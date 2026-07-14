@@ -24,5 +24,7 @@ touch :
     Used to create a new empty file.
 
 echo : 
-    Used to write text to a file from the terminal. Example: echo "text" > file.md-- I practiced basic terminal commands such as pwd, ls, cd, mkdir, touch, echo, cat, rm, and rmdir.
+    Used to write text to a file from the terminal. Example: echo "text" > file.md
+
+- I practiced basic terminal commands such as pwd, ls, cd, mkdir, touch, echo, cat, rm, and rmdir.
 - I learned that git log shows commit history.

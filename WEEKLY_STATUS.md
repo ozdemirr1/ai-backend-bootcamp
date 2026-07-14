@@ -24,8 +24,8 @@ Week 01
 - [x] ROADMAP.md created
 - [x] DECISIONS.md created
 - [x] AGENTS.md created
-- [ ] First Git commit
-- [ ] First GitHub push
+- [x] First Git commit
+- [x] First GitHub push
 - [ ] Week 01 report
 
 ## Problems

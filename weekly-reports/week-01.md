@@ -67,3 +67,7 @@ git diff :
 - I practiced terminal navigation and file operations using pwd, ls, cd, mkdir, touch, echo, cat, rm and rmdir.
 - I reviewed git status, git diff, git log, git add, git commit and git push.
 - Today I practiced terminal navigation, file operations, and the basic Git workflow. I also learned that git diff helps me review changes before committing.
+
+- I learned the basics of HTTP request and response structure.
+- I learned the difference between common HTTP methods such as GET, POST, PUT, PATCH, and DELETE.
+- I learned that 401 means unauthenticated, while 403 means authenticated but not authorized.

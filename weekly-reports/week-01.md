@@ -26,5 +26,42 @@ touch :
 echo : 
     Used to write text to a file from the terminal. Example: echo "text" > file.md
 
+pwd : 
+    Where am I?
+
+ls : 
+    What is in here?
+
+mkdir : 
+    Create a folder
+
+cd : 
+    Change folder (or directory)
+
+touch : 
+    Create a file
+
+echo : 
+    Write to a file
+
+cat : 
+    Read a file
+
+rm : 
+    Delete a file
+
+rmdir : 
+    Delete an empty folder
+
+git log : 
+    This is the work log of the project. (git log --oneline)
+Output: 
+    commit id + commit message
+
+git diff : 
+    This is the answer to the question, "What did I change before committing?". This shows you what has changed in the file.
+
 - I practiced basic terminal commands such as pwd, ls, cd, mkdir, touch, echo, cat, rm, and rmdir.
 - I learned that git log shows commit history.
+- I practiced terminal navigation and file operations using pwd, ls, cd, mkdir, touch, echo, cat, rm and rmdir.
+- I reviewed git status, git diff, git log, git add, git commit and git push.

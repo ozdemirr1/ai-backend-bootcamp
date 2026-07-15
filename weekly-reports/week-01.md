@@ -71,3 +71,4 @@ git diff :
 - I learned the basics of HTTP request and response structure.
 - I learned the difference between common HTTP methods such as GET, POST, PUT, PATCH, and DELETE.
 - I learned that 401 means unauthenticated, while 403 means authenticated but not authorized.
+-- I practiced choosing HTTP status codes for backend API scenarios.

@@ -61,7 +61,9 @@ Output:
 git diff : 
     This is the answer to the question, "What did I change before committing?". This shows you what has changed in the file.
 
+
 - I practiced basic terminal commands such as pwd, ls, cd, mkdir, touch, echo, cat, rm, and rmdir.
 - I learned that git log shows commit history.
 - I practiced terminal navigation and file operations using pwd, ls, cd, mkdir, touch, echo, cat, rm and rmdir.
 - I reviewed git status, git diff, git log, git add, git commit and git push.
+- Today I practiced terminal navigation, file operations, and the basic Git workflow. I also learned that git diff helps me review changes before committing.

@@ -66,3 +66,16 @@ DELETE /tasks/{task_id}
 ## My REST Summary
 
 In REST API design, endpoints should represent resources, not actions. HTTP methods describe the action. For example, GET /getTickets because GET already means retrieve data.
+
+## Request Body Validation
+
+Request body validation means checking the data sent by the client before processing it.
+
+For example, when creating a ticket, the backend should check:
+- Is the title provided ? 
+- Is the title empty ?
+- Is the description provided ?
+- Is the priority value valid ? 
+- Are the data types correct ?
+ 
+The backend should not trust client input blindly. Invalid request data should return a proper error response, such as 400 Bad Request or 422 Validation Error.

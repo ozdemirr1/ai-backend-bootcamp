@@ -62,3 +62,7 @@ DELETE /tasks/{task_id}
 - status
 - created_at
 - updated_at
+
+## My REST Summary
+
+In REST API design, endpoints should represent resources, not actions. HTTP methods describe the action. For example, GET /getTickets because GET already means retrieve data.

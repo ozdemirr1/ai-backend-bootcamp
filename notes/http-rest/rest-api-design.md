@@ -79,3 +79,68 @@ For example, when creating a ticket, the backend should check:
 - Are the data types correct ?
  
 The backend should not trust client input blindly. Invalid request data should return a proper error response, such as 400 Bad Request or 422 Validation Error.
+
+
+### Status Code Selection
+
+Status codes describe the result of an HTTP response.
+
+### 200 OK
+Used when a request succeeds and returns data.
+
+Example :
+GET /tickets
+
+### 201 Created
+Used when a new resoruce is created successfully.
+
+Example:
+POST /tickets
+
+### 204 No Content
+Used when a request succeeds but does not return a response body.
+
+Example:
+DELETE /tickets/{ticket_id}
+
+### 400 Bad Request 
+Used when the request is invalid or malformed.
+
+Example:
+The request body is not valid JSON.
+
+### 401 Unauthorized
+Used when the user is not authenticated.
+
+Example:
+The request does not include a valid token.
+
+### 403 Forbidden
+Used when the user is authenticated but does not have permission.
+
+Example:
+A normal user tries to access an admin-only endpoint.
+
+### 404 Not Found
+Used when the requested resource does not exist.
+
+Example:
+Get /tickets/999 when ticket 999 does not exist.
+
+### 409 Conflict 
+Used when the request conflicts with the current state of resource.
+
+Example:
+Trying to register with an email address that already exist.
+
+### 422 Validation Error
+Used when the request body is syntactically valid but fails validation rules.
+
+Example:
+The title fields is empty or priority has an invalid value.
+
+### 500 Internal Server Error
+Used when an unexpected server-side error ouccurs.
+
+Example:
+Unhandled exception or database failure.

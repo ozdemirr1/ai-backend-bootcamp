@@ -4,7 +4,7 @@
 
 A resource is an entity exposed through the API.
 
-Examples : 
+Examples:
 - users
 - tickets
 - comments
@@ -43,7 +43,7 @@ PATCH /tickets/{ticket_id}
 POST /tickets/{ticket_id}/comments
 PATCH /tickets/{ticket_id}/status
 
-# Task API Desing
+## Task API Design
 
 ## Endpoints
 
@@ -65,34 +65,34 @@ DELETE /tasks/{task_id}
 
 ## My REST Summary
 
-In REST API design, endpoints should represent resources, not actions. HTTP methods describe the action. For example, GET /getTickets because GET already means retrieve data.
+In REST API design, endpoints should represent resources, not actions. HTTP methods describe the action. For example, GET /tickets is better than GET /getTickets because GET already means retrieve data.
 
 ## Request Body Validation
 
 Request body validation means checking the data sent by the client before processing it.
 
 For example, when creating a ticket, the backend should check:
-- Is the title provided ? 
-- Is the title empty ?
-- Is the description provided ?
-- Is the priority value valid ? 
-- Are the data types correct ?
+- Is the title provided?
+- Is the title empty?
+- Is the description provided?
+- Is the priority value valid?
+- Are the data types correct?
  
 The backend should not trust client input blindly. Invalid request data should return a proper error response, such as 400 Bad Request or 422 Validation Error.
 
 
-### Status Code Selection
+## Status Code Selection
 
 Status codes describe the result of an HTTP response.
 
 ### 200 OK
 Used when a request succeeds and returns data.
 
-Example :
+Example:
 GET /tickets
 
 ### 201 Created
-Used when a new resoruce is created successfully.
+Used when a new resource is created successfully.
 
 Example:
 POST /tickets
@@ -103,7 +103,7 @@ Used when a request succeeds but does not return a response body.
 Example:
 DELETE /tickets/{ticket_id}
 
-### 400 Bad Request 
+### 400 Bad Request
 Used when the request is invalid or malformed.
 
 Example:
@@ -125,22 +125,22 @@ A normal user tries to access an admin-only endpoint.
 Used when the requested resource does not exist.
 
 Example:
-Get /tickets/999 when ticket 999 does not exist.
+GET /tickets/999 when ticket 999 does not exist.
 
-### 409 Conflict 
-Used when the request conflicts with the current state of resource.
+### 409 Conflict
+Used when the request conflicts with the current state of the resource.
 
 Example:
-Trying to register with an email address that already exist.
+Trying to register with an email address that already exists.
 
 ### 422 Validation Error
 Used when the request body is syntactically valid but fails validation rules.
 
 Example:
-The title fields is empty or priority has an invalid value.
+The title field is empty or priority has an invalid value.
 
 ### 500 Internal Server Error
-Used when an unexpected server-side error ouccurs.
+Used when an unexpected server-side error occurs.
 
 Example:
 Unhandled exception or database failure.

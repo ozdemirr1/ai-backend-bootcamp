@@ -107,3 +107,40 @@ Expected status codes:
 ## My Notes
 
 In REST API design, endpoints should represent resources. HTTP methods describe the action. Ticket access should be protected because tickets may contain private organization data.
+
+## Create Ticket Request Body
+
+Example request body:
+
+'''json
+{
+    "title": "Login problem",
+    "description": "I cannot login to my account.",
+    "priority": "high",
+    "category": "account"
+}
+
+Create Ticket Validation Rules
+-> title is required.
+-> title must not be empty.
+-> title should be between 3 and 120 characters.
+-> description is required.
+-> description must not be empty.
+-> priority is required.
+-> priority must be one of: low, medium, high.
+-> category is required.
+-> category must be one of: account, billing, technical, other.
+
+Invalid Request Example
+{
+    "title: "",
+    "priority": "super-urgent"
+}
+Problems:
+-> title is empty.
+-> description is missing.
+-> priority is not an allowed value.
+-> category is missing.
+
+Expected status code:
+-> 422 Validation Error

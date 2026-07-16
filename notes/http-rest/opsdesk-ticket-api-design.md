@@ -112,35 +112,41 @@ In REST API design, endpoints should represent resources. HTTP methods describe 
 
 Example request body:
 
-'''json
+```json
 {
-    "title": "Login problem",
-    "description": "I cannot login to my account.",
-    "priority": "high",
-    "category": "account"
+  "title": "Login problem",
+  "description": "I cannot login to my account.",
+  "priority": "high",
+  "category": "account"
 }
+```
 
-Create Ticket Validation Rules
--> title is required.
--> title must not be empty.
--> title should be between 3 and 120 characters.
--> description is required.
--> description must not be empty.
--> priority is required.
--> priority must be one of: low, medium, high.
--> category is required.
--> category must be one of: account, billing, technical, other.
+## Create Ticket Validation Rules
 
-Invalid Request Example
+- title is required.
+- title must not be empty.
+- title should be between 3 and 120 characters.
+- description is required.
+- description must not be empty.
+- priority is required.
+- priority must be one of: low, medium, high.
+- category is required.
+- category must be one of: account, billing, technical, other.
+
+## Invalid Request Example
+
+```json
 {
-    "title: "",
-    "priority": "super-urgent"
+  "title": "",
+  "priority": "super-urgent"
 }
+```
+
 Problems:
--> title is empty.
--> description is missing.
--> priority is not an allowed value.
--> category is missing.
+- title is empty.
+- description is missing.
+- priority is not an allowed value.
+- category is missing.
 
 Expected status code:
--> 422 Validation Error
+- 422 Validation Error

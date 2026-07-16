@@ -71,4 +71,5 @@ git diff :
 - I learned the basics of HTTP request and response structure.
 - I learned the difference between common HTTP methods such as GET, POST, PUT, PATCH, and DELETE.
 - I learned that 401 means unauthenticated, while 403 means authenticated but not authorized.
--- I practiced choosing HTTP status codes for backend API scenarios.
+- I practiced choosing HTTP status codes for backend API scenarios.
+- I learned that 204 No Content means the request succeeded but the server does not return a response body. It is not the same as 404 Not Found.

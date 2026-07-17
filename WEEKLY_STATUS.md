@@ -30,7 +30,7 @@ Week 01
 - [x] HTTP basics notes
 - [x] REST API design notes
 - [x] OpsDesk ticket API design notes
-- [ ] Week 01 report
+- [x] Week 01 report
 
 ## Problems
 
@@ -38,7 +38,6 @@ Week 01
 
 ## Next Tasks
 
-- Clean up Week 01 report
-- Add Week 01 terminal and Git practice project
-- Run first Python practice file
-- Prepare for Week 02
+- Prepare Week 02 plan
+- Start Python fundamentals
+- Practice virtual environment setup

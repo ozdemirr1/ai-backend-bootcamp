@@ -6,7 +6,7 @@ Week 01
 
 ## Date
 
-14 July - 19 July
+14 July - 17 July
 
 ## Current Focus
 

@@ -2,35 +2,33 @@
 
 ## Current Week
 
-Week 01
+Week 02
 
 ## Date
 
-14 July - 17 July
+20 July - 26 July
 
 ## Current Focus
 
-- Bootcamp repository setup
-- Git/GitHub workflow
-- Terminal basics
-- Markdown notes
-- HTTP/REST introduction
-- Codex workflow setup
+- Python fundamentals
+- Virtual environment
+- Functions
+- Data structures
+- File handling
+- Basic CLI project
+- Git workflow practice
 
 ## Completed
 
-- [x] Repository folder structure created
-- [x] README.md created
-- [x] ROADMAP.md created
-- [x] DECISIONS.md created
-- [x] AGENTS.md created
-- [x] First Git commit
-- [x] First GitHub push
-- [x] Terminal and Git practice
-- [x] HTTP basics notes
-- [x] REST API design notes
-- [x] OpsDesk ticket API design notes
-- [x] Week 01 report
+- [x] Week 02 plan created
+- [x] Python notes outline created
+- [ ] Python basics notes
+- [ ] Virtual environment practice
+- [ ] Function exercises
+- [ ] Data structure exercises
+- [ ] File handling notes
+- [ ] Basic CLI project
+- [ ] Week 02 report
 
 ## Problems
 
@@ -38,6 +36,7 @@ Week 01
 
 ## Next Tasks
 
-- Prepare Week 02 plan
-- Start Python fundamentals
-- Practice virtual environment setup
+- Start Python syntax refresh
+- Practice variables and data types
+- Practice conditionals and loops
+- Write Python basics notes

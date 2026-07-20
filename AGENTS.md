@@ -166,16 +166,17 @@ Each week should include:
 
 ## Current Week
 
-Week 01
+Week 02
 
 ## Current Focus
 
-- Repository setup
-- Git/GitHub workflow
-- Terminal basics
-- Markdown documentation
-- HTTP/REST introduction
-- Codex workflow setup
+- Python fundamentals
+- Virtual environments
+- Functions
+- Data structures
+- File handling
+- Basic CLI development
+- Git workflow practice
 
 ## Expected Behavior From Codex
 

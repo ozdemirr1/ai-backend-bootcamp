@@ -22,8 +22,8 @@ Week 02
 
 - [x] Week 02 plan created
 - [x] Python notes outline created
-- [ ] Python basics notes
-- [ ] Virtual environment practice
+- [x] Python basics notes
+- [x] Virtual environment practice
 - [ ] Function exercises
 - [ ] Data structure exercises
 - [ ] File handling notes
@@ -32,11 +32,12 @@ Week 02
 
 ## Problems
 
-- 
+- No current blockers.
 
 ## Next Tasks
 
-- Start Python syntax refresh
-- Practice variables and data types
-- Practice conditionals and loops
-- Write Python basics notes
+- Review function syntax
+- Practice parameters and return values
+- Compare `print()` and `return`
+- Complete small function exercises
+- Update `notes/python/functions.md`

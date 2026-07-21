@@ -10,6 +10,10 @@ This practice project reviews Python fundamentals through simple examples connec
 - `for` loops
 - `while` loops
 - Counters and basic backend business rules
+- Function definitions and calls
+- Parameters and arguments
+- `print()` and `return`
+- Basic function checks with `assert`
 
 ## Run
 
@@ -19,10 +23,16 @@ From the repository root, activate the virtual environment:
 source .venv/bin/activate
 ```
 
-Run the practice file:
+Run the Python basics practice:
 
 ```bash
 python projects/week-02-python-fundamentals/python_basics.py
+```
+
+Run the functions practice:
+
+```bash
+python projects/week-02-python-fundamentals/functions_practice.py
 ```
 
 ## Dependencies

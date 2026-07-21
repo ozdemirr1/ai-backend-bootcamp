@@ -24,7 +24,7 @@ Week 02
 - [x] Python notes outline created
 - [x] Python basics notes
 - [x] Virtual environment practice
-- [ ] Function exercises
+- [x] Function exercises
 - [ ] Data structure exercises
 - [ ] File handling notes
 - [ ] Basic CLI project
@@ -36,8 +36,8 @@ Week 02
 
 ## Next Tasks
 
-- Review function syntax
-- Practice parameters and return values
-- Compare `print()` and `return`
-- Complete small function exercises
-- Update `notes/python/functions.md`
+- Review lists and common list operations
+- Practice dictionaries and key-value modeling
+- Compare lists, tuples, and sets
+- Model simple OpsDesk ticket data
+- Update `notes/python/data-structures.md`

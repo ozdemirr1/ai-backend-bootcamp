@@ -25,7 +25,7 @@ Week 02
 - [x] Python basics notes
 - [x] Virtual environment practice
 - [x] Function exercises
-- [ ] Data structure exercises
+- [x] Data structure exercises
 - [ ] File handling notes
 - [ ] Basic CLI project
 - [ ] Week 02 report
@@ -36,8 +36,8 @@ Week 02
 
 ## Next Tasks
 
-- Review lists and common list operations
-- Practice dictionaries and key-value modeling
-- Compare lists, tuples, and sets
-- Model simple OpsDesk ticket data
-- Update `notes/python/data-structures.md`
+- Review file paths and `with open(...)`
+- Practice reading and writing text files
+- Practice basic JSON serialization
+- Handle a missing file safely
+- Update `notes/python/file-handling.md`

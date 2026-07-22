@@ -14,6 +14,10 @@ This practice project reviews Python fundamentals through simple examples connec
 - Parameters and arguments
 - `print()` and `return`
 - Basic function checks with `assert`
+- Lists and common list operations
+- Dictionaries and nested data modeling
+- Tuples and immutable sequences
+- Sets, unique values, and membership checks
 
 ## Run
 
@@ -33,6 +37,12 @@ Run the functions practice:
 
 ```bash
 python projects/week-02-python-fundamentals/functions_practice.py
+```
+
+Run the data structures practice:
+
+```bash
+python projects/week-02-python-fundamentals/data_structures_practice.py
 ```
 
 ## Dependencies

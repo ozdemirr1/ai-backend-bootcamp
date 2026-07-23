@@ -26,7 +26,7 @@ Week 02
 - [x] Virtual environment practice
 - [x] Function exercises
 - [x] Data structure exercises
-- [ ] File handling notes
+- [x] File handling notes
 - [ ] Basic CLI project
 - [ ] Week 02 report
 
@@ -36,8 +36,8 @@ Week 02
 
 ## Next Tasks
 
-- Review file paths and `with open(...)`
-- Practice reading and writing text files
-- Practice basic JSON serialization
-- Handle a missing file safely
-- Update `notes/python/file-handling.md`
+- Define the basic CLI project requirements
+- Plan the command flow and ticket data model
+- Reuse functions, data structures, and JSON handling
+- Add input validation and basic error handling
+- Document and test the CLI behavior

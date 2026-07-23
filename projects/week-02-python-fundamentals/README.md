@@ -18,6 +18,10 @@ This practice project reviews Python fundamentals through simple examples connec
 - Dictionaries and nested data modeling
 - Tuples and immutable sequences
 - Sets, unique values, and membership checks
+- File paths with `pathlib.Path`
+- Text file reading, writing, and appending
+- JSON serialization and deserialization
+- Basic file error handling
 
 ## Run
 
@@ -44,6 +48,17 @@ Run the data structures practice:
 ```bash
 python projects/week-02-python-fundamentals/data_structures_practice.py
 ```
+
+Run the file handling practice:
+
+```bash
+python projects/week-02-python-fundamentals/file_handling_practice.py
+```
+
+This script creates and updates example files in the `data/` directory:
+
+- `ticket_summary.txt`
+- `ticket.json`
 
 ## Dependencies
 

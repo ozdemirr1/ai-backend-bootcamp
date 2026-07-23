@@ -1,0 +1,4 @@
+Ticket ID: 1001
+Title: Password reset email is not received
+Priority: high
+Assigned user: Furkan

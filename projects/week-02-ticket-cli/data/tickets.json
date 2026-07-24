@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Password reset email is not received",
+    "priority": "high",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "VPN connection fails",
+    "priority": "medium",
+    "status": "open"
+  },
+  {
+    "id": 3,
+    "title": "Email delivery problem",
+    "priority": "high",
+    "status": "open"
+  }
+]

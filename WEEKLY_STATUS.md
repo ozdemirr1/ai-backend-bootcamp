@@ -27,7 +27,7 @@ Week 02
 - [x] Function exercises
 - [x] Data structure exercises
 - [x] File handling notes
-- [ ] Basic CLI project
+- [x] Basic CLI project
 - [ ] Week 02 report
 
 ## Problems
@@ -36,8 +36,8 @@ Week 02
 
 ## Next Tasks
 
-- Define the basic CLI project requirements
-- Plan the command flow and ticket data model
-- Reuse functions, data structures, and JSON handling
-- Add input validation and basic error handling
-- Document and test the CLI behavior
+- Take a rest or complete a light review on Saturday
+- Run all Week 02 practice files and CLI checks
+- Complete the Week 02 report
+- Review repository documentation and status
+- Prepare the Week 03 plan

@@ -166,17 +166,18 @@ Each week should include:
 
 ## Current Week
 
-Week 02
+Week 03
 
 ## Current Focus
 
-- Python fundamentals
-- Virtual environments
-- Functions
-- Data structures
-- File handling
-- Basic CLI development
-- Git workflow practice
+- Python engineering fundamentals
+- List comprehensions and type hints
+- Exception handling
+- Modules and imports
+- Pytest and Ruff
+- Dependency management
+- Git branch and pull request workflow
+- Terminal and HTTP gap review
 
 ## Expected Behavior From Codex
 

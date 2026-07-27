@@ -24,7 +24,7 @@ Week 03
 ## Completed
 
 - [x] Week 03 plan created
-- [ ] Git, terminal, and HTTP gap review
+- [x] Git, terminal, and HTTP gap review
 - [ ] List comprehension and type hint exercises
 - [ ] Exception and module exercises
 - [ ] Pytest CLI tests
@@ -38,8 +38,8 @@ Week 03
 
 ## Next Tasks
 
-- Create the Week 03 feature branch
-- Practice `git branch` and `git switch`
-- Review `grep`, `find`, and `chmod`
-- Send HTTP requests with `curl`
-- Review HTTP request parts, `409`, and `500`
+- Review list comprehensions and readability
+- Add parameter and return type hints
+- Practice common collection type annotations
+- Explain why type hints do not validate values at runtime
+- Update `notes/python/python-engineering.md`

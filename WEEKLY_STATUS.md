@@ -25,7 +25,7 @@ Week 03
 
 - [x] Week 03 plan created
 - [x] Git, terminal, and HTTP gap review
-- [ ] List comprehension and type hint exercises
+- [x] List comprehension and type hint exercises
 - [ ] Exception and module exercises
 - [ ] Pytest CLI tests
 - [ ] Ruff and dependency tooling
@@ -38,8 +38,8 @@ Week 03
 
 ## Next Tasks
 
-- Review list comprehensions and readability
-- Add parameter and return type hints
-- Practice common collection type annotations
-- Explain why type hints do not validate values at runtime
-- Update `notes/python/python-engineering.md`
+- Raise `ValueError` for invalid input
+- Practice `try`, `except`, `else`, and `finally`
+- Catch specific exceptions
+- Split Python code into small modules
+- Review imports and the main guard

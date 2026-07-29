@@ -26,7 +26,7 @@ Week 03
 - [x] Week 03 plan created
 - [x] Git, terminal, and HTTP gap review
 - [x] List comprehension and type hint exercises
-- [ ] Exception and module exercises
+- [x] Exception and module exercises
 - [ ] Pytest CLI tests
 - [ ] Ruff and dependency tooling
 - [ ] Feature branch and pull request practice
@@ -38,8 +38,9 @@ Week 03
 
 ## Next Tasks
 
-- Raise `ValueError` for invalid input
-- Practice `try`, `except`, `else`, and `finally`
-- Catch specific exceptions
-- Split Python code into small modules
-- Review imports and the main guard
+- Install pytest in the virtual environment
+- Review pytest test discovery
+- Convert plain CLI checks into pytest tests
+- Test valid and invalid priorities
+- Test missing-file and JSON persistence behavior
+- Keep test data isolated from real project data

@@ -126,3 +126,81 @@ SLA_HOURS_BY_PRIORITY: dict[str, int] = {
 ```
 
 Uppercase naming is a convention. Python does not make the dictionary immutable.
+
+## Raising Exceptions
+
+An exception communicates that a function cannot complete its operation normally.
+
+```python
+def validate_priority(priority: str) -> str:
+    normalized_priority = priority.strip().lower()
+
+    if normalized_priority not in SLA_HOURS_BY_PRIORITY:
+        raise ValueError(f"Unsupported priority: {priority}")
+
+    return normalized_priority
+```
+
+`ValueError` is appropriate when the input has an acceptable type but its value violates a rule.
+
+Returning `None` can represent an expected absence when the function contract defines that behavior. Raising an exception reports invalid input or another condition that the caller must handle. An exception interrupts the current flow, but the whole program does not have to stop if the exception is caught safely.
+
+## Handling Specific Exceptions
+
+Use `try` for an operation that can fail and catch only exceptions the code can handle meaningfully.
+
+```python
+try:
+    validated_priority = validate_priority("archived")
+except ValueError as error:
+    print(f"Priority validation failed: {error}")
+else:
+    print(f"Validated priority: {validated_priority}")
+finally:
+    print("Priority validation finished.")
+```
+
+- `try` contains the operation that can fail.
+- `except ValueError` handles the expected validation error.
+- `else` runs only when the `try` block succeeds.
+- `finally` runs whether the operation succeeds or fails.
+
+A bare `except:` can hide unrelated programming errors and make debugging difficult. Specific exception handlers allow unexpected failures to remain visible.
+
+## Modules and Imports
+
+Every Python file can be used as a module. Moving related rules into a separate module keeps responsibilities clearer and avoids repeating code.
+
+```python
+from ticket_rules import validate_priority
+```
+
+In the practice project:
+
+- `ticket_rules.py` contains priority constants and business rules.
+- `python_engineering_practice.py` imports those rules and runs example flows.
+
+Standard-library imports and local imports should be separated into groups:
+
+```python
+from typing import Optional
+
+from ticket_rules import validate_priority
+```
+
+Python executes top-level module code during the first import. Functions and constants are safe to define at the module level, but application startup code should be protected from import side effects.
+
+## Main Guard
+
+The main guard runs the application flow only when the file is executed directly:
+
+```python
+def main() -> None:
+    print("Application started.")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+When the file is imported, `__name__` contains the module name instead of `"__main__"`, so `main()` does not run automatically. This prevents CLI menus, file operations, and other startup behavior from running during imports or tests.

@@ -13,8 +13,15 @@ This project practices Python features that improve readability and maintainabil
 - Optional values with `Optional`
 - The difference between type hints and runtime validation
 - Constant naming conventions
+- Raising and handling specific exceptions
+- `try`, `except`, `else`, and `finally`
+- Modules and local imports
+- Main guards and import safety
 
-Exception handling and module organization will be added during the next Week 03 exercises.
+## Project Files
+
+- `ticket_rules.py`: Priority constants, validation, normalization, and SLA rules
+- `python_engineering_practice.py`: Example application flow and exception handling
 
 ## Run
 
@@ -29,6 +36,15 @@ Run the practice file:
 ```bash
 python projects/week-03-python-engineering/python_engineering_practice.py
 ```
+
+Import the practice module without running its application flow:
+
+```bash
+cd projects/week-03-python-engineering
+python -c "import python_engineering_practice"
+```
+
+The import check should complete without printing application output.
 
 ## Dependencies
 

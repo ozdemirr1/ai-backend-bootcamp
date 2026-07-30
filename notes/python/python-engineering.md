@@ -204,3 +204,70 @@ if __name__ == "__main__":
 ```
 
 When the file is imported, `__name__` contains the module name instead of `"__main__"`, so `main()` does not run automatically. This prevents CLI menus, file operations, and other startup behavior from running during imports or tests.
+
+## Pytest Basics
+
+Pytest discovers test files matching `test_*.py` or `*_test.py`. Test function names begin with `test`.
+
+```python
+def test_normalize_priorities_cleans_values() -> None:
+    raw_priorities = [" HIGH ", "medium", "CRITICAL"]
+
+    result = normalize_priorities(raw_priorities)
+
+    assert result == ["high", "medium", "critical"]
+```
+
+A test can be understood as three steps:
+
+- Arrange: Prepare the input and required state.
+- Act: Run the behavior being tested.
+- Assert: Compare the actual result with the expected result.
+
+Tests use `assert` to report whether an expectation is true. Returning a value from a test function does not verify behavior.
+
+## Testing Exceptions
+
+Use `pytest.raises()` when an exception is the expected behavior:
+
+```python
+import pytest
+
+
+def test_validate_priority_rejects_unsupported_value() -> None:
+    with pytest.raises(
+        ValueError,
+        match="Unsupported priority: archived",
+    ):
+        validate_priority("archived")
+```
+
+The test fails when the expected exception is not raised, a different exception is raised, or the message does not match.
+
+## Test Isolation With `tmp_path`
+
+Pytest provides the `tmp_path` fixture as an isolated `Path` object managed for a test run.
+
+```python
+from pathlib import Path
+
+
+def test_missing_file_returns_empty_list(tmp_path: Path) -> None:
+    tickets_file_path = tmp_path / "tickets.json"
+
+    assert load_tickets(tickets_file_path) == []
+```
+
+Using a temporary path prevents tests from reading or changing the real application data. Each test should create the state it needs instead of depending on another test.
+
+## Collection Errors and Test Failures
+
+A collection error happens before a test can run. Common causes include import errors, syntax errors, and executable top-level code that fails while Pytest imports a test module.
+
+A test failure happens after Pytest successfully discovers and starts a test, but an assertion or another expected condition is not satisfied.
+
+Run all discovered tests from the repository root:
+
+```bash
+python -m pytest -v
+```

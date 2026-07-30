@@ -22,6 +22,7 @@ This project practices Python features that improve readability and maintainabil
 
 - `ticket_rules.py`: Priority constants, validation, normalization, and SLA rules
 - `python_engineering_practice.py`: Example application flow and exception handling
+- `test_ticket_rules.py`: Pytest checks for normalization and validation rules
 
 ## Run
 
@@ -46,6 +47,22 @@ python -c "import python_engineering_practice"
 
 The import check should complete without printing application output.
 
+## Tests
+
+Run the project tests:
+
+```bash
+python -m pytest projects/week-03-python-engineering/test_ticket_rules.py -v
+```
+
+Run all tests from the repository root:
+
+```bash
+python -m pytest -v
+```
+
+Pytest discovers files matching `test_*.py` or `*_test.py` and functions whose names begin with `test`.
+
 ## Dependencies
 
-The current exercises use only the Python standard library and do not require external packages.
+The application code uses only the Python standard library. Running the tests requires Pytest as a development dependency.

@@ -27,7 +27,7 @@ Week 03
 - [x] Git, terminal, and HTTP gap review
 - [x] List comprehension and type hint exercises
 - [x] Exception and module exercises
-- [ ] Pytest CLI tests
+- [x] Pytest CLI tests
 - [ ] Ruff and dependency tooling
 - [ ] Feature branch and pull request practice
 - [ ] Week 03 report
@@ -38,9 +38,9 @@ Week 03
 
 ## Next Tasks
 
-- Install pytest in the virtual environment
-- Review pytest test discovery
-- Convert plain CLI checks into pytest tests
-- Test valid and invalid priorities
-- Test missing-file and JSON persistence behavior
-- Keep test data isolated from real project data
+- Install and run Ruff
+- Review lint output and fix reported issues
+- Add project dependency configuration
+- Separate runtime and development dependencies
+- Document test and lint commands
+- Run the full test suite after lint fixes

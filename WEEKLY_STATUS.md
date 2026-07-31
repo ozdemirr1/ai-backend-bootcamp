@@ -28,7 +28,7 @@ Week 03
 - [x] List comprehension and type hint exercises
 - [x] Exception and module exercises
 - [x] Pytest CLI tests
-- [ ] Ruff and dependency tooling
+- [x] Ruff and dependency tooling
 - [ ] Feature branch and pull request practice
 - [ ] Week 03 report
 
@@ -38,9 +38,9 @@ Week 03
 
 ## Next Tasks
 
-- Install and run Ruff
-- Review lint output and fix reported issues
-- Add project dependency configuration
-- Separate runtime and development dependencies
-- Document test and lint commands
-- Run the full test suite after lint fixes
+- Run the full Pytest suite
+- Run Ruff across the repository
+- Review the complete feature branch diff
+- Check documentation and repository status
+- Push the final feature branch changes
+- Open and review the first pull request

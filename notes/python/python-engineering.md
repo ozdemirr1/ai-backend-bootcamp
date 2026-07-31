@@ -271,3 +271,72 @@ Run all discovered tests from the repository root:
 ```bash
 python -m pytest -v
 ```
+
+## Ruff Basics
+
+Ruff performs static analysis without running the application flow.
+
+```bash
+ruff check .
+```
+
+Ruff can report problems such as:
+
+- Unused imports
+- Undefined names
+- Unorganized import blocks
+- Selected syntax and style violations
+
+Pytest and Ruff answer different questions:
+
+- Pytest checks whether tested behavior matches expectations.
+- Ruff checks code against enabled static-analysis and style rules.
+
+Passing one tool does not guarantee passing the other.
+
+## Ruff Configuration
+
+The repository configures Ruff in `pyproject.toml`:
+
+```toml
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "ticket_rules"]
+```
+
+The Python target prevents Ruff from recommending syntax that is unavailable in Python 3.9. First-party module configuration helps Ruff distinguish local modules from third-party packages when organizing imports.
+
+Automatic fixes must be reviewed with `git diff`. A fix can be correct according to an enabled rule while still being inappropriate for the project context. Tests should run again after lint fixes.
+
+## Dependency Types
+
+Runtime dependencies are required for the application to operate. Development dependencies support activities such as testing and linting but are not required by the current application flow.
+
+The current exercises use only the Python standard library at runtime. Development tools are recorded in `requirements-dev.txt`:
+
+```text
+pytest==8.4.2
+ruff==0.16.1
+```
+
+Install them with the active virtual environment:
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+Only the direct development dependencies are listed manually. Pip resolves their transitive dependencies, such as `pluggy` and `iniconfig` for Pytest.
+
+Pinned direct dependencies improve repeatability, but `requirements-dev.txt` is not a complete lock file because transitive versions are not pinned. A dedicated locking workflow can be introduced when the projects require stronger reproducibility.
+
+Check the installed dependency set for conflicts:
+
+```bash
+python -m pip check
+```

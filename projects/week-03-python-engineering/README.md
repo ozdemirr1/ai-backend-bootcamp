@@ -17,6 +17,9 @@ This project practices Python features that improve readability and maintainabil
 - `try`, `except`, `else`, and `finally`
 - Modules and local imports
 - Main guards and import safety
+- Pytest basics and test isolation
+- Ruff linting and import organization
+- Development dependency management
 
 ## Project Files
 
@@ -65,4 +68,25 @@ Pytest discovers files matching `test_*.py` or `*_test.py` and functions whose n
 
 ## Dependencies
 
-The application code uses only the Python standard library. Running the tests requires Pytest as a development dependency.
+The application code uses only the Python standard library.
+
+Install the repository development dependencies from the repository root:
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+The development dependencies are:
+
+- Pytest for automated tests
+- Ruff for linting and import checks
+
+## Lint
+
+Run Ruff from the repository root:
+
+```bash
+ruff check .
+```
+
+Ruff uses the settings in `pyproject.toml`, including the Python 3.9 target and first-party module names.

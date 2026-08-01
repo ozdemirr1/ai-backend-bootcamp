@@ -16,7 +16,6 @@ def get_assignee_label(assigned_user: Optional[str]) -> str:
     return assigned_user
 
 
-
 def main() -> None:
     raw_priorities = [" HIGH ", "medium", "CRITICAL", "low "]
     normalized_priorities = normalize_priorities(raw_priorities)

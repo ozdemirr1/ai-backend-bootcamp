@@ -30,3 +30,36 @@ My goal is to become a job-ready AI-assisted Backend / Full-Stack Developer by b
 
 I will not jump between random technologies.  
 I will focus on backend, full-stack fundamentals, AI integration, and production-ready project development.
+
+## Development Setup
+
+Create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install the development dependencies:
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+The current application exercises use only the Python standard library. Pytest and Ruff are development tools used for tests and code-quality checks.
+
+## Quality Checks
+
+Run all tests:
+
+```bash
+python -m pytest -q
+```
+
+Run the linter:
+
+```bash
+ruff check .
+```
+
+Ruff is configured in `pyproject.toml` for Python 3.9 compatibility.

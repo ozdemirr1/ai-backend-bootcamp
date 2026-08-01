@@ -162,7 +162,7 @@ Use a feature branch for Week 03 work.
 Planned branch:
 
 ```text
-codex/week-03-python-engineering
+feature/week-03-python-engineering
 ```
 
 Open and review the first pull request before merging into `main`.

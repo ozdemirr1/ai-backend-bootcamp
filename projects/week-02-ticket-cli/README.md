@@ -77,19 +77,19 @@ python projects/week-02-ticket-cli/app.py
 
 ## Tests
 
-Run the basic checks:
+Run the CLI tests with Pytest:
 
 ```bash
-python projects/week-02-ticket-cli/test_app.py
+python -m pytest projects/week-02-ticket-cli/test_app.py -v
 ```
 
 Expected output:
 
 ```text
-All CLI checks passed.
+3 passed
 ```
 
-The tests use Python's standard library and a temporary directory, so the real ticket data is not modified.
+The tests use Pytest's `tmp_path` fixture, so missing-file, invalid-JSON, and persistence checks do not modify the real ticket data.
 
 ## Validation Rules
 
@@ -104,10 +104,9 @@ The tests use Python's standard library and a temporary directory, so the real t
 - Data is stored in a local JSON file instead of a database.
 - Concurrent writes are not supported.
 - Ticket fields do not yet have schema validation.
-- The checks use plain `assert` instead of a test framework.
 
 These limitations will be addressed later with FastAPI, Pydantic validation, PostgreSQL, and proper automated tests.
 
 ## Dependencies
 
-This project uses only the Python standard library.
+The application uses only the Python standard library. Running the tests requires Pytest as a development dependency.

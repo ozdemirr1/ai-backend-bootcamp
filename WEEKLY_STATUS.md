@@ -24,11 +24,11 @@ Week 03
 ## Completed
 
 - [x] Week 03 plan created
-- [ ] Git, terminal, and HTTP gap review
-- [ ] List comprehension and type hint exercises
-- [ ] Exception and module exercises
-- [ ] Pytest CLI tests
-- [ ] Ruff and dependency tooling
+- [x] Git, terminal, and HTTP gap review
+- [x] List comprehension and type hint exercises
+- [x] Exception and module exercises
+- [x] Pytest CLI tests
+- [x] Ruff and dependency tooling
 - [ ] Feature branch and pull request practice
 - [ ] Week 03 report
 
@@ -38,8 +38,9 @@ Week 03
 
 ## Next Tasks
 
-- Create the Week 03 feature branch
-- Practice `git branch` and `git switch`
-- Review `grep`, `find`, and `chmod`
-- Send HTTP requests with `curl`
-- Review HTTP request parts, `409`, and `500`
+- Run the full Pytest suite
+- Run Ruff across the repository
+- Review the complete feature branch diff
+- Check documentation and repository status
+- Push the final feature branch changes
+- Open and review the first pull request

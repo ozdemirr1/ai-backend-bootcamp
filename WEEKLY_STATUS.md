@@ -29,7 +29,7 @@ Week 03
 - [x] Exception and module exercises
 - [x] Pytest CLI tests
 - [x] Ruff and dependency tooling
-- [ ] Feature branch and pull request practice
+- [x] Feature branch and pull request practice
 - [ ] Week 03 report
 
 ## Problems
@@ -38,9 +38,8 @@ Week 03
 
 ## Next Tasks
 
-- Run the full Pytest suite
-- Run Ruff across the repository
-- Review the complete feature branch diff
-- Check documentation and repository status
-- Push the final feature branch changes
-- Open and review the first pull request
+- Run the final Week 03 checks
+- Complete the Week 03 report
+- Review the Week 03 interview questions
+- Update the repository documentation and status
+- Prepare the Week 04 plan

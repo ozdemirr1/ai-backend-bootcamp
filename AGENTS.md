@@ -166,18 +166,18 @@ Each week should include:
 
 ## Current Week
 
-Week 03
+Week 04
 
 ## Current Focus
 
-- Python engineering fundamentals
-- List comprehensions and type hints
-- Exception handling
-- Modules and imports
-- Pytest and Ruff
-- Dependency management
-- Git branch and pull request workflow
-- Terminal and HTTP gap review
+- Python classes and objects
+- Constructors and `self`
+- Dataclasses and enums
+- Encapsulation and basic inheritance
+- Object dependencies
+- Modular project structure
+- Clean-code principles
+- OOP behavior tests
 
 ## Expected Behavior From Codex
 

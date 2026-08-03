@@ -22,7 +22,7 @@ Week 04
 ## Completed
 
 - [x] Week 04 plan created
-- [ ] Class and object exercises
+- [x] Class and object exercises
 - [ ] Dataclass and enum exercises
 - [ ] Repository and service exercises
 - [ ] OOP ticket CLI tests
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Create the Week 04 feature branch
-- Review classes, objects, constructors, and `self`
-- Compare a dictionary record with a class instance
-- Create a small class example before modeling a ticket
-- Update `notes/python/oop-clean-code.md`
+- Compare regular classes with dataclasses
+- Create controlled priority and status enums
+- Model ticket data with a dataclass
+- Decide which validation belongs to the model
+- Add focused model tests

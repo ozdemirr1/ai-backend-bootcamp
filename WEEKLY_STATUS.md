@@ -23,7 +23,7 @@ Week 04
 
 - [x] Week 04 plan created
 - [x] Class and object exercises
-- [ ] Dataclass and enum exercises
+- [x] Dataclass and enum exercises
 - [ ] Repository and service exercises
 - [ ] OOP ticket CLI tests
 - [ ] Clean-code review
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Compare regular classes with dataclasses
-- Create controlled priority and status enums
-- Model ticket data with a dataclass
-- Decide which validation belongs to the model
-- Add focused model tests
+- Define model, repository, and service responsibilities
+- Create an in-memory Ticket repository
+- Add repository operations for saving and listing tickets
+- Create a Ticket service for application rules
+- Pass the repository into the service constructor

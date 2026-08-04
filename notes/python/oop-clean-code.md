@@ -97,4 +97,78 @@ Keeping these responsibilities separate makes behavior easier to understand and 
 
 ## Current Limitation
 
-The current `Ticket` class accepts status values as unrestricted strings. Controlled values and validation will be introduced with enums and dataclasses.
+The introductory `Ticket` class accepts status values as unrestricted strings. The domain model improves this design with enums, a dataclass, and runtime validation.
+
+## Dataclasses
+
+A dataclass reduces boilerplate for data-focused models.
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Product:
+    product_id: int
+    name: str
+    price: float
+```
+
+By default, a dataclass generates useful methods such as `__init__`, `__repr__`, and `__eq__`. Domain methods can still be added when they belong to the model.
+
+Dataclasses do not enforce type hints at runtime.
+
+## Enums
+
+An enum defines a controlled collection of named values.
+
+```python
+from enum import Enum
+
+
+class TicketStatus(str, Enum):
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+```
+
+- `.name` returns the Python member name, such as `IN_PROGRESS`.
+- `.value` returns the external value, such as `"in_progress"`.
+
+Enums improve readability, discoverability, and consistency. They reduce uncontrolled strings but do not force a dataclass to reject raw strings automatically.
+
+## Dataclass Validation
+
+`__post_init__` runs after the generated dataclass `__init__` assigns the fields. It can protect rules that must be true for every model instance.
+
+```python
+def __post_init__(self) -> None:
+    if self.ticket_id <= 0:
+        raise ValueError("ticket_id must be positive")
+
+    if not self.title.strip():
+        raise ValueError("title cannot be empty")
+```
+
+Use exception types intentionally:
+
+- `TypeError`: the input has the wrong type, such as a raw string instead of `TicketPriority`.
+- `ValueError`: the type is acceptable, but the value violates a rule, such as an empty title.
+
+Validation belonging to every Ticket instance can live in the model. Rules involving storage, duplicate records, or multi-object workflows will belong in repository or service layers.
+
+## TDD: Red and Green
+
+Test-driven development can begin with a test that describes behavior before the implementation exists.
+
+- Red: the test runs and fails because the required behavior is missing.
+- Green: the smallest suitable implementation makes the test pass.
+
+A collection error is different from Red. A collection error means Pytest could not finish discovering tests, often because setup code ran at module import time or an import failed.
+
+## Static Checks and Behavior Tests
+
+Ruff performs static lint checks without executing application behavior. Pytest runs code and checks expectations.
+
+A function accidentally moved outside a class can still be valid Python and pass Ruff. A behavior test calling the missing instance method can reveal the mistake with `AttributeError`. Linting and tests provide different kinds of evidence, so both are needed.

@@ -24,7 +24,7 @@ Week 04
 - [x] Week 04 plan created
 - [x] Class and object exercises
 - [x] Dataclass and enum exercises
-- [ ] Repository and service exercises
+- [x] Repository and service exercises
 - [ ] OOP ticket CLI tests
 - [ ] Clean-code review
 - [ ] Feature branch and pull request practice
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Define model, repository, and service responsibilities
-- Create an in-memory Ticket repository
-- Add repository operations for saving and listing tickets
-- Create a Ticket service for application rules
-- Pass the repository into the service constructor
+- Review module boundaries and import responsibilities
+- Protect object invariants through public methods
+- Practice basic inheritance with a small example
+- Compare inheritance with composition
+- Keep unnecessary inheritance out of the ticket CLI

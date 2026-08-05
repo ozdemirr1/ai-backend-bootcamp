@@ -172,3 +172,69 @@ A collection error is different from Red. A collection error means Pytest could 
 Ruff performs static lint checks without executing application behavior. Pytest runs code and checks expectations.
 
 A function accidentally moved outside a class can still be valid Python and pass Ruff. A behavior test calling the missing instance method can reveal the mistake with `AttributeError`. Linting and tests provide different kinds of evidence, so both are needed.
+
+## Model, Repository, and Service Responsibilities
+
+The domain model represents one valid ticket and protects rules that apply to every ticket instance.
+
+The repository manages a collection of tickets. The current implementation stores data only in memory and provides operations for saving, listing, and finding tickets. A future repository could use JSON or PostgreSQL without moving storage logic into the model.
+
+The service coordinates application use cases. It creates a valid `Ticket`, checks rules involving other records, and delegates storage operations to the repository.
+
+```text
+TicketService -> TicketRepository -> Ticket
+```
+
+The layers have different reasons to change:
+
+- The model changes when ticket data or instance invariants change.
+- The repository changes when storage or query behavior changes.
+- The service changes when an application workflow or multi-record rule changes.
+
+## Encapsulation in the Repository
+
+Returning the repository's internal list directly would allow external code to change stored data without using repository methods.
+
+```python
+def list_all(self) -> list[Ticket]:
+    return list(self._tickets)
+```
+
+Returning a shallow copy protects the repository's list structure. It does not create copies of the individual `Ticket` objects inside the list.
+
+## Dependency Injection
+
+`TicketService` receives its repository through the constructor:
+
+```python
+class TicketService:
+    def __init__(self, repository: TicketRepository) -> None:
+        self._repository = repository
+```
+
+This makes the dependency explicit and prevents the service from deciding how its storage dependency must be created. Tests can provide a fresh in-memory repository, while a later application can provide a different repository implementation.
+
+Constructor injection also makes test isolation easier because each test controls the repository instance used by the service.
+
+## Multi-Record Rules
+
+A ticket cannot decide whether its ID already belongs to another ticket because a model instance does not know the complete collection.
+
+The service queries the repository before saving:
+
+```python
+existing_ticket = self._repository.find_by_id(ticket_id)
+
+if existing_ticket is not None:
+    raise ValueError(f"Ticket with ID {ticket_id} already exists.")
+```
+
+The check must happen before `save()`. Invalid input should fail before it changes stored state.
+
+`find_by_id()` returns `None` when a ticket is absent because absence is an expected query result. The service decides whether that absence is acceptable for the current use case.
+
+## Isolated In-Memory Tests
+
+Repository and service tests create a new in-memory repository for each test. They do not read or modify the Week 02 JSON file.
+
+This keeps tests fast, deterministic, independent of execution order, and safe for real project data.

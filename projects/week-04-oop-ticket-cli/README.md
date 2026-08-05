@@ -21,6 +21,11 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - `TypeError` and `ValueError`
 - TDD Red and Green phases
 - Focused model tests
+- In-memory repository operations
+- Service-layer application rules
+- Constructor dependency injection
+- Duplicate ticket ID protection
+- Isolated repository and service tests
 
 ## Current Files
 
@@ -28,6 +33,10 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - `models.py`: ticket enums and validated dataclass model
 - `model_practice.py`: enum and dataclass behavior demonstration
 - `test_models.py`: focused Ticket model tests
+- `repositories.py`: in-memory ticket storage and lookup operations
+- `services.py`: ticket creation workflow and duplicate ID rule
+- `test_repositories.py`: repository behavior and encapsulation tests
+- `test_services.py`: service workflow and dependency tests
 
 ## Run
 
@@ -55,16 +64,33 @@ Run the model tests:
 python -m pytest projects/week-04-oop-ticket-cli/test_models.py -v
 ```
 
+Run the repository and service tests:
+
+```bash
+python -m pytest projects/week-04-oop-ticket-cli/test_repositories.py -v
+python -m pytest projects/week-04-oop-ticket-cli/test_services.py -v
+```
+
+Run all project tests:
+
+```bash
+python -m pytest projects/week-04-oop-ticket-cli -v
+```
+
 ## Current Behavior
 
 The introductory practice creates two independent ticket objects, displays their summaries, and changes the status of one ticket through an instance method.
 
 The domain model uses enums for controlled priority and status values. The Ticket dataclass rejects empty titles, non-positive IDs, raw string priorities, and raw string statuses.
 
+The in-memory repository saves, lists, and finds tickets without reading or changing the Week 02 JSON data. `list_all()` returns a copy of its internal list to protect the collection from external mutation.
+
+The service receives its repository through constructor injection. It creates valid tickets, stores them through the repository, and rejects duplicate ticket IDs before stored state changes.
+
 ## Planned Evolution
 
-- Repository responsibility
-- Service responsibility
 - CLI integration
+- Encapsulation and composition review
+- Additional service behavior tests
 
 The project will avoid unnecessary inheritance and abstractions. New modules will be added only when their responsibilities are clear.

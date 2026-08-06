@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Review module boundaries and import responsibilities
-- Protect object invariants through public methods
-- Practice basic inheritance with a small example
-- Compare inheritance with composition
-- Keep unnecessary inheritance out of the ticket CLI
+- Review names and single-responsibility boundaries
+- Remove duplication without unnecessary abstractions
+- Add focused repository and service behavior tests
+- Run the complete Pytest and Ruff checks
+- Review and update project documentation

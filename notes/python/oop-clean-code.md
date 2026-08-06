@@ -238,3 +238,63 @@ The check must happen before `save()`. Invalid input should fail before it chang
 Repository and service tests create a new in-memory repository for each test. They do not read or modify the Week 02 JSON file.
 
 This keeps tests fast, deterministic, independent of execution order, and safe for real project data.
+
+## Invariants and Controlled State Changes
+
+An invariant is a rule that must remain true throughout an object's lifetime. A `Ticket` must always contain a `TicketStatus` instance in its status field.
+
+`__post_init__` protects this rule when the dataclass is first created. Later state changes need their own validation because `__post_init__` does not run again.
+
+```python
+def change_status(self, new_status: TicketStatus) -> None:
+    if not isinstance(new_status, TicketStatus):
+        raise TypeError("new_status must be an instance of TicketStatus")
+
+    self.status = new_status
+```
+
+The method validates before assignment so a failed operation leaves the existing state unchanged. The public method provides a controlled path for changing status. Python conventions still allow direct access to public attributes, so callers must use the model's intended API.
+
+## Basic Inheritance
+
+Inheritance represents an **is-a** relationship. A `SupportAgent` is a specialized `Employee`.
+
+```python
+class SupportAgent(Employee):
+    def __init__(self, name: str, queue_name: str) -> None:
+        super().__init__(name)
+        self.queue_name = queue_name
+```
+
+`super().__init__(name)` reuses the parent initialization instead of duplicating it. A child class can override an inherited method when the specialized type needs different behavior.
+
+Inheritance should not be introduced only to reuse code. The relationship must also make sense in the domain. Separate ticket classes for each priority would add unnecessary hierarchy because priority is already modeled as data with `TicketPriority`.
+
+## Composition
+
+Composition represents a **has-a** relationship. One object receives or contains another object that provides a needed capability.
+
+```python
+class TicketNotificationService:
+    def __init__(self, formatter: MessageFormatter) -> None:
+        self._formatter = formatter
+```
+
+The notification service has a formatter; it is not a type of formatter. The same relationship exists between `TicketService` and `TicketRepository`.
+
+Composition is often more flexible for backend dependencies because collaborators can be supplied from outside. Storage, formatting, logging, or notification implementations can change without turning the service into a subclass of those components.
+
+Prefer inheritance for a genuine **is-a** relationship and composition for a **has-a** or **uses-a** relationship.
+
+## Keep I/O at the Boundary
+
+Reusable model and service methods should usually return values instead of printing them.
+
+```python
+def create_notification(self, ticket_title: str) -> str:
+    return self._formatter.format(ticket_title)
+```
+
+The application boundary, such as `main()` or a future FastAPI route, decides how to present the returned value. This separation improves reuse and makes behavior tests simpler.
+
+Ruff can find many static lint problems, but it does not know the application's business requirements or architectural boundaries. Code review and behavior tests are still needed to detect hardcoded business data, misplaced I/O, and incorrect responsibility boundaries.

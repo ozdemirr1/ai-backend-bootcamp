@@ -39,3 +39,8 @@ class Ticket:
             f"Priority: {self.priority.value} | "
             f"Status: {self.status.value}"
         )
+
+    def change_status(self, new_status: TicketStatus) -> None:
+        if not isinstance(new_status, TicketStatus):
+            raise TypeError("new_status must be an instance of TicketStatus")
+        self.status = new_status

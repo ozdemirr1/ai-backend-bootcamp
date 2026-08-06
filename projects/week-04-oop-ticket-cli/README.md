@@ -26,6 +26,10 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - Constructor dependency injection
 - Duplicate ticket ID protection
 - Isolated repository and service tests
+- Controlled status changes and model invariants
+- Basic inheritance and method overriding
+- Composition and constructor dependencies
+- Separation of returned values from terminal output
 
 ## Current Files
 
@@ -37,6 +41,8 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - `services.py`: ticket creation workflow and duplicate ID rule
 - `test_repositories.py`: repository behavior and encapsulation tests
 - `test_services.py`: service workflow and dependency tests
+- `inheritance_practice.py`: small `Employee` and `SupportAgent` inheritance example
+- `composition_practice.py`: formatter dependency and notification service example
 
 ## Run
 
@@ -56,6 +62,13 @@ Run the dataclass and enum practice:
 
 ```bash
 python projects/week-04-oop-ticket-cli/model_practice.py
+```
+
+Run the inheritance and composition examples:
+
+```bash
+python projects/week-04-oop-ticket-cli/inheritance_practice.py
+python projects/week-04-oop-ticket-cli/composition_practice.py
 ```
 
 Run the model tests:
@@ -87,10 +100,11 @@ The in-memory repository saves, lists, and finds tickets without reading or chan
 
 The service receives its repository through constructor injection. It creates valid tickets, stores them through the repository, and rejects duplicate ticket IDs before stored state changes.
 
+The Ticket model validates status changes through a public behavior method. The standalone inheritance and composition examples demonstrate the difference between **is-a** and **has-a** relationships without adding an unnecessary class hierarchy to the ticket domain.
+
 ## Planned Evolution
 
 - CLI integration
-- Encapsulation and composition review
 - Additional service behavior tests
 
 The project will avoid unnecessary inheritance and abstractions. New modules will be added only when their responsibilities are clear.

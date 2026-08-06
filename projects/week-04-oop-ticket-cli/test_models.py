@@ -63,3 +63,28 @@ def test_ticket_summary_uses_enum_values() -> None:
     "Priority: critical | "
     "Status: in_progress"
     )
+
+
+def test_ticket_changes_status() -> None:
+    ticket = Ticket(
+        ticket_id=1006,
+        title="Cannot access shared drive",
+        priority=TicketPriority.MEDIUM,
+    )
+
+    ticket.change_status(TicketStatus.IN_PROGRESS)
+
+    assert ticket.status == TicketStatus.IN_PROGRESS
+
+
+def test_ticket_rejects_raw_string_status_change() -> None:
+    ticket = Ticket(
+        ticket_id=1007,
+        title="Software installation request",
+        priority=TicketPriority.LOW,
+    )
+
+    with pytest.raises(TypeError, match="new_status"):
+        ticket.change_status("resolved")
+
+    assert ticket.status == TicketStatus.OPEN

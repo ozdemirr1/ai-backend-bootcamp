@@ -26,7 +26,7 @@ Week 04
 - [x] Dataclass and enum exercises
 - [x] Repository and service exercises
 - [ ] OOP ticket CLI tests
-- [ ] Clean-code review
+- [x] Clean-code review
 - [ ] Feature branch and pull request practice
 - [ ] Week 04 report
 
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Review names and single-responsibility boundaries
-- Remove duplication without unnecessary abstractions
-- Add focused repository and service behavior tests
-- Run the complete Pytest and Ruff checks
-- Review and update project documentation
+- Connect the CLI to `TicketService`
+- Keep terminal input and output outside domain modules
+- Test valid and invalid CLI creation flows
+- Run the complete Week 04 quality checks
+- Review the feature branch diff and prepare the pull request

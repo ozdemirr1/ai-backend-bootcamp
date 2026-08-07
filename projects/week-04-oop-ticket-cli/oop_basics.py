@@ -12,8 +12,12 @@ class Ticket:
 
 
 def main() -> None:
-    first_ticket = Ticket(ticket_id=1001, title="Password reset is not received", status="open")
-    second_ticket = Ticket(ticket_id=1002, title="VPN connection fails", status="in_progress")
+    first_ticket = Ticket(
+        ticket_id=1001, title="Password reset is not received", status="open"
+    )
+    second_ticket = Ticket(
+        ticket_id=1002, title="VPN connection fails", status="in_progress"
+    )
 
     print(first_ticket.get_summary())
 

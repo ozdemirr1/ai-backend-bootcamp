@@ -298,3 +298,48 @@ def create_notification(self, ticket_title: str) -> str:
 The application boundary, such as `main()` or a future FastAPI route, decides how to present the returned value. This separation improves reuse and makes behavior tests simpler.
 
 Ruff can find many static lint problems, but it does not know the application's business requirements or architectural boundaries. Code review and behavior tests are still needed to detect hardcoded business data, misplaced I/O, and incorrect responsibility boundaries.
+
+## Clean-Code Review
+
+Clean code is not only code that passes tests. A review should also examine names, responsibility boundaries, dependency direction, duplication, failure behavior, and whether tests can detect realistic mistakes.
+
+A repository lookup test is stronger when it stores multiple records and verifies that the requested record is selected. With only one record, an incorrect implementation that always returns the first item could still pass.
+
+Service operations should validate and construct a model before saving it:
+
+```text
+check application rule
+-> construct and validate model
+-> save valid model
+```
+
+This fail-fast order prevents invalid operations from changing stored state.
+
+A small delegation method can still protect a useful boundary:
+
+```python
+def list_tickets(self) -> list[Ticket]:
+    return self._repository.list_all()
+```
+
+The CLI can now depend on the service rather than knowing both service and repository details. Future authorization, filtering, or ordering rules can be added at the application layer without changing the CLI's storage interaction.
+
+## Linting, Formatting, and Tests
+
+These quality checks answer different questions:
+
+- `ruff check .`: Does the code violate configured static lint rules?
+- `ruff format --check .`: Does the code match the configured formatter style?
+- `python -m pytest -q`: Does the executed behavior satisfy the test expectations?
+
+No single command replaces the others. Ruff lint does not prove business behavior, formatting does not prove correctness, and passing tests do not guarantee consistent style or catch every static issue.
+
+`ruff format --check` reports formatting differences without modifying files. `ruff format` applies the formatting. Tests should run again after automated changes as a regression check, even when the tool is designed to preserve behavior.
+
+## Avoid Premature Test Abstractions
+
+Repeated test setup should not automatically become a helper or fixture. Explicit setup can make a small test easier to read in isolation.
+
+Extract shared setup when repetition becomes substantial, obscures the behavior under test, or creates a real maintenance problem. An abstraction should reduce cognitive load rather than merely reduce line count.
+
+Test code belongs in test modules. Production modules should not import Pytest or contain test functions. This keeps development-only dependencies out of the application dependency direction and allows Pytest's test discovery rules to work predictably.

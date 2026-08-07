@@ -13,13 +13,13 @@ def main() -> None:
     first_ticket = Ticket(
         ticket_id=1001,
         title="Password reset is not received",
-        priority=TicketPriority.HIGH
+        priority=TicketPriority.HIGH,
     )
     second_ticket = Ticket(
         ticket_id=1002,
         title="VPN connection fails",
         priority=TicketPriority.MEDIUM,
-        status=TicketStatus.IN_PROGRESS
+        status=TicketStatus.IN_PROGRESS,
     )
 
     print(first_ticket.get_summary())

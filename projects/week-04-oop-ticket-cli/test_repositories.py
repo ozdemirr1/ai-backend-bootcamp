@@ -30,15 +30,21 @@ def test_repository_list_all_returns_a_copy() -> None:
 
 def test_repository_finds_ticket_by_id() -> None:
     repository = TicketRepository()
-    ticket = Ticket(
+    first_ticket = Ticket(
         ticket_id=1003,
         title="Test Ticket",
         priority=TicketPriority.MEDIUM,
     )
-    repository.save(ticket)
+    second_ticket = Ticket(
+        ticket_id=1005,
+        title="Another Test Ticket",
+        priority=TicketPriority.LOW,
+    )
+    repository.save(first_ticket)
+    repository.save(second_ticket)
 
-    found_ticket = repository.find_by_id(1003)
-    assert found_ticket == ticket
+    found_ticket = repository.find_by_id(1005)
+    assert found_ticket == second_ticket
 
 
 def test_repository_returns_none_when_ticket_is_missing() -> None:

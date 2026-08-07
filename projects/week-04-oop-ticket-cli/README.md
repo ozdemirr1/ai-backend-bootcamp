@@ -30,6 +30,9 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - Basic inheritance and method overriding
 - Composition and constructor dependencies
 - Separation of returned values from terminal output
+- Stronger lookup and failed-operation tests
+- Service-level ticket listing
+- Ruff lint and format checks
 
 ## Current Files
 
@@ -90,6 +93,14 @@ Run all project tests:
 python -m pytest projects/week-04-oop-ticket-cli -v
 ```
 
+Run the project quality checks:
+
+```bash
+ruff format --check projects/week-04-oop-ticket-cli
+ruff check projects/week-04-oop-ticket-cli
+python -m pytest projects/week-04-oop-ticket-cli -q
+```
+
 ## Current Behavior
 
 The introductory practice creates two independent ticket objects, displays their summaries, and changes the status of one ticket through an instance method.
@@ -100,11 +111,13 @@ The in-memory repository saves, lists, and finds tickets without reading or chan
 
 The service receives its repository through constructor injection. It creates valid tickets, stores them through the repository, and rejects duplicate ticket IDs before stored state changes.
 
+The service also exposes ticket listing so the CLI does not need to access repository storage operations directly. Invalid model input is rejected before `save()`, leaving repository state unchanged.
+
 The Ticket model validates status changes through a public behavior method. The standalone inheritance and composition examples demonstrate the difference between **is-a** and **has-a** relationships without adding an unnecessary class hierarchy to the ticket domain.
 
 ## Planned Evolution
 
 - CLI integration
-- Additional service behavior tests
+- CLI behavior tests
 
 The project will avoid unnecessary inheritance and abstractions. New modules will be added only when their responsibilities are clear.

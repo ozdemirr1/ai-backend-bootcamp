@@ -25,7 +25,7 @@ Week 04
 - [x] Class and object exercises
 - [x] Dataclass and enum exercises
 - [x] Repository and service exercises
-- [ ] OOP ticket CLI tests
+- [x] OOP ticket CLI tests
 - [x] Clean-code review
 - [ ] Feature branch and pull request practice
 - [ ] Week 04 report
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Connect the CLI to `TicketService`
-- Keep terminal input and output outside domain modules
-- Test valid and invalid CLI creation flows
-- Run the complete Week 04 quality checks
-- Review the feature branch diff and prepare the pull request
+- Run the final Week 04 quality checks
+- Review the complete feature branch diff
+- Open and review the Week 04 pull request
+- Merge the feature branch into `main`
+- Complete the Week 04 report

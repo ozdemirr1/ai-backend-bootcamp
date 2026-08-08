@@ -22,11 +22,11 @@ Week 04
 ## Completed
 
 - [x] Week 04 plan created
-- [ ] Class and object exercises
-- [ ] Dataclass and enum exercises
-- [ ] Repository and service exercises
-- [ ] OOP ticket CLI tests
-- [ ] Clean-code review
+- [x] Class and object exercises
+- [x] Dataclass and enum exercises
+- [x] Repository and service exercises
+- [x] OOP ticket CLI tests
+- [x] Clean-code review
 - [ ] Feature branch and pull request practice
 - [ ] Week 04 report
 
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Create the Week 04 feature branch
-- Review classes, objects, constructors, and `self`
-- Compare a dictionary record with a class instance
-- Create a small class example before modeling a ticket
-- Update `notes/python/oop-clean-code.md`
+- Run the final Week 04 quality checks
+- Review the complete feature branch diff
+- Open and review the Week 04 pull request
+- Merge the feature branch into `main`
+- Complete the Week 04 report

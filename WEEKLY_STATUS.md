@@ -27,7 +27,7 @@ Week 04
 - [x] Repository and service exercises
 - [x] OOP ticket CLI tests
 - [x] Clean-code review
-- [ ] Feature branch and pull request practice
+- [x] Feature branch and pull request practice
 - [ ] Week 04 report
 
 ## Problems
@@ -36,8 +36,8 @@ Week 04
 
 ## Next Tasks
 
-- Run the final Week 04 quality checks
-- Review the complete feature branch diff
-- Open and review the Week 04 pull request
-- Merge the feature branch into `main`
+- Run the final Week 04 checks on `main`
+- Review the Week 04 interview questions
 - Complete the Week 04 report
+- Review the first month of progress
+- Prepare the Week 05 plan

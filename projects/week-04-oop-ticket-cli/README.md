@@ -46,6 +46,8 @@ The project begins with a regular `Ticket` class and will grow incrementally as 
 - `test_services.py`: service workflow and dependency tests
 - `inheritance_practice.py`: small `Employee` and `SupportAgent` inheritance example
 - `composition_practice.py`: formatter dependency and notification service example
+- `oop_ticket_cli.py`: terminal presentation layer and application composition root
+- `test_cli_app.py`: isolated CLI output and user-input behavior tests
 
 ## Run
 
@@ -74,6 +76,12 @@ python projects/week-04-oop-ticket-cli/inheritance_practice.py
 python projects/week-04-oop-ticket-cli/composition_practice.py
 ```
 
+Run the OOP ticket CLI:
+
+```bash
+python projects/week-04-oop-ticket-cli/oop_ticket_cli.py
+```
+
 Run the model tests:
 
 ```bash
@@ -85,6 +93,12 @@ Run the repository and service tests:
 ```bash
 python -m pytest projects/week-04-oop-ticket-cli/test_repositories.py -v
 python -m pytest projects/week-04-oop-ticket-cli/test_services.py -v
+```
+
+Run the CLI tests:
+
+```bash
+python -m pytest projects/week-04-oop-ticket-cli/test_cli_app.py -v
 ```
 
 Run all project tests:
@@ -115,9 +129,13 @@ The service also exposes ticket listing so the CLI does not need to access repos
 
 The Ticket model validates status changes through a public behavior method. The standalone inheritance and composition examples demonstrate the difference between **is-a** and **has-a** relationships without adding an unnecessary class hierarchy to the ticket domain.
 
+The CLI constructs the repository and service at the application boundary. It communicates only with the service during ticket operations, converts terminal input into domain values, and turns expected validation failures into clear user-facing messages. The in-memory repository keeps tickets available during one CLI session without writing to the Week 02 JSON data.
+
+CLI tests replace interactive input with controlled values and capture terminal output. They cover empty and populated ticket lists, successful creation, invalid priorities, invalid titles, invalid menu choices, and clean exit behavior.
+
 ## Planned Evolution
 
-- CLI integration
-- CLI behavior tests
+- Persistent repository implementation
+- Additional ticket operations such as status updates
 
 The project will avoid unnecessary inheritance and abstractions. New modules will be added only when their responsibilities are clear.

@@ -343,3 +343,35 @@ Repeated test setup should not automatically become a helper or fixture. Explici
 Extract shared setup when repetition becomes substantial, obscures the behavior under test, or creates a real maintenance problem. An abstraction should reduce cognitive load rather than merely reduce line count.
 
 Test code belongs in test modules. Production modules should not import Pytest or contain test functions. This keeps development-only dependencies out of the application dependency direction and allows Pytest's test discovery rules to work predictably.
+
+## CLI as the Application Boundary
+
+The CLI is the presentation layer. It reads terminal input, converts raw strings into domain types, calls the service, and displays returned results. It should not manipulate repository storage directly.
+
+```text
+terminal input
+-> CLI conversion and presentation
+-> TicketService application rules
+-> Ticket model validation
+-> TicketRepository storage
+```
+
+The application entry point acts as the composition root:
+
+```python
+repository = TicketRepository()
+service = TicketService(repository)
+run_cli(service)
+```
+
+Only this outer boundary constructs the concrete dependency graph. The service still receives its repository through constructor injection, so service tests remain independent of terminal input.
+
+Expected input and validation errors should be handled at the CLI boundary. Invalid priority text can fail while converting to `TicketPriority`, while an empty title can fail during model construction. In both cases, the CLI prints a useful message and avoids changing repository state.
+
+## Testing Terminal Input and Output
+
+Pytest's `monkeypatch` fixture can replace `input()` with controlled answers. The `capsys` fixture captures printed output for assertions. This allows interactive behavior to be tested without a person typing during the test run.
+
+CLI tests should verify both the visible result and the stored state. For example, a failed creation test checks the error message, the `None` return value, and that the repository remains empty.
+
+Test and application module names must be unique when several learning projects are collected in one Pytest run. Reusing generic names such as `test_app.py` and `app.py` in multiple non-package directories can create import-cache collisions. Descriptive names such as `test_cli_app.py` and `oop_ticket_cli.py` prevent the wrong module from being reused during collection.

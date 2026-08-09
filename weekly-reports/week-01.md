@@ -11,7 +11,7 @@
 - Terminal basics
 - Markdown notes
 - HTTP/REST introduction
-- Codex workflow setup
+- Structured learning workflow setup
 
 ## What I Completed
 
@@ -19,7 +19,6 @@
 - [x] Created README.md
 - [x] Created ROADMAP.md
 - [x] Created DECISIONS.md
-- [x] Created AGENTS.md
 - [x] Practiced terminal commands
 - [x] Practiced Git commands
 - [x] Wrote HTTP basics notes

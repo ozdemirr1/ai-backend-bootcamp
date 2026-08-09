@@ -2,33 +2,35 @@
 
 ## Current Week
 
-Week 04
+Week 05
 
 ## Date
 
-3 August - 9 August
+10 August - 16 August
 
 ## Current Focus
 
-- Python classes and objects
-- Constructors and `self`
-- Dataclasses and enums
-- Encapsulation and basic inheritance
-- Object dependencies
-- Modular project structure
-- Clean-code principles
-- OOP behavior tests
+- FastAPI fundamentals
+- ASGI and Uvicorn
+- Route decorators and HTTP methods
+- Path and query parameters
+- Pydantic request and response models
+- API validation and error responses
+- FastAPI endpoint tests
+- Current stable dependency versions
+- `uv` dependency workflow
+- In-memory ticket CRUD API
 
 ## Completed
 
-- [x] Week 04 plan created
-- [x] Class and object exercises
-- [x] Dataclass and enum exercises
-- [x] Repository and service exercises
-- [x] OOP ticket CLI tests
-- [x] Clean-code review
-- [x] Feature branch and pull request practice
-- [ ] Week 04 report
+- [x] Week 05 plan created
+- [ ] FastAPI environment and version audit
+- [ ] FastAPI application and route exercises
+- [ ] Path and query parameter tests
+- [ ] Request and response schema exercises
+- [ ] API validation and error tests
+- [ ] Feature branch and pull request practice
+- [ ] Week 05 report
 
 ## Problems
 
@@ -36,8 +38,8 @@ Week 04
 
 ## Next Tasks
 
-- Run the final Week 04 checks on `main`
-- Review the Week 04 interview questions
-- Complete the Week 04 report
-- Review the first month of progress
-- Prepare the Week 05 plan
+- Create the Week 05 feature branch
+- Verify current stable compatible versions
+- Review FastAPI, ASGI, and Uvicorn responsibilities
+- Prepare the isolated development environment
+- Create and test the first health endpoint

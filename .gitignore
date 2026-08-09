@@ -10,3 +10,4 @@ venv/
 !.env.example
 *.rtf
 AGENTS.md
+.local-context/

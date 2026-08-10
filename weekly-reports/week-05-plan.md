@@ -56,7 +56,7 @@ This policy means **current and compatible**, not blindly installing every newes
 - Distinguish framework validation from domain and application rules.
 - Return appropriate HTTP status codes.
 - Test endpoints without depending only on manual browser checks.
-- Use FastAPI's testing utilities with the compatible HTTPX stack.
+- Use FastAPI's testing utilities with the compatible HTTPX2 stack.
 - Keep API presentation code separate from service and domain responsibilities.
 
 ## Daily Plan
@@ -203,7 +203,7 @@ FastAPI replaces the terminal presentation boundary; it does not replace the ser
 ```text
 projects/week-05-fastapi-fundamentals/
 ├── README.md
-├── app/
+├── ticket_api/
 │   ├── __init__.py
 │   ├── main.py
 │   ├── models.py
@@ -241,7 +241,7 @@ This is a target structure. Files should be added only when they have a clear re
 
 Direct runtime dependencies should be limited to the FastAPI application and its server requirements.
 
-Direct development dependencies should include only the tools required for testing and code quality, including the compatible HTTPX-based endpoint testing stack.
+Direct development dependencies should include only the tools required for testing and code quality, including the compatible HTTPX2-based endpoint testing stack.
 
 Use `uv` for the new Month 2 environment and dependency workflow after its current stable release and installation instructions are verified. Learn only the commands needed to create the environment, add dependencies, lock versions, sync the environment, and run project commands.
 

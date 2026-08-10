@@ -25,7 +25,8 @@ Week 05
 
 - [x] Week 05 plan created
 - [x] FastAPI environment and version audit
-- [ ] FastAPI application and route exercises
+- [x] Minimal FastAPI application and health endpoint
+- [ ] Route, path, and query parameter exercises
 - [ ] Path and query parameter tests
 - [ ] Request and response schema exercises
 - [ ] API validation and error tests
@@ -38,6 +39,7 @@ Week 05
 
 ## Next Tasks
 
-- Review FastAPI, ASGI, and Uvicorn responsibilities
-- Create and test the first health endpoint
-- Inspect the generated OpenAPI schema and Swagger UI
+- Add ticket collection and detail routes
+- Practice typed path parameters
+- Add optional query parameters
+- Test successful and invalid parameter values

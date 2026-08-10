@@ -24,7 +24,7 @@ Week 05
 ## Completed
 
 - [x] Week 05 plan created
-- [ ] FastAPI environment and version audit
+- [x] FastAPI environment and version audit
 - [ ] FastAPI application and route exercises
 - [ ] Path and query parameter tests
 - [ ] Request and response schema exercises
@@ -38,8 +38,6 @@ Week 05
 
 ## Next Tasks
 
-- Create the Week 05 feature branch
-- Verify current stable compatible versions
 - Review FastAPI, ASGI, and Uvicorn responsibilities
-- Prepare the isolated development environment
 - Create and test the first health endpoint
+- Inspect the generated OpenAPI schema and Swagger UI

@@ -250,7 +250,7 @@ Before recording any version:
 1. Check the official release source.
 2. Confirm Python compatibility.
 3. Install into the active isolated environment.
-4. Run `python -m pip check`.
+4. Run `uv pip check`.
 5. Run tests, lint, and formatting checks.
 6. Record the verified direct versions.
 

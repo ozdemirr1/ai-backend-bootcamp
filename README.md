@@ -33,33 +33,44 @@ I will focus on backend, full-stack fundamentals, AI integration, and production
 
 ## Development Setup
 
-Create and activate a virtual environment:
+Install `uv` by following the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+
+The repository pins its development Python version in `.python-version` and stores the exact dependency resolution in `uv.lock`.
+
+Create or synchronize the project environment:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+uv sync
 ```
 
-Install the development dependencies:
+Project commands can be run through `uv run` without manually activating the virtual environment.
 
-```bash
-python -m pip install -r requirements-dev.txt
-```
-
-The current application exercises use only the Python standard library. Pytest and Ruff are development tools used for tests and code-quality checks.
+Runtime dependencies are declared in `[project.dependencies]`. Test and code-quality tools are declared in `[dependency-groups].dev`.
 
 ## Quality Checks
+
+Verify that the lockfile and environment are synchronized:
+
+```bash
+uv sync --check
+uv lock --check
+```
 
 Run all tests:
 
 ```bash
-python -m pytest -q
+uv run pytest -q
 ```
 
-Run the linter:
+Run lint and formatting checks:
 
 ```bash
-ruff check .
+uv run ruff check .
+uv run ruff format --check .
 ```
 
-Ruff is configured in `pyproject.toml` for Python 3.9 compatibility.
+Check the installed dependency set:
+
+```bash
+uv pip check
+```

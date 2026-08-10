@@ -20,3 +20,15 @@ Python, FastAPI, PostgreSQL, Redis, Docker, React, TypeScript, OpenAI API, RAG, 
 - Game development
 - Desktop applications
 - Watching courses without building projects
+
+## Decision 002 - Python and Dependency Workflow
+
+The repository uses Python 3.14 and `uv` for Python version, environment, dependency, and lockfile management.
+
+Direct runtime dependencies are declared in `[project.dependencies]`. Development-only tools are declared in `[dependency-groups].dev`. Exact direct and transitive versions are recorded in `uv.lock`.
+
+## Reason
+
+Python 3.9 reached end of life and no longer provides an appropriate baseline for the FastAPI phase of the bootcamp. Python 3.14 is an actively supported stable release.
+
+Using one dependency workflow prevents `requirements-dev.txt`, manually installed packages, and the actual environment from becoming inconsistent. The lockfile makes the verified environment reproducible while `pyproject.toml` keeps direct dependency intent explicit.

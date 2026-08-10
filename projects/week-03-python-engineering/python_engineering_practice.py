@@ -20,9 +20,7 @@ def main() -> None:
     raw_priorities = [" HIGH ", "medium", "CRITICAL", "low "]
     normalized_priorities = normalize_priorities(raw_priorities)
     urgent_priorities = [
-        priority
-        for priority in normalized_priorities
-        if is_urgent_priority(priority)
+        priority for priority in normalized_priorities if is_urgent_priority(priority)
     ]
     unassigned_label = get_assignee_label(None)
     assigned_label = get_assignee_label("Furkan")

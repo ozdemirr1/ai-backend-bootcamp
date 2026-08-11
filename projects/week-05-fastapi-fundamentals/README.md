@@ -9,6 +9,9 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 
 - Minimal FastAPI application
 - Health endpoint
+- Ticket collection and detail route examples
+- Typed path and query parameters
+- Automatic request validation
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -40,9 +43,24 @@ available at `http://127.0.0.1:8000/docs`.
 
 ## Available Endpoints
 
-| Method | Path      | Success status | Response body     |
-| ------ | --------- | -------------- | ----------------- |
-| `GET`  | `/health` | `200 OK`       | `{"status":"ok"}` |
+| Method | Path                   | Success status | Response body example                  |
+| ------ | ---------------------- | -------------- | -------------------------------------- |
+| `GET`  | `/health`              | `200 OK`       | `{"status":"ok"}`                      |
+| `GET`  | `/tickets`             | `200 OK`       | `{"status_filter":null,"limit":10}`    |
+| `GET`  | `/tickets/{ticket_id}` | `200 OK`       | `{"ticket_id":42}`                     |
+
+`GET /tickets` accepts two optional query parameters:
+
+- `status`: an optional string filter with a default value of `null`
+- `limit`: an integer with a default value of `10`
+
+FastAPI returns `422 Unprocessable Content` before calling the route function
+when a path or query value cannot be converted to its declared type. For
+example, `/tickets/not-a-number` fails path validation and
+`/tickets?limit=not-a-number` fails query validation.
+
+The ticket routes currently demonstrate parameter parsing and validation. They
+do not access a repository or determine whether a ticket exists yet.
 
 ## Run the Tests
 

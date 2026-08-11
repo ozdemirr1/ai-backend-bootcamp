@@ -26,8 +26,8 @@ Week 05
 - [x] Week 05 plan created
 - [x] FastAPI environment and version audit
 - [x] Minimal FastAPI application and health endpoint
-- [ ] Route, path, and query parameter exercises
-- [ ] Path and query parameter tests
+- [x] Route, path, and query parameter exercises
+- [x] Path and query parameter tests
 - [ ] Request and response schema exercises
 - [ ] API validation and error tests
 - [ ] Feature branch and pull request practice
@@ -39,7 +39,7 @@ Week 05
 
 ## Next Tasks
 
-- Add ticket collection and detail routes
-- Practice typed path parameters
-- Add optional query parameters
-- Test successful and invalid parameter values
+- Create Pydantic request models
+- Add field types and validation constraints
+- Inspect valid and invalid JSON request bodies
+- Compare framework validation with domain validation

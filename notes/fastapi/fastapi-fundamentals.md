@@ -131,10 +131,19 @@ Path and query parameters are only two parts of an HTTP request:
 | Path | Identify a resource | `/tickets/42` |
 | Query | Filter or modify retrieval | `?status=open&limit=5` |
 | Header | Carry request metadata | `Authorization`, `Accept` |
-| Body | Carry a resource representation | JSON used to create a ticket |
+| Body | Carry a resource representation | JSON used to preview a ticket |
 
-Request bodies and Pydantic schemas are introduced separately so that path and
-query behavior is understood first.
+A Pydantic model used as a route parameter is interpreted as a request body:
+
+```python
+@app.post("/tickets/preview")
+def preview_ticket(ticket: TicketCreateRequest) -> dict[str, str]:
+    return {"title": ticket.title, "priority": ticket.priority}
+```
+
+FastAPI reads the JSON body, validates it against `TicketCreateRequest`, and
+calls the route with a validated model instance. A body validation failure
+returns `422 Unprocessable Content` before the route function runs.
 
 ## Automatic API Documentation
 

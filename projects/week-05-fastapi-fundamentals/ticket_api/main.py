@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+from ticket_api.schemas import TicketCreateRequest
+
 app = FastAPI(title="Week 05 FastAPI Fundamentals")
 
 
@@ -13,6 +15,14 @@ def list_tickets(
     status: str | None = None, limit: int = 10
 ) -> dict[str, str | int | None]:
     return {"status_filter": status, "limit": limit}
+
+
+@app.post("/tickets/preview")
+def preview_ticket(ticket: TicketCreateRequest) -> dict[str, str]:
+    return {
+        "title": ticket.title,
+        "priority": ticket.priority,
+    }
 
 
 @app.get("/tickets/{ticket_id}")

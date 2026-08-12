@@ -11,7 +11,8 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Health endpoint
 - Ticket collection and detail route examples
 - Typed path and query parameters
-- Automatic request validation
+- Pydantic request body schema
+- Request normalization and automatic validation
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -47,6 +48,7 @@ available at `http://127.0.0.1:8000/docs`.
 | ------ | ---------------------- | -------------- | -------------------------------------- |
 | `GET`  | `/health`              | `200 OK`       | `{"status":"ok"}`                      |
 | `GET`  | `/tickets`             | `200 OK`       | `{"status_filter":null,"limit":10}`    |
+| `POST` | `/tickets/preview`     | `200 OK`       | `{"title":"VPN fails","priority":"high"}` |
 | `GET`  | `/tickets/{ticket_id}` | `200 OK`       | `{"ticket_id":42}`                     |
 
 `GET /tickets` accepts two optional query parameters:
@@ -55,9 +57,15 @@ available at `http://127.0.0.1:8000/docs`.
 - `limit`: an integer with a default value of `10`
 
 FastAPI returns `422 Unprocessable Content` before calling the route function
-when a path or query value cannot be converted to its declared type. For
-example, `/tickets/not-a-number` fails path validation and
-`/tickets?limit=not-a-number` fails query validation.
+when path, query, or body input does not satisfy its declared contract. For
+example, `/tickets/not-a-number` fails path validation,
+`/tickets?limit=not-a-number` fails query validation, and an invalid preview
+payload fails body validation.
+
+`POST /tickets/preview` validates a JSON body containing `title` and `priority`.
+It trims surrounding title whitespace, enforces title length, restricts priority
+values, and rejects extra fields. It returns `200 OK` because it previews
+validated input without creating or storing a ticket.
 
 The ticket routes currently demonstrate parameter parsing and validation. They
 do not access a repository or determine whether a ticket exists yet.

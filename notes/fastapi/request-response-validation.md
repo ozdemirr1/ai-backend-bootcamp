@@ -2,9 +2,9 @@
 
 ## Goal
 
-This note explains how FastAPI converts path and query inputs, rejects invalid
-values, and represents validation errors. Request body models and explicit
-response models will extend this foundation in later exercises.
+This note explains how FastAPI converts path, query, and body inputs, rejects
+invalid values, and represents validation errors. Explicit response models will
+extend this foundation in a later exercise.
 
 ## Type Conversion
 
@@ -119,6 +119,65 @@ The exact English `msg` text may change between compatible framework versions.
 The error location and category express the behavior the API test needs to
 protect.
 
+## Pydantic Request Body Models
+
+A route parameter typed as a Pydantic model is interpreted as a JSON request
+body:
+
+```python
+class TicketCreateRequest(BaseModel):
+    title: TicketTitle
+    priority: Literal["low", "medium", "high", "critical"]
+
+
+@app.post("/tickets/preview")
+def preview_ticket(ticket: TicketCreateRequest) -> dict[str, str]:
+    return {"title": ticket.title, "priority": ticket.priority}
+```
+
+Both model fields are required because neither has a default value. FastAPI
+parses the JSON body, validates it through Pydantic, and passes a
+`TicketCreateRequest` instance to the route.
+
+The create request intentionally excludes `ticket_id` and `status`. A future
+creation workflow will assign the identifier and initial status on the server.
+
+## Validation and Normalization
+
+Validation checks whether input satisfies a contract and rejects input that
+does not. Normalization converts accepted input into a consistent form.
+
+```python
+TicketTitle = Annotated[
+    str,
+    StringConstraints(
+        strip_whitespace=True,
+        min_length=3,
+        max_length=100,
+    ),
+]
+```
+
+- `strip_whitespace=True` normalizes leading and trailing whitespace.
+- `min_length=3` and `max_length=100` validate the normalized length.
+
+As a result, `"  VPN connection fails  "` becomes `"VPN connection fails"`,
+while a whitespace-only title becomes empty after normalization and fails the
+minimum-length constraint.
+
+## Extra Fields
+
+Pydantic ignores fields that are not declared on a model by default. A strict
+API input contract can reject them instead:
+
+```python
+class TicketCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+```
+
+This prevents clients from silently sending misspelled fields or server-owned
+fields such as `status`. The validation error uses the `extra_forbidden` type.
+
 ## 422 Versus 404
 
 `422 Unprocessable Content` and `404 Not Found` represent different failures.
@@ -156,6 +215,8 @@ Framework validation answers questions such as:
 - Can `ticket_id` be parsed as an integer?
 - Can `limit` be parsed as an integer?
 - Is a required HTTP field present?
+- Does a title satisfy the API length constraints?
+- Is a priority one of the accepted external values?
 
 Domain or application validation answers questions such as:
 
@@ -169,10 +230,8 @@ becoming the location for every business rule.
 ## Current Limitations
 
 The current routes return dictionaries with broad dictionary return annotations.
-They demonstrate parameter validation, but they do not yet provide:
+They demonstrate request validation, but they do not yet provide:
 
-- Pydantic request body models
-- field constraints for ticket data
 - explicit response schemas
 - repository-backed existence checks
 - application error-to-HTTP response mapping

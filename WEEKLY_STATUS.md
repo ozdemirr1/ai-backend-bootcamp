@@ -28,8 +28,10 @@ Week 05
 - [x] Minimal FastAPI application and health endpoint
 - [x] Route, path, and query parameter exercises
 - [x] Path and query parameter tests
-- [ ] Request and response schema exercises
-- [ ] API validation and error tests
+- [x] Pydantic request schema and body validation exercises
+- [ ] Explicit response schema exercises
+- [x] API input validation tests
+- [ ] API error mapping tests
 - [ ] Feature branch and pull request practice
 - [ ] Week 05 report
 
@@ -39,7 +41,7 @@ Week 05
 
 ## Next Tasks
 
-- Create Pydantic request models
-- Add field types and validation constraints
-- Inspect valid and invalid JSON request bodies
-- Compare framework validation with domain validation
+- Create an explicit ticket response model
+- Add ticket creation and partial-update endpoints
+- Return intentional HTTP status codes
+- Map missing and duplicate tickets to API errors

@@ -3,8 +3,8 @@
 ## Goal
 
 This note explains how FastAPI converts path, query, and body inputs, rejects
-invalid values, and represents validation errors. Explicit response models will
-extend this foundation in a later exercise.
+invalid values, represents validation errors, and uses explicit schemas to
+describe external response contracts.
 
 ## Type Conversion
 
@@ -227,14 +227,41 @@ Domain or application validation answers questions such as:
 Keeping these responsibilities separate prevents FastAPI route functions from
 becoming the location for every business rule.
 
+## Explicit Response Models
+
+Request and response schemas protect different directions at the HTTP boundary.
+A request schema describes data accepted from a client. A response schema
+describes data the API promises to return.
+
+```python
+class TicketResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ticket_id: int = Field(gt=0)
+    title: TicketTitle
+    priority: TicketPriority
+    status: TicketStatus
+```
+
+This schema makes the intended public ticket representation explicit. It also
+keeps the API contract separate from the mutable domain `Ticket` object. The
+domain model owns internal validity and behavior, while the response model owns
+serialization constraints at the presentation boundary.
+
+Defining the schema alone does not apply it to an endpoint. A route must declare
+it as its response model when the repository-backed API operations are wired to
+the service.
+
 ## Current Limitations
 
 The current routes return dictionaries with broad dictionary return annotations.
-They demonstrate request validation, but they do not yet provide:
+The explicit ticket response schema and internal domain, repository, and service
+layers now exist, but the routes do not yet provide:
 
-- explicit response schemas
+- response-model enforcement on ticket endpoints
 - repository-backed existence checks
 - application error-to-HTTP response mapping
+- partial-update request handling
 
-These concerns will be added incrementally after the path and query foundations
-are understood and tested.
+These concerns will be added when the presentation layer is connected to the
+tested service workflow.

@@ -212,7 +212,10 @@ projects/week-05-fastapi-fundamentals/
 │   └── services.py
 └── tests/
     ├── __init__.py
-    └── test_api.py
+    ├── test_api.py
+    ├── test_models.py
+    ├── test_repositories.py
+    └── test_services.py
 ```
 
 This is a target structure. Files should be added only when they have a clear responsibility.

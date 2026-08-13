@@ -1,6 +1,9 @@
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+
+TicketPriority = Literal["low", "medium", "high", "critical"]
+TicketStatus = Literal["open", "in_progress", "resolved", "closed"]
 
 TicketTitle = Annotated[
     str,
@@ -16,4 +19,13 @@ class TicketCreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     title: TicketTitle
-    priority: Literal["low", "medium", "high", "critical"]
+    priority: TicketPriority
+
+
+class TicketResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ticket_id: int = Field(gt=0)
+    title: TicketTitle
+    priority: TicketPriority
+    status: TicketStatus

@@ -171,12 +171,32 @@ def test_read_ticket_accepts_integer_id() -> None:
 Uvicorn remains useful for manual browser and `curl` checks. `TestClient` is used
 for fast, repeatable automated endpoint tests.
 
-## Current Project Boundary
+## Project Boundaries
 
-The current ticket routes demonstrate routing, parameter parsing, and automatic
-validation. They do not yet read ticket data from a repository.
+The ticket project separates four responsibilities:
 
-For example, `GET /tickets/999` currently returns `{"ticket_id": 999}` because
-the route only echoes the validated identifier. Resource existence and `404 Not
-Found` behavior will require repository lookup, service logic, and API error
-mapping in later exercises.
+```text
+FastAPI route ------ HTTP parsing, schemas, status codes, and error mapping
+      |
+      v
+TicketService ------ application workflows and application-level errors
+      |
+      v
+Repository --------- temporary in-memory persistence operations
+      |
+      v
+Ticket model ------- valid domain state and behavior
+```
+
+The domain `Ticket` model rejects invalid identifiers, titles, priorities, and
+statuses regardless of whether it is created by an API route, a test, or a
+future persistence adapter. `InMemoryTicketRepository` stores valid tickets
+without knowing about HTTP. `TicketService` coordinates identifier assignment,
+creation, listing, lookup, and deletion while raising application-specific
+errors for missing and duplicate tickets.
+
+These layers have focused unit tests but are not connected to the FastAPI routes
+yet. For example, `GET /tickets/999` still returns `{"ticket_id": 999}` because
+the current route only echoes the validated identifier. The next presentation
+layer exercise will call the service and translate its errors into intentional
+HTTP responses.

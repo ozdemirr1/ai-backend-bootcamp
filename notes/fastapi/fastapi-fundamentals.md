@@ -193,7 +193,14 @@ statuses regardless of whether it is created by an API route, a test, or a
 future persistence adapter. `InMemoryTicketRepository` stores valid tickets
 without knowing about HTTP. `TicketService` coordinates identifier assignment,
 creation, listing, lookup, and deletion while raising application-specific
-errors for missing and duplicate tickets.
+errors for missing and duplicate tickets. Its partial-update workflow delegates
+title, priority, and status changes back to domain methods instead of assigning
+fields directly.
+
+The domain model uses one title-normalization function during both initial
+construction and later title changes. This prevents creation and update paths
+from applying different validity rules. A failed change raises before assignment,
+so the ticket keeps its previous valid state.
 
 These layers have focused unit tests but are not connected to the FastAPI routes
 yet. For example, `GET /tickets/999` still returns `{"ticket_id": 999}` because

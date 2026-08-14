@@ -252,6 +252,89 @@ Defining the schema alone does not apply it to an endpoint. A route must declare
 it as its response model when the repository-backed API operations are wired to
 the service.
 
+## Partial-Update Schemas
+
+A create request normally requires all client-owned fields. A partial-update
+request allows the client to send only the fields that should change:
+
+```json
+{
+  "status": "resolved"
+}
+```
+
+The update schema therefore gives each updatable field a default value of
+`None`:
+
+```python
+class TicketUpdateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: TicketTitle | None = None
+    priority: TicketPriority | None = None
+    status: TicketStatus | None = None
+```
+
+Optional fields alone would also accept an empty object. A model-level validator
+checks the fields together and rejects an update that contains no actual value:
+
+```python
+@model_validator(mode="after")
+def require_at_least_one_field(self) -> Self:
+    if self.title is None and self.priority is None and self.status is None:
+        raise ValueError("at least one field must be provided")
+
+    return self
+```
+
+`model_dump(exclude_none=True)` produces a dictionary containing only values
+that should participate in the update. In this Week 05 contract, explicit
+`null` values mean no change, and a request containing only `null` values is
+rejected.
+
+## API Literals and Domain Enums
+
+The API schemas use string literals because JSON clients send textual values:
+
+```text
+"critical"
+"in_progress"
+```
+
+The domain model uses enum members to protect internal state:
+
+```text
+TicketPriority.CRITICAL
+TicketStatus.IN_PROGRESS
+```
+
+Pydantic literal validation returns the accepted string value; it does not turn
+that value into the separately defined domain enum. Schema tests should assert
+external string values, while domain tests should assert enum identity. The
+FastAPI presentation layer will convert validated strings into domain enums
+before calling the service.
+
+```text
+JSON string -> request schema -> route conversion -> domain enum -> service
+```
+
+Keeping these representations separate prevents API transport concerns from
+becoming the domain model's responsibility.
+
+## Validation During Domain Updates
+
+Domain invariants must remain true after construction. Direct field assignment
+can bypass normalization and validation, so the service delegates changes to
+domain methods such as `change_title()`, `change_priority()`, and
+`change_status()`.
+
+Title creation and title changes share the same private normalization function.
+The new value is validated before assignment; when validation fails, the prior
+valid value remains unchanged. `TicketService.update_ticket()` performs only
+the changes whose arguments are not `None` and returns the updated domain
+object. Because the in-memory repository holds that same mutable object, the
+change is visible through subsequent repository reads.
+
 ## Current Limitations
 
 The current routes return dictionaries with broad dictionary return annotations.
@@ -261,7 +344,7 @@ layers now exist, but the routes do not yet provide:
 - response-model enforcement on ticket endpoints
 - repository-backed existence checks
 - application error-to-HTTP response mapping
-- partial-update request handling
+- partial-update route handling
 
 These concerns will be added when the presentation layer is connected to the
 tested service workflow.

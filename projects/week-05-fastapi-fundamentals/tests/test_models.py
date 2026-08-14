@@ -97,3 +97,53 @@ def test_ticket_rejects_raw_string_status_change() -> None:
         ticket.change_status("in_progress")
 
     assert ticket.status is TicketStatus.OPEN
+
+
+def test_ticket_changes_title() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="Old Title",
+        priority=TicketPriority.HIGH,
+    )
+
+    ticket.change_title("  New Title  ")
+
+    assert ticket.title == "New Title"
+
+
+def test_ticket_preserves_title_when_change_is_invalid() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="Old Title",
+        priority=TicketPriority.HIGH,
+    )
+
+    with pytest.raises(ValueError, match="title"):
+        ticket.change_title(" ")
+
+    assert ticket.title == "Old Title"
+
+
+def test_ticket_changes_priority() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="VPN connection fails",
+        priority=TicketPriority.LOW,
+    )
+
+    ticket.change_priority(TicketPriority.CRITICAL)
+
+    assert ticket.priority is TicketPriority.CRITICAL
+
+
+def test_ticket_preserves_priority_when_change_is_invalid() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="VPN connection fails",
+        priority=TicketPriority.LOW,
+    )
+
+    with pytest.raises(TypeError, match="new_priority"):
+        ticket.change_priority("critical")  # type: ignore
+
+    assert ticket.priority is TicketPriority.LOW

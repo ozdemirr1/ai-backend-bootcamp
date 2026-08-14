@@ -12,11 +12,13 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Ticket collection and detail route examples
 - Typed path and query parameters
 - Pydantic request body schema
+- Strict partial-update request schema
 - Explicit ticket response schema
 - Request normalization and automatic validation
 - Ticket domain model and invariants
+- Domain-safe title, priority, and status changes
 - In-memory ticket repository
-- Ticket application service
+- Ticket application service with partial updates
 - Focused domain, repository, and service tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
@@ -75,14 +77,14 @@ validated input without creating or storing a ticket.
 The project now has separate API schema, domain model, repository, and service
 modules. The domain model protects valid ticket state, the repository owns
 temporary in-memory storage, and the service coordinates creation, lookup,
-listing, and deletion. The response schema defines the intended external ticket
-representation.
+listing, partial updates, and deletion. The response schema defines the intended
+external ticket representation.
 
 These layers are not connected to the FastAPI routes yet. The current routes
 still demonstrate parameter parsing and request validation, so they do not
 perform repository-backed existence checks or return intentional `404`, `409`,
-`201`, and `204` responses. Route integration and partial updates are the next
-exercise.
+`201`, and `204` responses. The partial-update schema and service behavior are
+ready; route integration and endpoint error mapping are the next exercise.
 
 ## Run the Tests
 

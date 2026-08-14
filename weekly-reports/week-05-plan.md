@@ -124,24 +124,38 @@ Practice:
 
 ### Friday
 
-Modular API structure and dependency boundaries.
+Partial-update contracts and application-layer behavior.
 
 Practice:
 
 - Separate API schemas from domain models where responsibilities differ.
-- Keep route functions small.
+- Create and test a strict partial-update request schema.
+- Distinguish API string literals from domain enum values.
+- Centralize reusable domain normalization and validation.
+- Add domain-safe title and priority changes.
 - Delegate application rules to a service.
-- Complete the in-memory create, read, update, and delete flow.
-- Review dependency injection concepts in FastAPI without adding premature abstractions.
-- Avoid placing repository logic directly in route functions.
+- Add and test partial-update behavior in `TicketService`.
 - Update notes and project documentation.
+
+The presentation-layer integration originally planned for Friday was moved to
+Saturday after the schema, domain, and service checkpoints were completed.
 
 ### Saturday
 
-Integration, quality review, and pull request.
+CRUD route integration, endpoint testing, quality review, and pull request.
 
 Practice:
 
+- Review dependency injection concepts in FastAPI without adding premature abstractions.
+- Provide a replaceable `TicketService` dependency for route functions.
+- Keep route functions small and avoid repository logic in the presentation layer.
+- Connect create, list, detail, partial-update, and delete routes to the service.
+- Convert validated API strings into domain enums at the API boundary.
+- Apply `TicketResponse` to successful ticket responses.
+- Return `201 Created` for creation and `204 No Content` for deletion.
+- Map missing tickets to `404 Not Found` and duplicate identifiers to `409 Conflict`.
+- Isolate in-memory application state between endpoint tests.
+- Test CRUD response bodies, status codes, content types, and error behavior.
 - Run the complete endpoint and repository test suite.
 - Run Ruff lint and formatting checks.
 - Run the dependency health check.
@@ -215,6 +229,7 @@ projects/week-05-fastapi-fundamentals/
     ├── test_api.py
     ├── test_models.py
     ├── test_repositories.py
+    ├── test_schemas.py
     └── test_services.py
 ```
 

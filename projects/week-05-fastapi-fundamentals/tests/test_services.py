@@ -134,3 +134,82 @@ def test_service_does_not_save_ticket_with_raw_string_priority() -> None:
         )
 
     assert repository.list_all() == []
+
+
+def test_service_updates_only_ticket_title() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    updated = service.update_ticket(ticket.ticket_id, title="New Title")
+
+    assert updated.title == "New Title"
+    assert updated.priority is TicketPriority.LOW
+    assert updated.status is TicketStatus.OPEN
+
+
+def test_service_updates_ticket_priority() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    updated = service.update_ticket(ticket.ticket_id, priority=TicketPriority.HIGH)
+
+    assert updated.title == "Old Title"
+    assert updated.priority is TicketPriority.HIGH
+    assert updated.status is TicketStatus.OPEN
+
+
+def test_service_updates_ticket_status() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    updated = service.update_ticket(ticket.ticket_id, status=TicketStatus.IN_PROGRESS)
+
+    assert updated.title == "Old Title"
+    assert updated.priority is TicketPriority.LOW
+    assert updated.status is TicketStatus.IN_PROGRESS
+
+
+def test_service_updates_multiple_ticket_fields() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    updated = service.update_ticket(
+        ticket.ticket_id, title="New Title", status=TicketStatus.RESOLVED
+    )
+
+    assert updated.title == "New Title"
+    assert updated.priority is TicketPriority.LOW
+    assert updated.status is TicketStatus.RESOLVED
+
+
+def test_service_persists_updated_ticket() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    updated = service.update_ticket(ticket.ticket_id, title="New Title")
+
+    assert repository.get_by_id(ticket.ticket_id) == updated
+
+
+def test_service_raises_when_update_target_is_missing() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+
+    with pytest.raises(TicketNotFoundError, match="999"):
+        service.update_ticket(999, title="New Title")
+
+
+def test_service_preserves_ticket_when_title_update_is_invalid() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+    ticket = service.create_ticket("Old Title", TicketPriority.LOW)
+
+    with pytest.raises(ValueError, match="title"):
+        service.update_ticket(ticket.ticket_id, title=" ")
+
+    assert ticket.title == "Old Title"

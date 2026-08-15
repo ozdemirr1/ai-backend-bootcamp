@@ -13,10 +13,7 @@ A list comprehension creates a new list by transforming or filtering values from
 ```python
 raw_priorities = [" HIGH ", "medium", "CRITICAL", "low "]
 
-normalized_priorities = [
-    priority.strip().lower()
-    for priority in raw_priorities
-]
+normalized_priorities = [priority.strip().lower() for priority in raw_priorities]
 ```
 
 The original list is not modified. A new list is created after whitespace removal and lowercase conversion.
@@ -25,9 +22,7 @@ The original list is not modified. A new list is created after whitespace remova
 
 ```python
 urgent_priorities = [
-    priority
-    for priority in normalized_priorities
-    if priority in ("high", "critical")
+    priority for priority in normalized_priorities if priority in ("high", "critical")
 ]
 ```
 

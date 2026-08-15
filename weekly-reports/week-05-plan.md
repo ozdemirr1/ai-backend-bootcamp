@@ -56,7 +56,7 @@ This policy means **current and compatible**, not blindly installing every newes
 - Distinguish framework validation from domain and application rules.
 - Return appropriate HTTP status codes.
 - Test endpoints without depending only on manual browser checks.
-- Use FastAPI's testing utilities with the compatible HTTPX stack.
+- Use FastAPI's testing utilities with the compatible HTTPX2 stack.
 - Keep API presentation code separate from service and domain responsibilities.
 
 ## Daily Plan
@@ -124,24 +124,38 @@ Practice:
 
 ### Friday
 
-Modular API structure and dependency boundaries.
+Partial-update contracts and application-layer behavior.
 
 Practice:
 
 - Separate API schemas from domain models where responsibilities differ.
-- Keep route functions small.
+- Create and test a strict partial-update request schema.
+- Distinguish API string literals from domain enum values.
+- Centralize reusable domain normalization and validation.
+- Add domain-safe title and priority changes.
 - Delegate application rules to a service.
-- Complete the in-memory create, read, update, and delete flow.
-- Review dependency injection concepts in FastAPI without adding premature abstractions.
-- Avoid placing repository logic directly in route functions.
+- Add and test partial-update behavior in `TicketService`.
 - Update notes and project documentation.
+
+The presentation-layer integration originally planned for Friday was moved to
+Saturday after the schema, domain, and service checkpoints were completed.
 
 ### Saturday
 
-Integration, quality review, and pull request.
+CRUD route integration, endpoint testing, quality review, and pull request.
 
 Practice:
 
+- Review dependency injection concepts in FastAPI without adding premature abstractions.
+- Provide a replaceable `TicketService` dependency for route functions.
+- Keep route functions small and avoid repository logic in the presentation layer.
+- Connect create, list, detail, partial-update, and delete routes to the service.
+- Convert validated API strings into domain enums at the API boundary.
+- Apply `TicketResponse` to successful ticket responses.
+- Return `201 Created` for creation and `204 No Content` for deletion.
+- Map missing tickets to `404 Not Found` and duplicate identifiers to `409 Conflict`.
+- Isolate in-memory application state between endpoint tests.
+- Test CRUD response bodies, status codes, content types, and error behavior.
 - Run the complete endpoint and repository test suite.
 - Run Ruff lint and formatting checks.
 - Run the dependency health check.
@@ -149,6 +163,11 @@ Practice:
 - Confirm no secrets or environment-specific paths are committed.
 - Open and review the Week 05 pull request.
 - Merge only after the API behavior and documentation are verified.
+
+Saturday's implementation and manual verification completed the CRUD,
+dependency-injection, response-model, validation, status-code, and error-mapping
+goals. The remaining Saturday work is the final repository quality review,
+feature-branch review, commit, push, and pull request.
 
 ### Sunday
 
@@ -203,7 +222,7 @@ FastAPI replaces the terminal presentation boundary; it does not replace the ser
 ```text
 projects/week-05-fastapi-fundamentals/
 ├── README.md
-├── app/
+├── ticket_api/
 │   ├── __init__.py
 │   ├── main.py
 │   ├── models.py
@@ -212,7 +231,11 @@ projects/week-05-fastapi-fundamentals/
 │   └── services.py
 └── tests/
     ├── __init__.py
-    └── test_api.py
+    ├── test_api.py
+    ├── test_models.py
+    ├── test_repositories.py
+    ├── test_schemas.py
+    └── test_services.py
 ```
 
 This is a target structure. Files should be added only when they have a clear responsibility.
@@ -241,7 +264,7 @@ This is a target structure. Files should be added only when they have a clear re
 
 Direct runtime dependencies should be limited to the FastAPI application and its server requirements.
 
-Direct development dependencies should include only the tools required for testing and code quality, including the compatible HTTPX-based endpoint testing stack.
+Direct development dependencies should include only the tools required for testing and code quality, including the compatible HTTPX2-based endpoint testing stack.
 
 Use `uv` for the new Month 2 environment and dependency workflow after its current stable release and installation instructions are verified. Learn only the commands needed to create the environment, add dependencies, lock versions, sync the environment, and run project commands.
 
@@ -250,7 +273,7 @@ Before recording any version:
 1. Check the official release source.
 2. Confirm Python compatibility.
 3. Install into the active isolated environment.
-4. Run `python -m pip check`.
+4. Run `uv pip check`.
 5. Run tests, lint, and formatting checks.
 6. Record the verified direct versions.
 

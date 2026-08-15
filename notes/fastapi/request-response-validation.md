@@ -139,8 +139,9 @@ Both model fields are required because neither has a default value. FastAPI
 parses the JSON body, validates it through Pydantic, and passes a
 `TicketCreateRequest` instance to the route.
 
-The create request intentionally excludes `ticket_id` and `status`. A future
-creation workflow will assign the identifier and initial status on the server.
+The create request intentionally excludes `ticket_id` and `status`. The service
+assigns the identifier and the domain model assigns the initial `open` status on
+the server.
 
 ## Validation and Normalization
 
@@ -190,10 +191,11 @@ For example, `/tickets/not-a-number` cannot provide a valid integer ticket ID,
 so FastAPI returns `422` before any resource lookup.
 
 By contrast, `/tickets/999` contains a valid integer. Determining whether ticket
-`999` exists requires a repository lookup. The current example does not perform
-that lookup, so it returns `200 OK` with `{"ticket_id": 999}`.
+`999` exists requires a repository lookup. The route delegates that lookup to
+the service. When the service raises `TicketNotFoundError`, the route translates
+it into `404 Not Found`.
 
-The future responsibility flow will be:
+The responsibility flow is:
 
 ```text
 FastAPI route ------ parse input and map HTTP responses
@@ -248,9 +250,10 @@ keeps the API contract separate from the mutable domain `Ticket` object. The
 domain model owns internal validity and behavior, while the response model owns
 serialization constraints at the presentation boundary.
 
-Defining the schema alone does not apply it to an endpoint. A route must declare
-it as its response model when the repository-backed API operations are wired to
-the service.
+Defining the schema alone does not apply it to an endpoint. The ticket routes
+declare `TicketResponse` or `list[TicketResponse]` as their response model. A
+small presentation-layer mapper converts domain enum members to their public
+string values before FastAPI serializes the response.
 
 ## Partial-Update Schemas
 
@@ -311,8 +314,8 @@ TicketStatus.IN_PROGRESS
 Pydantic literal validation returns the accepted string value; it does not turn
 that value into the separately defined domain enum. Schema tests should assert
 external string values, while domain tests should assert enum identity. The
-FastAPI presentation layer will convert validated strings into domain enums
-before calling the service.
+FastAPI presentation layer converts validated strings into domain enums before
+calling the service.
 
 ```text
 JSON string -> request schema -> route conversion -> domain enum -> service
@@ -335,16 +338,42 @@ the changes whose arguments are not `None` and returns the updated domain
 object. Because the in-memory repository holds that same mutable object, the
 change is visible through subsequent repository reads.
 
+## HTTP Status and Error Mapping
+
+Framework, application, and success outcomes are mapped at different points:
+
+| Outcome | HTTP status | Mapping owner |
+| --- | --- | --- |
+| Invalid path, query, or body input | `422 Unprocessable Content` | FastAPI and Pydantic |
+| Ticket created | `201 Created` | Create route declaration |
+| Ticket read or updated | `200 OK` | Read or update route |
+| Ticket deleted | `204 No Content` | Delete route |
+| Ticket does not exist | `404 Not Found` | Route translating `TicketNotFoundError` |
+| Ticket identifier conflicts | `409 Conflict` | Route translating `DuplicateTicketError` |
+
+The service raises application-specific exceptions and does not import FastAPI.
+The route catches those exceptions and raises `HTTPException`, keeping HTTP
+knowledge at the presentation boundary. Using `raise ... from exc` preserves
+the original exception as the cause for debugging without exposing a stack
+trace in the response.
+
+A successful `204 No Content` response must have no JSON body. The delete route
+therefore returns an explicit empty `Response` with status `204`, and its test
+asserts `response.content == b""`.
+
+Query constraints are also part of the input contract. The list endpoint uses
+`Query(ge=1, le=100)`, so limits outside that range produce `422` before the
+service is called. The status filter uses the same literal values as the public
+ticket status contract.
+
 ## Current Limitations
 
-The current routes return dictionaries with broad dictionary return annotations.
-The explicit ticket response schema and internal domain, repository, and service
-layers now exist, but the routes do not yet provide:
+Storage is intentionally process-local and in memory, so tickets disappear when
+the application restarts and multiple server processes would not share state.
+PostgreSQL, SQLAlchemy, Alembic, and authentication remain outside Week 05 and
+will be introduced only in their planned weeks.
 
-- response-model enforcement on ticket endpoints
-- repository-backed existence checks
-- application error-to-HTTP response mapping
-- partial-update route handling
-
-These concerns will be added when the presentation layer is connected to the
-tested service workflow.
+Runtime behavior for `404`, `409`, and validation errors is covered by endpoint
+tests. The routes do not yet declare additional OpenAPI `responses` metadata for
+every error schema; custom error-body standardization is planned for a later
+error-handling week.

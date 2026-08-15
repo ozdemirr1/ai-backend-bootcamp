@@ -171,6 +171,41 @@ def test_read_ticket_accepts_integer_id() -> None:
 Uvicorn remains useful for manual browser and `curl` checks. `TestClient` is used
 for fast, repeatable automated endpoint tests.
 
+## Dependency Injection and Test Isolation
+
+The application creates its default in-memory repository and service at the
+composition root. Route functions receive the service through a small provider
+instead of constructing it or reaching into the repository directly:
+
+```python
+def get_ticket_service() -> TicketService:
+    return ticket_service
+
+
+TicketServiceDependency = Annotated[
+    TicketService,
+    Depends(get_ticket_service),
+]
+```
+
+`Depends` tells FastAPI how to obtain the route's service argument. The
+`Annotated` alias keeps the route signatures readable while preserving the
+dependency metadata FastAPI needs.
+
+The production provider returns one process-local service so manual requests
+share the same in-memory tickets. Endpoint tests replace that provider with a
+fresh repository and service for each test:
+
+```python
+app.dependency_overrides[get_ticket_service] = get_test_ticket_service
+```
+
+The override is removed during fixture cleanup. This makes every endpoint test
+independent: a ticket created in one test cannot change another test's expected
+identifier or list result. Dependency injection therefore improves both the
+architecture and testability; it is not only a shortcut for passing values into
+functions.
+
 ## Project Boundaries
 
 The ticket project separates four responsibilities:
@@ -202,8 +237,14 @@ construction and later title changes. This prevents creation and update paths
 from applying different validity rules. A failed change raises before assignment,
 so the ticket keeps its previous valid state.
 
-These layers have focused unit tests but are not connected to the FastAPI routes
-yet. For example, `GET /tickets/999` still returns `{"ticket_id": 999}` because
-the current route only echoes the validated identifier. The next presentation
-layer exercise will call the service and translate its errors into intentional
-HTTP responses.
+The FastAPI routes now use the service dependency for create, list, detail,
+partial-update, and delete operations. Routes convert validated API strings into
+domain enums, while a dedicated mapper converts domain tickets into
+`TicketResponse` objects. Application errors remain independent from HTTP until
+the presentation layer translates missing tickets into `404 Not Found` and a
+duplicate identifier into `409 Conflict`.
+
+Manual Uvicorn and curl checks confirmed that state changes pass through the
+full route-service-repository-domain flow. A created ticket can be listed,
+filtered, read, updated, and deleted; a later read of the deleted identifier
+returns `404`.

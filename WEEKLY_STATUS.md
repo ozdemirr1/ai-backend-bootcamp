@@ -37,7 +37,11 @@ Week 05
 - [x] Partial-update request schema and schema tests
 - [x] Domain-safe title and priority changes
 - [x] Partial-update service workflow and tests
-- [ ] API error mapping tests
+- [x] FastAPI dependency injection and isolated endpoint state
+- [x] Repository-backed ticket CRUD routes
+- [x] API error mapping tests
+- [x] Manual Uvicorn, curl, Swagger UI, and OpenAPI verification
+- [x] Full repository quality and public-diff review
 - [ ] Feature branch and pull request practice
 - [ ] Week 05 report
 
@@ -59,13 +63,28 @@ The remaining presentation-layer integration was intentionally moved to
 Saturday so it can be completed as one uninterrupted CRUD and endpoint-testing
 session.
 
+## Saturday Progress - 15 August
+
+- Added a replaceable `TicketService` dependency for FastAPI routes.
+- Added explicit domain-to-response mapping through `TicketResponse`.
+- Connected create, list, detail, partial-update, and delete routes to the
+  service layer without bypassing repository or domain boundaries.
+- Added status filtering and constrained the list limit to values from 1 to
+  100.
+- Returned `201 Created` for creation and an empty `204 No Content` response
+  for deletion.
+- Mapped missing tickets to `404 Not Found` and duplicate identifiers to
+  `409 Conflict` at the presentation boundary.
+- Isolated endpoint state with a fresh repository and service dependency in
+  every API test.
+- Expanded the endpoint suite to 31 tests covering CRUD behavior, validation,
+  filtering, limits, state changes, and error mapping.
+- Passed the complete 107-test repository suite together with Ruff formatting,
+  lint, lockfile, environment, and package compatibility checks.
+- Verified the complete CRUD lifecycle manually through Uvicorn, curl, Swagger
+  UI, and the generated OpenAPI schema.
+
 ## Next Tasks
 
-- Review basic FastAPI dependency injection
-- Connect the ticket service to the FastAPI routes
-- Complete repository-backed create, list, detail, partial-update, and delete routes
-- Return intentional HTTP status codes
-- Map missing and duplicate tickets to API errors
-- Isolate endpoint state between tests
-- Complete endpoint tests and documentation
-- Run the full quality review and prepare the pull request
+- Commit and push the completed CRUD API and documentation.
+- Open and review the Week 05 pull request.

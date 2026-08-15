@@ -18,8 +18,10 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Ticket domain model and invariants
 - Domain-safe title, priority, and status changes
 - In-memory ticket repository
-- Ticket application service with partial updates
-- Focused domain, repository, and service tests
+- Ticket application service with complete CRUD workflows
+- Dependency-injected FastAPI routes
+- Explicit HTTP status and application-error mapping
+- Isolated endpoint, schema, domain, repository, and service tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -51,17 +53,21 @@ available at `http://127.0.0.1:8000/docs`.
 
 ## Available Endpoints
 
-| Method | Path                   | Success status | Response body example                  |
-| ------ | ---------------------- | -------------- | -------------------------------------- |
-| `GET`  | `/health`              | `200 OK`       | `{"status":"ok"}`                      |
-| `GET`  | `/tickets`             | `200 OK`       | `{"status_filter":null,"limit":10}`    |
-| `POST` | `/tickets/preview`     | `200 OK`       | `{"title":"VPN fails","priority":"high"}` |
-| `GET`  | `/tickets/{ticket_id}` | `200 OK`       | `{"ticket_id":42}`                     |
+| Method   | Path                   | Success status   | Purpose |
+| -------- | ---------------------- | ---------------- | ------- |
+| `GET`    | `/health`              | `200 OK`         | Return application health. |
+| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
+| `POST`   | `/tickets`             | `201 Created`    | Validate and create a ticket. |
+| `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
+| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
+| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
+| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete a stored ticket without a body. |
 
 `GET /tickets` accepts two optional query parameters:
 
-- `status`: an optional string filter with a default value of `null`
-- `limit`: an integer with a default value of `10`
+- `status`: an optional filter restricted to `open`, `in_progress`, `resolved`,
+  or `closed`
+- `limit`: an integer from `1` through `100` with a default value of `10`
 
 FastAPI returns `422 Unprocessable Content` before calling the route function
 when path, query, or body input does not satisfy its declared contract. For
@@ -74,17 +80,27 @@ It trims surrounding title whitespace, enforces title length, restricts priority
 values, and rejects extra fields. It returns `200 OK` because it previews
 validated input without creating or storing a ticket.
 
-The project now has separate API schema, domain model, repository, and service
-modules. The domain model protects valid ticket state, the repository owns
-temporary in-memory storage, and the service coordinates creation, lookup,
-listing, partial updates, and deletion. The response schema defines the intended
-external ticket representation.
+`POST /tickets` accepts the same create contract, delegates ticket creation to
+the service, and returns the stored representation through `TicketResponse`.
+`PATCH /tickets/{ticket_id}` accepts one or more updatable fields. An empty
+update is rejected with `422`, while a missing ticket produces `404` after a
+valid identifier has reached the service.
 
-These layers are not connected to the FastAPI routes yet. The current routes
-still demonstrate parameter parsing and request validation, so they do not
-perform repository-backed existence checks or return intentional `404`, `409`,
-`201`, and `204` responses. The partial-update schema and service behavior are
-ready; route integration and endpoint error mapping are the next exercise.
+The project has separate presentation, API schema, domain model, repository,
+and service responsibilities. Routes receive a replaceable `TicketService`
+dependency and do not access the repository directly. They convert validated
+API strings into domain enums, translate application errors into `404` or `409`
+HTTP responses, and map domain tickets into the explicit response schema.
+
+The default application service uses process-local in-memory storage. Data is
+lost when the server restarts. Endpoint tests replace that dependency with a
+fresh repository and service for every test, so results do not depend on test
+order or data left by another test.
+
+The complete CRUD lifecycle was also verified manually on 15 August 2026 with
+Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
+creation, listing, filtering, limiting, detail lookup, partial update, deletion,
+input validation, and missing-resource behavior.
 
 ## Run the Tests
 

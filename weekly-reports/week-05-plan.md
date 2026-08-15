@@ -164,6 +164,11 @@ Practice:
 - Open and review the Week 05 pull request.
 - Merge only after the API behavior and documentation are verified.
 
+Saturday's implementation and manual verification completed the CRUD,
+dependency-injection, response-model, validation, status-code, and error-mapping
+goals. The remaining Saturday work is the final repository quality review,
+feature-branch review, commit, push, and pull request.
+
 ### Sunday
 
 Week 05 report and Week 06 preparation.

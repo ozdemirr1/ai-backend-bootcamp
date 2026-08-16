@@ -2,89 +2,63 @@
 
 ## Current Week
 
-Week 05
+Week 06
 
 ## Date
 
-10 August - 16 August
+17 August - 23 August
 
 ## Current Focus
 
-- FastAPI fundamentals
-- ASGI and Uvicorn
-- Route decorators and HTTP methods
-- Path and query parameters
-- Pydantic request and response models
-- API validation and error responses
-- FastAPI endpoint tests
-- Current stable dependency versions
-- `uv` dependency workflow
-- In-memory ticket CRUD API
+- PostgreSQL fundamentals
+- Relational tables, rows, columns, and schemas
+- SQL data types and constraints
+- Primary and foreign keys
+- One-to-many and many-to-many relationships
+- `SELECT`, `INSERT`, `UPDATE`, and `DELETE`
+- Filtering, ordering, grouping, and joins
+- Index purpose and tradeoffs
+- Transactions, commit, and rollback
+- Ticket database schema, SQL scripts, and ERD
 
 ## Completed
 
-- [x] Week 05 plan created
-- [x] FastAPI environment and version audit
-- [x] Minimal FastAPI application and health endpoint
-- [x] Route, path, and query parameter exercises
-- [x] Path and query parameter tests
-- [x] Pydantic request schema and body validation exercises
-- [x] Explicit response schema exercises
-- [x] API input validation tests
-- [x] Ticket domain model and invariant tests
-- [x] In-memory repository and repository tests
-- [x] Ticket service and application-rule tests
-- [x] Partial-update request schema and schema tests
-- [x] Domain-safe title and priority changes
-- [x] Partial-update service workflow and tests
-- [x] FastAPI dependency injection and isolated endpoint state
-- [x] Repository-backed ticket CRUD routes
-- [x] API error mapping tests
-- [x] Manual Uvicorn, curl, Swagger UI, and OpenAPI verification
-- [x] Full repository quality and public-diff review
+- [x] Week 05 report completed
+- [x] Week 05 pull request merged and branches cleaned
+- [x] Week 06 plan created
+- [x] Week 05-to-Week 06 transition quality checks
+- [ ] PostgreSQL environment and version audit
+- [ ] Dedicated local role and database
+- [ ] Ticket table and database constraints
+- [ ] CRUD and query exercises
+- [ ] One-to-many and many-to-many relationships
+- [ ] Join and aggregation exercises
+- [ ] Index and query-plan exercise
+- [ ] Transaction, commit, and rollback exercises
+- [ ] Ticket ERD and SQL project documentation
+- [ ] SQL verification and Python regression checks
 - [ ] Feature branch and pull request practice
-- [ ] Week 05 report
+- [ ] Week 06 report
 
 ## Problems
 
 - No current blockers.
 
-## Friday Progress - 14 August
+## Week 05 Handoff
 
-- Added `TicketUpdateRequest` with optional title, priority, and status fields.
-- Rejected empty updates, all-`None` updates, invalid literals, and extra fields.
-- Kept API string literals separate from domain enum values.
-- Centralized title normalization and validation in the domain model.
-- Added domain methods for safe title and priority changes.
-- Added `TicketService.update_ticket()` for partial application updates.
-- Verified 9 schema tests, 14 domain model tests, and 17 service tests.
-
-The remaining presentation-layer integration was intentionally moved to
-Saturday so it can be completed as one uninterrupted CRUD and endpoint-testing
-session.
-
-## Saturday Progress - 15 August
-
-- Added a replaceable `TicketService` dependency for FastAPI routes.
-- Added explicit domain-to-response mapping through `TicketResponse`.
-- Connected create, list, detail, partial-update, and delete routes to the
-  service layer without bypassing repository or domain boundaries.
-- Added status filtering and constrained the list limit to values from 1 to
-  100.
-- Returned `201 Created` for creation and an empty `204 No Content` response
-  for deletion.
-- Mapped missing tickets to `404 Not Found` and duplicate identifiers to
-  `409 Conflict` at the presentation boundary.
-- Isolated endpoint state with a fresh repository and service dependency in
-  every API test.
-- Expanded the endpoint suite to 31 tests covering CRUD behavior, validation,
-  filtering, limits, state changes, and error mapping.
-- Passed the complete 107-test repository suite together with Ruff formatting,
-  lint, lockfile, environment, and package compatibility checks.
-- Verified the complete CRUD lifecycle manually through Uvicorn, curl, Swagger
-  UI, and the generated OpenAPI schema.
+- Completed the in-memory Ticket CRUD API with explicit presentation, service,
+  repository, and domain boundaries.
+- Passed 31 endpoint tests and 107 tests in the complete repository suite.
+- Verified the CRUD lifecycle through TestClient, Uvicorn, curl, Swagger UI,
+  and OpenAPI.
+- Merged pull request #3 through merge commit `b02c983`.
+- Synchronized `main` with `origin/main` and removed the merged feature branch.
+- Recorded the complete result in `weekly-reports/week-05.md`.
+- PostgreSQL, SQLAlchemy, Alembic, and authentication were not started early.
 
 ## Next Tasks
 
-- Commit and push the completed CRUD API and documentation.
-- Open and review the Week 05 pull request.
+- Commit and push the Week 05-to-Week 06 documentation transition.
+- Prepare the second LinkedIn progress update for 17 August.
+- Create `feature/week-06-postgresql-sql` on Monday.
+- Audit the local PostgreSQL environment before installing or changing it.

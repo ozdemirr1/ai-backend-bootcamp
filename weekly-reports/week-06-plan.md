@@ -72,6 +72,8 @@ topic.
 
 PostgreSQL concepts, environment audit, and first connection.
 
+Status: completed on 17 August 2026.
+
 Practice:
 
 - Review the difference between an application, database server, database, and
@@ -85,6 +87,21 @@ Practice:
 - Create a dedicated local bootcamp role and database.
 - Connect through `psql` and inspect databases, schemas, and tables.
 - Record safe start, stop, connect, and inspection commands.
+
+Outcome:
+
+- Verified PostgreSQL 18.6 as the current stable release and Homebrew as the
+  supported local workflow.
+- Installed and started PostgreSQL 18.6 on `localhost:5432`.
+- Created the non-superuser `opsdesk_app` role and the owned `opsdesk_dev`
+  database.
+- Required SCRAM authentication for the OpsDesk application connection while
+  keeping credentials outside the repository.
+- Verified the client version, server version, service state, role attributes,
+  database ownership, schema information, and password-authenticated TCP
+  connection.
+- Documented the `psql`-first workflow and reserved pgAdmin for secondary visual
+  inspection.
 
 ### Tuesday
 

@@ -66,9 +66,10 @@ Useful `psql` inspection commands:
 \q
 ```
 
-## Planned Structure
+## Current and Planned Structure
 
-Files will be added only after their related concepts are understood:
+Only `001_schema.sql` exists today. The remaining files will be added after
+their related concepts are understood:
 
 ```text
 projects/week-06-postgresql-sql/
@@ -84,6 +85,43 @@ projects/week-06-postgresql-sql/
 ```
 
 Each SQL file will have one clear responsibility and will contain no secrets.
+
+## Core Ticket Schema
+
+`sql/001_schema.sql` creates the first `tickets` table with:
+
+- a database-generated `BIGINT` identity primary key;
+- required title, priority, status, and timestamp fields;
+- an `open` default status;
+- database-generated creation and update timestamps;
+- normalized title requirements;
+- allowed priority and status values; and
+- chronological timestamp protection.
+
+Execute the schema as the dedicated application role:
+
+```bash
+psql -X \
+  -h localhost \
+  -U opsdesk_app \
+  -d opsdesk_dev \
+  -W \
+  -v ON_ERROR_STOP=1 \
+  -f projects/week-06-postgresql-sql/sql/001_schema.sql
+```
+
+Inspect the result from an interactive `psql` session:
+
+```text
+\d+ tickets
+```
+
+The schema was verified with successful inserts around intentional violations
+of every named check constraint, a required-field rule, and the generated
+identity boundary. Failed rows were not stored. Their generated identity
+values were still consumed, demonstrating that a sequence supplies values
+rather than gapless row numbering. The primary key separately enforces
+uniqueness.
 
 ## Safety Rules
 

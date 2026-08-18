@@ -32,7 +32,7 @@ Week 06
 - [x] PostgreSQL 18.6 installed and verified
 - [x] Dedicated local role and database
 - [x] SCRAM authentication verified for the application connection
-- [ ] Ticket table and database constraints
+- [x] Ticket table and database constraints
 - [ ] CRUD and query exercises
 - [ ] One-to-many and many-to-many relationships
 - [ ] Join and aggregation exercises
@@ -63,6 +63,24 @@ Week 06
   and password-authenticated TCP connection through `psql`.
 - Kept the Week 05 FastAPI application in-memory and did not start ORM work.
 
+## Tuesday Outcome
+
+- Compared core PostgreSQL data types and assigned ownership for each Ticket
+  field.
+- Designed the `tickets` table before writing SQL.
+- Created and executed the repeatable `sql/001_schema.sql` script through the
+  non-superuser application connection.
+- Added an identity primary key, required fields, defaults, and four named
+  check constraints.
+- Inspected the stored table and constraint definitions through `psql` and the
+  PostgreSQL system catalog.
+- Verified valid inserts, database-generated values, and persistent data.
+- Intentionally triggered title, priority, status, required-field, timestamp,
+  and identity errors.
+- Confirmed that failed inserts do not persist rows but can consume identity
+  sequence values.
+- Kept SQLAlchemy, Alembic, and FastAPI database integration out of Week 06.
+
 ## Week 05 Handoff
 
 - Completed the in-memory Ticket CRUD API with explicit presentation, service,
@@ -77,8 +95,9 @@ Week 06
 
 ## Next Tasks
 
-- Review PostgreSQL data types and database-owned identifiers.
-- Design the core `tickets` table before writing its schema.
-- Add primary-key, required-field, default, and check constraints.
-- Execute and inspect the first schema script against `opsdesk_dev`.
-- Intentionally test invalid inserts and explain each database error.
+- Write repeatable seed and CRUD query scripts.
+- Practice single-row and multi-row inserts with `RETURNING`.
+- Filter, combine, order, and limit Ticket query results.
+- Update and delete only deliberately selected rows.
+- Keep `updated_at` synchronized explicitly during updates.
+- Compare application validation with database constraints.

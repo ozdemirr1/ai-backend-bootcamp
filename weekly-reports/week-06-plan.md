@@ -120,6 +120,25 @@ Practice:
 - Inspect the created table definition through `psql`.
 - Intentionally attempt invalid inserts and explain each database error.
 
+Outcome:
+
+- Compared the relevant PostgreSQL types and classified client-owned and
+  server-owned Ticket fields.
+- Designed and created the core `tickets` table through a repeatable SQL
+  script.
+- Added a generated identity primary key, required fields, defaults, and named
+  constraints for title, priority, status, and timestamp order.
+- Executed the schema as the non-superuser `opsdesk_app` role and verified that
+  it owns the table.
+- Inspected the table and all stored constraint definitions through `psql` and
+  `pg_constraint`.
+- Verified database-generated identity, status, and timestamp values through
+  successful inserts.
+- Triggered each intended database error and confirmed that rejected rows did
+  not persist.
+- Demonstrated that failed inserts may consume identity values and that an
+  identity is not a gapless row count.
+
 ### Wednesday
 
 CRUD statements and result queries.

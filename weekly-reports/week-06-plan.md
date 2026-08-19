@@ -157,6 +157,22 @@ Practice:
 - Compare application validation with database constraints.
 - Create a repeatable seed script and a separate query-practice script.
 
+Outcome:
+
+- Created a repeatable six-row Ticket seed script with multi-row `INSERT` and
+  `RETURNING`.
+- Used `TRUNCATE ... RESTART IDENTITY` only against the dedicated learning
+  database and executed the script atomically.
+- Practiced explicit-column selects, filtering, `IN`, `AND`, `OR`, predicate
+  grouping, deterministic ordering, and limiting.
+- Demonstrated the result difference between default boolean precedence and an
+  explicitly parenthesized business rule.
+- Previewed the exact target before each data-changing statement.
+- Updated one Ticket with a scoped predicate and set `updated_at` explicitly.
+- Deleted one closed Ticket using both identifier and expected-state guards.
+- Verified affected rows with `RETURNING` and confirmed the final persistent
+  dataset.
+
 ### Thursday
 
 Relationships and joins.

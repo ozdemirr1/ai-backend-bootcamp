@@ -123,6 +123,44 @@ values were still consumed, demonstrating that a sequence supplies values
 rather than gapless row numbering. The primary key separately enforces
 uniqueness.
 
+## Seed and CRUD Practice
+
+`sql/002_seed.sql` resets the local Ticket data and creates six deterministic
+rows. It is intentionally destructive and must target only the dedicated
+`opsdesk_dev` learning database.
+
+Run it atomically so an unexpected insert error also rolls back the truncate:
+
+```bash
+psql -X \
+  -h localhost \
+  -U opsdesk_app \
+  -d opsdesk_dev \
+  -W \
+  -v ON_ERROR_STOP=1 \
+  --single-transaction \
+  -f projects/week-06-postgresql-sql/sql/002_seed.sql
+```
+
+`sql/003_crud_queries.sql` contains explicit-column selects, filtering,
+predicate grouping, ordering, limiting, a scoped update, and a guarded delete.
+Run the seed first whenever the CRUD exercise needs its known starting state:
+
+```bash
+psql -X \
+  -h localhost \
+  -U opsdesk_app \
+  -d opsdesk_dev \
+  -W \
+  -v ON_ERROR_STOP=1 \
+  --single-transaction \
+  -f projects/week-06-postgresql-sql/sql/003_crud_queries.sql
+```
+
+The mutation workflow previews targets with `SELECT`, scopes every change with
+`WHERE`, updates `updated_at` explicitly, and inspects affected rows through
+`RETURNING`.
+
 ## Safety Rules
 
 - Review the target database and active role before executing a script.

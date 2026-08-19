@@ -268,6 +268,82 @@ Only successful inserts remained stored. Defaults and identity values are
 evaluated before later constraint checks, while sequence advancement is not
 rolled back when an insert fails.
 
+## Seed Data Workflow
+
+`sql/002_seed.sql` provides a deterministic local development dataset. It
+clears the existing Ticket rows, resets the identity generator, inserts six
+known rows with varied priorities and statuses, and returns the generated
+values.
+
+```sql
+TRUNCATE TABLE tickets RESTART IDENTITY;
+```
+
+`TRUNCATE` is deliberately destructive and belongs only in the dedicated
+learning database. The script is executed with both `ON_ERROR_STOP` and
+`--single-transaction`. If an insert fails, the transaction prevents the
+preceding truncate from leaving the table empty.
+
+A multi-row insert uses one column list followed by comma-separated value
+groups. String literals use single quotes. Double quotes identify SQL objects
+such as case-sensitive column or table names and do not represent strings.
+
+`RETURNING` exposes database-generated identifiers, defaults, and timestamps
+without requiring a separate select. The six seed rows receive identifiers
+`1` through `6` after `RESTART IDENTITY`.
+
+## Query and CRUD Fundamentals
+
+`sql/003_crud_queries.sql` records direct SQL exercises. The main query clauses
+appear in this written order:
+
+```text
+SELECT -> FROM -> WHERE -> ORDER BY -> LIMIT
+```
+
+Explicit column lists are preferred to `SELECT *` for application and report
+queries. They document the result contract, avoid retrieving unneeded data,
+and prevent newly added columns from silently changing the output shape.
+
+`WHERE` filters rows before ordering and limiting the result. `IN` expresses a
+set of accepted values. Multiple predicates can be combined with `AND` and
+`OR`, but `AND` has higher precedence. Parentheses make the intended business
+rule explicit:
+
+```sql
+WHERE priority = 'low'
+    AND (status = 'resolved' OR status = 'open')
+```
+
+Without `ORDER BY`, PostgreSQL does not guarantee row order. A deterministic
+query therefore declares its ordering, including a tie-breaker when needed.
+`LIMIT` is applied after ordering and should be used with a deliberate order
+when the selected subset must be predictable.
+
+Data-changing statements follow a preview-first rule:
+
+1. Run a `SELECT` with the intended predicate.
+2. Confirm that only the expected rows are returned.
+3. Reuse that scope in `UPDATE` or `DELETE`.
+4. Use `RETURNING` to inspect the affected rows.
+
+An `UPDATE` without `WHERE` changes every row, and a `DELETE` without `WHERE`
+removes every row. Primary-key predicates provide exact row targeting, while
+an additional expected-state predicate can add protection for deletion.
+
+`DEFAULT CURRENT_TIMESTAMP` applies only when a row is inserted. A later
+update must set the modification timestamp explicitly:
+
+```sql
+SET
+    status = 'resolved',
+    updated_at = CURRENT_TIMESTAMP
+```
+
+The verified update affected one Ticket and advanced only its `updated_at`
+value. The verified delete used both identifier and status predicates and
+removed one closed Ticket. The final table retained five rows.
+
 ## SQL Editing Workflow
 
 Week 06 uses three tools with separate responsibilities:

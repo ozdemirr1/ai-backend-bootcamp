@@ -33,7 +33,7 @@ Week 06
 - [x] Dedicated local role and database
 - [x] SCRAM authentication verified for the application connection
 - [x] Ticket table and database constraints
-- [ ] CRUD and query exercises
+- [x] CRUD and query exercises
 - [ ] One-to-many and many-to-many relationships
 - [ ] Join and aggregation exercises
 - [ ] Index and query-plan exercise
@@ -81,6 +81,23 @@ Week 06
   sequence values.
 - Kept SQLAlchemy, Alembic, and FastAPI database integration out of Week 06.
 
+## Wednesday Outcome
+
+- Created a deterministic six-row Ticket seed dataset with varied priorities
+  and statuses.
+- Used multi-row `INSERT` and `RETURNING` to inspect generated values.
+- Executed the destructive seed reset atomically with `ON_ERROR_STOP` and a
+  single transaction.
+- Practiced explicit-column selects, filtering, `IN`, `AND`, `OR`, predicate
+  grouping, ordering, and limiting.
+- Compared ungrouped and parenthesized boolean predicates through their actual
+  result sets.
+- Previewed mutation targets with the same predicates used by the changes.
+- Updated one Ticket, changed its status, and advanced `updated_at` explicitly.
+- Deleted one expected closed Ticket with both identifier and state guards.
+- Verified the final five-row table and confirmed that unrelated rows remained
+  unchanged.
+
 ## Week 05 Handoff
 
 - Completed the in-memory Ticket CRUD API with explicit presentation, service,
@@ -95,9 +112,10 @@ Week 06
 
 ## Next Tasks
 
-- Write repeatable seed and CRUD query scripts.
-- Practice single-row and multi-row inserts with `RETURNING`.
-- Filter, combine, order, and limit Ticket query results.
-- Update and delete only deliberately selected rows.
-- Keep `updated_at` synchronized explicitly during updates.
-- Compare application validation with database constraints.
+- Design a one-to-many relationship from tickets to comments.
+- Design tags and a ticket-tags junction table.
+- Add foreign keys with deliberate delete behavior.
+- Insert related rows in dependency order.
+- Query relationships with inner and left joins.
+- Group related rows and count them deliberately.
+- Update the Ticket ERD with keys and cardinality.

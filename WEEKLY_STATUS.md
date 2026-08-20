@@ -34,8 +34,8 @@ Week 06
 - [x] SCRAM authentication verified for the application connection
 - [x] Ticket table and database constraints
 - [x] CRUD and query exercises
-- [ ] One-to-many and many-to-many relationships
-- [ ] Join and aggregation exercises
+- [x] One-to-many and many-to-many relationships
+- [x] Join and aggregation exercises
 - [ ] Index and query-plan exercise
 - [ ] Transaction, commit, and rollback exercises
 - [ ] Ticket ERD and SQL project documentation
@@ -98,6 +98,28 @@ Week 06
 - Verified the final five-row table and confirmed that unrelated rows remained
   unchanged.
 
+## Thursday Outcome
+
+- Modeled a one-to-many relationship from Tickets to comments.
+- Modeled a many-to-many relationship from Tickets to reusable Tags through a
+  `ticket_tags` junction table.
+- Added three foreign keys with deliberate `ON DELETE CASCADE` behavior.
+- Used a composite `(ticket_id, tag_id)` primary key to prevent duplicate Tag
+  assignments.
+- Protected normalized, unique Tag names and validated comment body format.
+- Inspected the implemented tables, indexes, checks, and foreign keys through
+  `psql` and `pg_constraint`.
+- Reordered the SQL scripts so schemas, seeds, joins, and mutating CRUD practice
+  can be executed in dependency order.
+- Seeded six Tickets, six comments, five Tags, and six Ticket-Tag assignments in
+  one atomic workflow.
+- Compared inner and left joins through their actual result sets.
+- Traversed the many-to-many relationship through the junction table.
+- Grouped related rows and counted nullable child identifiers deliberately.
+- Demonstrated why `COUNT(*)` and `COUNT(child_id)` differ after a left join.
+- Combined ordered Tag names with `STRING_AGG` and represented a missing Tag set
+  with `COALESCE`.
+
 ## Week 05 Handoff
 
 - Completed the in-memory Ticket CRUD API with explicit presentation, service,
@@ -112,10 +134,8 @@ Week 06
 
 ## Next Tasks
 
-- Design a one-to-many relationship from tickets to comments.
-- Design tags and a ticket-tags junction table.
-- Add foreign keys with deliberate delete behavior.
-- Insert related rows in dependency order.
-- Query relationships with inner and left joins.
-- Group related rows and count them deliberately.
+- Verify cascade behavior without losing the deterministic seed state.
 - Update the Ticket ERD with keys and cardinality.
+- Create one justified secondary index and inspect its query plan.
+- Practice explicit transaction, commit, and rollback behavior.
+- Run clean-database SQL verification and the existing Python regression suite.

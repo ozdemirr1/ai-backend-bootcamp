@@ -1,4 +1,9 @@
-TRUNCATE TABLE tickets RESTART IDENTITY;
+TRUNCATE TABLE
+    ticket_tags,
+    comments,
+    tags,
+    tickets
+RESTART IDENTITY;
 
 INSERT INTO tickets (
     title,

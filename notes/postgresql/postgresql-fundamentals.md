@@ -27,7 +27,10 @@ The Week 06 environment currently has this shape:
 PostgreSQL 18.6 server
 └── opsdesk_dev database
     └── public schema
-        └── tickets table
+        ├── tickets table
+        ├── comments table
+        ├── tags table
+        └── ticket_tags junction table
 ```
 
 The server and client are not the same program. `psql --version` reports the
@@ -268,33 +271,92 @@ Only successful inserts remained stored. Defaults and identity values are
 evaluated before later constraint checks, while sequence advancement is not
 rolled back when an insert fails.
 
-## Seed Data Workflow
+## Relationship Design
 
-`sql/002_seed.sql` provides a deterministic local development dataset. It
-clears the existing Ticket rows, resets the identity generator, inserts six
-known rows with varied priorities and statuses, and returns the generated
-values.
+`sql/002_relationship_schema.sql` adds one-to-many and many-to-many
+relationships to the Ticket model:
 
-```sql
-TRUNCATE TABLE tickets RESTART IDENTITY;
+```text
+tickets 1 -------- * comments
+
+tickets * -------- * tags
+          through
+        ticket_tags
 ```
 
-`TRUNCATE` is deliberately destructive and belongs only in the dedicated
-learning database. The script is executed with both `ON_ERROR_STOP` and
-`--single-transaction`. If an insert fails, the transaction prevents the
-preceding truncate from leaving the table empty.
+The foreign key belongs to `comments`, the many side of the one-to-many
+relationship. Storing comment identifiers as an array on `tickets` would make
+referential integrity, joins, indexing, and concurrent writes harder to manage.
+
+`comments.ticket_id` references `tickets.ticket_id`. A comment has no meaning
+without its parent Ticket, so the learning schema uses `ON DELETE CASCADE`.
+This is deliberate but potentially destructive: deleting a Ticket also deletes
+its comments. Production retention and audit requirements may instead require
+soft deletion or restricted deletion.
+
+`ticket_tags` is a junction table containing foreign keys to both `tickets` and
+`tags`. Its composite primary key is:
+
+```sql
+PRIMARY KEY (ticket_id, tag_id)
+```
+
+This guarantees that the same Tag cannot be assigned to the same Ticket twice.
+Deleting a Ticket or Tag removes its junction rows. Deleting a Ticket does not
+delete reusable rows from `tags`.
+
+Tag names are stored in lowercase without surrounding whitespace and are
+unique. The check constraint validates the canonical form; it does not rewrite
+input. The unique constraint then prevents two canonical rows with the same
+name.
+
+Catalog inspection verified three foreign keys:
+
+- `comments.ticket_id` references `tickets.ticket_id`;
+- `ticket_tags.ticket_id` references `tickets.ticket_id`; and
+- `ticket_tags.tag_id` references `tags.tag_id`.
+
+## Seed Data Workflow
+
+`sql/003_ticket_seed.sql` provides a deterministic local development dataset.
+It clears all four related tables, resets their identity generators, inserts
+six known Ticket rows with varied priorities and statuses, and returns the
+generated values.
+
+```sql
+TRUNCATE TABLE
+    ticket_tags,
+    comments,
+    tags,
+    tickets
+RESTART IDENTITY;
+```
+
+All referencing and referenced tables are named explicitly. This satisfies the
+foreign-key boundary without hiding additional targets behind an unrestricted
+`CASCADE`. `TRUNCATE` is deliberately destructive and belongs only in the
+dedicated learning database.
+
+`sql/004_relationship_seed.sql` inserts reusable Tags, Ticket comments, and
+Ticket-Tag assignments in dependency order. The base and relationship seed
+files are executed together with both `ON_ERROR_STOP` and
+`--single-transaction`. If any related insert fails, the preceding truncate and
+all successful inserts are rolled back together.
 
 A multi-row insert uses one column list followed by comma-separated value
 groups. String literals use single quotes. Double quotes identify SQL objects
 such as case-sensitive column or table names and do not represent strings.
 
 `RETURNING` exposes database-generated identifiers, defaults, and timestamps
-without requiring a separate select. The six seed rows receive identifiers
-`1` through `6` after `RESTART IDENTITY`.
+without requiring a separate select. The verified dataset contains six
+Tickets, six comments, five Tags, and six Ticket-Tag assignments. Hard-coded
+relationship identifiers are acceptable only because the development seed
+resets identity generators and recreates the same known rows in one controlled
+workflow.
 
 ## Query and CRUD Fundamentals
 
-`sql/003_crud_queries.sql` records direct SQL exercises. The main query clauses
+`sql/006_crud_queries.sql` records direct SQL exercises. The main query clauses
 appear in this written order:
 
 ```text
@@ -343,6 +405,35 @@ SET
 The verified update affected one Ticket and advanced only its `updated_at`
 value. The verified delete used both identifier and status predicates and
 removed one closed Ticket. The final table retained five rows.
+
+## Joins and Aggregation
+
+`sql/005_join_queries.sql` reads the implemented relationships through explicit
+join conditions. Table aliases such as `t`, `c`, `tt`, and `tg` keep qualified
+column references readable. An `ON` clause declares how tables relate; a
+`WHERE` clause filters the joined result for a query-specific rule.
+
+An inner join between Tickets and comments returns only Tickets that have at
+least one matching comment. A left join keeps every Ticket and represents a
+missing child with `NULL` comment columns. A parent row appears once for every
+matching child row, so repeated Ticket columns in a joined result do not mean
+that duplicate Ticket rows are stored.
+
+The many-to-many query traverses both relationship edges:
+
+```text
+tickets -> ticket_tags -> tags
+```
+
+Grouping joined rows by Ticket makes per-Ticket summaries possible.
+`COUNT(*)` counts the placeholder row produced by a left join, while
+`COUNT(c.comment_id)` ignores a `NULL` child identifier and therefore reports
+zero for a Ticket without comments.
+
+`STRING_AGG` combines multiple Tag names into one ordered value per Ticket.
+When no Tag exists, the aggregate returns `NULL`; `COALESCE` replaces it with
+the explicit display value `no tags`. The verified summaries reported two Tags
+for Ticket 1 and zero Tags for Ticket 6.
 
 ## SQL Editing Workflow
 

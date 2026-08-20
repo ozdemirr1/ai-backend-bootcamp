@@ -177,6 +177,8 @@ Outcome:
 
 Relationships and joins.
 
+Status: completed on 20 August 2026.
+
 Practice:
 
 - Add a `comments` table for a one-to-many Ticket relationship.
@@ -189,6 +191,24 @@ Practice:
 - Query tickets with tags through the junction table.
 - Use grouping and aggregate functions to count related rows.
 - Update the ERD to show keys and cardinality.
+
+Outcome:
+
+- Created `comments`, `tags`, and `ticket_tags` through a repeatable relationship
+  schema script.
+- Verified one-to-many and many-to-many foreign keys and deliberate cascade
+  behavior through `psql` metadata.
+- Added a composite junction-table primary key and normalized unique Tag names.
+- Reordered scripts into schema, seed, join, and mutating CRUD dependency order.
+- Seeded Tickets, comments, Tags, and assignments atomically with deterministic
+  identifiers.
+- Compared inner joins with left joins, including Tickets without related rows.
+- Traversed the Ticket-Tag relationship through two explicit joins.
+- Grouped child rows, counted nullable identifiers, and demonstrated the
+  difference between `COUNT(*)` and `COUNT(child_id)`.
+- Produced ordered per-Ticket Tag summaries with `STRING_AGG` and `COALESCE`.
+- Deferred the ERD and destructive cascade verification to Friday alongside
+  index and transaction practice.
 
 ### Friday
 
@@ -296,10 +316,12 @@ projects/week-06-postgresql-sql/
 │   └── ticket-erd.md
 └── sql/
     ├── 001_schema.sql
-    ├── 002_seed.sql
-    ├── 003_crud_queries.sql
-    ├── 004_relationship_queries.sql
-    └── 005_transactions.sql
+    ├── 002_relationship_schema.sql
+    ├── 003_ticket_seed.sql
+    ├── 004_relationship_seed.sql
+    ├── 005_join_queries.sql
+    ├── 006_crud_queries.sql
+    └── 007_transactions.sql
 ```
 
 Files should be created only when the related concept is understood. SQL

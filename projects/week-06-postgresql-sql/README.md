@@ -66,22 +66,20 @@ Useful `psql` inspection commands:
 \q
 ```
 
-## Current and Planned Structure
+## Current Structure
 
-Only `001_schema.sql` exists today. The remaining files will be added after
-their related concepts are understood:
+The SQL scripts are numbered in dependency order:
 
 ```text
 projects/week-06-postgresql-sql/
 ├── README.md
-├── docs/
-│   └── ticket-erd.md
 └── sql/
     ├── 001_schema.sql
-    ├── 002_seed.sql
-    ├── 003_crud_queries.sql
-    ├── 004_relationship_queries.sql
-    └── 005_transactions.sql
+    ├── 002_relationship_schema.sql
+    ├── 003_ticket_seed.sql
+    ├── 004_relationship_seed.sql
+    ├── 005_join_queries.sql
+    └── 006_crud_queries.sql
 ```
 
 Each SQL file will have one clear responsibility and will contain no secrets.
@@ -123,11 +121,26 @@ values were still consumed, demonstrating that a sequence supplies values
 rather than gapless row numbering. The primary key separately enforces
 uniqueness.
 
+## Relationships
+
+`sql/002_relationship_schema.sql` adds:
+
+- a one-to-many relationship from `tickets` to `comments`;
+- reusable, normalized, unique rows in `tags`; and
+- a many-to-many relationship through the `ticket_tags` junction table.
+
+The junction table uses `(ticket_id, tag_id)` as a composite primary key, so a
+Tag cannot be assigned to the same Ticket twice. Foreign keys use deliberate
+`ON DELETE CASCADE` behavior for dependent comments and relationship rows.
+Deleting a Ticket does not delete reusable Tag rows.
+
 ## Seed and CRUD Practice
 
-`sql/002_seed.sql` resets the local Ticket data and creates six deterministic
-rows. It is intentionally destructive and must target only the dedicated
-`opsdesk_dev` learning database.
+`sql/003_ticket_seed.sql` resets all four local tables and creates six
+deterministic Ticket rows. `sql/004_relationship_seed.sql` then inserts five
+Tags, six comments, and six Ticket-Tag assignments. These scripts are
+intentionally destructive and must target only the dedicated `opsdesk_dev`
+learning database.
 
 Run it atomically so an unexpected insert error also rolls back the truncate:
 
@@ -139,10 +152,11 @@ psql -X \
   -W \
   -v ON_ERROR_STOP=1 \
   --single-transaction \
-  -f projects/week-06-postgresql-sql/sql/002_seed.sql
+  -f projects/week-06-postgresql-sql/sql/003_ticket_seed.sql \
+  -f projects/week-06-postgresql-sql/sql/004_relationship_seed.sql
 ```
 
-`sql/003_crud_queries.sql` contains explicit-column selects, filtering,
+`sql/006_crud_queries.sql` contains explicit-column selects, filtering,
 predicate grouping, ordering, limiting, a scoped update, and a guarded delete.
 Run the seed first whenever the CRUD exercise needs its known starting state:
 
@@ -154,12 +168,26 @@ psql -X \
   -W \
   -v ON_ERROR_STOP=1 \
   --single-transaction \
-  -f projects/week-06-postgresql-sql/sql/003_crud_queries.sql
+  -f projects/week-06-postgresql-sql/sql/006_crud_queries.sql
 ```
 
 The mutation workflow previews targets with `SELECT`, scopes every change with
 `WHERE`, updates `updated_at` explicitly, and inspects affected rows through
 `RETURNING`.
+
+## Join and Aggregation Practice
+
+`sql/005_join_queries.sql` demonstrates:
+
+- an inner join that returns only Tickets with comments;
+- a left join that preserves Tickets without comments;
+- traversal of the Ticket-Tag many-to-many relationship;
+- comment and Tag counts grouped by Ticket; and
+- ordered Tag summaries with `STRING_AGG` and `COALESCE`.
+
+The verified dataset returns six inner-joined comment rows and eight
+left-joined rows. Ticket 3 and Ticket 6 have zero comments, while Ticket 6 has
+zero Tags and receives the summary value `no tags`.
 
 ## Safety Rules
 

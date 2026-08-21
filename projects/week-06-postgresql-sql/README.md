@@ -73,13 +73,17 @@ The SQL scripts are numbered in dependency order:
 ```text
 projects/week-06-postgresql-sql/
 ├── README.md
+├── docs/
+│   └── ticket-erd.md
 └── sql/
     ├── 001_schema.sql
     ├── 002_relationship_schema.sql
     ├── 003_ticket_seed.sql
     ├── 004_relationship_seed.sql
     ├── 005_join_queries.sql
-    └── 006_crud_queries.sql
+    ├── 006_crud_queries.sql
+    ├── 007_transactions.sql
+    └── 008_indexes.sql
 ```
 
 Each SQL file will have one clear responsibility and will contain no secrets.
@@ -188,6 +192,60 @@ The mutation workflow previews targets with `SELECT`, scopes every change with
 The verified dataset returns six inner-joined comment rows and eight
 left-joined rows. Ticket 3 and Ticket 6 have zero comments, while Ticket 6 has
 zero Tags and receives the summary value `no tags`.
+
+## ERD
+
+`docs/ticket-erd.md` records the implemented entities, columns, primary keys,
+foreign keys, cardinalities, and delete behavior. It represents the same schema
+declared by `001_schema.sql` and `002_relationship_schema.sql`.
+
+## Index and Query-Plan Practice
+
+`sql/008_indexes.sql` creates one secondary index for the future Ticket-listing
+query pattern:
+
+```sql
+CREATE INDEX tickets_status_ticket_id_idx
+    ON tickets (status, ticket_id);
+```
+
+The query filters by status, orders by Ticket identifier, and applies a limit.
+`EXPLAIN (ANALYZE, BUFFERS)` showed that PostgreSQL naturally prefers a
+sequential scan for the six-row seed table. A controlled diagnostic verified
+that the composite index can provide both filtering and ordering without a
+separate sort. Sequential scans are not disabled in normal operation.
+
+Execute the index exercise atomically:
+
+```bash
+psql -X \
+  -h localhost \
+  -U opsdesk_app \
+  -d opsdesk_dev \
+  -W \
+  -v ON_ERROR_STOP=1 \
+  --single-transaction \
+  -f projects/week-06-postgresql-sql/sql/008_indexes.sql
+```
+
+## Transaction Practice
+
+`sql/007_transactions.sql` manages explicit transaction boundaries and must be
+executed without `--single-transaction`:
+
+```bash
+psql -X \
+  -h localhost \
+  -U opsdesk_app \
+  -d opsdesk_dev \
+  -W \
+  -v ON_ERROR_STOP=1 \
+  -f projects/week-06-postgresql-sql/sql/007_transactions.sql
+```
+
+The script verifies that rollback restores a Ticket and its cascaded dependent
+rows. It also commits a related Ticket and Comment write, verifies both rows,
+and commits a cleanup that cascades to the demonstration Comment.
 
 ## Safety Rules
 

@@ -36,9 +36,9 @@ Week 06
 - [x] CRUD and query exercises
 - [x] One-to-many and many-to-many relationships
 - [x] Join and aggregation exercises
-- [ ] Index and query-plan exercise
-- [ ] Transaction, commit, and rollback exercises
-- [ ] Ticket ERD and SQL project documentation
+- [x] Index and query-plan exercise
+- [x] Transaction, commit, and rollback exercises
+- [x] Ticket ERD and SQL project documentation
 - [ ] SQL verification and Python regression checks
 - [ ] Feature branch and pull request practice
 - [ ] Week 06 report
@@ -120,6 +120,31 @@ Week 06
 - Combined ordered Tag names with `STRING_AGG` and represented a missing Tag set
   with `COALESCE`.
 
+## Friday Outcome
+
+- Verified actual cascade behavior inside a transaction without changing the
+  deterministic seed state.
+- Confirmed that deleting a Ticket removes its Comment and Ticket-Tag assignment
+  while preserving the reusable Tag row.
+- Demonstrated that `ROLLBACK` restores both direct and cascaded changes.
+- Created a Mermaid ERD matching all implemented tables, keys, cardinalities,
+  and delete behavior.
+- Connected the future status-filtered Ticket API query to one justified
+  `(status, ticket_id)` secondary index.
+- Compared execution plans before and after index creation with
+  `EXPLAIN (ANALYZE, BUFFERS)`.
+- Confirmed that PostgreSQL correctly prefers a sequential scan for the tiny
+  seed dataset.
+- Verified that the composite index can satisfy both filtering and ordering
+  without a separate sort.
+- Used `ANALYZE` to refresh planner statistics and separated cost estimates from
+  elapsed time.
+- Committed a Ticket and related Comment atomically through two SQL statements.
+- Verified committed persistence, then committed a cascade cleanup of the demo
+  relationship.
+- Kept SQLAlchemy, Alembic, database drivers, and FastAPI database integration
+  out of the SQL fundamentals week.
+
 ## Week 05 Handoff
 
 - Completed the in-memory Ticket CRUD API with explicit presentation, service,
@@ -134,8 +159,7 @@ Week 06
 
 ## Next Tasks
 
-- Verify cascade behavior without losing the deterministic seed state.
-- Update the Ticket ERD with keys and cardinality.
-- Create one justified secondary index and inspect its query plan.
-- Practice explicit transaction, commit, and rollback behavior.
 - Run clean-database SQL verification and the existing Python regression suite.
+- Review every destructive statement and the complete feature-branch diff.
+- Confirm that no secret or machine-specific path is tracked.
+- Complete project documentation and open the Week 06 pull request.

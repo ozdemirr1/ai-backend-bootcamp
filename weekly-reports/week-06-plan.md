@@ -214,6 +214,8 @@ Outcome:
 
 Indexes, query plans, and transactions.
 
+Status: completed on 21 August 2026.
+
 Practice:
 
 - Explain how PostgreSQL can find rows with and without an index.
@@ -225,6 +227,27 @@ Practice:
 - Begin, commit, and roll back transactions.
 - Demonstrate that a rolled-back change is not persisted.
 - Demonstrate why related writes may need one atomic transaction.
+
+Outcome:
+
+- Created a composite secondary index for status-filtered Ticket listing in
+  identifier order.
+- Compared the natural sequential-scan plan with an index-scan demonstration
+  using `EXPLAIN (ANALYZE, BUFFERS)`.
+- Confirmed that PostgreSQL reasonably prefers a sequential scan for the tiny
+  six-row seed dataset even when a suitable index exists.
+- Used `ANALYZE` to refresh planner statistics and treated forced index use as
+  a diagnostic exercise rather than a production setting.
+- Verified `ON DELETE CASCADE` inside a transaction and used `ROLLBACK` to
+  restore the Ticket, its Comment, and its Tag assignment.
+- Confirmed that deleting a Ticket removes the junction row but preserves the
+  reusable Tag row.
+- Committed a related Ticket and Comment atomically, verified both rows, and
+  committed a cleanup that also demonstrated cascade deletion.
+- Documented the Ticket, Comment, Tag, and junction-table relationships in a
+  Mermaid ERD.
+- Added focused notes covering indexes, query plans, transactions, identity
+  behavior, and safe script execution.
 
 ### Saturday
 
@@ -321,7 +344,8 @@ projects/week-06-postgresql-sql/
     ├── 004_relationship_seed.sql
     ├── 005_join_queries.sql
     ├── 006_crud_queries.sql
-    └── 007_transactions.sql
+    ├── 007_transactions.sql
+    └── 008_indexes.sql
 ```
 
 Files should be created only when the related concept is understood. SQL

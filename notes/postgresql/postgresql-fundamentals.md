@@ -435,6 +435,23 @@ When no Tag exists, the aggregate returns `NULL`; `COALESCE` replaces it with
 the explicit display value `no tags`. The verified summaries reported two Tags
 for Ticket 1 and zero Tags for Ticket 6.
 
+## Index and Transaction Fundamentals
+
+`sql/008_indexes.sql` adds the composite
+`tickets_status_ticket_id_idx` index for status-filtered Ticket listing in
+identifier order. `EXPLAIN (ANALYZE, BUFFERS)` showed that PostgreSQL correctly
+prefers a sequential scan for the six-row seed table. A controlled diagnostic
+confirmed that the index can satisfy both the status predicate and ordering
+without a separate sort.
+
+`sql/007_transactions.sql` verifies explicit rollback and commit behavior. A
+rolled-back Ticket deletion restored the parent row and both cascade effects.
+A separate committed transaction persisted a related Ticket and Comment write,
+and another committed transaction removed the demonstration data.
+
+Detailed query-plan and transaction notes are recorded in
+`notes/postgresql/sql-queries-and-transactions.md`.
+
 ## SQL Editing Workflow
 
 Week 06 uses three tools with separate responsibilities:

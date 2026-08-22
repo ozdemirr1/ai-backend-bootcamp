@@ -134,6 +134,54 @@ Identity sequences are not gapless row counts. Committing and later deleting a
 generated row does not rewind the sequence, and a failed or rolled-back insert
 may also consume a sequence value depending on when it was generated.
 
+## Verification Requires a Known Starting State
+
+Mutation scripts are stateful. Running the CRUD exercise twice does not prove
+the same behavior twice: the first run resolves Ticket 2 and deletes Ticket 5,
+so a second run updates an already resolved Ticket and reports `DELETE 0`.
+
+The clean verification therefore restores `003_ticket_seed.sql` and
+`004_relationship_seed.sql` before exercises that depend on particular rows.
+In particular, the seed must be restored after `006_crud_queries.sql` and before
+`007_transactions.sql`, because the transaction exercise expects closed Ticket
+5 and its relationships to exist.
+
+`TRUNCATE ... RESTART IDENTITY` makes the learning dataset deterministic again.
+It restores Ticket identifiers 1 through 6 even after failed inserts and
+rolled-back transactions have consumed sequence values.
+
+## Transaction-Stable Timestamps
+
+PostgreSQL evaluates `CURRENT_TIMESTAMP` at the start of the current
+transaction. It remains stable until that transaction ends. If a seed insert
+and a later update run inside the same transaction, `created_at` and
+`updated_at` can therefore remain equal even though the update succeeded.
+
+The reliable evidence for that exercise is the changed status and the
+`UPDATE 1` command tag. `updated_at > created_at` is only expected when the
+operations occur at different transaction times. A changing wall-clock value
+can be obtained with `clock_timestamp()`, but the learning schema deliberately
+keeps the conventional transaction timestamp behavior.
+
+## Clean-Database Verification Result
+
+The complete schema was recreated with four application-owned tables, sixteen
+columns, fourteen named primary-key, foreign-key, unique, and check constraints,
+and the expected deterministic seed counts:
+
+```text
+Tickets:             6
+Comments:            6
+Tags:                5
+Ticket-Tag links:    6
+```
+
+Expected failures verified title normalization, allowed priority values,
+foreign-key integrity, composite-key uniqueness, and normalized Tag-name
+uniqueness. An intentional invalid priority in a multi-statement transaction
+also confirmed that `ON_ERROR_STOP=1` prevents later statements and that the
+single transaction rolls back the earlier valid insert.
+
 ## Script Execution Rules
 
 `sql/007_transactions.sql` contains explicit `BEGIN`, `COMMIT`, and `ROLLBACK`

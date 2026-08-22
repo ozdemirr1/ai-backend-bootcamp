@@ -247,6 +247,41 @@ The script verifies that rollback restores a Ticket and its cascaded dependent
 rows. It also commits a related Ticket and Comment write, verifies both rows,
 and commits a cleanup that cascades to the demonstration Comment.
 
+## Clean-Database Verification Order
+
+The SQL files have separate responsibilities, but the mutating exercises do not
+all share the same preconditions. Use this order when verifying the complete
+project from an empty `opsdesk_dev` database:
+
+1. Run `001_schema.sql` through `004_relationship_seed.sql` together in one
+   transaction.
+2. Run the read-only `005_join_queries.sql` file.
+3. Run `006_crud_queries.sql` from the deterministic seed state.
+4. Re-run `003_ticket_seed.sql` and `004_relationship_seed.sql` because the CRUD
+   exercise resolves Ticket 2 and deletes Ticket 5.
+5. Run `007_transactions.sql` without an outer single transaction because it
+   controls its own commit and rollback boundaries.
+6. Run `008_indexes.sql` once on the clean schema.
+7. Re-run the two seed files to leave deterministic identifiers and rows for
+   later inspection. The secondary index remains present after the seed reset.
+
+The final verified state contains six Tickets, six comments, five Tags, six
+Ticket-Tag assignments, and the `tickets_status_ticket_id_idx` secondary index.
+
+Mutation verification must begin from a known seed state. Running the CRUD file
+again after it has already deleted Ticket 5 correctly produces `DELETE 0`, but
+that does not independently verify the intended deletion path.
+
+`CURRENT_TIMESTAMP` is fixed at transaction start. When seed inserts and the
+Ticket update run inside the same outer transaction, `created_at` and
+`updated_at` can be equal even after `UPDATE 1`. This is normal PostgreSQL
+transaction-time behavior.
+
+The clean-database audit also verified expected title, priority, foreign-key,
+composite-key, and unique-name failures. `ON_ERROR_STOP=1` combined with a
+single transaction prevented an earlier valid insert from remaining after a
+later constraint failure.
+
 ## Safety Rules
 
 - Review the target database and active role before executing a script.

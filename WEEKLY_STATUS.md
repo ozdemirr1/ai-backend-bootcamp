@@ -39,7 +39,7 @@ Week 06
 - [x] Index and query-plan exercise
 - [x] Transaction, commit, and rollback exercises
 - [x] Ticket ERD and SQL project documentation
-- [ ] SQL verification and Python regression checks
+- [x] SQL verification and Python regression checks
 - [ ] Feature branch and pull request practice
 - [ ] Week 06 report
 
@@ -145,6 +145,33 @@ Week 06
 - Kept SQLAlchemy, Alembic, database drivers, and FastAPI database integration
   out of the SQL fundamentals week.
 
+## Saturday Outcome
+
+- Recreated `opsdesk_dev` from an empty database owned by the non-superuser
+  `opsdesk_app` role.
+- Applied all schema and seed files atomically in dependency order and verified
+  four table owners, sixteen columns, fourteen named constraints, and expected
+  row counts.
+- Re-ran join and aggregation queries against the clean deterministic dataset.
+- Verified guarded CRUD mutations from a known seed state, including one
+  expected update and one expected cascade delete.
+- Restored the seed before transaction tests and reproduced rollback, commit,
+  atomic related writes, and cascade cleanup behavior.
+- Created and inspected the justified composite index on the clean database.
+- Confirmed that PostgreSQL naturally prefers a sequential scan for six rows
+  while the index remains eligible for the real filter-and-order query shape.
+- Demonstrated that `CURRENT_TIMESTAMP` remains fixed throughout one
+  transaction, so an insert and update in that transaction can share a value.
+- Verified title, priority, foreign-key, composite-key, and unique-name
+  rejection without persisting invalid rows.
+- Demonstrated that `ON_ERROR_STOP=1` and a single transaction prevent a
+  partially applied multi-statement workflow.
+- Restored deterministic IDs and seed counts after destructive and invalid
+  exercises.
+- Reviewed all destructive SQL targets and confirmed that no credential,
+  connection URI, or machine-specific path is tracked.
+- Passed Ruff lint, Ruff formatting, and all 107 repository tests.
+
 ## Week 05 Handoff
 
 - Completed the in-memory Ticket CRUD API with explicit presentation, service,
@@ -159,7 +186,6 @@ Week 06
 
 ## Next Tasks
 
-- Run clean-database SQL verification and the existing Python regression suite.
-- Review every destructive statement and the complete feature-branch diff.
-- Confirm that no secret or machine-specific path is tracked.
-- Complete project documentation and open the Week 06 pull request.
+- Review and commit the Saturday verification documentation.
+- Open and review the Week 06 pull request.
+- Complete the Week 06 report and prepare Week 07.

@@ -72,6 +72,8 @@ topic.
 
 PostgreSQL concepts, environment audit, and first connection.
 
+Status: completed on 17 August 2026.
+
 Practice:
 
 - Review the difference between an application, database server, database, and
@@ -85,6 +87,21 @@ Practice:
 - Create a dedicated local bootcamp role and database.
 - Connect through `psql` and inspect databases, schemas, and tables.
 - Record safe start, stop, connect, and inspection commands.
+
+Outcome:
+
+- Verified PostgreSQL 18.6 as the current stable release and Homebrew as the
+  supported local workflow.
+- Installed and started PostgreSQL 18.6 on `localhost:5432`.
+- Created the non-superuser `opsdesk_app` role and the owned `opsdesk_dev`
+  database.
+- Required SCRAM authentication for the OpsDesk application connection while
+  keeping credentials outside the repository.
+- Verified the client version, server version, service state, role attributes,
+  database ownership, schema information, and password-authenticated TCP
+  connection.
+- Documented the `psql`-first workflow and reserved pgAdmin for secondary visual
+  inspection.
 
 ### Tuesday
 
@@ -102,6 +119,25 @@ Practice:
 - Execute the schema script against the dedicated learning database.
 - Inspect the created table definition through `psql`.
 - Intentionally attempt invalid inserts and explain each database error.
+
+Outcome:
+
+- Compared the relevant PostgreSQL types and classified client-owned and
+  server-owned Ticket fields.
+- Designed and created the core `tickets` table through a repeatable SQL
+  script.
+- Added a generated identity primary key, required fields, defaults, and named
+  constraints for title, priority, status, and timestamp order.
+- Executed the schema as the non-superuser `opsdesk_app` role and verified that
+  it owns the table.
+- Inspected the table and all stored constraint definitions through `psql` and
+  `pg_constraint`.
+- Verified database-generated identity, status, and timestamp values through
+  successful inserts.
+- Triggered each intended database error and confirmed that rejected rows did
+  not persist.
+- Demonstrated that failed inserts may consume identity values and that an
+  identity is not a gapless row count.
 
 ### Wednesday
 
@@ -121,9 +157,27 @@ Practice:
 - Compare application validation with database constraints.
 - Create a repeatable seed script and a separate query-practice script.
 
+Outcome:
+
+- Created a repeatable six-row Ticket seed script with multi-row `INSERT` and
+  `RETURNING`.
+- Used `TRUNCATE ... RESTART IDENTITY` only against the dedicated learning
+  database and executed the script atomically.
+- Practiced explicit-column selects, filtering, `IN`, `AND`, `OR`, predicate
+  grouping, deterministic ordering, and limiting.
+- Demonstrated the result difference between default boolean precedence and an
+  explicitly parenthesized business rule.
+- Previewed the exact target before each data-changing statement.
+- Updated one Ticket with a scoped predicate and set `updated_at` explicitly.
+- Deleted one closed Ticket using both identifier and expected-state guards.
+- Verified affected rows with `RETURNING` and confirmed the final persistent
+  dataset.
+
 ### Thursday
 
 Relationships and joins.
+
+Status: completed on 20 August 2026.
 
 Practice:
 
@@ -138,9 +192,29 @@ Practice:
 - Use grouping and aggregate functions to count related rows.
 - Update the ERD to show keys and cardinality.
 
+Outcome:
+
+- Created `comments`, `tags`, and `ticket_tags` through a repeatable relationship
+  schema script.
+- Verified one-to-many and many-to-many foreign keys and deliberate cascade
+  behavior through `psql` metadata.
+- Added a composite junction-table primary key and normalized unique Tag names.
+- Reordered scripts into schema, seed, join, and mutating CRUD dependency order.
+- Seeded Tickets, comments, Tags, and assignments atomically with deterministic
+  identifiers.
+- Compared inner joins with left joins, including Tickets without related rows.
+- Traversed the Ticket-Tag relationship through two explicit joins.
+- Grouped child rows, counted nullable identifiers, and demonstrated the
+  difference between `COUNT(*)` and `COUNT(child_id)`.
+- Produced ordered per-Ticket Tag summaries with `STRING_AGG` and `COALESCE`.
+- Deferred the ERD and destructive cascade verification to Friday alongside
+  index and transaction practice.
+
 ### Friday
 
 Indexes, query plans, and transactions.
+
+Status: completed on 21 August 2026.
 
 Practice:
 
@@ -154,9 +228,32 @@ Practice:
 - Demonstrate that a rolled-back change is not persisted.
 - Demonstrate why related writes may need one atomic transaction.
 
+Outcome:
+
+- Created a composite secondary index for status-filtered Ticket listing in
+  identifier order.
+- Compared the natural sequential-scan plan with an index-scan demonstration
+  using `EXPLAIN (ANALYZE, BUFFERS)`.
+- Confirmed that PostgreSQL reasonably prefers a sequential scan for the tiny
+  six-row seed dataset even when a suitable index exists.
+- Used `ANALYZE` to refresh planner statistics and treated forced index use as
+  a diagnostic exercise rather than a production setting.
+- Verified `ON DELETE CASCADE` inside a transaction and used `ROLLBACK` to
+  restore the Ticket, its Comment, and its Tag assignment.
+- Confirmed that deleting a Ticket removes the junction row but preserves the
+  reusable Tag row.
+- Committed a related Ticket and Comment atomically, verified both rows, and
+  committed a cleanup that also demonstrated cascade deletion.
+- Documented the Ticket, Comment, Tag, and junction-table relationships in a
+  Mermaid ERD.
+- Added focused notes covering indexes, query plans, transactions, identity
+  behavior, and safe script execution.
+
 ### Saturday
 
 Ticket SQL project completion and verification.
+
+Status: completed on 22 August 2026.
 
 Practice:
 
@@ -172,6 +269,30 @@ Practice:
 - Confirm no credentials, connection secrets, or machine-specific paths are
   included.
 - Open and review the Week 06 pull request.
+
+Outcome:
+
+- Recreated the dedicated learning database from an empty state with
+  `opsdesk_app` as its owner.
+- Applied schema and seed scripts atomically and verified owners, columns,
+  defaults, identities, keys, checks, and foreign-key delete behavior.
+- Reproduced join, aggregation, guarded CRUD, transaction, and index exercises
+  against known deterministic seed states.
+- Documented the required seed reset between the mutating CRUD exercise and
+  the transaction exercise.
+- Verified expected title, priority, foreign-key, composite-key, and unique-name
+  failures without persisting invalid data.
+- Demonstrated that `ON_ERROR_STOP=1` plus a single transaction prevents partial
+  multi-statement writes.
+- Distinguished transaction-stable `CURRENT_TIMESTAMP` from a changing wall
+  clock during same-transaction insert and update practice.
+- Restored Ticket IDs 1 through 6 and the expected `6 / 6 / 5 / 6` final seed
+  counts while preserving the justified secondary index.
+- Reviewed destructive SQL targets and the complete feature-branch change set.
+- Confirmed that the tracked Week 06 material contains no password, connection
+  URI, private key, or machine-specific user path.
+- Passed Ruff lint, Ruff formatting, and all 107 existing Python tests.
+- Deferred only the pull-request UI workflow to the final Git handoff.
 
 ### Sunday
 
@@ -244,10 +365,13 @@ projects/week-06-postgresql-sql/
 │   └── ticket-erd.md
 └── sql/
     ├── 001_schema.sql
-    ├── 002_seed.sql
-    ├── 003_crud_queries.sql
-    ├── 004_relationship_queries.sql
-    └── 005_transactions.sql
+    ├── 002_relationship_schema.sql
+    ├── 003_ticket_seed.sql
+    ├── 004_relationship_seed.sql
+    ├── 005_join_queries.sql
+    ├── 006_crud_queries.sql
+    ├── 007_transactions.sql
+    └── 008_indexes.sql
 ```
 
 Files should be created only when the related concept is understood. SQL

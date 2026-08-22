@@ -32,3 +32,26 @@ Direct runtime dependencies are declared in `[project.dependencies]`. Developmen
 Python 3.9 reached end of life and no longer provides an appropriate baseline for the FastAPI phase of the bootcamp. Python 3.14 is an actively supported stable release.
 
 Using one dependency workflow prevents `requirements-dev.txt`, manually installed packages, and the actual environment from becoming inconsistent. The lockfile makes the verified environment reproducible while `pyproject.toml` keeps direct dependency intent explicit.
+
+## Decision 003 - Local PostgreSQL Workflow
+
+Week 06 uses the current stable PostgreSQL 18 release installed and managed
+through Homebrew. SQL is written in version-controlled files, executed through
+`psql`, and may be inspected later with pgAdmin as a secondary visual tool.
+
+The local learning environment uses a dedicated `opsdesk_app` login role and an
+`opsdesk_dev` database. The application role is not a superuser and its
+connection requires SCRAM password authentication. Credentials and connection
+URLs remain outside the repository.
+
+## Reason
+
+Using PostgreSQL and `psql` directly makes server, client, role, database,
+schema, SQL, and authentication behavior visible before SQLAlchemy and Alembic
+introduce another abstraction layer. Homebrew matches the existing macOS tool
+workflow and avoids adding Docker before its planned month.
+
+Separating the application role from the cluster administrator applies least
+privilege and prevents application code from depending on administrative
+access. Repeatable SQL files preserve the database design in Git without
+storing machine-specific state or secrets.

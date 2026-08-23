@@ -2,190 +2,91 @@
 
 ## Current Week
 
-Week 06
+Week 07
 
 ## Date
 
-17 August - 23 August
+24 August - 30 August 2026
 
 ## Current Focus
 
-- PostgreSQL fundamentals
-- Relational tables, rows, columns, and schemas
-- SQL data types and constraints
-- Primary and foreign keys
-- One-to-many and many-to-many relationships
-- `SELECT`, `INSERT`, `UPDATE`, and `DELETE`
-- Filtering, ordering, grouping, and joins
-- Index purpose and tradeoffs
-- Transactions, commit, and rollback
-- Ticket database schema, SQL scripts, and ERD
+- SQLAlchemy 2 fundamentals
+- Psycopg PostgreSQL connectivity
+- Environment-based database configuration
+- Engine, connection, session, and transaction responsibilities
+- Declarative persistence mappings
+- Alembic migration fundamentals
+- PostgreSQL Ticket repository
+- FastAPI request-scoped database sessions
+- Isolated PostgreSQL integration tests
 
 ## Completed
 
-- [x] Week 05 report completed
-- [x] Week 05 pull request merged and branches cleaned
-- [x] Week 06 plan created
-- [x] Week 05-to-Week 06 transition quality checks
-- [x] Second LinkedIn progress update published
-- [x] PostgreSQL environment and version audit
-- [x] PostgreSQL 18.6 installed and verified
-- [x] Dedicated local role and database
-- [x] SCRAM authentication verified for the application connection
-- [x] Ticket table and database constraints
-- [x] CRUD and query exercises
+- [x] Week 06 PostgreSQL 18.6 learning environment
+- [x] Dedicated non-superuser application role and development database
+- [x] SCRAM-authenticated local application connection
+- [x] Constrained four-table Ticket relational schema
 - [x] One-to-many and many-to-many relationships
-- [x] Join and aggregation exercises
-- [x] Index and query-plan exercise
-- [x] Transaction, commit, and rollback exercises
-- [x] Ticket ERD and SQL project documentation
-- [x] SQL verification and Python regression checks
-- [ ] Feature branch and pull request practice
-- [ ] Week 06 report
+- [x] Deterministic development seed data
+- [x] CRUD, join, aggregation, transaction, and index exercises
+- [x] Mermaid Ticket ERD and PostgreSQL notes
+- [x] Clean-database reconstruction and verification
+- [x] Ruff checks and 107 repository tests
+- [x] Week 06 pull request merged and feature branches cleaned
+- [x] Week 06 interview review
+- [x] Week 06 report
+- [x] Week 07 plan
+- [ ] Week 07 feature branch
+- [ ] SQLAlchemy, Psycopg, and Alembic dependencies
+- [ ] Environment-based database configuration
+- [ ] SQLAlchemy persistence mapping
+- [ ] Alembic migration workflow
+- [ ] PostgreSQL repository implementation
+- [ ] FastAPI database integration
+- [ ] Isolated database integration tests
 
 ## Problems
 
 - No current blockers.
 
-## Monday Outcome
+## Week 06 Handoff
 
-- Audited the existing Homebrew, PostgreSQL, service, client, and server state.
-- Removed the confirmed disposable `visabot` database before changing servers.
-- Verified PostgreSQL 18.6 as the current stable release from official sources.
-- Installed PostgreSQL 18.6 and initialized its checksum-enabled local cluster.
-- Stopped PostgreSQL 14 and started PostgreSQL 18 on `localhost:5432`.
-- Configured the shell to use the PostgreSQL 18 client tools by default.
-- Created the non-superuser `opsdesk_app` login role and its `opsdesk_dev`
-  database.
-- Added specific `pg_hba.conf` rules requiring SCRAM authentication for the
-  OpsDesk application connection.
-- Verified the role, database owner, schema, server version, connection details,
-  and password-authenticated TCP connection through `psql`.
-- Kept the Week 05 FastAPI application in-memory and did not start ORM work.
-
-## Tuesday Outcome
-
-- Compared core PostgreSQL data types and assigned ownership for each Ticket
-  field.
-- Designed the `tickets` table before writing SQL.
-- Created and executed the repeatable `sql/001_schema.sql` script through the
-  non-superuser application connection.
-- Added an identity primary key, required fields, defaults, and four named
-  check constraints.
-- Inspected the stored table and constraint definitions through `psql` and the
-  PostgreSQL system catalog.
-- Verified valid inserts, database-generated values, and persistent data.
-- Intentionally triggered title, priority, status, required-field, timestamp,
-  and identity errors.
-- Confirmed that failed inserts do not persist rows but can consume identity
-  sequence values.
-- Kept SQLAlchemy, Alembic, and FastAPI database integration out of Week 06.
-
-## Wednesday Outcome
-
-- Created a deterministic six-row Ticket seed dataset with varied priorities
-  and statuses.
-- Used multi-row `INSERT` and `RETURNING` to inspect generated values.
-- Executed the destructive seed reset atomically with `ON_ERROR_STOP` and a
-  single transaction.
-- Practiced explicit-column selects, filtering, `IN`, `AND`, `OR`, predicate
-  grouping, ordering, and limiting.
-- Compared ungrouped and parenthesized boolean predicates through their actual
-  result sets.
-- Previewed mutation targets with the same predicates used by the changes.
-- Updated one Ticket, changed its status, and advanced `updated_at` explicitly.
-- Deleted one expected closed Ticket with both identifier and state guards.
-- Verified the final five-row table and confirmed that unrelated rows remained
-  unchanged.
-
-## Thursday Outcome
-
-- Modeled a one-to-many relationship from Tickets to comments.
-- Modeled a many-to-many relationship from Tickets to reusable Tags through a
-  `ticket_tags` junction table.
-- Added three foreign keys with deliberate `ON DELETE CASCADE` behavior.
-- Used a composite `(ticket_id, tag_id)` primary key to prevent duplicate Tag
-  assignments.
-- Protected normalized, unique Tag names and validated comment body format.
-- Inspected the implemented tables, indexes, checks, and foreign keys through
-  `psql` and `pg_constraint`.
-- Reordered the SQL scripts so schemas, seeds, joins, and mutating CRUD practice
-  can be executed in dependency order.
-- Seeded six Tickets, six comments, five Tags, and six Ticket-Tag assignments in
-  one atomic workflow.
-- Compared inner and left joins through their actual result sets.
-- Traversed the many-to-many relationship through the junction table.
-- Grouped related rows and counted nullable child identifiers deliberately.
-- Demonstrated why `COUNT(*)` and `COUNT(child_id)` differ after a left join.
-- Combined ordered Tag names with `STRING_AGG` and represented a missing Tag set
-  with `COALESCE`.
-
-## Friday Outcome
-
-- Verified actual cascade behavior inside a transaction without changing the
-  deterministic seed state.
-- Confirmed that deleting a Ticket removes its Comment and Ticket-Tag assignment
-  while preserving the reusable Tag row.
-- Demonstrated that `ROLLBACK` restores both direct and cascaded changes.
-- Created a Mermaid ERD matching all implemented tables, keys, cardinalities,
-  and delete behavior.
-- Connected the future status-filtered Ticket API query to one justified
-  `(status, ticket_id)` secondary index.
-- Compared execution plans before and after index creation with
-  `EXPLAIN (ANALYZE, BUFFERS)`.
-- Confirmed that PostgreSQL correctly prefers a sequential scan for the tiny
-  seed dataset.
-- Verified that the composite index can satisfy both filtering and ordering
-  without a separate sort.
-- Used `ANALYZE` to refresh planner statistics and separated cost estimates from
-  elapsed time.
-- Committed a Ticket and related Comment atomically through two SQL statements.
-- Verified committed persistence, then committed a cascade cleanup of the demo
-  relationship.
-- Kept SQLAlchemy, Alembic, database drivers, and FastAPI database integration
-  out of the SQL fundamentals week.
-
-## Saturday Outcome
-
-- Recreated `opsdesk_dev` from an empty database owned by the non-superuser
-  `opsdesk_app` role.
-- Applied all schema and seed files atomically in dependency order and verified
-  four table owners, sixteen columns, fourteen named constraints, and expected
-  row counts.
-- Re-ran join and aggregation queries against the clean deterministic dataset.
-- Verified guarded CRUD mutations from a known seed state, including one
-  expected update and one expected cascade delete.
-- Restored the seed before transaction tests and reproduced rollback, commit,
-  atomic related writes, and cascade cleanup behavior.
-- Created and inspected the justified composite index on the clean database.
-- Confirmed that PostgreSQL naturally prefers a sequential scan for six rows
-  while the index remains eligible for the real filter-and-order query shape.
-- Demonstrated that `CURRENT_TIMESTAMP` remains fixed throughout one
-  transaction, so an insert and update in that transaction can share a value.
-- Verified title, priority, foreign-key, composite-key, and unique-name
-  rejection without persisting invalid rows.
-- Demonstrated that `ON_ERROR_STOP=1` and a single transaction prevent a
-  partially applied multi-statement workflow.
-- Restored deterministic IDs and seed counts after destructive and invalid
+- PostgreSQL 18.6 is running locally.
+- `opsdesk_app` is a non-superuser role that owns `opsdesk_dev`.
+- The local application connection requires SCRAM password authentication.
+- The relational model contains `tickets`, `comments`, `tags`, and
+  `ticket_tags`.
+- The schema contains 16 columns and 14 named primary-key, foreign-key, unique,
+  and check constraints.
+- The deterministic development state contains six Tickets, six Comments, five
+  Tags, and six Ticket-Tag assignments.
+- The composite index `tickets_status_ticket_id_idx` supports status-filtered
+  Ticket listing in identifier order.
+- Eight ordered SQL scripts can rebuild data and reproduce the Week 06
   exercises.
-- Reviewed all destructive SQL targets and confirmed that no credential,
-  connection URI, or machine-specific path is tracked.
-- Passed Ruff lint, Ruff formatting, and all 107 repository tests.
-
-## Week 05 Handoff
-
-- Completed the in-memory Ticket CRUD API with explicit presentation, service,
-  repository, and domain boundaries.
-- Passed 31 endpoint tests and 107 tests in the complete repository suite.
-- Verified the CRUD lifecycle through TestClient, Uvicorn, curl, Swagger UI,
-  and OpenAPI.
-- Merged pull request #3 through merge commit `b02c983`.
-- Synchronized `main` with `origin/main` and removed the merged feature branch.
-- Recorded the complete result in `weekly-reports/week-05.md`.
-- PostgreSQL, SQLAlchemy, Alembic, and authentication were not started early.
+- Pull request #4 was merged into `main` as commit `6c60128`.
+- Local and remote Week 06 feature branches were deleted after merge.
+- `main` is synchronized with `origin/main`.
 
 ## Next Tasks
 
-- Review and commit the Saturday verification documentation.
-- Open and review the Week 06 pull request.
-- Complete the Week 06 report and prepare Week 07.
+1. Create `feature/week-07-sqlalchemy-alembic` from updated `main`.
+2. Review the separate responsibilities of Psycopg, SQLAlchemy, and Alembic.
+3. Verify the latest stable, mutually compatible dependency versions.
+4. Add only the required dependencies with `uv`.
+5. Configure the database URL through an environment variable without tracking
+   credentials.
+6. Establish a minimal synchronous connection through `opsdesk_app`.
+7. Explain the engine, connection, session, and transaction lifecycle before
+   adding ORM mappings.
+
+## Week 07 Guardrails
+
+- Use a dedicated `opsdesk_test` database for integration tests.
+- Never run destructive tests against `opsdesk_dev`.
+- Do not commit passwords, `.env` files, or complete database URLs.
+- Do not use a superuser as the application runtime role.
+- Keep domain, service, persistence, and HTTP responsibilities separate.
+- Do not use `create_all()` as a replacement for migrations.
+- Begin with synchronous SQLAlchemy to match the current application flow.
+- Do not add authentication, Docker, Redis, or AI features early.

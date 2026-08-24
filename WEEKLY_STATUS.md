@@ -43,6 +43,7 @@ Week 07
 - [x] Manual synchronous connection through `opsdesk_app`
 - [x] Five focused configuration and database-factory unit tests
 - [x] Complete dependency and quality checks with 112 passing tests
+- [x] Stable Month 02 Ticket API project naming
 - [ ] SQLAlchemy persistence mapping
 - [ ] Alembic migration workflow
 - [ ] PostgreSQL repository implementation
@@ -90,11 +91,13 @@ Week 07
 - Passed five focused configuration and database-factory unit tests.
 - Passed the complete 112-test repository suite with Ruff lint and formatting
   checks.
+- Renamed the living Weeks 05-08 application to
+  `projects/month-02-ticket-api/` while preserving the bounded Week 06 SQL lab.
 
 ## Next Tasks
 
-1. Review Monday's staged diff for secrets and machine-specific values.
-2. Commit and push the persistence configuration foundation.
+1. Verify the structural rename through the focused and complete quality suite.
+2. Review and commit the stable project naming change.
 3. Begin Tuesday with SQLAlchemy 2 declarative Ticket mapping.
 4. Keep persistence records separate from the existing domain Ticket model.
 

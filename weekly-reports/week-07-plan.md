@@ -131,6 +131,8 @@ two learning problems and obscure session and transaction fundamentals.
 - Kept the actual `.env` file and complete local connection URL outside Git.
 - Passed lockfile, environment, package compatibility, Ruff lint, Ruff
   formatting, and the complete 112-test repository suite.
+- Renamed the living Weeks 05-08 application to the stable
+  `projects/month-02-ticket-api/` module name.
 
 ### Tuesday - SQLAlchemy Models and Mapping
 

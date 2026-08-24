@@ -27,7 +27,7 @@ from ticket_api.services import (
     TicketService,
 )
 
-app = FastAPI(title="Week 05 FastAPI Fundamentals")
+app = FastAPI(title="Month 02 Ticket API")
 
 ticket_repository = InMemoryTicketRepository()
 ticket_service = TicketService(ticket_repository)

@@ -80,3 +80,29 @@ tracked. Factory functions avoid reading local configuration during module
 import and let unit tests supply safe, synthetic settings without contacting
 PostgreSQL. Request-scoped sessions will provide an explicit unit-of-work
 boundary and prevent unrelated requests from sharing mutable persistence state.
+
+## Decision 005 - Stable Learning Module and Product Repository Names
+
+The living Ticket API that began in Week 05 uses the stable directory
+`projects/month-02-ticket-api/` while it progresses through FastAPI,
+PostgreSQL persistence, migrations, and authentication during Weeks 05-08.
+Weekly reports, feature branches, and commit messages remain week-based.
+
+The completed `projects/week-06-postgresql-sql/` directory remains unchanged
+because it is a bounded SQL laboratory and historical learning artifact.
+
+OpsDesk, DocuMind, and HireMatch AI will each receive a separate public product
+repository when real implementation of that product begins. Each product will
+start as one repository rather than separate backend and frontend repositories.
+
+## Reason
+
+A living application should have a stable identity instead of being renamed at
+every weekly transition. Time-based names remain useful for reports and Git
+history, while a stable module name keeps commands, documentation, and paths
+predictable.
+
+Separate product repositories will make the three portfolio applications easy
+to understand and pin on GitHub without mixing their production code with the
+bootcamp's notes and laboratories. Creating them only when implementation
+begins avoids empty showcase repositories and premature structure.

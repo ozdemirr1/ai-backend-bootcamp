@@ -1,4 +1,4 @@
-# Week 05 FastAPI Fundamentals
+# Month 02 Ticket API
 
 ## Goal
 
@@ -80,7 +80,7 @@ From the repository root, run:
 
 ```bash
 uv run uvicorn ticket_api.main:app \
-  --app-dir projects/week-05-fastapi-fundamentals \
+  --app-dir projects/month-02-ticket-api \
   --reload
 ```
 
@@ -140,10 +140,10 @@ input validation, and missing-resource behavior.
 
 ## Run the Tests
 
-Run all Week 05 tests from the repository root:
+Run all Month 02 Ticket API tests from the repository root:
 
 ```bash
-uv run pytest projects/week-05-fastapi-fundamentals/tests -v
+uv run pytest projects/month-02-ticket-api/tests -v
 ```
 
 Run the complete repository test suite:

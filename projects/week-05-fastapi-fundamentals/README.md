@@ -38,6 +38,42 @@ The following stable versions were verified on 10 August 2026:
 - Pytest 9.1.1
 - Ruff 0.16.2
 
+The Week 07 persistence foundation adds the following verified versions:
+
+- SQLAlchemy 2.0.52
+- Psycopg 3.3.4
+- Alembic 1.19.1
+- Pydantic Settings 2.15.0
+
+## Database Configuration Foundation
+
+The application reads its PostgreSQL connection URL from the required
+`DATABASE_URL` environment variable. Copy the tracked example locally and
+replace every placeholder without committing the resulting file:
+
+```bash
+cp .env.example .env
+```
+
+The URL uses SQLAlchemy's explicit Psycopg driver name:
+
+```text
+postgresql+psycopg://APP_USER:URL_ENCODED_PASSWORD@DB_HOST:5432/APP_DATABASE
+```
+
+The real `.env` file is ignored by Git. Passwords containing URL-reserved
+characters must be URL-encoded. Do not paste the real URL into source code,
+tests, documentation, terminal screenshots, or Git history.
+
+`ticket_api.config` loads and validates settings. `ticket_api.database`
+contains testable Engine and Session factory functions. Engine creation is
+lazy: a real connection is opened only when a Connection or Session first
+executes database work.
+
+The current application routes still use the Week 05 in-memory repository.
+Week 07 will add persistence mappings, Alembic migrations, a PostgreSQL
+repository, and request-scoped FastAPI sessions in separate steps.
+
 ## Run the Application
 
 From the repository root, run:

@@ -1,0 +1,122 @@
+# SQLAlchemy Persistence Fundamentals
+
+## Responsibility Boundaries
+
+The Week 07 persistence stack has separate layers:
+
+- PostgreSQL stores durable relational data and enforces constraints.
+- Psycopg implements the PostgreSQL driver protocol used by Python.
+- SQLAlchemy provides engine, connection, transaction, SQL expression, and ORM
+  abstractions on top of the driver.
+- Alembic will own explicit, versioned schema migration history.
+- Pydantic Settings loads and validates application configuration.
+
+An ORM does not replace PostgreSQL knowledge. SQLAlchemy-generated operations
+must still be understood in terms of SQL, transactions, constraints, indexes,
+and connection behavior.
+
+## Synchronous First
+
+The current FastAPI Ticket API uses synchronous routes and services. The first
+database implementation therefore uses SQLAlchemy's synchronous API. This
+keeps the initial learning scope focused on persistence mapping, sessions, and
+transactions. Async database access can be evaluated later when the synchronous
+lifecycle is understood and a measured need exists.
+
+## Environment Configuration
+
+The application requires `DATABASE_URL`. Pydantic Settings reads the value from
+the process environment or a local `.env` file. `SecretStr` prevents the value
+from appearing in ordinary settings representations.
+
+The repository tracks `.env.example`, which documents the expected URL shape:
+
+```text
+postgresql+psycopg://APP_USER:URL_ENCODED_PASSWORD@DB_HOST:5432/APP_DATABASE
+```
+
+The real `.env` file and password are excluded from Git. A password containing
+reserved URL characters must be URL-encoded before being placed in the URL.
+
+Unit tests disable `.env` loading with `_env_file=None`. They provide synthetic
+configuration directly, so results do not depend on a developer's machine and
+do not contact a real database.
+
+## Engine
+
+An SQLAlchemy `Engine` holds the database dialect, driver configuration, and
+connection pool. It is intended to be a long-lived application object.
+
+Creating an engine is lazy. `create_engine()` validates and stores connection
+configuration but normally does not open a PostgreSQL connection immediately.
+The first operation that needs database access checks a connection out of the
+pool.
+
+`pool_pre_ping=True` checks a pooled connection before reuse. This helps replace
+connections that PostgreSQL or the network has already closed.
+
+## Connection
+
+An SQLAlchemy `Connection` represents a checked-out database connection at the
+Core layer. Calling `engine.connect()` crosses the lazy boundary and attempts a
+real driver connection.
+
+The Week 07 manual check executed a SQL statement through a Connection and
+confirmed:
+
+- the `postgresql+psycopg` dialect and driver combination;
+- the `opsdesk_dev` database;
+- the non-superuser `opsdesk_app` role;
+- the PostgreSQL 18.6 server.
+
+## Session and Session Factory
+
+An ORM `Session` is not the same as a permanent database connection. It is a
+unit-of-work and persistence context. It tracks ORM objects, coordinates SQL,
+and obtains a pooled connection only when work requires one.
+
+`sessionmaker` is a factory that creates independent Session instances. The
+current factory uses:
+
+- `bind=engine` to select the database engine;
+- `autoflush=False` to keep flushing explicit while learning the lifecycle;
+- `expire_on_commit=False` so committed attributes remain readable while an
+  HTTP response is produced.
+
+These options do not automatically commit application work. Transaction
+ownership must still be defined explicitly.
+
+FastAPI will eventually create one Session per request. A Session must not be
+shared globally between concurrent requests.
+
+## Transaction Lifecycle
+
+The manual Session check demonstrated SQLAlchemy's lazy `autobegin` behavior:
+
+```text
+before the first query: no active transaction
+after the first query: active transaction
+```
+
+Even a `SELECT` begins a database transaction when the Session first performs
+work. Closing the Session releases its connection and ends an uncommitted
+transaction. Future write workflows must choose `commit` or `rollback`
+deliberately and verify both behaviors with isolated tests.
+
+## Verified Tests
+
+Five focused unit tests currently verify that:
+
+- `DATABASE_URL` can be read from the environment;
+- missing required configuration fails clearly;
+- the secret URL is hidden from the settings representation;
+- the Engine uses PostgreSQL with the Psycopg driver and expected URL parts;
+- the Session factory uses the intended Engine and lifecycle options.
+
+These are unit tests, not PostgreSQL integration tests. Dedicated integration
+tests will later use `opsdesk_test`; they must never destructively isolate data
+inside `opsdesk_dev`.
+
+After adding these tests, the complete repository suite contained 112 tests.
+All 112 tests passed together with the dependency, Ruff lint, and Ruff
+formatting checks.

@@ -55,3 +55,28 @@ Separating the application role from the cluster administrator applies least
 privilege and prevents application code from depending on administrative
 access. Repeatable SQL files preserve the database design in Git without
 storing machine-specific state or secrets.
+
+## Decision 004 - Synchronous SQLAlchemy Persistence Foundation
+
+The first PostgreSQL integration uses synchronous SQLAlchemy 2 with Psycopg.
+Database configuration is loaded from the required `DATABASE_URL` environment
+variable through Pydantic Settings. The real `.env` file remains local, while
+`.env.example` documents only the connection-string shape and placeholders.
+
+Engine and session construction remain in testable factory functions. Creating
+an engine or a session does not itself prove connectivity; an explicit query is
+used when a real database connection must be verified. Sessions will later be
+created per FastAPI request instead of being shared across requests.
+
+## Reason
+
+The existing FastAPI routes and service workflows are synchronous. Starting
+with synchronous persistence keeps the session and transaction lifecycle
+visible without introducing async-specific connection and testing concerns at
+the same time.
+
+Environment-based configuration prevents credentials from being hardcoded or
+tracked. Factory functions avoid reading local configuration during module
+import and let unit tests supply safe, synthetic settings without contacting
+PostgreSQL. Request-scoped sessions will provide an explicit unit-of-work
+boundary and prevent unrelated requests from sharing mutable persistence state.

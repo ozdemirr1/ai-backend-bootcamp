@@ -144,6 +144,19 @@ two learning problems and obscure session and transaction fundamentals.
 - Compare database constraints with ORM declarations and domain validation.
 - Add focused mapping tests.
 
+#### Tuesday Outcome
+
+- Added a typed SQLAlchemy `DeclarativeBase` and `TicketRecord` mapping.
+- Preserved the Week 06 identity, text columns, server defaults,
+  timezone-aware timestamps, nullability, and four named check constraints.
+- Compiled and inspected the PostgreSQL DDL before introducing migrations.
+- Kept the persistence record separate from the existing domain `Ticket`.
+- Added explicit record-to-domain and domain-to-existing-record mapping.
+- Kept database identity and timestamp ownership outside the mapper.
+- Added four persistence metadata tests and five mapper tests.
+- Passed 25 focused model, database, persistence, and mapper tests.
+- Passed Ruff lint, Ruff formatting, diff checks, and all 121 repository tests.
+
 ### Wednesday - Alembic Fundamentals
 
 - Initialize Alembic in the FastAPI project.

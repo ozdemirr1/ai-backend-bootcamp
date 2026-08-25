@@ -103,6 +103,54 @@ work. Closing the Session releases its connection and ends an uncommitted
 transaction. Future write workflows must choose `commit` or `rollback`
 deliberately and verify both behaviors with isolated tests.
 
+## Declarative Persistence Mapping
+
+SQLAlchemy's declarative mapping connects a Python persistence class to table
+metadata. `DeclarativeBase` owns the shared metadata registry, `Mapped[T]`
+describes the Python-facing attribute type, and `mapped_column()` declares the
+database-facing column behavior.
+
+`TicketRecord` mirrors the durable `tickets` row rather than replacing the
+domain `Ticket` model. The persistence record includes database concerns such
+as:
+
+- a `BIGINT GENERATED ALWAYS AS IDENTITY` primary key;
+- `TEXT NOT NULL` business columns;
+- a server-owned `open` status default;
+- timezone-aware server timestamp defaults;
+- named title, priority, status, and timestamp check constraints.
+
+The compiled PostgreSQL DDL was inspected directly. This caught an important
+default-expression distinction: `server_default=text("'open'")` produces
+`DEFAULT 'open'`, while passing a string that already contains quotes would
+produce a value with additional literal quote characters.
+
+The ORM metadata intentionally repeats the Week 06 database constraints.
+Alembic will use this metadata to create reviewable migrations, while
+PostgreSQL remains the final authority that enforces the resulting schema.
+
+## Persistence and Domain Mapping
+
+Persistence records keep database strings for priority and status because the
+current PostgreSQL schema uses `TEXT` plus named check constraints. The domain
+model keeps `TicketPriority` and `TicketStatus` enums and owns behavior such as
+title normalization and state changes.
+
+The mapper boundary performs explicit conversion:
+
+```text
+TicketRecord string values -> Ticket domain enums
+Ticket domain enums        -> existing TicketRecord string values
+```
+
+Mapping an existing domain Ticket back onto a record updates only title,
+priority, and status. It rejects mismatched identifiers before mutation and
+does not change the database-owned identity or timestamp fields.
+
+A new record is not created by copying a domain Ticket identifier. New Ticket
+identity generation must remain owned by PostgreSQL's `GENERATED ALWAYS`
+column. The repository creation workflow will handle that lifecycle later.
+
 ## Verified Tests
 
 Five focused unit tests currently verify that:
@@ -113,10 +161,18 @@ Five focused unit tests currently verify that:
 - the Engine uses PostgreSQL with the Psycopg driver and expected URL parts;
 - the Session factory uses the intended Engine and lifecycle options.
 
+Four persistence-model tests additionally verify table and column metadata,
+database-generated identity configuration, defaults, timezone-aware
+timestamps, nullability, and the four named check constraints.
+
+Five mapper tests verify valid record-to-domain conversion, rejection of
+invalid persistence enum values, business-field updates, preservation of
+identity and timestamps, and non-mutating rejection of mismatched identifiers.
+
 These are unit tests, not PostgreSQL integration tests. Dedicated integration
 tests will later use `opsdesk_test`; they must never destructively isolate data
 inside `opsdesk_dev`.
 
-After adding these tests, the complete repository suite contained 112 tests.
-All 112 tests passed together with the dependency, Ruff lint, and Ruff
-formatting checks.
+After adding the declarative model and mapper tests, the complete repository
+suite contained 121 tests. All 121 passed together with Ruff lint, Ruff
+formatting, and diff checks.

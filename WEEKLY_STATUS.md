@@ -44,7 +44,10 @@ Week 07
 - [x] Five focused configuration and database-factory unit tests
 - [x] Complete dependency and quality checks with 112 passing tests
 - [x] Stable Month 02 Ticket API project naming
-- [ ] SQLAlchemy persistence mapping
+- [x] Typed SQLAlchemy Ticket persistence record
+- [x] Explicit persistence-to-domain mapping
+- [x] Four persistence metadata tests and five mapper tests
+- [x] Complete quality checks with 121 passing tests
 - [ ] Alembic migration workflow
 - [ ] PostgreSQL repository implementation
 - [ ] FastAPI database integration
@@ -94,12 +97,27 @@ Week 07
 - Renamed the living Weeks 05-08 application to
   `projects/month-02-ticket-api/` while preserving the bounded Week 06 SQL lab.
 
+## Week 07 Tuesday Outcome
+
+- Added a typed declarative `TicketRecord` without replacing the domain
+  `Ticket` model.
+- Matched the Week 06 PostgreSQL identity, defaults, timestamps, nullability,
+  and named constraints in SQLAlchemy metadata.
+- Compiled and reviewed the generated PostgreSQL `CREATE TABLE` statement.
+- Added explicit conversion from persistence strings to domain enums.
+- Added safe business-field mapping back onto an existing persistence record.
+- Rejected mismatched identifiers before record mutation.
+- Preserved database-owned identifiers and timestamps across mapper updates.
+- Passed 25 focused tests and the complete 121-test repository suite.
+- Passed Ruff lint, Ruff formatting, and Git diff checks.
+
 ## Next Tasks
 
-1. Verify the structural rename through the focused and complete quality suite.
-2. Review and commit the stable project naming change.
-3. Begin Tuesday with SQLAlchemy 2 declarative Ticket mapping.
-4. Keep persistence records separate from the existing domain Ticket model.
+1. Review and commit the Tuesday persistence mapping work.
+2. Initialize Alembic inside the Month 02 Ticket API project.
+3. Connect Alembic metadata and URL configuration without exposing secrets.
+4. Generate and inspect the initial migration before applying it.
+5. Verify downgrade and upgrade behavior against an empty development database.
 
 ## Week 07 Guardrails
 

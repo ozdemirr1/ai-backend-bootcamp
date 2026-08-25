@@ -17,6 +17,9 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Request normalization and automatic validation
 - Ticket domain model and invariants
 - Domain-safe title, priority, and status changes
+- Typed SQLAlchemy Ticket persistence record
+- Explicit persistence-to-domain mapping
+- Database identity, default, timestamp, and constraint metadata tests
 - In-memory ticket repository
 - Ticket application service with complete CRUD workflows
 - Dependency-injected FastAPI routes
@@ -70,9 +73,22 @@ contains testable Engine and Session factory functions. Engine creation is
 lazy: a real connection is opened only when a Connection or Session first
 executes database work.
 
-The current application routes still use the Week 05 in-memory repository.
-Week 07 will add persistence mappings, Alembic migrations, a PostgreSQL
-repository, and request-scoped FastAPI sessions in separate steps.
+## Persistence Mapping Foundation
+
+`ticket_api.persistence_models` defines a typed SQLAlchemy `TicketRecord` that
+mirrors the constrained PostgreSQL `tickets` table. The record preserves the
+database-generated identity, server defaults, timezone-aware timestamps,
+nullability, and named check constraints established during Week 06.
+
+The persistence record remains separate from the domain `Ticket`. Database
+priority and status strings cross the boundary through explicit mapper
+functions, which convert them to domain enums and apply domain business fields
+back to an existing record without overwriting identity or timestamps.
+
+The current application routes still use the in-memory repository. The next
+Week 07 steps add Alembic migrations, a PostgreSQL repository, and
+request-scoped FastAPI sessions without weakening the existing domain or HTTP
+boundaries.
 
 ## Run the Application
 

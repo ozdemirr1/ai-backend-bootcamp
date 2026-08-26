@@ -151,6 +151,45 @@ A new record is not created by copying a domain Ticket identifier. New Ticket
 identity generation must remain owned by PostgreSQL's `GENERATED ALWAYS`
 column. The repository creation workflow will handle that lifecycle later.
 
+## Alembic Migration Lifecycle
+
+SQLAlchemy metadata describes the desired application schema, while Alembic
+stores the ordered operations required to move a real database between schema
+versions. Calling `Base.metadata.create_all()` is intentionally not part of the
+application lifecycle because it does not provide a reviewable, reversible
+history of schema changes.
+
+The Alembic environment loads the same secret-aware `DATABASE_URL` setting as
+the application, but `alembic.ini` contains no connection credentials. During
+the Week 07 migration exercise, `ALEMBIC_DATABASE_NAME` replaced only the
+database component of that URL so all destructive migration checks targeted
+the isolated `opsdesk_migration_dev` database rather than `opsdesk_dev`.
+
+`target_metadata = Base.metadata` allows autogeneration to compare the
+declarative schema with PostgreSQL. Type and server-default comparison are
+enabled in both offline and online configuration. Autogeneration remains a
+proposal rather than an approval step: the generated Python operations and
+offline SQL must be reviewed before an upgrade is applied.
+
+The initial revision creates:
+
+- the six-column `tickets` table;
+- a database-generated `BIGINT` identity primary key;
+- database-owned status and timestamp defaults;
+- four named check constraints; and
+- the `(status, ticket_id)` composite listing index.
+
+Alembic records the applied revision in its own `alembic_version` table. The
+initial workflow was verified by upgrading an empty database, inspecting the
+resulting PostgreSQL catalog, downgrading to `base`, and upgrading to `head`
+again. `alembic check` then reported no difference between `Base.metadata` and
+the migrated database.
+
+Offline mode generated the complete transactional SQL without applying it. It
+included `BEGIN`, the Alembic version table, the Ticket table and index, the
+revision insert, and `COMMIT`. Online mode instead used a live SQLAlchemy
+Connection that remained open for the complete migration transaction.
+
 ## Verified Tests
 
 Five focused unit tests currently verify that:
@@ -161,9 +200,10 @@ Five focused unit tests currently verify that:
 - the Engine uses PostgreSQL with the Psycopg driver and expected URL parts;
 - the Session factory uses the intended Engine and lifecycle options.
 
-Four persistence-model tests additionally verify table and column metadata,
+Five persistence-model tests additionally verify table and column metadata,
 database-generated identity configuration, defaults, timezone-aware
-timestamps, nullability, and the four named check constraints.
+timestamps, nullability, the four named check constraints, and the composite
+status-listing index.
 
 Five mapper tests verify valid record-to-domain conversion, rejection of
 invalid persistence enum values, business-field updates, preservation of
@@ -174,5 +214,6 @@ tests will later use `opsdesk_test`; they must never destructively isolate data
 inside `opsdesk_dev`.
 
 After adding the declarative model and mapper tests, the complete repository
-suite contained 121 tests. All 121 passed together with Ruff lint, Ruff
-formatting, and diff checks.
+suite contained 121 tests. The index metadata test raised the total to 122;
+all 122 passed together with dependency consistency, Ruff lint, Ruff
+formatting, and diff checks after the migration workflow was completed.

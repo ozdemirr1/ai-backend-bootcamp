@@ -67,3 +67,17 @@ def test_ticket_record_declares_expected_check_constraints() -> None:
     }
 
     assert set(check_constraints.keys()) == expected_constraints
+
+
+def test_ticket_record_declares_status_listing_index() -> None:
+    indexes = {
+        index.name: [column.name for column in index.columns]
+        for index in TicketRecord.__table__.indexes
+    }
+
+    assert indexes == {
+        "tickets_status_ticket_id_idx": [
+            "status",
+            "ticket_id",
+        ]
+    }

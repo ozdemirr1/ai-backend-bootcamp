@@ -46,9 +46,9 @@ Week 07
 - [x] Stable Month 02 Ticket API project naming
 - [x] Typed SQLAlchemy Ticket persistence record
 - [x] Explicit persistence-to-domain mapping
-- [x] Four persistence metadata tests and five mapper tests
+- [x] Five persistence metadata tests and five mapper tests
 - [x] Complete quality checks with 121 passing tests
-- [ ] Alembic migration workflow
+- [x] Alembic migration workflow
 - [ ] PostgreSQL repository implementation
 - [ ] FastAPI database integration
 - [ ] Isolated database integration tests
@@ -111,13 +111,32 @@ Week 07
 - Passed 25 focused tests and the complete 121-test repository suite.
 - Passed Ruff lint, Ruff formatting, and Git diff checks.
 
+## Week 07 Wednesday Outcome
+
+- Initialized Alembic inside the stable Month 02 Ticket API project.
+- Connected Alembic to secret-aware settings and `Base.metadata` without
+  tracking credentials.
+- Added and tested the `(status, ticket_id)` composite index in SQLAlchemy
+  metadata.
+- Created the isolated `opsdesk_migration_dev` migration database under the
+  non-superuser application role.
+- Generated and reviewed revision `e07f08d4399d` before applying it.
+- Verified the migrated Ticket columns, identity, defaults, constraints,
+  primary key, and composite index through the PostgreSQL catalogs.
+- Completed upgrade, downgrade, and re-upgrade successfully.
+- Confirmed the database is at `head` and `alembic check` reports no metadata
+  drift.
+- Inspected the complete offline transactional SQL without applying it.
+- Passed lockfile, environment, package compatibility, Ruff lint, Ruff
+  formatting, Git diff, and all 122 repository tests.
+
 ## Next Tasks
 
-1. Review and commit the Tuesday persistence mapping work.
-2. Initialize Alembic inside the Month 02 Ticket API project.
-3. Connect Alembic metadata and URL configuration without exposing secrets.
-4. Generate and inspect the initial migration before applying it.
-5. Verify downgrade and upgrade behavior against an empty development database.
+1. Implement the SQLAlchemy Ticket repository boundary.
+2. Practice explicit `flush`, `commit`, `rollback`, and `refresh` behavior.
+3. Create the dedicated `opsdesk_test` integration-test database safely.
+4. Add isolated PostgreSQL repository integration tests.
+5. Preserve the existing domain and service contracts.
 
 ## Week 07 Guardrails
 

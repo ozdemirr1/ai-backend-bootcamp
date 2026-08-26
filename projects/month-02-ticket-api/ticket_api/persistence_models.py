@@ -1,6 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, CheckConstraint, DateTime, Identity, Text, func, text
+from sqlalchemy import (
+    BigInteger,
+    CheckConstraint,
+    DateTime,
+    Identity,
+    Index,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -34,6 +43,11 @@ class TicketRecord(Base):
         server_default=func.current_timestamp(),
     )
     __table_args__ = (
+        Index(
+            "tickets_status_ticket_id_idx",
+            "status",
+            "ticket_id",
+        ),
         CheckConstraint(
             "title = btrim(title) AND char_length(title) BETWEEN 3 AND 100",
             name="tickets_title_format",

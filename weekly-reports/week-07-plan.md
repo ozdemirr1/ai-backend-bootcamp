@@ -167,6 +167,31 @@ two learning problems and obscure session and transaction fundamentals.
 - Downgrade and upgrade again to demonstrate reversible schema history.
 - Confirm that `Base.metadata.create_all()` is not used as a migration system.
 
+#### Wednesday Outcome
+
+- Initialized a single-database Alembic environment inside the Month 02 Ticket
+  API project.
+- Loaded migration connectivity from the secret-aware application settings
+  without storing a database URL in `alembic.ini`.
+- Bound Alembic autogeneration to `Base.metadata` and enabled type and server
+  default comparison.
+- Added the justified `(status, ticket_id)` listing index to SQLAlchemy
+  metadata and covered it with a fifth persistence-model test.
+- Created the isolated `opsdesk_migration_dev` database owned by the
+  non-superuser `opsdesk_app` role.
+- Generated and manually reviewed the initial Ticket schema revision before
+  applying it.
+- Verified the generated table, identity column, defaults, timestamps, four
+  named check constraints, primary key, and composite index in PostgreSQL.
+- Completed `upgrade head`, `downgrade base`, and a second `upgrade head`
+  successfully.
+- Confirmed revision `e07f08d4399d` at `head` and verified that `alembic check`
+  reports no pending schema operations.
+- Inspected offline SQL containing transactional DDL and the expected Alembic
+  version update.
+- Passed dependency consistency checks, Ruff lint, Ruff formatting, Git diff
+  checks, and all 122 repository tests.
+
 ### Thursday - PostgreSQL Repository
 
 - Implement Ticket add, lookup, list, update, and delete persistence operations.

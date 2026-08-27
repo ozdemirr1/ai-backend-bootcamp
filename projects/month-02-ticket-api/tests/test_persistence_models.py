@@ -47,6 +47,8 @@ def test_ticket_record_uses_expected_defaults_and_timestamps() -> None:
     assert updated_at.type.timezone is True
     assert updated_at.server_default is not None
     assert updated_at.nullable is False
+    assert updated_at.onupdate is not None
+    assert "CURRENT_TIMESTAMP" in str(updated_at.onupdate.arg)
 
     assert table.c.title.nullable is False
     assert table.c.priority.nullable is False

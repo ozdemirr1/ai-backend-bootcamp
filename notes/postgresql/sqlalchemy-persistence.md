@@ -147,9 +147,11 @@ Mapping an existing domain Ticket back onto a record updates only title,
 priority, and status. It rejects mismatched identifiers before mutation and
 does not change the database-owned identity or timestamp fields.
 
-A new record is not created by copying a domain Ticket identifier. New Ticket
-identity generation must remain owned by PostgreSQL's `GENERATED ALWAYS`
-column. The repository creation workflow will handle that lifecycle later.
+A new record is not created by copying a domain Ticket identifier. `NewTicket`
+represents validated creation input without a durable identifier. The
+SQLAlchemy repository converts it into a new `TicketRecord`, flushes the row,
+loads the PostgreSQL-generated identity, and returns a complete domain
+`Ticket`.
 
 ## Alembic Migration Lifecycle
 
@@ -190,6 +192,82 @@ included `BEGIN`, the Alembic version table, the Ticket table and index, the
 revision insert, and `COMMIT`. Online mode instead used a live SQLAlchemy
 Connection that remained open for the complete migration transaction.
 
+## Repository Boundary
+
+`TicketRepository` is a structural `Protocol` describing the storage behavior
+required by `TicketService`: create, lookup, ordered listing, update, and
+delete. The service depends on that contract and does not import SQLAlchemy,
+Session, persistence records, or PostgreSQL exceptions.
+
+The in-memory and SQLAlchemy repositories implement the same protocol. The
+in-memory implementation remains useful for deterministic unit and HTTP tests.
+`SqlAlchemyTicketRepository` maps the same workflows onto a real Session and
+PostgreSQL. This keeps storage replacement at the composition boundary instead
+of spreading database knowledge through the service and route layers.
+
+`NewTicket` represents a valid Ticket request before persistence assigns an
+identity. `Ticket` represents a domain entity with a positive durable
+identifier. This distinction prevents the service from inventing database
+identifiers and keeps `GENERATED ALWAYS AS IDENTITY` authoritative.
+
+Expected SQLAlchemy integrity failures are translated into
+`TicketRepositoryConflictError`. The service then translates that persistence-
+neutral error into its existing application-level conflict error. Driver and
+ORM exceptions therefore do not leak into the HTTP contract.
+
+## Flush, Refresh, Commit, and Rollback
+
+`flush()` sends pending SQL inside the current transaction. It allows the
+repository to receive generated identities and detect database constraint
+failures without deciding whether the complete use case should be committed.
+`refresh()` reloads database-owned values such as server defaults into a
+persistence record.
+
+`commit()` makes the complete transaction durable and visible to other
+connections. `rollback()` discards its uncommitted effects. The repository
+does neither: transaction ownership belongs to the caller. This permits a
+future request handler to compose several repository operations into one
+atomic unit of work and roll all of them back when any step fails.
+
+After an `IntegrityError` during flush, the Session transaction is failed and
+cannot continue normally until its owner rolls it back. Translating the
+exception does not repair or end the transaction; it only preserves the
+application boundary.
+
+## Timestamp Update Behavior
+
+The `updated_at` mapping uses a server default for insertion and SQLAlchemy's
+`onupdate=func.current_timestamp()` behavior for ORM-generated updates. The
+repository therefore includes `CURRENT_TIMESTAMP` when it flushes a changed
+Ticket record.
+
+PostgreSQL `CURRENT_TIMESTAMP` is the start time of the current transaction.
+The integration test creates and updates its Ticket in separate transactions
+so it can prove that `updated_at` advances beyond `created_at`. This mapping
+does not create a PostgreSQL update trigger: direct SQL writers must still set
+`updated_at` explicitly if they bypass the ORM repository.
+
+## Dedicated-Database Integration Testing
+
+PostgreSQL repository tests are disabled unless `RUN_DATABASE_TESTS=1` is set.
+They derive the connection from the normal secret-aware configuration but
+replace only the database component with `opsdesk_test`. Before running, the
+session-scoped guard verifies the exact database name, rejects a superuser
+role, and requires the Alembic-managed `tickets` table.
+
+The per-test fixture refuses to delete pre-existing data. It stops when the
+Ticket table is not empty, then wraps ordinary test work in an external
+transaction that is rolled back during teardown. Commit and visibility tests
+use separate Sessions and clean only the identifiers they created. This makes
+destructive intent explicit and prevents accidental isolation against
+`opsdesk_dev`.
+
+The integration suite verifies database-generated identity, defaults, CRUD,
+ordered listing, missing rows, flush without commit, cross-Session commit
+visibility, rollback invisibility, and timestamp advancement. Rolled-back
+identity values are not reused, so gaps in generated identifiers remain
+expected behavior.
+
 ## Verified Tests
 
 Five focused unit tests currently verify that:
@@ -209,11 +287,12 @@ Five mapper tests verify valid record-to-domain conversion, rejection of
 invalid persistence enum values, business-field updates, preservation of
 identity and timestamps, and non-mutating rejection of mismatched identifiers.
 
-These are unit tests, not PostgreSQL integration tests. Dedicated integration
-tests will later use `opsdesk_test`; they must never destructively isolate data
-inside `opsdesk_dev`.
+Eleven opt-in PostgreSQL integration tests verify the SQLAlchemy repository and
+transaction lifecycle against the dedicated `opsdesk_test` database. They must
+never run destructive isolation against `opsdesk_dev`.
 
-After adding the declarative model and mapper tests, the complete repository
-suite contained 121 tests. The index metadata test raised the total to 122;
-all 122 passed together with dependency consistency, Ruff lint, Ruff
-formatting, and diff checks after the migration workflow was completed.
+The complete 27 August quality run collected 143 tests. Without database tests,
+132 passed and 11 integration tests were skipped. With
+`RUN_DATABASE_TESTS=1`, all 143 passed. Dependency consistency, Ruff lint, Ruff
+formatting, and Git diff checks also passed, and the final `opsdesk_test`
+Ticket count was zero.

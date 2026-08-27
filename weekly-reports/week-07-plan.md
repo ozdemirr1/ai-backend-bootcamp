@@ -201,6 +201,31 @@ two learning problems and obscure session and transaction fundamentals.
 - Translate expected persistence conflicts into application-level errors.
 - Add repository integration tests against `opsdesk_test`.
 
+#### Thursday Outcome
+
+- Added a validated `NewTicket` creation model so PostgreSQL, rather than the
+  service, owns durable Ticket identity generation.
+- Introduced a storage-independent `TicketRepository` protocol and adapted the
+  in-memory repository and service without weakening existing HTTP behavior.
+- Implemented SQLAlchemy create, lookup, ordered listing, update, and delete
+  operations with explicit ORM-to-domain mapping.
+- Kept `flush()` and `refresh()` inside the repository while leaving
+  `commit()` and `rollback()` to the caller-owned transaction boundary.
+- Translated expected SQLAlchemy integrity failures into a repository-level
+  conflict without leaking driver exceptions into the service contract.
+- Added `updated_at` handling for ORM-generated updates and verified it across
+  separate PostgreSQL transactions.
+- Created and migrated the dedicated `opsdesk_test` database under the
+  non-superuser `opsdesk_app` role.
+- Added guarded, opt-in integration fixtures that reject the wrong database,
+  superusers, missing migrations, and pre-existing Ticket data.
+- Added 11 PostgreSQL integration tests covering CRUD, generated identities,
+  commit visibility, rollback invisibility, no implicit commit, ordered
+  listing, missing rows, and timestamp advancement.
+- Passed the normal suite with 132 tests and 11 integration skips, then passed
+  all 143 tests with database integration enabled.
+- Confirmed the final `opsdesk_test` Ticket count was zero.
+
 ### Friday - FastAPI Database Integration
 
 - Provide a request-scoped SQLAlchemy session through FastAPI dependency

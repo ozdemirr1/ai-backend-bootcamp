@@ -106,3 +106,30 @@ Separate product repositories will make the three portfolio applications easy
 to understand and pin on GitHub without mixing their production code with the
 bootcamp's notes and laboratories. Creating them only when implementation
 begins avoids empty showcase repositories and premature structure.
+
+## Decision 006 - Repository and Transaction Ownership
+
+`TicketService` depends on a storage-independent `TicketRepository` protocol.
+The in-memory and SQLAlchemy implementations satisfy the same application
+contract. The SQLAlchemy repository owns persistence queries, ORM/domain
+mapping, `flush()`, and `refresh()`, but it does not call `commit()` or
+`rollback()`.
+
+Transaction ownership belongs to the application use-case boundary. The
+request-scoped FastAPI Session added next will commit a successful request and
+roll back a failed request. Destructive repository integration tests run only
+against the dedicated `opsdesk_test` database through the non-superuser
+application role.
+
+## Reason
+
+A use case may require multiple repository operations to succeed or fail as
+one unit. If a repository commits internally, it closes the transaction before
+the caller knows whether the complete workflow succeeded. Caller-owned
+transactions preserve atomicity, keep persistence behavior composable, and
+make commit and rollback outcomes directly testable.
+
+The repository protocol keeps services independent of SQLAlchemy and permits
+fast in-memory tests alongside real PostgreSQL integration tests. A dedicated,
+guarded test database makes destructive isolation explicit and prevents test
+cleanup from touching development data.

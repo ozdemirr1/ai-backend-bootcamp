@@ -49,9 +49,9 @@ Week 07
 - [x] Five persistence metadata tests and five mapper tests
 - [x] Complete quality checks with 121 passing tests
 - [x] Alembic migration workflow
-- [ ] PostgreSQL repository implementation
+- [x] PostgreSQL repository implementation
 - [ ] FastAPI database integration
-- [ ] Isolated database integration tests
+- [x] Isolated database integration tests
 
 ## Problems
 
@@ -130,13 +130,45 @@ Week 07
 - Passed lockfile, environment, package compatibility, Ruff lint, Ruff
   formatting, Git diff, and all 122 repository tests.
 
+## Week 07 Thursday Outcome
+
+- Added `NewTicket` to separate validated creation input from a persisted
+  Ticket with a database-generated identifier.
+- Introduced the `TicketRepository` protocol and kept `TicketService`
+  independent of concrete storage technology.
+- Adapted the in-memory repository and service while preserving existing unit
+  and HTTP behavior.
+- Implemented SQLAlchemy Ticket create, lookup, ordered listing, update, and
+  delete operations.
+- Kept repository `flush()` and `refresh()` behavior separate from
+  caller-owned `commit()` and `rollback()` decisions.
+- Translated expected persistence conflicts without leaking SQLAlchemy
+  exceptions into the application contract.
+- Added ORM-driven `updated_at` behavior and verified timestamp advancement in
+  separate PostgreSQL transactions.
+- Created and migrated the dedicated `opsdesk_test` database under
+  `opsdesk_app`.
+- Added guarded, opt-in integration fixtures and 11 real PostgreSQL repository
+  tests.
+- Verified commit visibility, rollback invisibility, no implicit repository
+  commit, generated identity, CRUD behavior, ordering, missing records, and
+  final test cleanup.
+- Passed lockfile, environment, package compatibility, Ruff lint, Ruff
+  formatting, and Git diff checks.
+- Passed 132 tests with 11 integration skips in the default run and all 143
+  tests with database integration enabled.
+- Confirmed the final `opsdesk_test` Ticket count was zero.
+
 ## Next Tasks
 
-1. Implement the SQLAlchemy Ticket repository boundary.
-2. Practice explicit `flush`, `commit`, `rollback`, and `refresh` behavior.
-3. Create the dedicated `opsdesk_test` integration-test database safely.
-4. Add isolated PostgreSQL repository integration tests.
-5. Preserve the existing domain and service contracts.
+1. Add a request-scoped SQLAlchemy Session dependency.
+2. Compose `SqlAlchemyTicketRepository` and `TicketService` at the FastAPI
+   boundary.
+3. Commit successful request transactions and roll back failed requests.
+4. Preserve the intentional `201`, `204`, `404`, `409`, and `422` HTTP
+   behavior.
+5. Add API integration tests that prove durable storage without sharing
+   Sessions between requests.
 
 ## Week 07 Guardrails
 

@@ -22,11 +22,15 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Database identity, default, timestamp, and constraint metadata tests
 - Reviewed and reversible Alembic schema history
 - Composite index for status-filtered Ticket listing
+- Storage-independent Ticket repository protocol
 - In-memory ticket repository
+- PostgreSQL-backed SQLAlchemy Ticket repository
+- Explicit repository flush and caller-owned transaction boundaries
 - Ticket application service with complete CRUD workflows
 - Dependency-injected FastAPI routes
 - Explicit HTTP status and application-error mapping
 - Isolated endpoint, schema, domain, repository, and service tests
+- Dedicated-database PostgreSQL repository integration tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -88,9 +92,18 @@ priority and status strings cross the boundary through explicit mapper
 functions, which convert them to domain enums and apply domain business fields
 back to an existing record without overwriting identity or timestamps.
 
-The current application routes still use the in-memory repository. The next
-Week 07 steps add a PostgreSQL repository and request-scoped FastAPI sessions
-without weakening the existing domain or HTTP boundaries.
+`TicketService` now depends on the storage-independent `TicketRepository`
+protocol rather than a concrete implementation. The in-memory repository
+continues to support fast unit and API tests, while
+`SqlAlchemyTicketRepository` implements the same service-facing operations
+against PostgreSQL.
+
+The SQLAlchemy repository owns queries, persistence mapping, `flush()`, and
+`refresh()` where server-generated values must be loaded. It deliberately does
+not call `commit()` or `rollback()`. Transaction ownership remains outside the
+repository so a caller can compose multiple operations into one atomic unit of
+work. The application routes still use in-memory storage until the
+request-scoped Session dependency is added.
 
 ## Alembic Migration Workflow
 
@@ -218,3 +231,24 @@ Run the complete repository test suite:
 ```bash
 uv run pytest
 ```
+
+PostgreSQL integration tests are opt-in and use only the dedicated
+`opsdesk_test` database:
+
+```bash
+RUN_DATABASE_TESTS=1 \
+uv run pytest \
+  projects/month-02-ticket-api/tests/test_sqlalchemy_repositories.py \
+  -v
+```
+
+The integration-test guard derives a test URL without tracking another secret,
+verifies the exact database name, rejects a superuser connection, requires the
+migrated `tickets` table, and refuses to start when existing Ticket data is
+present. Per-test transactions roll back ordinary CRUD work. Tests that verify
+real commits remove only the identifiers they created. Never point these tests
+at `opsdesk_dev`.
+
+The complete quality run on 27 August 2026 produced `132 passed, 11 skipped`
+without database tests and `143 passed` with `RUN_DATABASE_TESTS=1`. The final
+Ticket count in `opsdesk_test` was zero.

@@ -16,6 +16,37 @@ class TicketStatus(str, Enum):
     CLOSED = "closed"
 
 
+def _normalize_ticket_title(value: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError("title must be a str")
+
+    normalized = value.strip()
+
+    if len(normalized) < 3:
+        raise ValueError("title must be at least 3 characters")
+
+    if len(normalized) > 100:
+        raise ValueError("title must be at most 100 characters")
+
+    return normalized
+
+
+@dataclass(frozen=True)
+class NewTicket:
+    title: str
+    priority: TicketPriority
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.priority, TicketPriority):
+            raise TypeError("priority must be a TicketPriority instance")
+
+        object.__setattr__(
+            self,
+            "title",
+            _normalize_ticket_title(self.title),
+        )
+
+
 @dataclass
 class Ticket:
     ticket_id: int
@@ -33,28 +64,13 @@ class Ticket:
         if not isinstance(self.status, TicketStatus):
             raise TypeError("status must be a TicketStatus instance")
 
-        self.title = self._normalize_title(self.title)
+        self.title = _normalize_ticket_title(self.title)
 
         if self.ticket_id <= 0:
             raise ValueError("ticket_id must be positive")
 
-    @staticmethod
-    def _normalize_title(value: str) -> str:
-        if not isinstance(value, str):
-            raise TypeError("title must be a str")
-
-        normalized = value.strip()
-
-        if len(normalized) < 3:
-            raise ValueError("title must be at least 3 characters")
-
-        if len(normalized) > 100:
-            raise ValueError("title must be at most 100 characters")
-
-        return normalized
-
     def change_title(self, new_title: str) -> None:
-        normalized = self._normalize_title(new_title)
+        normalized = _normalize_ticket_title(new_title)
         self.title = normalized
 
     def change_priority(self, new_priority: TicketPriority) -> None:

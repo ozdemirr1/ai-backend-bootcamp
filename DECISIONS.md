@@ -65,8 +65,8 @@ variable through Pydantic Settings. The real `.env` file remains local, while
 
 Engine and session construction remain in testable factory functions. Creating
 an engine or a session does not itself prove connectivity; an explicit query is
-used when a real database connection must be verified. Sessions will later be
-created per FastAPI request instead of being shared across requests.
+used when a real database connection must be verified. Sessions are now
+created through a FastAPI request dependency instead of shared across requests.
 
 ## Reason
 
@@ -78,7 +78,7 @@ the same time.
 Environment-based configuration prevents credentials from being hardcoded or
 tracked. Factory functions avoid reading local configuration during module
 import and let unit tests supply safe, synthetic settings without contacting
-PostgreSQL. Request-scoped sessions will provide an explicit unit-of-work
+PostgreSQL. Request-scoped sessions provide an explicit unit-of-work
 boundary and prevent unrelated requests from sharing mutable persistence state.
 
 ## Decision 005 - Stable Learning Module and Product Repository Names
@@ -116,8 +116,10 @@ mapping, `flush()`, and `refresh()`, but it does not call `commit()` or
 `rollback()`.
 
 Transaction ownership belongs to the application use-case boundary. The
-request-scoped FastAPI Session added next will commit a successful request and
-roll back a failed request. Destructive repository integration tests run only
+request-scoped FastAPI Session dependency commits on successful completion and
+rolls back when an exception occurs, including during commit. It closes the
+Session in `finally` and uses function-scoped finalization before response
+transmission. Destructive repository and HTTP integration tests run only
 against the dedicated `opsdesk_test` database through the non-superuser
 application role.
 
@@ -133,3 +135,26 @@ The repository protocol keeps services independent of SQLAlchemy and permits
 fast in-memory tests alongside real PostgreSQL integration tests. A dedicated,
 guarded test database makes destructive isolation explicit and prevents test
 cleanup from touching development data.
+
+## Decision 007 - Application Lifecycle and Test Composition
+
+The Ticket API uses `create_app()` with an application lifespan that creates
+the Engine and Session factory at startup and disposes the Engine on exit.
+The factory lives in `app.state`; mutable Sessions do not. Route definitions
+remain in an `APIRouter`, and the default service dependency now composes the
+PostgreSQL repository.
+
+Fast HTTP tests create an application without database startup and explicitly
+override the service with an in-memory implementation. PostgreSQL HTTP tests
+provide a guarded `opsdesk_test` factory but retain the real Session and
+service dependency chain. No application startup hook creates or migrates
+tables.
+
+## Reason
+
+Separating application construction from resource startup avoids import-time
+configuration and makes test composition explicit. It preserves inexpensive
+HTTP contract tests while enabling focused tests of real commits and database
+visibility. Lifespan and Session mocks verify cleanup paths, but do not replace
+HTTP failure tests or the manual persistence-after-restart check. The latter
+checks remain scheduled for 29 August rather than being assumed complete.

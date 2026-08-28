@@ -237,12 +237,53 @@ two learning problems and obscure session and transaction fundamentals.
 - Verify that data remains available after application restart.
 - Preserve intentional `201`, `204`, `404`, `409`, and `422` behavior.
 
-### Saturday - Isolation and Complete Verification
+#### Friday Outcome - Partial Verification Complete
 
-- Recreate or migrate the dedicated test database safely.
-- Make database tests independent of execution order.
-- Ensure each test leaves a predictable database state.
-- Test persistence, rollback, uniqueness, missing resources, and invalid input.
+- Implemented the application lifespan, request-scoped Session dependency, and
+  PostgreSQL repository/service composition.
+- Added an application factory and moved routes onto an `APIRouter` while
+  preserving their existing contracts.
+- Kept in-memory API tests isolated through per-test application creation and
+  service dependency overrides without starting the database lifespan.
+- Passed 39 focused tests: 31 API tests and eight database/lifecycle tests.
+- Passed one PostgreSQL API integration test proving creation, committed
+  visibility through a separate connection, and subsequent HTTP lookup.
+- Confirmed zero remaining Tickets in `opsdesk_test` after cleanup.
+- Passed final Ruff lint and formatting checks (90 files), `git diff --check`,
+  and full regression runs: 138 passed / 12 skipped without database tests,
+  150 passed with database tests. The final test-database Ticket count was zero.
+- Stopped on 28 August at Furkan's request. The unfinished checks below are
+  carried into Saturday; neither Friday verification nor Week 07 is marked
+  fully complete. The existing suite is green; the new scenarios below still
+  need implementation and verification. Staged review, commit, and push remain.
+
+### Saturday - Friday Carry-Over, Isolation, and Complete Verification
+
+Complete the carried-over work first; do not rebuild the working foundation.
+
+#### Friday Carry-Over
+
+- Confirm the existing `opsdesk_test` migration revision and empty Ticket
+  state; recreate or migrate only if inspection shows a need.
+- Extend PostgreSQL HTTP tests to listing/filtering, PATCH, DELETE, `404`,
+  `422`, and the existing expected-conflict contract. Ticket titles are not
+  unique: do not invent a duplicate-title rule to manufacture a `409` test.
+- Test a write followed by request failure and verify no partial committed row.
+- Inject a commit failure through the HTTP boundary and verify rollback,
+  cleanup, and absence of a false `201` response.
+- Verify independent Session instances across requests.
+- Inspect the manual API runtime's target database and schema before starting
+  the demonstration. The Alembic-only override does not configure the API;
+  preserve `opsdesk_dev` as the Week 06 laboratory.
+- Verify POST/read persistence after a real server restart and clean only the
+  demonstration records created for that check.
+
+#### Complete Verification and Review
+
+- Make database tests independent of execution order and ensure each test
+  leaves a predictable state, including tests that commit or raise errors.
+- Review persistence constraints and error translation without weakening the
+  existing domain or HTTP contract.
 - Run the complete repository quality suite.
 - Review diffs for credentials, local paths, and destructive database targets.
 - Update README, notes, decisions, and weekly status.
@@ -252,7 +293,8 @@ two learning problems and obscure session and transaction fundamentals.
 
 - Answer SQLAlchemy, session, transaction, and migration interview questions.
 - Write the Week 07 report.
-- Merge the reviewed pull request and clean feature branches.
+- Merge the reviewed pull request and clean feature branches only after the
+  verification goals and definition of done are satisfied.
 - Prepare Week 08 without starting authentication early.
 
 ## Likely Project Changes

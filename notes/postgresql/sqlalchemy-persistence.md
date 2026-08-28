@@ -8,7 +8,7 @@ The Week 07 persistence stack has separate layers:
 - Psycopg implements the PostgreSQL driver protocol used by Python.
 - SQLAlchemy provides engine, connection, transaction, SQL expression, and ORM
   abstractions on top of the driver.
-- Alembic will own explicit, versioned schema migration history.
+- Alembic owns explicit, versioned schema migration history.
 - Pydantic Settings loads and validates application configuration.
 
 An ORM does not replace PostgreSQL knowledge. SQLAlchemy-generated operations
@@ -86,8 +86,9 @@ current factory uses:
 These options do not automatically commit application work. Transaction
 ownership must still be defined explicitly.
 
-FastAPI will eventually create one Session per request. A Session must not be
-shared globally between concurrent requests.
+FastAPI now obtains a Session through a request dependency. The shared object
+is the Session factory, not a mutable Session. Sessions must not be shared
+globally between concurrent requests.
 
 ## Transaction Lifecycle
 
@@ -100,8 +101,9 @@ after the first query: active transaction
 
 Even a `SELECT` begins a database transaction when the Session first performs
 work. Closing the Session releases its connection and ends an uncommitted
-transaction. Future write workflows must choose `commit` or `rollback`
-deliberately and verify both behaviors with isolated tests.
+transaction. The request dependency now chooses `commit` or `rollback`
+explicitly; successful repository persistence and rollback behavior have also
+been exercised with isolated PostgreSQL tests.
 
 ## Declarative Persistence Mapping
 
@@ -126,7 +128,7 @@ default-expression distinction: `server_default=text("'open'")` produces
 produce a value with additional literal quote characters.
 
 The ORM metadata intentionally repeats the Week 06 database constraints.
-Alembic will use this metadata to create reviewable migrations, while
+Alembic uses this metadata to create reviewable migrations, while
 PostgreSQL remains the final authority that enforces the resulting schema.
 
 ## Persistence and Domain Mapping
@@ -210,10 +212,12 @@ identity. `Ticket` represents a domain entity with a positive durable
 identifier. This distinction prevents the service from inventing database
 identifiers and keeps `GENERATED ALWAYS AS IDENTITY` authoritative.
 
-Expected SQLAlchemy integrity failures are translated into
+The repository's create operation translates SQLAlchemy integrity failures into
 `TicketRepositoryConflictError`. The service then translates that persistence-
-neutral error into its existing application-level conflict error. Driver and
-ORM exceptions therefore do not leak into the HTTP contract.
+neutral error into its existing application-level conflict error. This keeps
+expected creation conflicts independent of the driver. It is not blanket
+translation of every database failure: update, delete, and commit failures
+must also be considered in the HTTP error-path review.
 
 ## Flush, Refresh, Commit, and Rollback
 
@@ -225,8 +229,8 @@ persistence record.
 
 `commit()` makes the complete transaction durable and visible to other
 connections. `rollback()` discards its uncommitted effects. The repository
-does neither: transaction ownership belongs to the caller. This permits a
-future request handler to compose several repository operations into one
+does neither: transaction ownership belongs to the caller. This permits the
+request boundary to compose several repository operations into one
 atomic unit of work and roll all of them back when any step fails.
 
 After an `IntegrityError` during flush, the Session transaction is failed and
@@ -296,3 +300,72 @@ The complete 27 August quality run collected 143 tests. Without database tests,
 `RUN_DATABASE_TESTS=1`, all 143 passed. Dependency consistency, Ruff lint, Ruff
 formatting, and Git diff checks also passed, and the final `opsdesk_test`
 Ticket count was zero.
+
+## FastAPI Lifespan and Request Transactions - 28 August
+
+The application factory creates the FastAPI instance and includes the router.
+The default lifespan loads settings at startup, constructs the Engine and
+Session factory, and stores the factory in `app.state`. Engine disposal is in
+`finally`, including the path where Session factory creation fails. Importing
+the application does not read the local settings or open a database connection.
+
+The lifespan is an async context manager because of the ASGI application
+lifecycle. Database Sessions, repository operations, and routes remain
+synchronous; no async SQLAlchemy or new driver was introduced.
+
+The dependency chain is:
+
+```text
+app.state.session_factory -> get_session -> SQLAlchemy repository -> TicketService
+```
+
+`get_session` yields one Session and owns its transaction boundary:
+
+- Normal completion: commit, then close.
+- An exception during the request: rollback, re-raise, then close.
+- An exception during commit: rollback, re-raise, then close.
+
+The commit is inside the same `try` as `yield`, not outside the exception
+handler. `Depends(get_session, scope="function")` requests cleanup before the
+HTTP response is sent. This is important because a successful route return is
+not itself proof that the database transaction committed.
+
+Eight database tests now cover the original two factories plus six Session
+and lifespan scenarios. These lifecycle tests use mocks, so their success
+proves control flow without proving every real HTTP/database failure outcome.
+
+## Fast Tests Versus PostgreSQL HTTP Tests
+
+The existing API fixture creates a fresh application with
+`lifespan_handler=None` and overrides `get_ticket_service` with an in-memory
+service. Disabling the lifespan alone does not select in-memory storage; the
+explicit override does that. All 31 existing API tests passed alongside the
+eight database tests (`39 passed`).
+
+The first PostgreSQL API test disables only production startup and supplies
+the guarded test Engine's Session factory. It leaves `get_session` and
+`get_ticket_service` unchanged, so the POST uses the real transaction and
+repository chain. The test checks `201`, a generated identifier, server-owned
+status, committed visibility through a separate connection, and a subsequent
+HTTP GET. Cleanup removes only its unique probe title in `finally`.
+
+That focused test passed and the final `opsdesk_test` Ticket count was zero.
+Although its name is `test_create_ticket_commits_before_response`, the current
+assertions observe state after `TestClient` returns. They prove successful
+commit visibility, not by themselves the ordering of response transmission or
+the absence of a false success when commit fails.
+
+The following verification is deferred to 29 August: PostgreSQL HTTP
+list/update/delete and error cases, a failed request after a write, commit
+failure without false success, independent request Sessions, and a real
+server-restart demonstration. The final 28 August full-suite runs passed:
+138 tests with 12 integration skips under `RUN_DATABASE_TESTS=0`, and all 150
+tests under `RUN_DATABASE_TESTS=1`. Ruff lint, formatting (90 files), and Git
+diff checks passed, and the final test-database Ticket count was zero. The
+27 August totals above remain historical evidence; a green current suite does
+not imply that the deferred scenarios have already been tested.
+
+For the manual runtime check, inspect the configured database without printing
+the password or complete URL. `ALEMBIC_DATABASE_NAME` selects a migration
+target only; the API still uses `DATABASE_URL`. Do not assume a migration
+performed on one database prepared a different database for the API.

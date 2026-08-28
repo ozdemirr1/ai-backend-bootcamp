@@ -28,9 +28,12 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Explicit repository flush and caller-owned transaction boundaries
 - Ticket application service with complete CRUD workflows
 - Dependency-injected FastAPI routes
+- Application factory and startup/shutdown database lifespan
+- Request-scoped Sessions with explicit commit, rollback, and cleanup
 - Explicit HTTP status and application-error mapping
 - Isolated endpoint, schema, domain, repository, and service tests
 - Dedicated-database PostgreSQL repository integration tests
+- Initial PostgreSQL HTTP creation and lookup integration test
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -102,8 +105,27 @@ The SQLAlchemy repository owns queries, persistence mapping, `flush()`, and
 `refresh()` where server-generated values must be loaded. It deliberately does
 not call `commit()` or `rollback()`. Transaction ownership remains outside the
 repository so a caller can compose multiple operations into one atomic unit of
-work. The application routes still use in-memory storage until the
-request-scoped Session dependency is added.
+work. The default application now composes the SQLAlchemy repository and
+service through a request-scoped Session dependency.
+
+## Application and Request Lifecycle
+
+`create_app()` builds a fresh application using the shared route definitions.
+The default `database_lifespan` loads settings and creates an Engine and
+Session factory at startup. The factory is stored in `app.state`; the Engine
+is disposed on exit, including when factory creation fails. The lifespan's
+async context-manager interface does not change the synchronous database API.
+
+`get_session` creates a Session for database-backed requests, yields it to the
+service dependency, commits on success, rolls back on an exception (including
+a commit failure), and closes the Session in `finally`. Its function scope
+places finalization before the response is sent. The repository continues to
+flush without deciding whether the request should commit.
+
+Fast API tests create an application without the database lifespan and override
+the service with a fresh in-memory implementation. The PostgreSQL API test
+instead injects a guarded `opsdesk_test` Session factory while keeping the real
+Session and service dependencies.
 
 ## Alembic Migration Workflow
 
@@ -155,6 +177,13 @@ revisions must be inspected for unexpected tables, constraints, indexes, data
 operations, and destructive statements before they are applied.
 
 ## Run the Application
+
+The default application now requires valid database settings and an existing
+compatible schema. Startup does not apply migrations or seed data. Verify the
+intended database and migration state before manual writes. Setting
+`ALEMBIC_DATABASE_NAME` affects Alembic only, not the API's `DATABASE_URL`.
+Preserve the Week 06 `opsdesk_dev` laboratory; do not run blind migrations or
+destructive cleanup against it.
 
 From the repository root, run:
 
@@ -208,12 +237,12 @@ dependency and do not access the repository directly. They convert validated
 API strings into domain enums, translate application errors into `404` or `409`
 HTTP responses, and map domain tickets into the explicit response schema.
 
-The default application service uses process-local in-memory storage. Data is
-lost when the server restarts. Endpoint tests replace that dependency with a
-fresh repository and service for every test, so results do not depend on test
-order or data left by another test.
+The default application uses PostgreSQL storage. In-memory storage is retained
+for isolated unit/API tests, not as the default runtime. Creation and committed
+visibility through the HTTP path have been verified; the manual PostgreSQL
+server-restart demonstration is scheduled for 29 August.
 
-The complete CRUD lifecycle was also verified manually on 15 August 2026 with
+The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
 creation, listing, filtering, limiting, detail lookup, partial update, deletion,
 input validation, and missing-resource behavior.
@@ -239,6 +268,7 @@ PostgreSQL integration tests are opt-in and use only the dedicated
 RUN_DATABASE_TESTS=1 \
 uv run pytest \
   projects/month-02-ticket-api/tests/test_sqlalchemy_repositories.py \
+  projects/month-02-ticket-api/tests/test_database_api.py \
   -v
 ```
 
@@ -246,9 +276,23 @@ The integration-test guard derives a test URL without tracking another secret,
 verifies the exact database name, rejects a superuser connection, requires the
 migrated `tickets` table, and refuses to start when existing Ticket data is
 present. Per-test transactions roll back ordinary CRUD work. Tests that verify
-real commits remove only the identifiers they created. Never point these tests
-at `opsdesk_dev`.
+real commits remove only their own records: repository tests use generated
+identifiers, and the first API test uses its unique probe title. Never point
+these tests at `opsdesk_dev`.
 
 The complete quality run on 27 August 2026 produced `132 passed, 11 skipped`
 without database tests and `143 passed` with `RUN_DATABASE_TESTS=1`. The final
 Ticket count in `opsdesk_test` was zero.
+
+On 28 August, the focused API and database/lifecycle run passed 39 tests; the
+first PostgreSQL API test passed separately and left zero Tickets behind. It
+verified a successful POST, visibility through an independent connection, and
+a subsequent GET. It does not alone prove HTTP behavior when commit fails.
+Full PostgreSQL HTTP CRUD/error coverage, request isolation checks, and the
+manual restart demonstration are carried to 29 August.
+
+The final 28 August regression run produced `138 passed, 12 skipped` with
+`RUN_DATABASE_TESTS=0` and `150 passed` with `RUN_DATABASE_TESTS=1`. Ruff lint,
+formatting (90 files), and `git diff --check` passed. The final `opsdesk_test`
+Ticket count was zero. These results cover the implemented suite, not the
+additional scenarios scheduled for 29 August.

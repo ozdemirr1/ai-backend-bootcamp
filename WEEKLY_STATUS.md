@@ -50,7 +50,9 @@ Week 07
 - [x] Complete quality checks with 121 passing tests
 - [x] Alembic migration workflow
 - [x] PostgreSQL repository implementation
-- [ ] FastAPI database integration
+- [x] FastAPI lifespan, application factory, and request-scoped Session wiring
+- [x] PostgreSQL API creation and subsequent lookup integration test
+- [ ] Complete PostgreSQL HTTP failure-path and restart verification
 - [x] Isolated database integration tests
 
 ## Problems
@@ -159,16 +161,49 @@ Week 07
   tests with database integration enabled.
 - Confirmed the final `opsdesk_test` Ticket count was zero.
 
-## Next Tasks
+## Week 07 Friday Outcome - 28 August
 
-1. Add a request-scoped SQLAlchemy Session dependency.
-2. Compose `SqlAlchemyTicketRepository` and `TicketService` at the FastAPI
-   boundary.
-3. Commit successful request transactions and roll back failed requests.
-4. Preserve the intentional `201`, `204`, `404`, `409`, and `422` HTTP
-   behavior.
-5. Add API integration tests that prove durable storage without sharing
-   Sessions between requests.
+- Added an application lifespan that constructs the Engine and Session factory
+  at startup and disposes the Engine on shutdown or setup failure.
+- Added a request-scoped Session dependency with commit on success, rollback
+  on an exception or commit failure, and unconditional Session cleanup.
+- Selected function-scoped dependency finalization so transaction completion
+  occurs before FastAPI sends the response.
+- Composed `SqlAlchemyTicketRepository` and `TicketService` through dependency
+  injection and removed the default process-global in-memory service.
+- Added `create_app()` and preserved fast API tests with a fresh application,
+  disabled database lifespan, and an explicit in-memory service override.
+- Passed 39 focused tests: 31 existing API tests and eight database-factory,
+  Session-finalization, and lifespan tests.
+- Passed the first real PostgreSQL API integration test: POST returned `201`,
+  a separate database connection saw the committed row, and a subsequent GET
+  returned the same Ticket. The production Session/service dependencies were
+  used with a guarded test-database Session factory.
+- Confirmed `opsdesk_test` contained zero Tickets after targeted cleanup.
+- Passed the final whole-repository Ruff lint and formatting checks (90 files
+  already formatted), plus `git diff --check`.
+- Passed 138 tests with 12 integration skips under `RUN_DATABASE_TESTS=0`
+  and all 150 tests under `RUN_DATABASE_TESTS=1`.
+- Confirmed zero Tickets in `opsdesk_test` after the complete integration run.
+  Staged review, commit, and push remain the Git closing steps.
+- Stopped feature work by choice and moved the unfinished Friday verification
+  to Saturday. Week 07 is not yet complete.
+
+## Next Tasks - Saturday, 29 August
+
+1. Resume PostgreSQL HTTP integration tests for listing, filtering, updating,
+   deleting, missing resources, invalid input, and expected conflict handling.
+2. Verify rollback after a write followed by a request failure, commit failure
+   without a false successful response, and separate Sessions per request.
+   Mock lifecycle tests and the successful POST test do not replace these
+   end-to-end failure checks.
+3. Check the manual runtime's database target and migration state without
+   exposing credentials. `ALEMBIC_DATABASE_NAME` does not change the API's
+   `DATABASE_URL`; preserve the Week 06 SQL laboratory.
+4. Demonstrate persistence across a real application restart, using only
+   explicitly identified demonstration records for cleanup.
+5. Complete Saturday's isolation review and full quality checks, update the
+   evidence, and prepare the Week 07 PR only after the remaining checks pass.
 
 ## Week 07 Guardrails
 

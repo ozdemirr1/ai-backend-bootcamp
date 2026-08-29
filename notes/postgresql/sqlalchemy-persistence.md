@@ -355,15 +355,31 @@ assertions observe state after `TestClient` returns. They prove successful
 commit visibility, not by themselves the ordering of response transmission or
 the absence of a false success when commit fails.
 
-The following verification is deferred to 29 August: PostgreSQL HTTP
-list/update/delete and error cases, a failed request after a write, commit
-failure without false success, independent request Sessions, and a real
-server-restart demonstration. The final 28 August full-suite runs passed:
-138 tests with 12 integration skips under `RUN_DATABASE_TESTS=0`, and all 150
-tests under `RUN_DATABASE_TESTS=1`. Ruff lint, formatting (90 files), and Git
-diff checks passed, and the final test-database Ticket count was zero. The
-27 August totals above remain historical evidence; a green current suite does
-not imply that the deferred scenarios have already been tested.
+On 29 August, the PostgreSQL HTTP suite grew to eight scenarios. It verifies
+committed create/read behavior, filtered and limited listing, committed update
+and delete operations, `404` and `422` responses without state changes,
+rollback after a deliberately flushed write, commit failure without a false
+`201`, and a distinct Session for each request.
+
+The rollback probe is a hidden route added only to a fixture-created test
+application. The commit failure uses a test-only `Session` subclass. Neither is
+part of the production application. This bounded fault injection exercises the
+real dependency finalizer and PostgreSQL transaction while keeping the failure
+mechanism explicit. A natural database-backed `409` was not manufactured:
+Ticket titles are not unique, and adding a uniqueness rule solely for a test
+would change the domain. The existing fast HTTP contract test continues to
+cover application-error-to-`409` translation.
+
+The manual restart check safely changed only the process-local database target
+to `opsdesk_test`, created one identified Ticket, stopped Uvicorn, restarted it,
+and retrieved the same row. Deleting it through the API produced `204`; a later
+lookup produced `404`, and PostgreSQL confirmed zero remaining Tickets. This
+proves persistence beyond both a request and an application process lifetime.
+
+The final 29 August runs passed 138 tests with 19 integration skips under
+`RUN_DATABASE_TESTS=0` and all 157 tests under `RUN_DATABASE_TESTS=1`. Ruff,
+formatting for 90 files, dependency checks, Git diff checks, Alembic head state,
+and the final zero-row test-database check also passed.
 
 For the manual runtime check, inspect the configured database without printing
 the password or complete URL. `ALEMBIC_DATABASE_NAME` selects a migration

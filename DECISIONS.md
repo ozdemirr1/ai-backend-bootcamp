@@ -156,5 +156,10 @@ Separating application construction from resource startup avoids import-time
 configuration and makes test composition explicit. It preserves inexpensive
 HTTP contract tests while enabling focused tests of real commits and database
 visibility. Lifespan and Session mocks verify cleanup paths, but do not replace
-HTTP failure tests or the manual persistence-after-restart check. The latter
-checks remain scheduled for 29 August rather than being assumed complete.
+real HTTP failure tests or a persistence-after-restart check. The PostgreSQL
+HTTP suite therefore also exercises rollback after a flushed write, commit
+failure without a false success response, and separate Sessions per request.
+Test-only failure injection stays inside fixture-created applications. A manual
+Uvicorn stop/start check against `opsdesk_test` proves that committed data
+survives the application process and is cleaned up by its exact identifier
+afterward.

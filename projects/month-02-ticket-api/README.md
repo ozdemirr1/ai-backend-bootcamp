@@ -33,7 +33,7 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Explicit HTTP status and application-error mapping
 - Isolated endpoint, schema, domain, repository, and service tests
 - Dedicated-database PostgreSQL repository integration tests
-- Initial PostgreSQL HTTP creation and lookup integration test
+- Eight PostgreSQL HTTP transaction and lifecycle integration tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -124,8 +124,8 @@ flush without deciding whether the request should commit.
 
 Fast API tests create an application without the database lifespan and override
 the service with a fresh in-memory implementation. The PostgreSQL API test
-instead injects a guarded `opsdesk_test` Session factory while keeping the real
-Session and service dependencies.
+suite instead injects a guarded `opsdesk_test` Session factory while keeping
+the real Session and service dependencies.
 
 ## Alembic Migration Workflow
 
@@ -238,9 +238,9 @@ API strings into domain enums, translate application errors into `404` or `409`
 HTTP responses, and map domain tickets into the explicit response schema.
 
 The default application uses PostgreSQL storage. In-memory storage is retained
-for isolated unit/API tests, not as the default runtime. Creation and committed
-visibility through the HTTP path have been verified; the manual PostgreSQL
-server-restart demonstration is scheduled for 29 August.
+for isolated unit/API tests, not as the default runtime. Committed CRUD,
+failure rollback, request isolation, and persistence across a real application
+restart have been verified against the dedicated test database.
 
 The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
@@ -275,10 +275,9 @@ uv run pytest \
 The integration-test guard derives a test URL without tracking another secret,
 verifies the exact database name, rejects a superuser connection, requires the
 migrated `tickets` table, and refuses to start when existing Ticket data is
-present. Per-test transactions roll back ordinary CRUD work. Tests that verify
-real commits remove only their own records: repository tests use generated
-identifiers, and the first API test uses its unique probe title. Never point
-these tests at `opsdesk_dev`.
+present. Per-test transactions roll back ordinary repository work. HTTP tests
+that verify real commits remove only records they created, using unique probe
+titles or captured identifiers. Never point these tests at `opsdesk_dev`.
 
 The complete quality run on 27 August 2026 produced `132 passed, 11 skipped`
 without database tests and `143 passed` with `RUN_DATABASE_TESTS=1`. The final
@@ -296,3 +295,19 @@ The final 28 August regression run produced `138 passed, 12 skipped` with
 formatting (90 files), and `git diff --check` passed. The final `opsdesk_test`
 Ticket count was zero. These results cover the implemented suite, not the
 additional scenarios scheduled for 29 August.
+
+On 29 August, eight PostgreSQL HTTP tests verified committed creation and later
+lookup, filtering and limiting, committed update/delete behavior, `404` and
+`422` paths, rollback after a flushed write, commit failure without a false
+`201`, and a distinct Session per request. Test-only routes and fault-injecting
+Session classes exist only in fixture-created applications.
+
+A manual Uvicorn stop/start check used a process-local override targeting
+`opsdesk_test`; it did not modify `.env`. A precisely identified Ticket was
+created, observed directly in PostgreSQL, retrieved after process restart, and
+then deleted through the API. PostgreSQL ended with zero Tickets.
+
+The final 29 August quality run produced `138 passed, 19 skipped` with database
+tests disabled and `157 passed` with `RUN_DATABASE_TESTS=1`. Dependency checks,
+Ruff lint, formatting for 90 files, `git diff --check`, the zero-row isolation
+check, and Alembic revision `e07f08d4399d` all passed.

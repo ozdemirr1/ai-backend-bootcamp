@@ -52,7 +52,7 @@ Week 07
 - [x] PostgreSQL repository implementation
 - [x] FastAPI lifespan, application factory, and request-scoped Session wiring
 - [x] PostgreSQL API creation and subsequent lookup integration test
-- [ ] Complete PostgreSQL HTTP failure-path and restart verification
+- [x] Complete PostgreSQL HTTP failure-path and restart verification
 - [x] Isolated database integration tests
 
 ## Problems
@@ -189,21 +189,44 @@ Week 07
 - Stopped feature work by choice and moved the unfinished Friday verification
   to Saturday. Week 07 is not yet complete.
 
-## Next Tasks - Saturday, 29 August
+## Week 07 Saturday Outcome - 29 August
 
-1. Resume PostgreSQL HTTP integration tests for listing, filtering, updating,
-   deleting, missing resources, invalid input, and expected conflict handling.
-2. Verify rollback after a write followed by a request failure, commit failure
-   without a false successful response, and separate Sessions per request.
-   Mock lifecycle tests and the successful POST test do not replace these
-   end-to-end failure checks.
-3. Check the manual runtime's database target and migration state without
-   exposing credentials. `ALEMBIC_DATABASE_NAME` does not change the API's
-   `DATABASE_URL`; preserve the Week 06 SQL laboratory.
-4. Demonstrate persistence across a real application restart, using only
-   explicitly identified demonstration records for cleanup.
-5. Complete Saturday's isolation review and full quality checks, update the
-   evidence, and prepare the Week 07 PR only after the remaining checks pass.
+- Confirmed that `opsdesk_test` was empty, migrated to revision `e07f08d4399d`
+  at `head`, and free of pending Alembic upgrade operations before testing.
+- Expanded the PostgreSQL HTTP suite to eight integration tests using the real
+  request Session, SQLAlchemy repository, service, routes, and PostgreSQL
+  transaction boundary.
+- Verified committed create/read behavior, status filtering and limiting,
+  committed update/delete behavior, missing-resource `404` responses, and
+  validation `422` responses.
+- Verified that an exception after `flush()` rolls back the write, an injected
+  commit failure returns no false `201` and leaves no row, and two requests use
+  distinct Session instances.
+- Kept the existing `409` application contract covered by fast tests without
+  inventing a duplicate-title constraint that the relational model does not
+  require.
+- Started the application against `opsdesk_test` using a process-local database
+  override without changing `.env` or exposing credentials.
+- Created Ticket `97`, stopped and restarted Uvicorn, retrieved the same Ticket
+  after restart, then deleted only that demonstration record. The final Ticket
+  count was zero and port `8000` was closed cleanly.
+- Passed dependency consistency checks, Ruff lint, Ruff formatting for 90
+  files, and `git diff --check`.
+- Passed `138` tests with `19` integration skips when database tests were
+  disabled and all `157` tests when they were enabled.
+- Reconfirmed zero Tickets in `opsdesk_test` and Alembic revision
+  `e07f08d4399d` after the complete run.
+
+## Next Tasks - Sunday, 30 August
+
+1. Review the final Week 07 diff and create the closing commit.
+2. Push the verified branch and open or refresh the Week 07 pull request.
+3. Complete the SQLAlchemy, Session, transaction, repository, and Alembic
+   interview review.
+4. Write the Week 07 report and review the pull request against the definition
+   of done.
+5. Merge only after review and green checks, then synchronize `main`, clean the
+   feature branches, and prepare Week 08 without starting authentication early.
 
 ## Week 07 Guardrails
 

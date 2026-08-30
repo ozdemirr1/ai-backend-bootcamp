@@ -2,23 +2,22 @@
 
 ## Current Week
 
-Week 07
+Week 08
 
 ## Date
 
-24 August - 30 August 2026
+31 August - 6 September 2026
 
 ## Current Focus
 
-- SQLAlchemy 2 fundamentals
-- Psycopg PostgreSQL connectivity
-- Environment-based database configuration
-- Engine, connection, session, and transaction responsibilities
-- Declarative persistence mappings
-- Alembic migration fundamentals
-- PostgreSQL Ticket repository
-- FastAPI request-scoped database sessions
-- Isolated PostgreSQL integration tests
+- User registration and login
+- Secure password hashing and verification
+- JWT access-token creation and validation
+- Current-user dependency
+- Protected Ticket endpoints
+- Ticket ownership and object-level authorization
+- Bounded role/function-level authorization
+- Authentication and authorization testing
 
 ## Completed
 
@@ -54,6 +53,10 @@ Week 07
 - [x] PostgreSQL API creation and subsequent lookup integration test
 - [x] Complete PostgreSQL HTTP failure-path and restart verification
 - [x] Isolated database integration tests
+- [x] Week 07 technical interview review
+- [x] Week 07 pull request merged and feature branches cleaned
+- [x] Week 07 report
+- [x] Week 08 plan
 
 ## Problems
 
@@ -217,24 +220,45 @@ Week 07
 - Reconfirmed zero Tickets in `opsdesk_test` and Alembic revision
   `e07f08d4399d` after the complete run.
 
-## Next Tasks - Sunday, 30 August
+## Week 07 Sunday Outcome - 30 August
 
-1. Review the final Week 07 diff and create the closing commit.
-2. Push the verified branch and open or refresh the Week 07 pull request.
-3. Complete the SQLAlchemy, Session, transaction, repository, and Alembic
-   interview review.
-4. Write the Week 07 report and review the pull request against the definition
-   of done.
-5. Merge only after review and green checks, then synchronize `main`, clean the
-   feature branches, and prepare Week 08 without starting authentication early.
+- Completed an eight-question technical interview review covering Psycopg,
+  SQLAlchemy, Alembic, Engine, Connection, Session, transaction methods,
+  migration safety, mapping, repositories, integration tests, and the complete
+  HTTP persistence lifecycle.
+- Re-ran the complete dependency, Ruff, formatting, and test gates before
+  merge: `138 passed, 19 skipped` without database tests and all `157` tests
+  with database tests enabled.
+- Reviewed the complete pull-request diff for credentials, local paths,
+  destructive development-database targets, test-only behavior, and production
+  boundary leaks; no merge blockers remained.
+- Merged pull request #5 into `main` through merge commit `7ebc076`.
+- Fast-forwarded local `main` to `origin/main` and removed both local and remote
+  `feature/week-07-sqlalchemy-alembic` branches.
+- Added the Week 07 report and prepared the Week 08 authentication and
+  authorization plan.
 
-## Week 07 Guardrails
+## Next Tasks - Monday, 31 August
 
-- Use a dedicated `opsdesk_test` database for integration tests.
-- Never run destructive tests against `opsdesk_dev`.
-- Do not commit passwords, `.env` files, or complete database URLs.
-- Do not use a superuser as the application runtime role.
-- Keep domain, service, persistence, and HTTP responsibilities separate.
-- Do not use `create_all()` as a replacement for migrations.
-- Begin with synchronous SQLAlchemy to match the current application flow.
-- Do not add authentication, Docker, Redis, or AI features early.
+1. Create the Week 08 feature branch from synchronized `main`.
+2. Explain authentication, authorization, password hashing, bearer tokens,
+   JWT, and IDOR/BOLA before implementation.
+3. Review the existing dependency and persistence boundaries for reuse.
+4. Verify current compatible security dependencies from primary documentation.
+5. Add environment-based token configuration without tracked secrets.
+6. Implement only the password hashing and verification foundation with focused
+   tests after the architecture review.
+
+## Week 08 Guardrails
+
+- Never store, log, return, or commit plaintext passwords, token secrets, or
+  complete access tokens.
+- Do not implement password hashing or JWT cryptography manually.
+- Treat authentication and authorization as separate decisions.
+- Derive Ticket ownership from the authenticated User, not client input.
+- Add explicit object-level and function/role-level authorization checks.
+- Keep routes independent of SQLAlchemy and preserve transaction ownership.
+- Use Alembic for User and Ticket-ownership schema changes.
+- Continue destructive integration testing only against `opsdesk_test`.
+- Do not add OAuth providers, refresh-token rotation, Docker, Redis, React, or
+  AI features before the core Week 08 scope is complete.

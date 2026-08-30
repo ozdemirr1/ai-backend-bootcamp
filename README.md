@@ -38,6 +38,13 @@ begin. This repository remains the learning log and evidence base.
   bounded SQL laboratory with schema, relationship, query, transaction, and
   index exercises
 
+## Current Weekly Evidence
+
+- [Week 07 Report](weekly-reports/week-07.md) - SQLAlchemy, Alembic,
+  PostgreSQL persistence, request transactions, and integration testing
+- [Week 08 Plan](weekly-reports/week-08-plan.md) - authentication, JWT,
+  Ticket ownership, and authorization
+
 ## Learning Rule
 
 I will not jump between random technologies.  

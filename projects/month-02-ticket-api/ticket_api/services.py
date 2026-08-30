@@ -1,5 +1,8 @@
-from ticket_api.models import Ticket, TicketPriority, TicketStatus
-from ticket_api.repositories import InMemoryTicketRepository
+from ticket_api.models import NewTicket, Ticket, TicketPriority, TicketStatus
+from ticket_api.repositories import (
+    TicketRepository,
+    TicketRepositoryConflictError,
+)
 
 
 class TicketNotFoundError(Exception):
@@ -11,22 +14,19 @@ class DuplicateTicketError(Exception):
 
 
 class TicketService:
-    def __init__(self, repository: InMemoryTicketRepository) -> None:
+    def __init__(self, repository: TicketRepository) -> None:
         self._repository = repository
-        self._next_ticket_id = 1
 
     def create_ticket(self, title: str, priority: TicketPriority) -> Ticket:
-        ticket = Ticket(
-            ticket_id=self._next_ticket_id,
+        new_ticket = NewTicket(
             title=title,
             priority=priority,
         )
 
-        if not self._repository.add(ticket):
-            raise DuplicateTicketError(f"Ticket {ticket.ticket_id} already exists")
-
-        self._next_ticket_id += 1
-        return ticket
+        try:
+            return self._repository.create(new_ticket)
+        except TicketRepositoryConflictError as exc:
+            raise DuplicateTicketError(str(exc)) from exc
 
     def list_tickets(self) -> list[Ticket]:
         return self._repository.list_all()
@@ -36,7 +36,6 @@ class TicketService:
 
         if ticket is None:
             raise TicketNotFoundError(f"Ticket {ticket_id} not found")
-
         return ticket
 
     def delete_ticket(self, ticket_id: int) -> None:
@@ -61,5 +60,8 @@ class TicketService:
 
         if status is not None:
             ticket.change_status(status)
+
+        if not self._repository.update(ticket):
+            raise TicketNotFoundError(f"Ticket {ticket_id} not found")
 
         return ticket

@@ -1,0 +1,313 @@
+# Month 02 Ticket API
+
+## Goal
+
+Build a small, tested FastAPI application while learning the request lifecycle,
+ASGI, Uvicorn, route handling, validation, and API documentation.
+
+## Current Scope
+
+- Minimal FastAPI application
+- Health endpoint
+- Ticket collection and detail route examples
+- Typed path and query parameters
+- Pydantic request body schema
+- Strict partial-update request schema
+- Explicit ticket response schema
+- Request normalization and automatic validation
+- Ticket domain model and invariants
+- Domain-safe title, priority, and status changes
+- Typed SQLAlchemy Ticket persistence record
+- Explicit persistence-to-domain mapping
+- Database identity, default, timestamp, and constraint metadata tests
+- Reviewed and reversible Alembic schema history
+- Composite index for status-filtered Ticket listing
+- Storage-independent Ticket repository protocol
+- In-memory ticket repository
+- PostgreSQL-backed SQLAlchemy Ticket repository
+- Explicit repository flush and caller-owned transaction boundaries
+- Ticket application service with complete CRUD workflows
+- Dependency-injected FastAPI routes
+- Application factory and startup/shutdown database lifespan
+- Request-scoped Sessions with explicit commit, rollback, and cleanup
+- Explicit HTTP status and application-error mapping
+- Isolated endpoint, schema, domain, repository, and service tests
+- Dedicated-database PostgreSQL repository integration tests
+- Eight PostgreSQL HTTP transaction and lifecycle integration tests
+- Automatic OpenAPI schema and Swagger UI
+- Endpoint testing without a manually running server
+
+## Verified Environment
+
+The following stable versions were verified on 10 August 2026:
+
+- Python 3.14.7
+- uv 0.12.3
+- FastAPI 0.141.1
+- Uvicorn 0.52.1
+- Pydantic 2.13.4
+- HTTPX2 2.10.0
+- Pytest 9.1.1
+- Ruff 0.16.2
+
+The Week 07 persistence foundation adds the following verified versions:
+
+- SQLAlchemy 2.0.52
+- Psycopg 3.3.4
+- Alembic 1.19.1
+- Pydantic Settings 2.15.0
+
+## Database Configuration Foundation
+
+The application reads its PostgreSQL connection URL from the required
+`DATABASE_URL` environment variable. Copy the tracked example locally and
+replace every placeholder without committing the resulting file:
+
+```bash
+cp .env.example .env
+```
+
+The URL uses SQLAlchemy's explicit Psycopg driver name:
+
+```text
+postgresql+psycopg://APP_USER:URL_ENCODED_PASSWORD@DB_HOST:5432/APP_DATABASE
+```
+
+The real `.env` file is ignored by Git. Passwords containing URL-reserved
+characters must be URL-encoded. Do not paste the real URL into source code,
+tests, documentation, terminal screenshots, or Git history.
+
+`ticket_api.config` loads and validates settings. `ticket_api.database`
+contains testable Engine and Session factory functions. Engine creation is
+lazy: a real connection is opened only when a Connection or Session first
+executes database work.
+
+## Persistence Mapping Foundation
+
+`ticket_api.persistence_models` defines a typed SQLAlchemy `TicketRecord` that
+mirrors the constrained PostgreSQL `tickets` table. The record preserves the
+database-generated identity, server defaults, timezone-aware timestamps,
+nullability, named check constraints, and justified status-listing index
+established during Week 06.
+
+The persistence record remains separate from the domain `Ticket`. Database
+priority and status strings cross the boundary through explicit mapper
+functions, which convert them to domain enums and apply domain business fields
+back to an existing record without overwriting identity or timestamps.
+
+`TicketService` now depends on the storage-independent `TicketRepository`
+protocol rather than a concrete implementation. The in-memory repository
+continues to support fast unit and API tests, while
+`SqlAlchemyTicketRepository` implements the same service-facing operations
+against PostgreSQL.
+
+The SQLAlchemy repository owns queries, persistence mapping, `flush()`, and
+`refresh()` where server-generated values must be loaded. It deliberately does
+not call `commit()` or `rollback()`. Transaction ownership remains outside the
+repository so a caller can compose multiple operations into one atomic unit of
+work. The default application now composes the SQLAlchemy repository and
+service through a request-scoped Session dependency.
+
+## Application and Request Lifecycle
+
+`create_app()` builds a fresh application using the shared route definitions.
+The default `database_lifespan` loads settings and creates an Engine and
+Session factory at startup. The factory is stored in `app.state`; the Engine
+is disposed on exit, including when factory creation fails. The lifespan's
+async context-manager interface does not change the synchronous database API.
+
+`get_session` creates a Session for database-backed requests, yields it to the
+service dependency, commits on success, rolls back on an exception (including
+a commit failure), and closes the Session in `finally`. Its function scope
+places finalization before the response is sent. The repository continues to
+flush without deciding whether the request should commit.
+
+Fast API tests create an application without the database lifespan and override
+the service with a fresh in-memory implementation. The PostgreSQL API test
+suite instead injects a guarded `opsdesk_test` Session factory while keeping
+the real Session and service dependencies.
+
+## Alembic Migration Workflow
+
+Alembic owns schema evolution; the application does not call
+`Base.metadata.create_all()`. Its configuration imports `Base.metadata` for
+autogeneration and reads the database URL through the same secret-aware
+settings used by the application. No complete connection URL is stored in
+`alembic.ini`.
+
+Run Alembic from the repository root and always select the intended disposable
+migration database explicitly during local schema exercises:
+
+```bash
+ALEMBIC_DATABASE_NAME=opsdesk_migration_dev \
+uv run alembic \
+  -c projects/month-02-ticket-api/alembic.ini \
+  current
+```
+
+Apply the reviewed migration history:
+
+```bash
+ALEMBIC_DATABASE_NAME=opsdesk_migration_dev \
+uv run alembic \
+  -c projects/month-02-ticket-api/alembic.ini \
+  upgrade head
+```
+
+Check for differences between the migrated database and current ORM metadata:
+
+```bash
+ALEMBIC_DATABASE_NAME=opsdesk_migration_dev \
+uv run alembic \
+  -c projects/month-02-ticket-api/alembic.ini \
+  check
+```
+
+Generate offline SQL for review without applying it:
+
+```bash
+ALEMBIC_DATABASE_NAME=opsdesk_migration_dev \
+uv run alembic \
+  -c projects/month-02-ticket-api/alembic.ini \
+  upgrade head --sql
+```
+
+Never run destructive migration practice against `opsdesk_dev`. Autogenerated
+revisions must be inspected for unexpected tables, constraints, indexes, data
+operations, and destructive statements before they are applied.
+
+## Run the Application
+
+The default application now requires valid database settings and an existing
+compatible schema. Startup does not apply migrations or seed data. Verify the
+intended database and migration state before manual writes. Setting
+`ALEMBIC_DATABASE_NAME` affects Alembic only, not the API's `DATABASE_URL`.
+Preserve the Week 06 `opsdesk_dev` laboratory; do not run blind migrations or
+destructive cleanup against it.
+
+From the repository root, run:
+
+```bash
+uv run uvicorn ticket_api.main:app \
+  --app-dir projects/month-02-ticket-api \
+  --reload
+```
+
+The application is available at `http://127.0.0.1:8000`. Swagger UI is
+available at `http://127.0.0.1:8000/docs`.
+
+## Available Endpoints
+
+| Method   | Path                   | Success status   | Purpose |
+| -------- | ---------------------- | ---------------- | ------- |
+| `GET`    | `/health`              | `200 OK`         | Return application health. |
+| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
+| `POST`   | `/tickets`             | `201 Created`    | Validate and create a ticket. |
+| `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
+| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
+| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
+| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete a stored ticket without a body. |
+
+`GET /tickets` accepts two optional query parameters:
+
+- `status`: an optional filter restricted to `open`, `in_progress`, `resolved`,
+  or `closed`
+- `limit`: an integer from `1` through `100` with a default value of `10`
+
+FastAPI returns `422 Unprocessable Content` before calling the route function
+when path, query, or body input does not satisfy its declared contract. For
+example, `/tickets/not-a-number` fails path validation,
+`/tickets?limit=not-a-number` fails query validation, and an invalid preview
+payload fails body validation.
+
+`POST /tickets/preview` validates a JSON body containing `title` and `priority`.
+It trims surrounding title whitespace, enforces title length, restricts priority
+values, and rejects extra fields. It returns `200 OK` because it previews
+validated input without creating or storing a ticket.
+
+`POST /tickets` accepts the same create contract, delegates ticket creation to
+the service, and returns the stored representation through `TicketResponse`.
+`PATCH /tickets/{ticket_id}` accepts one or more updatable fields. An empty
+update is rejected with `422`, while a missing ticket produces `404` after a
+valid identifier has reached the service.
+
+The project has separate presentation, API schema, domain model, repository,
+and service responsibilities. Routes receive a replaceable `TicketService`
+dependency and do not access the repository directly. They convert validated
+API strings into domain enums, translate application errors into `404` or `409`
+HTTP responses, and map domain tickets into the explicit response schema.
+
+The default application uses PostgreSQL storage. In-memory storage is retained
+for isolated unit/API tests, not as the default runtime. Committed CRUD,
+failure rollback, request isolation, and persistence across a real application
+restart have been verified against the dedicated test database.
+
+The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
+Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
+creation, listing, filtering, limiting, detail lookup, partial update, deletion,
+input validation, and missing-resource behavior.
+
+## Run the Tests
+
+Run all Month 02 Ticket API tests from the repository root:
+
+```bash
+uv run pytest projects/month-02-ticket-api/tests -v
+```
+
+Run the complete repository test suite:
+
+```bash
+uv run pytest
+```
+
+PostgreSQL integration tests are opt-in and use only the dedicated
+`opsdesk_test` database:
+
+```bash
+RUN_DATABASE_TESTS=1 \
+uv run pytest \
+  projects/month-02-ticket-api/tests/test_sqlalchemy_repositories.py \
+  projects/month-02-ticket-api/tests/test_database_api.py \
+  -v
+```
+
+The integration-test guard derives a test URL without tracking another secret,
+verifies the exact database name, rejects a superuser connection, requires the
+migrated `tickets` table, and refuses to start when existing Ticket data is
+present. Per-test transactions roll back ordinary repository work. HTTP tests
+that verify real commits remove only records they created, using unique probe
+titles or captured identifiers. Never point these tests at `opsdesk_dev`.
+
+The complete quality run on 27 August 2026 produced `132 passed, 11 skipped`
+without database tests and `143 passed` with `RUN_DATABASE_TESTS=1`. The final
+Ticket count in `opsdesk_test` was zero.
+
+On 28 August, the focused API and database/lifecycle run passed 39 tests; the
+first PostgreSQL API test passed separately and left zero Tickets behind. It
+verified a successful POST, visibility through an independent connection, and
+a subsequent GET. It does not alone prove HTTP behavior when commit fails.
+Full PostgreSQL HTTP CRUD/error coverage, request isolation checks, and the
+manual restart demonstration are carried to 29 August.
+
+The final 28 August regression run produced `138 passed, 12 skipped` with
+`RUN_DATABASE_TESTS=0` and `150 passed` with `RUN_DATABASE_TESTS=1`. Ruff lint,
+formatting (90 files), and `git diff --check` passed. The final `opsdesk_test`
+Ticket count was zero. These results cover the implemented suite, not the
+additional scenarios scheduled for 29 August.
+
+On 29 August, eight PostgreSQL HTTP tests verified committed creation and later
+lookup, filtering and limiting, committed update/delete behavior, `404` and
+`422` paths, rollback after a flushed write, commit failure without a false
+`201`, and a distinct Session per request. Test-only routes and fault-injecting
+Session classes exist only in fixture-created applications.
+
+A manual Uvicorn stop/start check used a process-local override targeting
+`opsdesk_test`; it did not modify `.env`. A precisely identified Ticket was
+created, observed directly in PostgreSQL, retrieved after process restart, and
+then deleted through the API. PostgreSQL ended with zero Tickets.
+
+The final 29 August quality run produced `138 passed, 19 skipped` with database
+tests disabled and `157 passed` with `RUN_DATABASE_TESTS=1`. Dependency checks,
+Ruff lint, formatting for 90 files, `git diff --check`, the zero-row isolation
+check, and Alembic revision `e07f08d4399d` all passed.

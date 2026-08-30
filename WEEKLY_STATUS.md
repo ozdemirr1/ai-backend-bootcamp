@@ -36,14 +36,24 @@ Week 07
 - [x] Week 06 interview review
 - [x] Week 06 report
 - [x] Week 07 plan
-- [ ] Week 07 feature branch
-- [ ] SQLAlchemy, Psycopg, and Alembic dependencies
-- [ ] Environment-based database configuration
-- [ ] SQLAlchemy persistence mapping
-- [ ] Alembic migration workflow
-- [ ] PostgreSQL repository implementation
-- [ ] FastAPI database integration
-- [ ] Isolated database integration tests
+- [x] Week 07 feature branch
+- [x] SQLAlchemy, Psycopg, Alembic, and Pydantic Settings dependencies
+- [x] Environment-based database configuration
+- [x] SQLAlchemy Engine and Session factory foundation
+- [x] Manual synchronous connection through `opsdesk_app`
+- [x] Five focused configuration and database-factory unit tests
+- [x] Complete dependency and quality checks with 112 passing tests
+- [x] Stable Month 02 Ticket API project naming
+- [x] Typed SQLAlchemy Ticket persistence record
+- [x] Explicit persistence-to-domain mapping
+- [x] Five persistence metadata tests and five mapper tests
+- [x] Complete quality checks with 121 passing tests
+- [x] Alembic migration workflow
+- [x] PostgreSQL repository implementation
+- [x] FastAPI lifespan, application factory, and request-scoped Session wiring
+- [x] PostgreSQL API creation and subsequent lookup integration test
+- [x] Complete PostgreSQL HTTP failure-path and restart verification
+- [x] Isolated database integration tests
 
 ## Problems
 
@@ -68,17 +78,155 @@ Week 07
 - Local and remote Week 06 feature branches were deleted after merge.
 - `main` is synchronized with `origin/main`.
 
-## Next Tasks
+## Week 07 Monday Outcome
 
-1. Create `feature/week-07-sqlalchemy-alembic` from updated `main`.
-2. Review the separate responsibilities of Psycopg, SQLAlchemy, and Alembic.
-3. Verify the latest stable, mutually compatible dependency versions.
-4. Add only the required dependencies with `uv`.
-5. Configure the database URL through an environment variable without tracking
-   credentials.
-6. Establish a minimal synchronous connection through `opsdesk_app`.
-7. Explain the engine, connection, session, and transaction lifecycle before
-   adding ORM mappings.
+- Created `feature/week-07-sqlalchemy-alembic` from synchronized `main`.
+- Added SQLAlchemy 2.0.52, Psycopg 3.3.4, Alembic 1.19.1, and Pydantic Settings
+  2.15.0 through `uv`.
+- Verified the lockfile, environment synchronization, and installed-package
+  compatibility.
+- Added a required, immutable, secret-aware database settings model.
+- Confirmed that the real `.env` file is ignored while `.env.example` is
+  trackable.
+- Added testable Engine and Session factory functions without import-time
+  connectivity.
+- Verified a real SQLAlchemy connection to PostgreSQL 18.6 through
+  `opsdesk_app` and `opsdesk_dev`.
+- Observed lazy Session transaction behavior before and after its first query.
+- Passed five focused configuration and database-factory unit tests.
+- Passed the complete 112-test repository suite with Ruff lint and formatting
+  checks.
+- Renamed the living Weeks 05-08 application to
+  `projects/month-02-ticket-api/` while preserving the bounded Week 06 SQL lab.
+
+## Week 07 Tuesday Outcome
+
+- Added a typed declarative `TicketRecord` without replacing the domain
+  `Ticket` model.
+- Matched the Week 06 PostgreSQL identity, defaults, timestamps, nullability,
+  and named constraints in SQLAlchemy metadata.
+- Compiled and reviewed the generated PostgreSQL `CREATE TABLE` statement.
+- Added explicit conversion from persistence strings to domain enums.
+- Added safe business-field mapping back onto an existing persistence record.
+- Rejected mismatched identifiers before record mutation.
+- Preserved database-owned identifiers and timestamps across mapper updates.
+- Passed 25 focused tests and the complete 121-test repository suite.
+- Passed Ruff lint, Ruff formatting, and Git diff checks.
+
+## Week 07 Wednesday Outcome
+
+- Initialized Alembic inside the stable Month 02 Ticket API project.
+- Connected Alembic to secret-aware settings and `Base.metadata` without
+  tracking credentials.
+- Added and tested the `(status, ticket_id)` composite index in SQLAlchemy
+  metadata.
+- Created the isolated `opsdesk_migration_dev` migration database under the
+  non-superuser application role.
+- Generated and reviewed revision `e07f08d4399d` before applying it.
+- Verified the migrated Ticket columns, identity, defaults, constraints,
+  primary key, and composite index through the PostgreSQL catalogs.
+- Completed upgrade, downgrade, and re-upgrade successfully.
+- Confirmed the database is at `head` and `alembic check` reports no metadata
+  drift.
+- Inspected the complete offline transactional SQL without applying it.
+- Passed lockfile, environment, package compatibility, Ruff lint, Ruff
+  formatting, Git diff, and all 122 repository tests.
+
+## Week 07 Thursday Outcome
+
+- Added `NewTicket` to separate validated creation input from a persisted
+  Ticket with a database-generated identifier.
+- Introduced the `TicketRepository` protocol and kept `TicketService`
+  independent of concrete storage technology.
+- Adapted the in-memory repository and service while preserving existing unit
+  and HTTP behavior.
+- Implemented SQLAlchemy Ticket create, lookup, ordered listing, update, and
+  delete operations.
+- Kept repository `flush()` and `refresh()` behavior separate from
+  caller-owned `commit()` and `rollback()` decisions.
+- Translated expected persistence conflicts without leaking SQLAlchemy
+  exceptions into the application contract.
+- Added ORM-driven `updated_at` behavior and verified timestamp advancement in
+  separate PostgreSQL transactions.
+- Created and migrated the dedicated `opsdesk_test` database under
+  `opsdesk_app`.
+- Added guarded, opt-in integration fixtures and 11 real PostgreSQL repository
+  tests.
+- Verified commit visibility, rollback invisibility, no implicit repository
+  commit, generated identity, CRUD behavior, ordering, missing records, and
+  final test cleanup.
+- Passed lockfile, environment, package compatibility, Ruff lint, Ruff
+  formatting, and Git diff checks.
+- Passed 132 tests with 11 integration skips in the default run and all 143
+  tests with database integration enabled.
+- Confirmed the final `opsdesk_test` Ticket count was zero.
+
+## Week 07 Friday Outcome - 28 August
+
+- Added an application lifespan that constructs the Engine and Session factory
+  at startup and disposes the Engine on shutdown or setup failure.
+- Added a request-scoped Session dependency with commit on success, rollback
+  on an exception or commit failure, and unconditional Session cleanup.
+- Selected function-scoped dependency finalization so transaction completion
+  occurs before FastAPI sends the response.
+- Composed `SqlAlchemyTicketRepository` and `TicketService` through dependency
+  injection and removed the default process-global in-memory service.
+- Added `create_app()` and preserved fast API tests with a fresh application,
+  disabled database lifespan, and an explicit in-memory service override.
+- Passed 39 focused tests: 31 existing API tests and eight database-factory,
+  Session-finalization, and lifespan tests.
+- Passed the first real PostgreSQL API integration test: POST returned `201`,
+  a separate database connection saw the committed row, and a subsequent GET
+  returned the same Ticket. The production Session/service dependencies were
+  used with a guarded test-database Session factory.
+- Confirmed `opsdesk_test` contained zero Tickets after targeted cleanup.
+- Passed the final whole-repository Ruff lint and formatting checks (90 files
+  already formatted), plus `git diff --check`.
+- Passed 138 tests with 12 integration skips under `RUN_DATABASE_TESTS=0`
+  and all 150 tests under `RUN_DATABASE_TESTS=1`.
+- Confirmed zero Tickets in `opsdesk_test` after the complete integration run.
+  Staged review, commit, and push remain the Git closing steps.
+- Stopped feature work by choice and moved the unfinished Friday verification
+  to Saturday. Week 07 is not yet complete.
+
+## Week 07 Saturday Outcome - 29 August
+
+- Confirmed that `opsdesk_test` was empty, migrated to revision `e07f08d4399d`
+  at `head`, and free of pending Alembic upgrade operations before testing.
+- Expanded the PostgreSQL HTTP suite to eight integration tests using the real
+  request Session, SQLAlchemy repository, service, routes, and PostgreSQL
+  transaction boundary.
+- Verified committed create/read behavior, status filtering and limiting,
+  committed update/delete behavior, missing-resource `404` responses, and
+  validation `422` responses.
+- Verified that an exception after `flush()` rolls back the write, an injected
+  commit failure returns no false `201` and leaves no row, and two requests use
+  distinct Session instances.
+- Kept the existing `409` application contract covered by fast tests without
+  inventing a duplicate-title constraint that the relational model does not
+  require.
+- Started the application against `opsdesk_test` using a process-local database
+  override without changing `.env` or exposing credentials.
+- Created Ticket `97`, stopped and restarted Uvicorn, retrieved the same Ticket
+  after restart, then deleted only that demonstration record. The final Ticket
+  count was zero and port `8000` was closed cleanly.
+- Passed dependency consistency checks, Ruff lint, Ruff formatting for 90
+  files, and `git diff --check`.
+- Passed `138` tests with `19` integration skips when database tests were
+  disabled and all `157` tests when they were enabled.
+- Reconfirmed zero Tickets in `opsdesk_test` and Alembic revision
+  `e07f08d4399d` after the complete run.
+
+## Next Tasks - Sunday, 30 August
+
+1. Review the final Week 07 diff and create the closing commit.
+2. Push the verified branch and open or refresh the Week 07 pull request.
+3. Complete the SQLAlchemy, Session, transaction, repository, and Alembic
+   interview review.
+4. Write the Week 07 report and review the pull request against the definition
+   of done.
+5. Merge only after review and green checks, then synchronize `main`, clean the
+   feature branches, and prepare Week 08 without starting authentication early.
 
 ## Week 07 Guardrails
 

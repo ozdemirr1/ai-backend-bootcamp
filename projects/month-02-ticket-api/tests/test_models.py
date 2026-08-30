@@ -1,6 +1,6 @@
 import pytest
 
-from ticket_api.models import Ticket, TicketPriority, TicketStatus
+from ticket_api.models import NewTicket, Ticket, TicketPriority, TicketStatus
 
 
 def test_ticket_uses_open_status_by_default() -> None:
@@ -147,3 +147,28 @@ def test_ticket_preserves_priority_when_change_is_invalid() -> None:
         ticket.change_priority("critical")  # type: ignore
 
     assert ticket.priority is TicketPriority.LOW
+
+
+def test_new_ticket_strips_title_whitespace() -> None:
+    ticket = NewTicket(
+        title=" VPN connection fails ",
+        priority=TicketPriority.MEDIUM,
+    )
+
+    assert ticket.title == "VPN connection fails"
+
+
+def test_new_ticket_rejects_invalid_short_title() -> None:
+    with pytest.raises(ValueError, match="title"):
+        NewTicket(
+            title="AB",
+            priority=TicketPriority.MEDIUM,
+        )
+
+
+def test_new_ticket_rejects_raw_string_priority() -> None:
+    with pytest.raises(TypeError, match="priority"):
+        NewTicket(
+            title="VPN connection fails",
+            priority="high",
+        )

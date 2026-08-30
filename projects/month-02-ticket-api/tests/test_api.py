@@ -3,7 +3,8 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from ticket_api.main import app, get_ticket_service
+from ticket_api.dependencies import get_ticket_service
+from ticket_api.main import create_app
 from ticket_api.models import Ticket, TicketPriority
 from ticket_api.repositories import InMemoryTicketRepository
 from ticket_api.services import TicketService
@@ -11,19 +12,21 @@ from ticket_api.services import TicketService
 
 @pytest.fixture
 def client() -> Iterator[TestClient]:
+    test_app = create_app(lifespan_handler=None)
+
     repository = InMemoryTicketRepository()
     service = TicketService(repository)
 
     def get_test_ticket_service() -> TicketService:
         return service
 
-    app.dependency_overrides[get_ticket_service] = get_test_ticket_service
+    test_app.dependency_overrides[get_ticket_service] = get_test_ticket_service
 
     try:
-        with TestClient(app) as test_client:
+        with TestClient(test_app) as test_client:
             yield test_client
     finally:
-        app.dependency_overrides.pop(get_ticket_service, None)
+        test_app.dependency_overrides.pop(get_ticket_service, None)
 
 
 def test_read_health(client: TestClient) -> None:
@@ -511,7 +514,7 @@ def test_create_ticket_returns_409_for_duplicate_id(
     def get_conflicting_ticket_service() -> TicketService:
         return conflicting_service
 
-    app.dependency_overrides[get_ticket_service] = get_conflicting_ticket_service
+    client.app.dependency_overrides[get_ticket_service] = get_conflicting_ticket_service
 
     response = client.post(
         "/tickets",

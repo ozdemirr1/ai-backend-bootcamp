@@ -117,6 +117,23 @@ two learning problems and obscure session and transaction fundamentals.
 - Create a minimal connection check through the non-superuser application role.
 - Document why the first implementation remains synchronous.
 
+#### Monday Outcome
+
+- Created and verified the Week 07 feature branch.
+- Added and locked SQLAlchemy 2.0.52, Psycopg 3.3.4, Alembic 1.19.1, and
+  Pydantic Settings 2.15.0.
+- Added secret-aware environment configuration and a safe `.env.example`.
+- Added testable Engine and Session factory functions.
+- Passed five focused unit tests for configuration and database factories.
+- Connected synchronously to PostgreSQL 18.6 as `opsdesk_app` on
+  `opsdesk_dev`.
+- Demonstrated lazy connection and Session `autobegin` behavior.
+- Kept the actual `.env` file and complete local connection URL outside Git.
+- Passed lockfile, environment, package compatibility, Ruff lint, Ruff
+  formatting, and the complete 112-test repository suite.
+- Renamed the living Weeks 05-08 application to the stable
+  `projects/month-02-ticket-api/` module name.
+
 ### Tuesday - SQLAlchemy Models and Mapping
 
 - Learn SQLAlchemy 2 declarative mapping and typed mapped columns.
@@ -126,6 +143,19 @@ two learning problems and obscure session and transaction fundamentals.
 - Write explicit conversion between persistence records and domain objects.
 - Compare database constraints with ORM declarations and domain validation.
 - Add focused mapping tests.
+
+#### Tuesday Outcome
+
+- Added a typed SQLAlchemy `DeclarativeBase` and `TicketRecord` mapping.
+- Preserved the Week 06 identity, text columns, server defaults,
+  timezone-aware timestamps, nullability, and four named check constraints.
+- Compiled and inspected the PostgreSQL DDL before introducing migrations.
+- Kept the persistence record separate from the existing domain `Ticket`.
+- Added explicit record-to-domain and domain-to-existing-record mapping.
+- Kept database identity and timestamp ownership outside the mapper.
+- Added four persistence metadata tests and five mapper tests.
+- Passed 25 focused model, database, persistence, and mapper tests.
+- Passed Ruff lint, Ruff formatting, diff checks, and all 121 repository tests.
 
 ### Wednesday - Alembic Fundamentals
 
@@ -137,6 +167,31 @@ two learning problems and obscure session and transaction fundamentals.
 - Downgrade and upgrade again to demonstrate reversible schema history.
 - Confirm that `Base.metadata.create_all()` is not used as a migration system.
 
+#### Wednesday Outcome
+
+- Initialized a single-database Alembic environment inside the Month 02 Ticket
+  API project.
+- Loaded migration connectivity from the secret-aware application settings
+  without storing a database URL in `alembic.ini`.
+- Bound Alembic autogeneration to `Base.metadata` and enabled type and server
+  default comparison.
+- Added the justified `(status, ticket_id)` listing index to SQLAlchemy
+  metadata and covered it with a fifth persistence-model test.
+- Created the isolated `opsdesk_migration_dev` database owned by the
+  non-superuser `opsdesk_app` role.
+- Generated and manually reviewed the initial Ticket schema revision before
+  applying it.
+- Verified the generated table, identity column, defaults, timestamps, four
+  named check constraints, primary key, and composite index in PostgreSQL.
+- Completed `upgrade head`, `downgrade base`, and a second `upgrade head`
+  successfully.
+- Confirmed revision `e07f08d4399d` at `head` and verified that `alembic check`
+  reports no pending schema operations.
+- Inspected offline SQL containing transactional DDL and the expected Alembic
+  version update.
+- Passed dependency consistency checks, Ruff lint, Ruff formatting, Git diff
+  checks, and all 122 repository tests.
+
 ### Thursday - PostgreSQL Repository
 
 - Implement Ticket add, lookup, list, update, and delete persistence operations.
@@ -145,6 +200,31 @@ two learning problems and obscure session and transaction fundamentals.
 - Preserve the service-facing repository behavior where appropriate.
 - Translate expected persistence conflicts into application-level errors.
 - Add repository integration tests against `opsdesk_test`.
+
+#### Thursday Outcome
+
+- Added a validated `NewTicket` creation model so PostgreSQL, rather than the
+  service, owns durable Ticket identity generation.
+- Introduced a storage-independent `TicketRepository` protocol and adapted the
+  in-memory repository and service without weakening existing HTTP behavior.
+- Implemented SQLAlchemy create, lookup, ordered listing, update, and delete
+  operations with explicit ORM-to-domain mapping.
+- Kept `flush()` and `refresh()` inside the repository while leaving
+  `commit()` and `rollback()` to the caller-owned transaction boundary.
+- Translated expected SQLAlchemy integrity failures into a repository-level
+  conflict without leaking driver exceptions into the service contract.
+- Added `updated_at` handling for ORM-generated updates and verified it across
+  separate PostgreSQL transactions.
+- Created and migrated the dedicated `opsdesk_test` database under the
+  non-superuser `opsdesk_app` role.
+- Added guarded, opt-in integration fixtures that reject the wrong database,
+  superusers, missing migrations, and pre-existing Ticket data.
+- Added 11 PostgreSQL integration tests covering CRUD, generated identities,
+  commit visibility, rollback invisibility, no implicit commit, ordered
+  listing, missing rows, and timestamp advancement.
+- Passed the normal suite with 132 tests and 11 integration skips, then passed
+  all 143 tests with database integration enabled.
+- Confirmed the final `opsdesk_test` Ticket count was zero.
 
 ### Friday - FastAPI Database Integration
 
@@ -157,22 +237,87 @@ two learning problems and obscure session and transaction fundamentals.
 - Verify that data remains available after application restart.
 - Preserve intentional `201`, `204`, `404`, `409`, and `422` behavior.
 
-### Saturday - Isolation and Complete Verification
+#### Friday Outcome - Partial Verification Complete
 
-- Recreate or migrate the dedicated test database safely.
-- Make database tests independent of execution order.
-- Ensure each test leaves a predictable database state.
-- Test persistence, rollback, uniqueness, missing resources, and invalid input.
+- Implemented the application lifespan, request-scoped Session dependency, and
+  PostgreSQL repository/service composition.
+- Added an application factory and moved routes onto an `APIRouter` while
+  preserving their existing contracts.
+- Kept in-memory API tests isolated through per-test application creation and
+  service dependency overrides without starting the database lifespan.
+- Passed 39 focused tests: 31 API tests and eight database/lifecycle tests.
+- Passed one PostgreSQL API integration test proving creation, committed
+  visibility through a separate connection, and subsequent HTTP lookup.
+- Confirmed zero remaining Tickets in `opsdesk_test` after cleanup.
+- Passed final Ruff lint and formatting checks (90 files), `git diff --check`,
+  and full regression runs: 138 passed / 12 skipped without database tests,
+  150 passed with database tests. The final test-database Ticket count was zero.
+- Stopped on 28 August at Furkan's request. The unfinished checks below are
+  carried into Saturday; neither Friday verification nor Week 07 is marked
+  fully complete. The existing suite is green; the new scenarios below still
+  need implementation and verification. Staged review, commit, and push remain.
+
+### Saturday - Friday Carry-Over, Isolation, and Complete Verification
+
+Complete the carried-over work first; do not rebuild the working foundation.
+
+#### Friday Carry-Over
+
+- Confirm the existing `opsdesk_test` migration revision and empty Ticket
+  state; recreate or migrate only if inspection shows a need.
+- Extend PostgreSQL HTTP tests to listing/filtering, PATCH, DELETE, `404`,
+  `422`, and the existing expected-conflict contract. Ticket titles are not
+  unique: do not invent a duplicate-title rule to manufacture a `409` test.
+- Test a write followed by request failure and verify no partial committed row.
+- Inject a commit failure through the HTTP boundary and verify rollback,
+  cleanup, and absence of a false `201` response.
+- Verify independent Session instances across requests.
+- Inspect the manual API runtime's target database and schema before starting
+  the demonstration. The Alembic-only override does not configure the API;
+  preserve `opsdesk_dev` as the Week 06 laboratory.
+- Verify POST/read persistence after a real server restart and clean only the
+  demonstration records created for that check.
+
+#### Complete Verification and Review
+
+- Make database tests independent of execution order and ensure each test
+  leaves a predictable state, including tests that commit or raise errors.
+- Review persistence constraints and error translation without weakening the
+  existing domain or HTTP contract.
 - Run the complete repository quality suite.
 - Review diffs for credentials, local paths, and destructive database targets.
 - Update README, notes, decisions, and weekly status.
 - Open and review the Week 07 pull request when the work is complete.
 
+#### Saturday Outcome
+
+- Confirmed `opsdesk_test` was empty, at Alembic revision `e07f08d4399d`, and
+  had no pending metadata operations before running destructive tests.
+- Expanded the PostgreSQL HTTP suite from one scenario to eight integration
+  tests covering committed CRUD, filter/limit behavior, `404`, `422`, rollback
+  after a flushed write, commit failure without a false `201`, and one distinct
+  Session per request.
+- Kept test-only failure injection inside fixture-created applications and
+  retained the production dependency chain for the operations under test.
+- Preserved the existing `409` contract test without adding a false
+  duplicate-title constraint to PostgreSQL.
+- Proved durable data across a real Uvicorn stop/start cycle against
+  `opsdesk_test`. The demonstration Ticket was identified precisely, retrieved
+  after restart, deleted through the API, and confirmed absent in PostgreSQL.
+- Left `.env` unchanged, printed no password or complete URL, preserved
+  `opsdesk_dev`, and finished with zero Tickets in `opsdesk_test`.
+- Passed dependency, lint, formatting, diff, migration-state, and full-suite
+  checks: `138 passed, 19 skipped` without database tests and `157 passed` with
+  database tests enabled.
+- Completed the carried-over Friday verification. Documentation, final Git
+  review, branch push, pull-request review, and Sunday transition remain.
+
 ### Sunday - Review and Transition
 
 - Answer SQLAlchemy, session, transaction, and migration interview questions.
 - Write the Week 07 report.
-- Merge the reviewed pull request and clean feature branches.
+- Merge the reviewed pull request and clean feature branches only after the
+  verification goals and definition of done are satisfied.
 - Prepare Week 08 without starting authentication early.
 
 ## Likely Project Changes

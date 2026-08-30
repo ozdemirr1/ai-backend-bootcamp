@@ -1,0 +1,6 @@
+Single-database Alembic configuration for the Month 02 Ticket API.
+
+Run commands from the repository root with the project `alembic.ini`. Local
+migration exercises must set `ALEMBIC_DATABASE_NAME=opsdesk_migration_dev` so
+they do not mutate the populated `opsdesk_dev` database. The connection URL is
+loaded from secret-aware application settings and must not be added to Git.

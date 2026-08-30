@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import (
+    APIRouter,
     Depends,
     FastAPI,
     HTTPException,
@@ -8,13 +9,15 @@ from fastapi import (
     Response,
     status,
 )
+from starlette.types import Lifespan
 
+from ticket_api.dependencies import get_ticket_service
+from ticket_api.lifespan import database_lifespan
 from ticket_api.models import (
     Ticket,
     TicketPriority,
     TicketStatus,
 )
-from ticket_api.repositories import InMemoryTicketRepository
 from ticket_api.schemas import (
     TicketCreateRequest,
     TicketResponse,
@@ -27,14 +30,7 @@ from ticket_api.services import (
     TicketService,
 )
 
-app = FastAPI(title="Week 05 FastAPI Fundamentals")
-
-ticket_repository = InMemoryTicketRepository()
-ticket_service = TicketService(ticket_repository)
-
-
-def get_ticket_service() -> TicketService:
-    return ticket_service
+router = APIRouter()
 
 
 TicketServiceDependency = Annotated[
@@ -52,12 +48,12 @@ def _to_ticket_response(ticket: Ticket) -> TicketResponse:
     )
 
 
-@app.get("/health")
+@router.get("/health")
 def read_health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.get("/tickets", response_model=list[TicketResponse])
+@router.get("/tickets", response_model=list[TicketResponse])
 def list_tickets(
     service: TicketServiceDependency,
     status: TicketStatusValue | None = None,
@@ -76,7 +72,7 @@ def list_tickets(
     return [_to_ticket_response(ticket) for ticket in limited_tickets]
 
 
-@app.post(
+@router.post(
     "/tickets", response_model=TicketResponse, status_code=status.HTTP_201_CREATED
 )
 def create_ticket(
@@ -97,7 +93,7 @@ def create_ticket(
     return _to_ticket_response(ticket)
 
 
-@app.post("/tickets/preview")
+@router.post("/tickets/preview")
 def preview_ticket(ticket: TicketCreateRequest) -> dict[str, str]:
     return {
         "title": ticket.title,
@@ -105,7 +101,7 @@ def preview_ticket(ticket: TicketCreateRequest) -> dict[str, str]:
     }
 
 
-@app.get(
+@router.get(
     "/tickets/{ticket_id}",
     response_model=TicketResponse,
 )
@@ -123,7 +119,7 @@ def read_ticket(
     return _to_ticket_response(ticket)
 
 
-@app.patch(
+@router.patch(
     "/tickets/{ticket_id}",
     response_model=TicketResponse,
 )
@@ -156,7 +152,7 @@ def update_ticket(
     return _to_ticket_response(ticket)
 
 
-@app.delete(
+@router.delete(
     "/tickets/{ticket_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
@@ -175,3 +171,15 @@ def delete_ticket(
     return Response(
         status_code=status.HTTP_204_NO_CONTENT,
     )
+
+
+def create_app(
+    *,
+    lifespan_handler: Lifespan[FastAPI] | None = database_lifespan,
+) -> FastAPI:
+    application = FastAPI(title="Month 02 Ticket API", lifespan=lifespan_handler)
+    application.include_router(router)
+    return application
+
+
+app = create_app()

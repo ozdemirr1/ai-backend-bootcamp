@@ -26,6 +26,18 @@ My goal is to become a job-ready AI-assisted Backend / Full-Stack Developer by b
 2. DocuMind - RAG-based document intelligence platform
 3. HireMatch AI - CV and job matching assistant
 
+The product repositories will be created when their implementation phases
+begin. This repository remains the learning log and evidence base.
+
+## Current Learning Modules
+
+- [Month 02 Ticket API](projects/month-02-ticket-api/README.md) - the living
+  FastAPI application that progresses through validation, persistence, and
+  authentication during Weeks 05-08
+- [Week 06 PostgreSQL and SQL](projects/week-06-postgresql-sql/README.md) - a
+  bounded SQL laboratory with schema, relationship, query, transaction, and
+  index exercises
+
 ## Learning Rule
 
 I will not jump between random technologies.  

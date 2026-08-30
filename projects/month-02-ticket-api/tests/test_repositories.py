@@ -1,7 +1,10 @@
 import pytest
 
-from ticket_api.models import Ticket, TicketPriority
-from ticket_api.repositories import InMemoryTicketRepository
+from ticket_api.models import NewTicket, Ticket, TicketPriority, TicketStatus
+from ticket_api.repositories import (
+    InMemoryTicketRepository,
+    TicketRepositoryConflictError,
+)
 
 
 def test_repository_adds_ticket() -> None:
@@ -107,3 +110,71 @@ def test_repository_returns_false_when_delete_target_is_missing() -> None:
     result = repository.delete(999)
 
     assert result is False
+
+
+def test_repository_creates_ticket_and_generates_id() -> None:
+    repo = InMemoryTicketRepository()
+    new_ticket = NewTicket(title="VPN connection fails", priority=TicketPriority.HIGH)
+
+    ticket = repo.create(new_ticket)
+
+    assert ticket.ticket_id == 1
+    assert ticket.title == "VPN connection fails"
+    assert ticket.priority is TicketPriority.HIGH
+
+
+def test_repository_generates_consecutive_ids() -> None:
+    repo = InMemoryTicketRepository()
+    t1 = repo.create(NewTicket(title="First Ticket", priority=TicketPriority.LOW))
+    t2 = repo.create(NewTicket(title="Second Ticket", priority=TicketPriority.MEDIUM))
+
+    assert t1.ticket_id == 1
+    assert t2.ticket_id == 2
+
+
+def test_repository_create_rejects_invalid_type() -> None:
+    repo = InMemoryTicketRepository()
+
+    with pytest.raises(TypeError, match="ticket must be a NewTicket instance"):
+        repo.create(Ticket(ticket_id=1, title="Test", priority=TicketPriority.LOW))
+
+
+def test_repository_create_raises_conflict_if_id_exists() -> None:
+    repo = InMemoryTicketRepository()
+
+    repo.add(Ticket(ticket_id=1, title="Manual Ticket", priority=TicketPriority.LOW))
+
+    new_ticket = NewTicket(title="Conflicting Ticket", priority=TicketPriority.HIGH)
+
+    with pytest.raises(TicketRepositoryConflictError):
+        repo.create(new_ticket)
+
+
+def test_repository_update_stores_modified_ticket() -> None:
+    repo = InMemoryTicketRepository()
+    ticket = repo.create(NewTicket(title="Old Title", priority=TicketPriority.LOW))
+
+    ticket.change_title("New Title")
+    ticket.change_status(TicketStatus.IN_PROGRESS)
+
+    success = repo.update(ticket)
+
+    assert success is True
+    saved = repo.get_by_id(ticket.ticket_id)
+    assert saved is not None
+    assert saved.title == "New Title"
+    assert saved.status is TicketStatus.IN_PROGRESS
+
+
+def test_repository_update_returns_false_for_missing_id() -> None:
+    repo = InMemoryTicketRepository()
+    ticket = Ticket(ticket_id=999, title="Not in repo", priority=TicketPriority.LOW)
+
+    assert repo.update(ticket) is False
+
+
+def test_repository_update_rejects_invalid_type() -> None:
+    repo = InMemoryTicketRepository()
+
+    with pytest.raises(TypeError, match="ticket must be a Ticket instance"):
+        repo.update(NewTicket(title="Test", priority=TicketPriority.LOW))

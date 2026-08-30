@@ -1,0 +1,85 @@
+from sqlalchemy import BigInteger, CheckConstraint, DateTime
+
+from ticket_api.persistence_models import Base, TicketRecord
+
+
+def test_ticket_record_uses_expected_table_and_columns() -> None:
+    table = TicketRecord.__table__
+
+    assert table.name == "tickets"
+    assert list(table.columns.keys()) == [
+        "ticket_id",
+        "title",
+        "priority",
+        "status",
+        "created_at",
+        "updated_at",
+    ]
+    assert Base.metadata.tables["tickets"] is table
+
+
+def test_ticket_record_uses_database_generated_identity() -> None:
+    column = TicketRecord.__table__.c.ticket_id
+
+    assert column.primary_key is True
+    assert isinstance(column.type, BigInteger)
+    assert column.identity is not None
+    assert column.identity.always is True
+    assert column.nullable is False
+
+
+def test_ticket_record_uses_expected_defaults_and_timestamps() -> None:
+    table = TicketRecord.__table__
+
+    status = table.c.status
+    assert status.server_default is not None
+    assert str(status.server_default.arg) == "'open'"
+    assert status.nullable is False
+
+    created_at = table.c.created_at
+    assert isinstance(created_at.type, DateTime)
+    assert created_at.type.timezone is True
+    assert created_at.server_default is not None
+    assert created_at.nullable is False
+
+    updated_at = table.c.updated_at
+    assert isinstance(updated_at.type, DateTime)
+    assert updated_at.type.timezone is True
+    assert updated_at.server_default is not None
+    assert updated_at.nullable is False
+    assert updated_at.onupdate is not None
+    assert "CURRENT_TIMESTAMP" in str(updated_at.onupdate.arg)
+
+    assert table.c.title.nullable is False
+    assert table.c.priority.nullable is False
+
+
+def test_ticket_record_declares_expected_check_constraints() -> None:
+    check_constraints = {
+        constraint.name: str(constraint.sqltext)
+        for constraint in TicketRecord.__table__.constraints
+        if isinstance(constraint, CheckConstraint)
+    }
+
+    expected_constraints = {
+        "tickets_title_format",
+        "tickets_priority_allowed",
+        "tickets_status_allowed",
+        "tickets_timestamp_order",
+    }
+
+    assert set(check_constraints.keys()) == expected_constraints
+
+
+def test_ticket_record_declares_status_listing_index() -> None:
+    indexes = {
+        index.name: [column.name for column in index.columns]
+        for index in TicketRecord.__table__.indexes
+    }
+
+    assert indexes == {
+        "tickets_status_ticket_id_idx": [
+            "status",
+            "ticket_id",
+        ]
+    }

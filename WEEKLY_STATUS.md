@@ -57,6 +57,11 @@ Week 08
 - [x] Week 07 pull request merged and feature branches cleaned
 - [x] Week 07 report
 - [x] Week 08 plan
+- [x] Week 08 feature branch
+- [x] Authentication and authorization threat model
+- [x] Argon2id password hashing boundary and behavior tests
+- [x] Secret-aware JWT configuration foundation
+- [x] Monday dependency, lint, formatting, unit, and integration quality gates
 
 ## Problems
 
@@ -238,16 +243,42 @@ Week 08
 - Added the Week 07 report and prepared the Week 08 authentication and
   authorization plan.
 
-## Next Tasks - Monday, 31 August
+## Week 08 Monday Outcome - 31 August
 
-1. Create the Week 08 feature branch from synchronized `main`.
-2. Explain authentication, authorization, password hashing, bearer tokens,
-   JWT, and IDOR/BOLA before implementation.
-3. Review the existing dependency and persistence boundaries for reuse.
-4. Verify current compatible security dependencies from primary documentation.
-5. Add environment-based token configuration without tracked secrets.
-6. Implement only the password hashing and verification foundation with focused
-   tests after the architecture review.
+- Created `feature/week-08-auth-authorization` from synchronized `main`.
+- Separated authentication from authorization and threat-modeled database
+  compromise, credential enumeration, bearer-token theft, token tampering,
+  IDOR/BOLA, and role escalation before implementation.
+- Verified `pwdlib`, Argon2id, PyJWT, FastAPI, and OWASP password-storage
+  guidance from primary documentation.
+- Added `pwdlib` 0.3.1 with Argon2 support and PyJWT 2.13.0 through `uv`.
+- Added a focused `PasswordHasher` boundary around the maintained library
+  instead of distributing password-library calls through routes and services.
+- Verified that hashes differ from plaintext, correct credentials verify,
+  incorrect credentials fail, per-hash salts produce distinct values, and the
+  selected encoding identifies Argon2id.
+- Added a required secret-aware JWT setting with a minimum length guard and a
+  bounded access-token lifetime of 1 through 1,440 minutes, defaulting to 30.
+- Kept the real JWT secret out of source, examples, logs, and tests;
+  `.env.example` contains only a deliberately invalid placeholder.
+- Isolated configuration and PostgreSQL tests from machine-specific JWT
+  secrets by providing explicit synthetic test values.
+- Passed dependency consistency, Ruff lint, formatting for 94 files, and Git
+  diff checks.
+- Passed `150` tests with `19` integration skips when database tests were
+  disabled and all `169` tests against the guarded `opsdesk_test` database.
+
+## Next Tasks - Tuesday, 1 September
+
+1. Define the minimal User domain identity, login field, normalization, and
+   public representation before writing persistence code.
+2. Choose and document the smallest justified role set.
+3. Add separate User domain and SQLAlchemy persistence models.
+4. Add User repository and mapper boundaries without exposing password hashes.
+5. Add Ticket ownership with an explicit User foreign key.
+6. Generate and manually review the Alembic migration, then verify upgrade,
+   downgrade, re-upgrade, and metadata drift only on the isolated migration
+   database.
 
 ## Week 08 Guardrails
 

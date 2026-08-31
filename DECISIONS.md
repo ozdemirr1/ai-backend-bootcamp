@@ -163,3 +163,30 @@ Test-only failure injection stays inside fixture-created applications. A manual
 Uvicorn stop/start check against `opsdesk_test` proves that committed data
 survives the application process and is cleaned up by its exact identifier
 afterward.
+
+## Decision 008 - Password Hashing and Token Configuration Boundary
+
+The authentication foundation uses pwdlib's maintained recommended Argon2
+configuration through the local `PasswordHasher` boundary. Routes, services,
+and repositories will not call the third-party password library directly.
+
+JWT signing configuration comes from environment-backed Pydantic Settings.
+`JWT_SECRET` is required, represented as `SecretStr`, and guarded against
+obviously short values. Access-token lifetime is bounded and defaults to 30
+minutes. No default signing secret, real secret, complete token, or plaintext
+password is stored in Git. Tracked tests use explicit synthetic secrets.
+
+## Reason
+
+Password hashing is a specialized, deliberately expensive one-way operation;
+it must not be replaced with reversible encryption or a fast general-purpose
+digest. Centralizing the maintained library keeps cryptographic details out of
+HTTP, application, and persistence responsibilities while preserving a clear
+place for later algorithm upgrades.
+
+A signing secret is runtime configuration rather than source code. Requiring
+it makes unsafe omission fail at startup, while `SecretStr` reduces accidental
+display in ordinary representations. The length guard catches obvious
+placeholders but does not replace cryptographically random generation. Test
+secrets remain deterministic and non-sensitive so the suite does not depend
+on a developer's local secret.

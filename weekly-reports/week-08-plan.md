@@ -91,6 +91,18 @@ current-user dependency
 - Add focused password hashing and verification functions with unit tests.
 - Document why passwords are hashed rather than encrypted.
 
+#### Monday Outcome
+
+- Completed the authentication/authorization threat model before adding code.
+- Added and verified `pwdlib[argon2]` and PyJWT dependencies.
+- Added an Argon2id-backed `PasswordHasher` boundary with five focused tests.
+- Added required secret-aware JWT configuration and a bounded 30-minute
+  default access-token lifetime with focused validation tests.
+- Used only synthetic JWT secrets in tracked tests and documentation.
+- Kept integration fixtures independent of a developer's real JWT secret.
+- Passed `150` tests with `19` integration skips and all `169` tests with the
+  guarded PostgreSQL integration suite enabled.
+
 ### Tuesday - User Persistence and Migration
 
 - Design the minimal User domain and persistence representations.

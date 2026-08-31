@@ -22,6 +22,7 @@ def test_create_database_engine_uses_postgresql_psycopg_driver() -> None:
             "postgresql+psycopg://example_user@localhost:5432/example_database"
         ),
         _env_file=None,
+        jwt_secret="x" * 32,
     )
 
     engine = create_database_engine(settings)
@@ -42,6 +43,7 @@ def test_create_session_factory_uses_expected_engine_and_options() -> None:
             "postgresql+psycopg://example_user@localhost:5432/example_database"
         ),
         _env_file=None,
+        jwt_secret="x" * 32,
     )
     engine = create_database_engine(settings)
     session_factory = create_session_factory(engine)

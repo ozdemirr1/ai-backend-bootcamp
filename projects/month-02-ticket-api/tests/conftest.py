@@ -6,10 +6,11 @@ from sqlalchemy import create_engine, func, select, text
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.orm import Session
 
-from ticket_api.config import get_settings
+from ticket_api.config import Settings
 from ticket_api.persistence_models import TicketRecord
 
 TEST_DATABASE_NAME = "opsdesk_test"
+TEST_JWT_SECRET = "integration-test-jwt-secret-with-32-characters"
 
 
 @pytest.fixture(scope="session")
@@ -17,7 +18,8 @@ def postgresql_test_engine() -> Iterator[Engine]:
     if os.getenv("RUN_DATABASE_TESTS") != "1":
         pytest.skip("set RUN_DATABASE_TESTS=1 to run PostgreSQL integration tests")
 
-    database_url = make_url(get_settings().database_url.get_secret_value()).set(
+    settings = Settings(jwt_secret=TEST_JWT_SECRET)
+    database_url = make_url(settings.database_url.get_secret_value()).set(
         database=TEST_DATABASE_NAME
     )
 

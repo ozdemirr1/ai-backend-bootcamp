@@ -57,6 +57,12 @@ The Week 07 persistence foundation adds the following verified versions:
 - Alembic 1.19.1
 - Pydantic Settings 2.15.0
 
+The Week 08 authentication foundation adds the following verified versions:
+
+- pwdlib 0.3.1
+- Argon2 CFFI 25.1.0
+- PyJWT 2.13.0
+
 ## Database Configuration Foundation
 
 The application reads its PostgreSQL connection URL from the required
@@ -81,6 +87,28 @@ tests, documentation, terminal screenshots, or Git history.
 contains testable Engine and Session factory functions. Engine creation is
 lazy: a real connection is opened only when a Connection or Session first
 executes database work.
+
+## Password and Token Configuration Foundation
+
+`ticket_api.passwords.PasswordHasher` is the application boundary around
+pwdlib's recommended Argon2 configuration. Registration code will call this
+boundary rather than import cryptographic-library details throughout routes,
+services, or repositories. The plaintext password is never recoverable from
+the stored value; verification repeats the password-hashing calculation using
+the algorithm parameters and salt encoded in the stored hash.
+
+The application also requires `JWT_SECRET`. Pydantic represents it as a
+`SecretStr` so ordinary settings representations mask the value. Masking is
+not encryption: application code can still retrieve the value when signing or
+validating a token, so it must not be printed, returned, or committed. A
+minimum length rejects obvious placeholder-sized secrets but does not make a
+predictable value secure; local secrets must be generated randomly.
+
+`ACCESS_TOKEN_EXPIRE_MINUTES` defaults to `30` and accepts values from `1`
+through `1440`. Token creation and decoding are deliberately deferred until
+the User/login boundary is designed. JWT payloads are signed rather than
+encrypted and must not contain passwords, password hashes, secrets, or other
+sensitive user records.
 
 ## Persistence Mapping Foundation
 
@@ -311,3 +339,10 @@ The final 29 August quality run produced `138 passed, 19 skipped` with database
 tests disabled and `157 passed` with `RUN_DATABASE_TESTS=1`. Dependency checks,
 Ruff lint, formatting for 90 files, `git diff --check`, the zero-row isolation
 check, and Alembic revision `e07f08d4399d` all passed.
+
+On 31 August, the password and token-configuration foundation increased the
+complete suite to `150 passed, 19 skipped` with database tests disabled and
+`169 passed` with `RUN_DATABASE_TESTS=1`. PostgreSQL fixtures use a synthetic
+test-only JWT secret, while the real ignored `.env` remains outside tests and
+Git. Dependency consistency, Ruff lint, formatting for 94 files, and
+`git diff --check` passed.

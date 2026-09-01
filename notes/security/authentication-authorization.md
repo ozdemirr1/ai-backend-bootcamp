@@ -100,10 +100,58 @@ PostgreSQL integration fixtures also provide a synthetic JWT secret. They read
 the local database URL only to derive the guarded `opsdesk_test` connection;
 they do not need or reveal the developer's real JWT secret.
 
+## User Identity and Email Normalization
+
+The durable User identity is the database-generated `user_id`. Email is a
+login identifier and may change, so it is not used as a Ticket foreign key or
+as the long-lived identity represented by a future JWT `sub` claim.
+
+Account emails follow an explicit application policy: surrounding whitespace
+is removed and the validated normalized form is case-folded before storage or
+lookup. This is a product identity decision rather than a universal statement
+that every email local part is case-insensitive.
+
+`email-validator` owns maintained email syntax parsing. Domain validation uses
+`check_deliverability=False`, so registration and login do not perform DNS or
+MX lookups. Syntax validation cannot prove mailbox ownership; that would
+require a separate email-verification workflow, which is outside the current
+scope.
+
+`normalize_user_email` is the single domain boundary for this policy. It
+translates the third-party `EmailNotValidError` into a domain-facing
+`ValueError`, preventing higher layers from depending on library-specific
+exceptions.
+
+## User Domain and Persistence Representations
+
+`NewUser` contains only normalized email and a password hash. It deliberately
+has no role or active-state field, so ordinary registration cannot request an
+elevated role. `User` contains the persisted identity, internal password hash,
+bounded `member`/`admin` role, and active state. Future public response schemas
+must omit the password hash even though the internal authentication domain
+needs it for verification.
+
+`UserRecord` defines the PostgreSQL representation. The database owns the
+identity and applies `member` and active defaults. A named unique constraint
+protects normalized email identity, while check constraints defend the email
+format, allowed roles, and timestamp order even when writes bypass ordinary
+application construction.
+
+The registration mapper copies only email and password hash into a new record.
+It does not assign role or active state. After an INSERT, the repository will
+use `flush()` and `refresh()` to obtain the database-generated identity and
+trusted defaults. The record-to-domain mapper converts raw role text into a
+`UserRole`; unknown persisted roles fail rather than silently entering the
+domain.
+
+Ticket ownership will reference `users.user_id`. Because existing Ticket rows
+have no owner, the first ownership migration will add nullable `owner_id` as
+the expand phase. Backfill and a later non-null contract must be explicit; a
+fabricated owner must not be silently assigned during schema creation.
+
 ## Not Implemented Yet
 
-- User domain and persistence models
-- User repository and mapper
+- User repository
 - Registration and login routes
 - JWT creation and decoding
 - Current-user dependency
@@ -118,3 +166,5 @@ they do not need or reveal the developer's real JWT secret.
   <https://frankie567.github.io/pwdlib/reference/pwdlib/>
 - OWASP Password Storage Cheat Sheet:
   <https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html>
+- email-validator documentation:
+  <https://github.com/JoshData/python-email-validator>

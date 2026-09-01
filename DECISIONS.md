@@ -190,3 +190,31 @@ display in ordinary representations. The length guard catches obvious
 placeholders but does not replace cryptographically random generation. Test
 secrets remain deterministic and non-sensitive so the suite does not depend
 on a developer's local secret.
+
+## Decision 009 - Stable User Identity and Trusted Registration Defaults
+
+Users use a database-generated `user_id` as their durable identity. Email is a
+normalized, case-insensitive account login field with a named database unique
+constraint, but it is not used as a Ticket relationship key. The current role
+set is limited to `member` and `admin`.
+
+Ordinary registration data contains email and password hash only. It cannot
+select a role, active state, identity, or Ticket owner. PostgreSQL supplies the
+safe `member` and active defaults. Domain and persistence models remain
+separate and cross through explicit mapper functions.
+
+Ticket ownership will reference `users.user_id`. The first migration adds
+`owner_id` as nullable because existing Ticket rows have no trustworthy owner;
+backfill and a later non-null contract remain explicit follow-up steps.
+
+## Reason
+
+Email is mutable business data, while primary-key relationships and token
+subjects require a stable identifier. A client-controlled role would permit
+privilege escalation, so authorization attributes must come from trusted
+server state.
+
+Adding a non-null foreign key immediately would make PostgreSQL invent or
+require an owner for historical Tickets. The expand-backfill-contract sequence
+preserves existing data and makes the ownership decision visible instead of
+hiding it inside a destructive or misleading migration.

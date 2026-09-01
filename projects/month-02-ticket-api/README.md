@@ -110,6 +110,28 @@ the User/login boundary is designed. JWT payloads are signed rather than
 encrypted and must not contain passwords, password hashes, secrets, or other
 sensitive user records.
 
+## User Identity Foundation
+
+`ticket_api.user_models` defines a stable database-generated User identity,
+normalized email login field, internal password-hash value, active state, and
+the bounded `member`/`admin` role set. Ordinary `NewUser` registration data has
+no role field; elevated access is never accepted from untrusted client input.
+
+Email syntax is validated through the maintained `email-validator` library
+without DNS checks. The application stores and looks up one normalized,
+case-folded account identity. Email remains mutable login data; relationships
+and future JWT subject claims use immutable `user_id` instead.
+
+`UserRecord` is the separate SQLAlchemy persistence representation. PostgreSQL
+owns the generated identity and safe member/active defaults, and named
+constraints protect email uniqueness, normalized storage, allowed roles, and
+timestamp ordering. Explicit mapper functions cross between registration,
+persistence, and domain representations without allowing registration input
+to assign privileged fields.
+
+The User repository, Ticket ownership foreign key, and Alembic migration are
+the next persistence steps and are not yet implemented.
+
 ## Persistence Mapping Foundation
 
 `ticket_api.persistence_models` defines a typed SQLAlchemy `TicketRecord` that

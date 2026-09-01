@@ -268,17 +268,45 @@ Week 08
 - Passed `150` tests with `19` integration skips when database tests were
   disabled and all `169` tests against the guarded `opsdesk_test` database.
 
-## Next Tasks - Tuesday, 1 September
+## Week 08 Tuesday Outcome - 1 September
 
-1. Define the minimal User domain identity, login field, normalization, and
-   public representation before writing persistence code.
-2. Choose and document the smallest justified role set.
-3. Add separate User domain and SQLAlchemy persistence models.
-4. Add User repository and mapper boundaries without exposing password hashes.
-5. Add Ticket ownership with an explicit User foreign key.
-6. Generate and manually review the Alembic migration, then verify upgrade,
-   downgrade, re-upgrade, and metadata drift only on the isolated migration
-   database.
+- Selected a stable database-generated `user_id` for identity, Ticket
+  ownership, and the future JWT subject instead of using mutable email data as
+  a relationship key.
+- Defined an explicit case-insensitive account-email policy and added
+  `email-validator` 2.3.0 for maintained syntax validation and normalization
+  without runtime DNS checks.
+- Added `NewUser`, `User`, and the bounded `member`/`admin` `UserRole` enum.
+  Ordinary registration data contains no client-selected role.
+- Added nine User-domain tests covering normalization, invalid input, strict
+  identifiers, role types, active state, and password-hash preservation.
+- Added a typed SQLAlchemy `UserRecord` with database identity, named unique
+  and check constraints, safe `member`/active server defaults, and
+  timezone-aware timestamps.
+- Added five persistence-model tests for the User table alongside the existing
+  Ticket metadata tests.
+- Added explicit mapping from trusted registration data to `UserRecord` and
+  from persisted records to the `User` domain type. Database defaults remain
+  database-owned until `flush()`/`refresh()`.
+- Passed Ruff, `git diff --check`, and 29 focused domain, persistence-model,
+  and mapper tests.
+- Deliberately deferred repository, Ticket ownership, and migration work to a
+  longer Wednesday session rather than rushing database-sensitive changes.
+
+## Next Tasks - Wednesday, 2 September
+
+1. Add the User repository protocol and SQLAlchemy implementation, including
+   normalized-email lookup and duplicate-identity translation.
+2. Add nullable Ticket `owner_id` metadata and its foreign key to `users` as
+   the expand phase for existing Ticket rows.
+3. Add guarded PostgreSQL repository tests against `opsdesk_test`.
+4. Generate and manually review the User/ownership Alembic revision.
+5. Verify upgrade, downgrade, re-upgrade, and metadata drift only against
+   `opsdesk_migration_dev`.
+6. Run the complete dependency, Ruff, formatting, fast-test, integration-test,
+   migration, and secret-review gates.
+7. Begin registration request/response contracts only if the persistence and
+   migration boundary is fully verified.
 
 ## Week 08 Guardrails
 

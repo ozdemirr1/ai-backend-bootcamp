@@ -114,14 +114,42 @@ current-user dependency
   migration database.
 - Add mapper and repository tests.
 
-### Wednesday - Registration
+#### Tuesday Outcome
 
-- Add a strict registration request contract.
-- Reject malformed and extra input before persistence.
-- Hash the password before creating the persistence record.
-- Prevent plaintext or hash values from entering the response model.
-- Translate duplicate identity into a stable application and HTTP conflict.
-- Add unit, service, HTTP, and PostgreSQL integration tests.
+- Chose a database-generated, stable `user_id` as the ownership and future JWT
+  subject identity instead of a mutable email address.
+- Defined `member` and `admin` as the smallest current role set; ordinary
+  registration has no client-controlled role field.
+- Added `email-validator` 2.3.0 and a single domain normalization boundary with
+  deterministic syntax checks and no DNS dependency.
+- Added `NewUser`, `User`, and `UserRole` domain types with focused validation
+  tests.
+- Added a constrained SQLAlchemy `UserRecord` with a normalized unique email,
+  safe database defaults, and timestamps.
+- Added explicit `NewUser`/`UserRecord`/`User` mapper functions. Registration
+  mapping deliberately leaves role and active-state assignment to trusted
+  server defaults.
+- Passed Ruff, diff checks, and 29 focused User, persistence-model, and mapper
+  tests.
+- Stopped before repository, Ticket ownership, and migration work. These
+  database-sensitive tasks move to Wednesday rather than being rushed.
+
+### Wednesday - Persistence Completion and Registration Start
+
+- Add the User repository protocol and SQLAlchemy implementation, including
+  lookup by normalized email and database-generated defaults. Estimated:
+  60-90 minutes.
+- Add nullable Ticket `owner_id` metadata and its User foreign key as the
+  expand phase for existing Tickets. Estimated: 35-50 minutes.
+- Generate and manually review the User/ownership Alembic revision. Estimated:
+  45-60 minutes.
+- Verify upgrade, downgrade, re-upgrade, and `alembic check` only against
+  `opsdesk_migration_dev`. Estimated: 45-60 minutes.
+- Add repository integration tests and run the complete quality gates.
+  Estimated: 40-60 minutes.
+- If the persistence boundary is complete and energy remains, begin the strict
+  registration request/response contracts. This is a stretch task, not a
+  reason to weaken migration review. Estimated: 45-60 minutes.
 
 ### Thursday - Login, JWT, and Current User
 

@@ -1,6 +1,12 @@
-from sqlalchemy import BigInteger, CheckConstraint, DateTime
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    UniqueConstraint,
+)
 
-from ticket_api.persistence_models import Base, TicketRecord
+from ticket_api.persistence_models import Base, TicketRecord, UserRecord
 
 
 def test_ticket_record_uses_expected_table_and_columns() -> None:
@@ -82,4 +88,80 @@ def test_ticket_record_declares_status_listing_index() -> None:
             "status",
             "ticket_id",
         ]
+    }
+
+
+def test_user_record_uses_expected_table_and_columns() -> None:
+    table = UserRecord.__table__
+
+    assert table.name == "users"
+    assert list(table.columns.keys()) == [
+        "user_id",
+        "email",
+        "password_hash",
+        "role",
+        "is_active",
+        "created_at",
+        "updated_at",
+    ]
+    assert Base.metadata.tables["users"] is table
+
+
+def test_user_record_uses_database_generated_identity() -> None:
+    column = UserRecord.__table__.columns["user_id"]
+
+    assert column.primary_key is True
+    assert isinstance(column.type, BigInteger)
+    assert column.identity is not None
+    assert column.identity.always is True
+
+
+def test_user_record_declares_unique_email() -> None:
+    unique_constraints = {
+        constraint.name: [column.name for column in constraint.columns]
+        for constraint in UserRecord.__table__.constraints
+        if isinstance(constraint, UniqueConstraint)
+    }
+
+    assert unique_constraints == {
+        "users_email_key": ["email"],
+    }
+
+
+def test_user_record_uses_safe_defaults_and_timestamps() -> None:
+    columns = UserRecord.__table__.columns
+
+    assert columns["email"].nullable is False
+    assert columns["password_hash"].nullable is False
+
+    assert columns["role"].nullable is False
+    assert columns["role"].server_default is not None
+
+    assert columns["is_active"].nullable is False
+    assert isinstance(columns["is_active"].type, Boolean)
+    assert columns["is_active"].server_default is not None
+
+    created_col = columns["created_at"]
+    assert isinstance(created_col.type, DateTime)
+    assert created_col.type.timezone is True
+    assert created_col.server_default is not None
+
+    updated_col = columns["updated_at"]
+    assert isinstance(updated_col.type, DateTime)
+    assert updated_col.type.timezone is True
+    assert updated_col.server_default is not None
+    assert updated_col.onupdate is not None
+
+
+def test_user_record_declares_expected_check_constraints() -> None:
+    check_constraints = {
+        constraint.name
+        for constraint in UserRecord.__table__.constraints
+        if isinstance(constraint, CheckConstraint)
+    }
+
+    assert check_constraints == {
+        "users_email_format",
+        "users_role_allowed",
+        "users_timestamp_order",
     }

@@ -151,6 +151,26 @@ current-user dependency
   registration request/response contracts. This is a stretch task, not a
   reason to weaken migration review. Estimated: 45-60 minutes.
 
+#### Wednesday Outcome
+
+- Completed the User repository protocol and both in-memory and SQLAlchemy
+  implementations with normalized lookup and duplicate conflict translation.
+- Added nullable Ticket ownership metadata, its restrictive User foreign key,
+  the ownership listing index, and mapper ownership invariants.
+- Generated and reviewed revision `e98825c4d6b6`, then proved upgrade,
+  downgrade, legacy-row preservation, re-upgrade, and zero metadata drift on
+  the isolated migration database.
+- Upgraded guarded `opsdesk_test` and added real PostgreSQL User repository
+  coverage while preserving caller-owned transactions and empty test tables.
+- Completed the stretch registration slice: strict request/public response
+  contracts, injected hashing capability, registration service, dependency
+  composition, and `POST /auth/register`.
+- Proved successful commit, Argon2id-only persistence, safe response fields,
+  normalized duplicate conflict handling, rollback, and exact cleanup through
+  the real HTTP/Session/PostgreSQL stack.
+- Passed dependency, lint, formatting, migration, and diff gates; passed `205`
+  tests with `27` integration skips and all `232` guarded database tests.
+
 ### Thursday - Login, JWT, and Current User
 
 - Add a login workflow with generic invalid-credential responses.

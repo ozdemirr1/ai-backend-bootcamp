@@ -293,20 +293,48 @@ Week 08
 - Deliberately deferred repository, Ticket ownership, and migration work to a
   longer Wednesday session rather than rushing database-sensitive changes.
 
-## Next Tasks - Wednesday, 2 September
+## Week 08 Wednesday Outcome - 2 September
 
-1. Add the User repository protocol and SQLAlchemy implementation, including
-   normalized-email lookup and duplicate-identity translation.
-2. Add nullable Ticket `owner_id` metadata and its foreign key to `users` as
-   the expand phase for existing Ticket rows.
-3. Add guarded PostgreSQL repository tests against `opsdesk_test`.
-4. Generate and manually review the User/ownership Alembic revision.
-5. Verify upgrade, downgrade, re-upgrade, and metadata drift only against
-   `opsdesk_migration_dev`.
-6. Run the complete dependency, Ruff, formatting, fast-test, integration-test,
-   migration, and secret-review gates.
-7. Begin registration request/response contracts only if the persistence and
-   migration boundary is fully verified.
+- Added a storage-independent User repository protocol plus in-memory and
+  SQLAlchemy implementations with normalized-email lookup, database-generated
+  defaults, and duplicate-identity exception translation.
+- Added guarded PostgreSQL User repository tests without moving `commit()` or
+  `rollback()` into the repository boundary.
+- Added nullable Ticket `owner_id` metadata, a restrictive foreign key to
+  `users.user_id`, an ownership/status/listing index, and mapper protection
+  against accidental ownership transfer.
+- Added and manually reviewed Alembic revision `e98825c4d6b6` for the User
+  table and Ticket ownership expand phase.
+- Proved upgrade, downgrade, and re-upgrade behavior against
+  `opsdesk_migration_dev`, including preservation of a legacy Ticket while the
+  nullable ownership column was added and removed. `alembic check` reports no
+  metadata drift.
+- Applied the revision to guarded `opsdesk_test` and verified its tables,
+  column, unique constraint, foreign key, empty state, and head revision.
+- Added strict registration request and public User response contracts. Client
+  input cannot select role, identity, active state, or ownership, and responses
+  cannot expose plaintext or hashed passwords.
+- Added an injected `PasswordHashing` protocol and `RegistrationService` that
+  validates identity before the expensive hash, stores only an Argon2id hash,
+  and translates repository conflicts without depending on SQLAlchemy.
+- Added `POST /auth/register`, dependency composition, fast HTTP tests, and
+  guarded PostgreSQL tests for durable registration, password hashing,
+  duplicate conflict rollback, and exact cleanup.
+- Passed dependency consistency, Ruff, formatting for 101 files, and Git diff
+  checks. Passed `205` tests with `27` integration skips and all `232` tests
+  with guarded database tests enabled.
+
+## Next Tasks - Thursday, 3 September
+
+1. Define strict login and token response contracts.
+2. Add a login service with one generic public invalid-credential failure for
+   missing users, incorrect passwords, and inactive users.
+3. Add deterministic clock-backed JWT creation and validation with fixed
+   algorithm selection, minimal claims, and bounded expiration.
+4. Reject malformed, tampered, expired, and unsupported tokens with `401`.
+5. Load the persisted active User through a current-user dependency.
+6. Add and test `POST /auth/login` and `GET /users/me` without logging or
+   returning complete tokens outside the intended login response.
 
 ## Week 08 Guardrails
 

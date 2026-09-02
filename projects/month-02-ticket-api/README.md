@@ -34,6 +34,11 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Isolated endpoint, schema, domain, repository, and service tests
 - Dedicated-database PostgreSQL repository integration tests
 - Eight PostgreSQL HTTP transaction and lifecycle integration tests
+- User domain, persistence, mapping, and repository boundaries
+- Nullable Ticket ownership foreign key and reviewed Alembic expand migration
+- Strict registration request and public User response contracts
+- Injected registration service with Argon2id password hashing
+- `POST /auth/register` with duplicate-conflict and transaction rollback tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -62,6 +67,7 @@ The Week 08 authentication foundation adds the following verified versions:
 - pwdlib 0.3.1
 - Argon2 CFFI 25.1.0
 - PyJWT 2.13.0
+- email-validator 2.3.0
 
 ## Database Configuration Foundation
 
@@ -91,9 +97,9 @@ executes database work.
 ## Password and Token Configuration Foundation
 
 `ticket_api.passwords.PasswordHasher` is the application boundary around
-pwdlib's recommended Argon2 configuration. Registration code will call this
-boundary rather than import cryptographic-library details throughout routes,
-services, or repositories. The plaintext password is never recoverable from
+pwdlib's recommended Argon2 configuration. `RegistrationService` receives the
+smaller `PasswordHashing` protocol, while dependency composition supplies the
+real implementation. The plaintext password is never recoverable from
 the stored value; verification repeats the password-hashing calculation using
 the algorithm parameters and salt encoded in the stored hash.
 
@@ -129,8 +135,25 @@ timestamp ordering. Explicit mapper functions cross between registration,
 persistence, and domain representations without allowing registration input
 to assign privileged fields.
 
-The User repository, Ticket ownership foreign key, and Alembic migration are
-the next persistence steps and are not yet implemented.
+The User repository has in-memory and SQLAlchemy implementations behind one
+service-facing protocol. Alembic revision `e98825c4d6b6` creates `users` and
+adds nullable Ticket `owner_id` as the safe expand phase for historical rows.
+The foreign key uses `ON DELETE RESTRICT`; backfill and a later non-null
+contract remain future explicit changes.
+
+## Registration Workflow
+
+`POST /auth/register` accepts only a validated email and a 12-to-128-character
+password. Registration validates identity before performing the deliberately
+expensive hash, stores only an Argon2id encoding, and lets PostgreSQL assign the
+User identity, `member` role, and active state. Duplicate normalized identities
+return `409 Conflict` and cause the request transaction to roll back.
+
+The public response exposes only User identity, normalized email, role, and
+active state. Plaintext passwords and password hashes are never returned.
+Fast tests replace repositories and hashing through dependency injection;
+guarded PostgreSQL tests retain the real request-scoped Session, repository,
+Argon2id hashing, commit, conflict rollback, and cleanup chain.
 
 ## Persistence Mapping Foundation
 
@@ -251,6 +274,7 @@ available at `http://127.0.0.1:8000/docs`.
 | Method   | Path                   | Success status   | Purpose |
 | -------- | ---------------------- | ---------------- | ------- |
 | `GET`    | `/health`              | `200 OK`         | Return application health. |
+| `POST`   | `/auth/register`       | `201 Created`    | Register a member with a hashed password. |
 | `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
 | `POST`   | `/tickets`             | `201 Created`    | Validate and create a ticket. |
 | `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |

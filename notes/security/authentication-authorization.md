@@ -3,9 +3,9 @@
 ## Purpose
 
 These notes record the Week 08 security model for the Month 02 Ticket API.
-They describe the current password and token-configuration foundation without
-claiming that registration, login, JWT issuance, or authorization are already
-implemented.
+They describe the implemented password, User persistence, Ticket ownership
+expand phase, and registration boundaries. Login, JWT issuance, current-user
+resolution, and authorization remain later steps.
 
 ## Authentication and Authorization Are Different Decisions
 
@@ -49,9 +49,10 @@ The salt is not a secret; it is stored with the encoded hash.
 
 `ticket_api.passwords.PasswordHasher` contains the pwdlib dependency. This is
 a local library boundary: higher layers ask to hash or verify without knowing
-pwdlib's construction or method details. Full dependency inversion will be
-introduced only when a service depends on an injected protocol rather than a
-concrete implementation.
+pwdlib's construction or method details. `RegistrationService` depends on the
+smaller injected `PasswordHashing` protocol, so fast service tests can use a
+recording fake without invoking Argon2 while production composition supplies
+the maintained pwdlib-backed implementation.
 
 ## Password Behavior Proven on Monday
 
@@ -144,18 +145,41 @@ trusted defaults. The record-to-domain mapper converts raw role text into a
 `UserRole`; unknown persisted roles fail rather than silently entering the
 domain.
 
-Ticket ownership will reference `users.user_id`. Because existing Ticket rows
-have no owner, the first ownership migration will add nullable `owner_id` as
-the expand phase. Backfill and a later non-null contract must be explicit; a
-fabricated owner must not be silently assigned during schema creation.
+Ticket ownership references `users.user_id`. Because existing Ticket rows have
+no trustworthy owner, revision `e98825c4d6b6` adds nullable `owner_id` as the
+expand phase. Its restrictive foreign key prevents deletion of an owning User,
+and the ownership/status/Ticket-id index supports future authorized listings.
+Backfill and a later non-null contract remain explicit; no fabricated owner is
+silently assigned during schema creation.
+
+## Registration Boundary
+
+`UserRegisterRequest` accepts only email and plaintext password. Extra input is
+forbidden, so a client cannot select `admin`, active state, identity, or Ticket
+ownership. Email is syntactically validated and case-folded. Password length is
+bounded, all-whitespace input is rejected, and meaningful surrounding spaces
+are preserved rather than silently changing the credential.
+
+The plaintext password exists only at the HTTP and hashing boundary. The
+registration service validates and normalizes email first, asks the injected
+hashing capability for an Argon2id encoding, constructs `NewUser` with that
+encoding, and passes it to the repository. `UserResponse` deliberately contains
+only `user_id`, email, role, and active state; Pydantic rejects password fields
+instead of serializing them accidentally.
+
+The database unique constraint is the final authority for duplicate identity.
+The SQLAlchemy repository translates `IntegrityError`, the service translates
+the storage-facing conflict, and the route raises HTTP `409`. Raising the HTTP
+exception allows the request-scoped Session dependency to roll back the failed
+transaction. PostgreSQL HTTP tests prove that the original User survives, no
+duplicate row appears, and cleanup returns both guarded tables to zero rows.
 
 ## Not Implemented Yet
 
-- User repository
-- Registration and login routes
+- Login route and credential verification workflow
 - JWT creation and decoding
 - Current-user dependency
-- Ticket ownership
+- Ticket ownership backfill and non-null contract
 - Object-level and role/function-level authorization
 
 ## Primary References

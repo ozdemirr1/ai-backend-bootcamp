@@ -11,7 +11,10 @@ from fastapi import (
 )
 from starlette.types import Lifespan
 
-from ticket_api.dependencies import get_ticket_service
+from ticket_api.dependencies import (
+    get_registration_service,
+    get_ticket_service,
+)
 from ticket_api.lifespan import database_lifespan
 from ticket_api.models import (
     Ticket,
@@ -22,13 +25,18 @@ from ticket_api.schemas import (
     TicketCreateRequest,
     TicketResponse,
     TicketUpdateRequest,
+    UserRegisterRequest,
+    UserResponse,
 )
 from ticket_api.schemas import TicketStatus as TicketStatusValue
 from ticket_api.services import (
     DuplicateTicketError,
+    DuplicateUserError,
+    RegistrationService,
     TicketNotFoundError,
     TicketService,
 )
+from ticket_api.user_models import User
 
 router = APIRouter()
 
@@ -36,6 +44,11 @@ router = APIRouter()
 TicketServiceDependency = Annotated[
     TicketService,
     Depends(get_ticket_service),
+]
+
+RegistrationServiceDependency = Annotated[
+    RegistrationService,
+    Depends(get_registration_service),
 ]
 
 
@@ -46,6 +59,38 @@ def _to_ticket_response(ticket: Ticket) -> TicketResponse:
         priority=ticket.priority.value,
         status=ticket.status.value,
     )
+
+
+def _to_user_response(user: User) -> UserResponse:
+    return UserResponse(
+        user_id=user.user_id,
+        email=user.email,
+        role=user.role.value,
+        is_active=user.is_active,
+    )
+
+
+@router.post(
+    "/auth/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def register_user(
+    user_data: UserRegisterRequest,
+    service: RegistrationServiceDependency,
+) -> UserResponse:
+    try:
+        user = service.register_user(
+            email=str(user_data.email),
+            plain_password=user_data.password,
+        )
+    except DuplicateUserError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        ) from exc
+
+    return _to_user_response(user)
 
 
 @router.get("/health")

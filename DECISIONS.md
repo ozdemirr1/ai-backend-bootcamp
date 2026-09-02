@@ -218,3 +218,31 @@ Adding a non-null foreign key immediately would make PostgreSQL invent or
 require an owner for historical Tickets. The expand-backfill-contract sequence
 preserves existing data and makes the ownership decision visible instead of
 hiding it inside a destructive or misleading migration.
+
+## Decision 010 - Registration Composition and Public User Boundary
+
+Registration accepts only email and plaintext password at the HTTP boundary.
+`RegistrationService` depends on a User repository protocol and the narrow
+`PasswordHashing` capability. Production dependencies compose the SQLAlchemy
+repository and pwdlib-backed hasher; fast tests supply in-memory and recording
+implementations. PostgreSQL retains authority for unique email identity and
+safe role/active defaults.
+
+The service translates persistence conflicts, while the route exposes a
+bounded `409 Conflict` and returns a dedicated public User response without
+password fields. Repository methods may `flush()` and `refresh()`, but the
+request-scoped Session dependency continues to own commit and rollback.
+
+## Reason
+
+Keeping cryptographic, persistence, application, and HTTP concerns behind
+separate interfaces prevents routes from handling hashes or SQLAlchemy state.
+It also permits inexpensive service tests without weakening end-to-end proof
+that production registration stores an Argon2id encoding.
+
+The database unique constraint closes race conditions that a preliminary
+lookup alone cannot prevent. Propagating the translated failure as an HTTP
+exception ensures the failed Session transaction reaches the dependency's
+rollback path. A dedicated response model makes accidental password-hash
+disclosure fail validation rather than relying on callers to remember which
+internal User fields are safe.

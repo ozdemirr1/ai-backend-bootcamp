@@ -4,8 +4,12 @@ from typing import Annotated
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session, sessionmaker
 
-from ticket_api.services import TicketService
-from ticket_api.sqlalchemy_repositories import SqlAlchemyTicketRepository
+from ticket_api.passwords import PasswordHasher
+from ticket_api.services import RegistrationService, TicketService
+from ticket_api.sqlalchemy_repositories import (
+    SqlAlchemyTicketRepository,
+    SqlAlchemyUserRepository,
+)
 
 
 def get_session_factory(request: Request) -> sessionmaker[Session]:
@@ -40,3 +44,15 @@ SessionDependency = Annotated[
 def get_ticket_service(session: SessionDependency) -> TicketService:
     repository = SqlAlchemyTicketRepository(session)
     return TicketService(repository)
+
+
+def get_registration_service(
+    session: SessionDependency,
+) -> RegistrationService:
+    repository = SqlAlchemyUserRepository(session)
+    password_hasher = PasswordHasher()
+
+    return RegistrationService(
+        repository=repository,
+        password_hasher=password_hasher,
+    )

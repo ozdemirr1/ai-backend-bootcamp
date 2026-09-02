@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session, sessionmaker
 from ticket_api.database import create_session_factory
 from ticket_api.dependencies import SessionDependency
 from ticket_api.main import create_app
-from ticket_api.persistence_models import TicketRecord
+from ticket_api.passwords import PasswordHasher
+from ticket_api.persistence_models import TicketRecord, UserRecord
 
 pytestmark = pytest.mark.integration
 
@@ -446,3 +447,92 @@ def test_each_postgresql_request_uses_a_distinct_session(
         )
 
     assert ticket_count_after == 0
+
+
+def test_registered_user_is_committed_with_hashed_password(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"registration-{marker}@example.com"
+    plain_password = "strong-password-123"
+
+    try:
+        response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": plain_password,
+            },
+        )
+
+        assert response.status_code == 201
+
+        response_data = response.json()
+        assert response_data["email"] == email
+        assert response_data["role"] == "member"
+        assert response_data["is_active"] is True
+        assert "password" not in response_data
+        assert "password_hash" not in response_data
+
+        with postgresql_test_engine.connect() as connection:
+            password_hash = connection.scalar(
+                select(UserRecord.password_hash).where(UserRecord.email == email)
+            )
+
+        assert isinstance(password_hash, str)
+        assert password_hash != plain_password
+        assert password_hash.startswith("$argon2id$")
+        assert PasswordHasher().verify_password(
+            plain_password,
+            password_hash,
+        )
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_duplicate_registration_returns_409_and_preserves_original_user(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    normalized_email = f"duplicate-{marker}@example.com"
+    password = "strong-password-123"
+
+    try:
+        first_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": f"Duplicate-{marker}@Example.COM",
+                "password": password,
+            },
+        )
+        assert first_response.status_code == 201
+        assert first_response.json()["email"] == normalized_email
+
+        duplicate_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": normalized_email,
+                "password": password,
+            },
+        )
+        assert duplicate_response.status_code == 409
+        assert duplicate_response.json() == {"detail": "User registration conflict"}
+
+        with postgresql_test_engine.connect() as connection:
+            user_count = connection.scalar(
+                select(func.count())
+                .select_from(UserRecord)
+                .where(UserRecord.email == normalized_email)
+            )
+
+        assert user_count == 1
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(
+                delete(UserRecord).where(UserRecord.email == normalized_email)
+            )

@@ -5,6 +5,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    ForeignKey,
     Identity,
     Index,
     Text,
@@ -28,6 +29,15 @@ class TicketRecord(Base):
         Identity(always=True),
         primary_key=True,
     )
+    owner_id: Mapped[int | None] = mapped_column(
+        BigInteger,
+        ForeignKey(
+            "users.user_id",
+            name="tickets_owner_id_fkey",
+            ondelete="RESTRICT",
+        ),
+        nullable=True,
+    )
     title: Mapped[str] = mapped_column(Text, nullable=False)
     priority: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(
@@ -49,6 +59,12 @@ class TicketRecord(Base):
     __table_args__ = (
         Index(
             "tickets_status_ticket_id_idx",
+            "status",
+            "ticket_id",
+        ),
+        Index(
+            "tickets_owner_id_status_ticket_id_idx",
+            "owner_id",
             "status",
             "ticket_id",
         ),

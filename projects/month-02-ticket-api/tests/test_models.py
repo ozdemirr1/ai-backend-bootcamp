@@ -172,3 +172,46 @@ def test_new_ticket_rejects_raw_string_priority() -> None:
             title="VPN connection fails",
             priority="high",
         )
+
+
+def test_ticket_allows_missing_owner_during_migration() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="Legacy ticket",
+        priority=TicketPriority.LOW,
+    )
+
+    assert ticket.owner_id is None
+
+
+def test_ticket_accepts_positive_owner_id() -> None:
+    ticket = Ticket(
+        ticket_id=1,
+        title="Owned ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=7,
+    )
+
+    assert ticket.owner_id == 7
+
+
+@pytest.mark.parametrize(
+    ("owner_id", "expected_exception"),
+    [
+        (0, ValueError),
+        (-1, ValueError),
+        ("7", TypeError),
+        (True, TypeError),
+    ],
+)
+def test_ticket_rejects_invalid_owner_id(
+    owner_id: object,
+    expected_exception: type[Exception],
+) -> None:
+    with pytest.raises(expected_exception, match="owner_id"):
+        Ticket(
+            ticket_id=1,
+            title="Owned ticket",
+            priority=TicketPriority.HIGH,
+            owner_id=owner_id,  # type: ignore[arg-type]
+        )

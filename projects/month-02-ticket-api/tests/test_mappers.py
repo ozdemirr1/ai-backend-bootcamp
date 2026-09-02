@@ -58,6 +58,7 @@ def test_update_ticket_record_from_domain_updates_business_fields() -> None:
     timestamp = datetime(2026, 8, 25, 12, 0, tzinfo=UTC)
     record = TicketRecord(
         ticket_id=1,
+        owner_id=7,
         title="Old title",
         priority="low",
         status="open",
@@ -66,6 +67,7 @@ def test_update_ticket_record_from_domain_updates_business_fields() -> None:
     )
     ticket = Ticket(
         ticket_id=1,
+        owner_id=7,
         title="New title",
         priority=TicketPriority.CRITICAL,
         status=TicketStatus.RESOLVED,
@@ -74,6 +76,7 @@ def test_update_ticket_record_from_domain_updates_business_fields() -> None:
     update_ticket_record_from_domain(record, ticket)
 
     assert record.ticket_id == 1
+    assert record.owner_id == 7
     assert record.title == "New title"
     assert record.priority == "critical"
     assert record.status == "resolved"
@@ -160,3 +163,26 @@ def test_new_user_to_record_rejects_wrong_type() -> None:
 def test_user_record_to_domain_rejects_wrong_type() -> None:
     with pytest.raises(TypeError, match="UserRecord"):
         user_record_to_domain("not-a-record")  # type: ignore[arg-type]
+
+
+def test_update_ticket_record_rejects_mismatched_owners() -> None:
+    record = TicketRecord(
+        ticket_id=1,
+        owner_id=7,
+        title="Original title",
+        priority="low",
+        status="open",
+    )
+    ticket = Ticket(
+        ticket_id=1,
+        owner_id=8,
+        title="Changed title",
+        priority=TicketPriority.HIGH,
+        status=TicketStatus.OPEN,
+    )
+
+    with pytest.raises(ValueError, match="owner_id must match"):
+        update_ticket_record_from_domain(record, ticket)
+
+    assert record.title == "Original title"
+    assert record.owner_id == 7

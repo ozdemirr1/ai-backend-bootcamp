@@ -53,6 +53,7 @@ class Ticket:
     title: str
     priority: TicketPriority
     status: TicketStatus = TicketStatus.OPEN
+    owner_id: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.ticket_id) is not int:
@@ -68,6 +69,13 @@ class Ticket:
 
         if self.ticket_id <= 0:
             raise ValueError("ticket_id must be positive")
+
+        if self.owner_id is not None:
+            if type(self.owner_id) is not int:
+                raise TypeError("owner_id must be an int or None")
+
+            if self.owner_id <= 0:
+                raise ValueError("owner_id must be positive")
 
     def change_title(self, new_title: str) -> None:
         normalized = _normalize_ticket_title(new_title)

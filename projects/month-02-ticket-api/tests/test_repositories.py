@@ -3,8 +3,11 @@ import pytest
 from ticket_api.models import NewTicket, Ticket, TicketPriority, TicketStatus
 from ticket_api.repositories import (
     InMemoryTicketRepository,
+    InMemoryUserRepository,
     TicketRepositoryConflictError,
+    UserRepositoryConflictError,
 )
+from ticket_api.user_models import NewUser, UserRole
 
 
 def test_repository_adds_ticket() -> None:
@@ -178,3 +181,83 @@ def test_repository_update_rejects_invalid_type() -> None:
 
     with pytest.raises(TypeError, match="ticket must be a Ticket instance"):
         repo.update(NewTicket(title="Test", priority=TicketPriority.LOW))
+
+
+def test_user_repository_creates_member_with_generated_id() -> None:
+    repository = InMemoryUserRepository()
+    new_user = NewUser(
+        email="Furkan@Example.com",
+        password_hash="$argon2id$example",
+    )
+
+    user = repository.create(new_user)
+
+    assert user.user_id == 1
+    assert user.email == "furkan@example.com"
+    assert user.password_hash == "$argon2id$example"
+    assert user.role is UserRole.MEMBER
+    assert user.is_active is True
+
+
+def test_user_repository_generates_consecutive_ids() -> None:
+    repository = InMemoryUserRepository()
+
+    u1 = repository.create(NewUser(email="first@example.com", password_hash="hash1"))
+    u2 = repository.create(NewUser(email="second@example.com", password_hash="hash2"))
+
+    assert u1.user_id == 1
+    assert u2.user_id == 2
+
+
+def test_user_repository_gets_user_by_id() -> None:
+    repository = InMemoryUserRepository()
+    user = repository.create(
+        NewUser(email="furkan@example.com", password_hash="$argon2id$example")
+    )
+
+    found = repository.get_by_id(user.user_id)
+
+    assert found == user
+
+
+def test_user_repository_gets_user_by_normalized_email() -> None:
+    repository = InMemoryUserRepository()
+    user = repository.create(
+        NewUser(email="furkan@example.com", password_hash="$argon2id$example")
+    )
+
+    found = repository.get_by_email(" FURKAN@example.com ")
+
+    assert found == user
+
+
+def test_user_repository_returns_none_for_missing_user() -> None:
+    repository = InMemoryUserRepository()
+
+    assert repository.get_by_id(999) is None
+    assert repository.get_by_email("missing@example.com") is None
+
+
+def test_user_repository_rejects_duplicate_normalized_email() -> None:
+    repository = InMemoryUserRepository()
+    repository.create(
+        NewUser(
+            email="furkan@example.com",
+            password_hash="$argon2id$first",
+        )
+    )
+
+    with pytest.raises(UserRepositoryConflictError):
+        repository.create(
+            NewUser(
+                email=" FURKAN@EXAMPLE.COM ",
+                password_hash="$argon2id$second",
+            )
+        )
+
+
+def test_user_repository_create_rejects_invalid_type() -> None:
+    repository = InMemoryUserRepository()
+
+    with pytest.raises(TypeError, match="user must be a NewUser instance"):
+        repository.create("not-a-new-user")

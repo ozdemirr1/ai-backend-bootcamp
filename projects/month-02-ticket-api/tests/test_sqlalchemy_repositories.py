@@ -10,10 +10,13 @@ from ticket_api.models import (
     TicketPriority,
     TicketStatus,
 )
-from ticket_api.persistence_models import TicketRecord
+from ticket_api.persistence_models import TicketRecord, UserRecord
+from ticket_api.repositories import UserRepositoryConflictError
 from ticket_api.sqlalchemy_repositories import (
     SqlAlchemyTicketRepository,
+    SqlAlchemyUserRepository,
 )
+from ticket_api.user_models import NewUser, UserRole
 
 pytestmark = pytest.mark.integration
 
@@ -252,3 +255,101 @@ def test_repository_does_not_commit_created_ticket(
         )
 
     assert visible_ticket_id is None
+
+
+def test_user_repository_creates_database_generated_member(
+    database_session: Session,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+
+    user = repository.create(
+        NewUser(
+            email=" Database.User@Example.com ",
+            password_hash="$argon2id$integration-example",
+        )
+    )
+
+    assert user.user_id > 0
+    assert user.email == "database.user@example.com"
+    assert user.password_hash == "$argon2id$integration-example"
+    assert user.role is UserRole.MEMBER
+    assert user.is_active is True
+    assert database_session.in_transaction() is True
+
+
+def test_user_repository_finds_user_by_id_and_normalized_email(
+    database_session: Session,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+    created_user = repository.create(
+        NewUser(
+            email="lookup@example.com",
+            password_hash="$argon2id$lookup-example",
+        )
+    )
+
+    found_by_id = repository.get_by_id(created_user.user_id)
+    found_by_email = repository.get_by_email(" LOOKUP@EXAMPLE.COM ")
+
+    assert found_by_id == created_user
+    assert found_by_email == created_user
+
+
+def test_user_repository_returns_none_for_missing_user(
+    database_session: Session,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+
+    assert repository.get_by_id(9_000_000_000) is None
+    assert repository.get_by_email("missing@example.com") is None
+
+
+def test_user_repository_translates_duplicate_email_conflict(
+    database_session: Session,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+
+    repository.create(
+        NewUser(
+            email="duplicate@example.com",
+            password_hash="$argon2id$first-example",
+        )
+    )
+
+    with pytest.raises(UserRepositoryConflictError):
+        repository.create(
+            NewUser(
+                email=" DUPLICATE@EXAMPLE.COM ",
+                password_hash="$argon2id$second-example",
+            )
+        )
+
+
+def test_user_repository_does_not_commit_created_user(
+    database_session: Session,
+    postgresql_test_engine: Engine,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+
+    user = repository.create(
+        NewUser(
+            email="uncommitted@example.com",
+            password_hash="$argon2id$uncommitted-example",
+        )
+    )
+
+    with postgresql_test_engine.connect() as connection:
+        visible_user_id = connection.scalar(
+            select(UserRecord.user_id).where(UserRecord.user_id == user.user_id)
+        )
+
+    assert visible_user_id is None
+
+
+def test_sqlalchemy_user_repository_rejects_invalid_type(
+    database_session: Session,
+) -> None:
+    repository = SqlAlchemyUserRepository(database_session)
+
+    with pytest.raises(TypeError, match="NewUser"):
+        repository.create("not-a-user")  # type: ignore[arg-type]

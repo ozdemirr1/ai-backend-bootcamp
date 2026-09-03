@@ -18,6 +18,22 @@ class PasswordHashing(Protocol):
     def hash_password(self, plain_password: str) -> str: ...
 
 
+class PasswordVerifying(Protocol):
+    def verify_password(
+        self,
+        plain_password: str,
+        password_hash: str,
+    ) -> bool: ...
+
+
+class AccessTokenIssuing(Protocol):
+    def create_access_token(self, user_id: int) -> str: ...
+
+
+class InvalidCredentialsError(Exception):
+    pass
+
+
 class TicketNotFoundError(Exception):
     pass
 
@@ -57,6 +73,42 @@ class RegistrationService:
             return self._repository.create(new_user)
         except UserRepositoryConflictError as exc:
             raise DuplicateUserError("User registration conflict") from exc
+
+
+class AuthenticationService:
+    def __init__(
+        self,
+        repository: UserRepository,
+        password_verifier: PasswordVerifying,
+        token_issuer: AccessTokenIssuing,
+        dummy_password_hash: str,
+    ) -> None:
+        self._repository = repository
+        self._password_verifier = password_verifier
+        self._token_issuer = token_issuer
+        self._dummy_password_hash = dummy_password_hash
+
+    def login_user(
+        self,
+        email: str,
+        plain_password: str,
+    ) -> str:
+        normalized_email = normalize_user_email(email)
+        user = self._repository.get_by_email(normalized_email)
+
+        password_hash = (
+            user.password_hash if user is not None else self._dummy_password_hash
+        )
+
+        password_matches = self._password_verifier.verify_password(
+            plain_password,
+            password_hash,
+        )
+
+        if user is None or not password_matches or not user.is_active:
+            raise InvalidCredentialsError("Invalid email or password")
+
+        return self._token_issuer.create_access_token(user.user_id)
 
 
 class TicketService:

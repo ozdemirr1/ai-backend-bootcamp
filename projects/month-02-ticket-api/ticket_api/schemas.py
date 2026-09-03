@@ -87,3 +87,26 @@ class UserResponse(BaseModel):
     email: EmailStr
     role: UserRole
     is_active: bool
+
+
+class UserLoginRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    email: EmailStr
+    password: str = Field(
+        strict=True,
+        min_length=1,
+        max_length=128,
+    )
+
+    @field_validator("email", mode="after")
+    @classmethod
+    def normalize_email(cls, value: EmailStr) -> str:
+        return str(value).casefold()
+
+
+class AccessTokenResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    access_token: str = Field(min_length=1)
+    token_type: Literal["bearer"] = "bearer"

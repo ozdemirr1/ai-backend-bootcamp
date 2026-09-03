@@ -39,6 +39,9 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Strict registration request and public User response contracts
 - Injected registration service with Argon2id password hashing
 - `POST /auth/register` with duplicate-conflict and transaction rollback tests
+- Strict login and bearer-token response contracts
+- Deterministic UTC clock boundary and fixed-algorithm JWT manager
+- Generic, storage-independent authentication service contract
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -111,10 +114,25 @@ minimum length rejects obvious placeholder-sized secrets but does not make a
 predictable value secure; local secrets must be generated randomly.
 
 `ACCESS_TOKEN_EXPIRE_MINUTES` defaults to `30` and accepts values from `1`
-through `1440`. Token creation and decoding are deliberately deferred until
-the User/login boundary is designed. JWT payloads are signed rather than
-encrypted and must not contain passwords, password hashes, secrets, or other
-sensitive user records.
+through `1440`. `JwtAccessTokenManager` signs with server-configured HS256 and
+decodes with the same fixed accepted algorithm. It issues only `sub`, `iat`,
+and `exp`, requires those claims during validation, and converts `sub` back to
+a positive User identifier. JWT payloads are signed rather than encrypted and
+must not contain passwords, password hashes, secrets, or other sensitive User
+records.
+
+The time source is injected through a small `Clock` protocol. `SystemClock`
+provides timezone-aware UTC in production, while frozen test clocks make
+expiration behavior deterministic. Token tests reject modified signatures,
+wrong secrets, unsupported algorithms, expired tokens, missing claims, invalid
+subjects, and timezone-naive issuance times.
+
+`AuthenticationService` orchestrates normalized User lookup, password
+verification, active-state enforcement, and token issuance behind narrow
+protocols. Missing Users, incorrect passwords, and inactive Users share one
+generic failure and never issue a token. A dummy-hash path prevents an
+immediate missing-User exit; production Argon2id dummy-hash composition and the
+HTTP login route are the next implementation step.
 
 ## User Identity Foundation
 

@@ -180,15 +180,49 @@ current-user dependency
 - Load the current active User from persistent storage.
 - Add `GET /users/me` and test missing, invalid, and valid credentials.
 
-### Friday - Ticket Ownership and Object Authorization
+#### Thursday Outcome
 
-- Require authentication for Ticket operations.
-- Assign newly created Tickets to the current User on the server.
-- Never accept a client-selected owner during ordinary Ticket creation.
-- Filter collection results to authorized Tickets.
-- Protect detail, update, and delete operations with ownership checks.
-- Add horizontal-access tests proving one user cannot access another user's
-  Ticket by changing the URL identifier.
+- Added strict login request and bearer token response contracts without
+  exposing role selection or password-derived data.
+- Added an injectable UTC `Clock` boundary and a production `SystemClock` so
+  token issuance can be deterministic in unit tests.
+- Implemented HS256 access-token creation and decoding with minimal `sub`,
+  `iat`, and `exp` claims, fixed server-selected algorithm validation, and a
+  positive configured lifetime.
+- Added focused rejection coverage for malformed identities, missing claims,
+  expired tokens, wrong secrets, unsupported algorithms, and modified
+  signatures. The signature test mutates meaningful Base64URL data instead of
+  relying on unused final padding bits.
+- Added an `AuthenticationService` behind narrow password-verification and
+  token-issuing protocols. Successful login issues a token for the immutable
+  `user_id`; missing, incorrect, and inactive identities share one generic
+  failure contract.
+- Added a dummy-hash path to the service contract so a missing account can
+  still perform password-verification work and reduce timing-based account
+  enumeration. Production dummy-hash composition remains Friday work.
+- Passed dependency, Ruff, formatting, diff, fast-test, and guarded database
+  gates: `235 passed, 27 skipped` without database tests and all `262` tests
+  with them enabled. `opsdesk_test` finished with zero Users and Tickets at
+  Alembic revision `e98825c4d6b6`.
+- Stopped before dependency composition and HTTP endpoints by choice. Those
+  tasks move to a longer Friday session rather than being rushed.
+
+### Friday - Complete Login, Current User, and Begin Ticket Authorization
+
+- Add a cached, real Argon2id dummy hash and compose the production
+  authentication service. Estimated: 30-45 minutes.
+- Add `POST /auth/login`, generic `401` mapping, fast HTTP tests, and guarded
+  PostgreSQL login verification. Estimated: 60-90 minutes.
+- Add bearer-token extraction, token decoding, persisted active-User loading,
+  and consistent authentication failures. Estimated: 75-100 minutes.
+- Add `GET /users/me` with missing, malformed, expired, unknown-User, inactive-
+  User, and valid-token tests. Estimated: 60-90 minutes.
+- If the authentication boundary is complete and reviewed, begin requiring
+  authentication for Ticket operations and derive new Ticket ownership from
+  the current User. Estimated: 90-120 minutes; this is a stretch block.
+- Preserve the remaining Ticket listing/detail/update/delete ownership and
+  horizontal-access tests for Saturday if the security review needs more
+  time.
 
 ### Saturday - Role Authorization and Complete Verification
 

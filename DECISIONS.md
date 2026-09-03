@@ -246,3 +246,31 @@ exception ensures the failed Session transaction reaches the dependency's
 rollback path. A dedicated response model makes accidental password-hash
 disclosure fail validation rather than relying on callers to remember which
 internal User fields are safe.
+
+## Decision 011 - Minimal JWT and Generic Login Boundary
+
+Access tokens use server-selected HS256 with required `sub`, `iat`, and `exp`
+claims. The subject is the immutable positive `user_id`; tokens do not carry
+email, role, password-derived data, or complete User state. Token code depends
+on an injected timezone-aware UTC clock so issuance is deterministic in tests
+without weakening production time behavior.
+
+Login is an application service behind User lookup, password-verification, and
+token-issuing protocols. Missing Users, incorrect passwords, and inactive
+Users share one generic invalid-credential exception. A missing User follows a
+dummy-hash verification path rather than returning before the deliberately
+expensive password check.
+
+## Reason
+
+Fixing the accepted algorithm in trusted server code prevents an unverified
+JWT header from choosing validation behavior. Minimal claims reduce disclosure
+and avoid treating stale authorization attributes in a bearer token as the
+current database truth. Required issuance and expiration timestamps bound the
+credential lifetime and make invalid structures fail closed.
+
+Uniform failure text prevents direct account-state disclosure, while dummy
+verification reduces the response-time difference between an unknown account
+and a known account with an incorrect password. Keeping orchestration behind
+narrow protocols allows fast fakes for service tests and preserves clear
+production composition points for pwdlib, PyJWT, SQLAlchemy, and settings.

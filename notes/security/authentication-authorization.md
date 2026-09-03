@@ -4,8 +4,9 @@
 
 These notes record the Week 08 security model for the Month 02 Ticket API.
 They describe the implemented password, User persistence, Ticket ownership
-expand phase, and registration boundaries. Login, JWT issuance, current-user
-resolution, and authorization remain later steps.
+expand phase, registration boundaries, JWT implementation, and login-service
+contract. Production login composition, current-user resolution, and
+authorization remain later steps.
 
 ## Authentication and Authorization Are Different Decisions
 
@@ -174,10 +175,59 @@ exception allows the request-scoped Session dependency to roll back the failed
 transaction. PostgreSQL HTTP tests prove that the original User survives, no
 duplicate row appears, and cleanup returns both guarded tables to zero rows.
 
+## Access-Token Implementation
+
+The access-token manager signs with server-configured HS256 and accepts only
+that same explicit algorithm while decoding. It does not trust an algorithm
+named by the unverified token header. Tokens contain only `sub`, `iat`, and
+`exp`: the immutable User identifier, issuance time, and expiration time.
+Email, role, password hashes, database records, and secrets are deliberately
+absent.
+
+`Clock` is a narrow time-source protocol. Production uses a timezone-aware UTC
+`SystemClock`; tests use a frozen implementation. This keeps production time
+real while making exact `iat` and `exp` assertions deterministic. A naive
+datetime is rejected because a timestamp without timezone context can be
+interpreted inconsistently.
+
+Decoding requires all three claims, verifies the signature and expiration,
+and converts `sub` back to a positive integer. Malformed, modified, expired,
+wrong-secret, wrong-algorithm, missing-claim, and invalid-subject tokens cross
+one local `InvalidAccessTokenError` boundary rather than leaking PyJWT-specific
+exceptions upward.
+
+A compact JWT uses Base64URL text. Changing its final encoded character is not
+always a valid tampering test because that character may contain unused
+padding bits and still decode to the same bytes. The signature test therefore
+changes a meaningful leading signature character and proves that verification
+rejects the altered byte sequence.
+
+## Login Application Boundary
+
+`AuthenticationService` depends on three capabilities: User lookup, password
+verification, and access-token issuance. It does not import SQLAlchemy,
+pwdlib, PyJWT, environment configuration, or HTTP types. Recording fakes prove
+the orchestration quickly, while production composition will supply the real
+implementations.
+
+Login normalizes the email, looks up the User, verifies the submitted password,
+rejects inactive accounts, and issues a token only for a successful active
+identity. Missing users, incorrect passwords, and inactive users all raise the
+same `InvalidCredentialsError` message and never reach token issuance. This
+generic contract prevents response text from revealing which account state
+was encountered.
+
+Generic text alone is insufficient if a missing User returns much faster than
+a wrong password. The service therefore selects a dummy password hash when no
+User exists and still invokes the password verifier. The dummy hash must be a
+valid Argon2id encoding in production and should be generated once rather than
+rehash a random value on every request. That real cached hash and dependency
+composition are intentionally deferred to the next session.
+
 ## Not Implemented Yet
 
-- Login route and credential verification workflow
-- JWT creation and decoding
+- Production dummy-hash and authentication dependency composition
+- Login HTTP route and real PostgreSQL credential verification
 - Current-user dependency
 - Ticket ownership backfill and non-null contract
 - Object-level and role/function-level authorization
@@ -188,6 +238,10 @@ duplicate row appears, and cleanup returns both guarded tables to zero rows.
   <https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/>
 - pwdlib API reference:
   <https://frankie567.github.io/pwdlib/reference/pwdlib/>
+- PyJWT API reference:
+  <https://pyjwt.readthedocs.io/en/stable/api.html>
+- OWASP Authentication Cheat Sheet:
+  <https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html>
 - OWASP Password Storage Cheat Sheet:
   <https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html>
 - email-validator documentation:

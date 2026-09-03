@@ -62,6 +62,10 @@ Week 08
 - [x] Argon2id password hashing boundary and behavior tests
 - [x] Secret-aware JWT configuration foundation
 - [x] Monday dependency, lint, formatting, unit, and integration quality gates
+- [x] Strict login and access-token response schemas
+- [x] Deterministic UTC clock boundary for token tests
+- [x] Fixed-algorithm JWT creation and validation
+- [x] Generic authentication service failure contract
 
 ## Problems
 
@@ -324,17 +328,44 @@ Week 08
   checks. Passed `205` tests with `27` integration skips and all `232` tests
   with guarded database tests enabled.
 
-## Next Tasks - Thursday, 3 September
+## Week 08 Thursday Outcome - 3 September
 
-1. Define strict login and token response contracts.
-2. Add a login service with one generic public invalid-credential failure for
-   missing users, incorrect passwords, and inactive users.
-3. Add deterministic clock-backed JWT creation and validation with fixed
-   algorithm selection, minimal claims, and bounded expiration.
-4. Reject malformed, tampered, expired, and unsupported tokens with `401`.
-5. Load the persisted active User through a current-user dependency.
-6. Add and test `POST /auth/login` and `GET /users/me` without logging or
-   returning complete tokens outside the intended login response.
+- Added strict login and access-token response schemas.
+- Added a small `Clock` protocol and timezone-aware `SystemClock`, allowing
+  deterministic token issuance tests without changing production time code.
+- Added an HS256 JWT manager that issues only `sub`, `iat`, and `exp`, requires
+  those claims during decoding, fixes the accepted algorithm in server code,
+  and returns a validated positive `user_id`.
+- Covered modified signatures, wrong secrets, unsupported algorithms, expired
+  tokens, missing claims, invalid subjects, naive clocks, and invalid creation
+  identities with 17 focused token tests.
+- Added `AuthenticationService` behind repository, password-verification, and
+  token-issuing protocols. Correct credentials issue a token for immutable
+  `user_id`; wrong passwords, missing users, and inactive users produce the
+  same public error and never invoke token issuance.
+- Included a dummy password-hash input in the application contract so missing-
+  user authentication does not take an immediate fast-exit path. Real cached
+  Argon2id dummy-hash composition remains the first Friday task.
+- Passed dependency consistency, Ruff lint, formatting for 105 files, and Git
+  diff checks.
+- Passed `235` tests with `27` integration skips and all `262` guarded database
+  tests. Reconfirmed zero Users, zero Tickets, and Alembic revision
+  `e98825c4d6b6` in `opsdesk_test`.
+
+## Next Tasks - Friday, 4 September
+
+1. Add and cache a valid Argon2id dummy hash, then compose
+   `AuthenticationService` with real settings, repository, verifier, clock,
+   and token manager. Estimated: 30-45 minutes.
+2. Add `POST /auth/login` with one generic `401` contract and fast plus guarded
+   PostgreSQL tests. Estimated: 60-90 minutes.
+3. Add bearer-token extraction and current active-User resolution. Estimated:
+   75-100 minutes.
+4. Add `GET /users/me` and test missing, invalid, expired, unknown-User,
+   inactive-User, and valid credentials. Estimated: 60-90 minutes.
+5. If authentication is completely green, begin server-derived Ticket
+   ownership and protected Ticket creation. Estimated: 90-120 minutes as a
+   stretch block; do not compress the security review to reach it.
 
 ## Week 08 Guardrails
 

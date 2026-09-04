@@ -1,6 +1,9 @@
 import pytest
 
-from ticket_api.passwords import PasswordHasher
+from ticket_api.passwords import (
+    PasswordHasher,
+    get_dummy_password_hash,
+)
 
 
 @pytest.fixture
@@ -49,3 +52,13 @@ def test_generated_hash_starts_with_argon2id(hasher: PasswordHasher) -> None:
     hashed = hasher.hash_password(plain_password)
 
     assert hashed.startswith("$argon2id$")
+
+
+def test_dummy_password_hash_is_valid_argon2id_and_cached() -> None:
+    get_dummy_password_hash.cache_clear()
+
+    first_hash = get_dummy_password_hash()
+    second_hash = get_dummy_password_hash()
+
+    assert first_hash.startswith("$argon2id$")
+    assert second_hash == first_hash

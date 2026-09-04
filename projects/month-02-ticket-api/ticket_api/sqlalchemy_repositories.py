@@ -30,6 +30,7 @@ class SqlAlchemyTicketRepository:
             raise TypeError("ticket must be a NewTicket instance")
 
         record = TicketRecord(
+            owner_id=ticket.owner_id,
             title=ticket.title,
             priority=ticket.priority.value,
         )

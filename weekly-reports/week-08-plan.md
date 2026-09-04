@@ -224,6 +224,27 @@ current-user dependency
   horizontal-access tests for Saturday if the security review needs more
   time.
 
+#### Friday Outcome
+
+- Generated and process-cached a valid Argon2id dummy hash, then composed the
+  production authentication service from the real repository, verifier,
+  configured JWT manager, and UTC clock.
+- Added JSON `POST /auth/login` with uniform `401` behavior and verified real
+  PostgreSQL plus Argon2 registration-to-login flow.
+- Added HTTP Bearer extraction and current active-User resolution. Tokens for
+  deleted or deactivated Users are rejected because current database state is
+  checked on every protected request.
+- Added `GET /users/me` and covered missing headers, wrong schemes, malformed
+  and expired JWTs, unknown Users, inactive Users, and valid identities.
+- Completed the stretch block for protected Ticket creation: ownership is
+  derived from the current User, client-supplied `owner_id` is rejected, and
+  PostgreSQL integration tests prove the owner is persisted.
+- Preserved Ticket collection/detail/update/delete object authorization for
+  Saturday rather than treating authentication as implicit authorization.
+- Passed dependency, Ruff, formatting, diff, fast-test, and guarded database
+  gates: `255 passed, 33 skipped` without database tests and all `288` tests
+  with database tests enabled.
+
 ### Saturday - Role Authorization and Complete Verification
 
 - Add the smallest justified privileged role/function check.

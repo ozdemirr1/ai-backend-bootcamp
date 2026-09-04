@@ -12,6 +12,8 @@ from fastapi import (
 from starlette.types import Lifespan
 
 from ticket_api.dependencies import (
+    get_authentication_service,
+    get_current_user,
     get_registration_service,
     get_ticket_service,
 )
@@ -22,16 +24,20 @@ from ticket_api.models import (
     TicketStatus,
 )
 from ticket_api.schemas import (
+    AccessTokenResponse,
     TicketCreateRequest,
     TicketResponse,
     TicketUpdateRequest,
+    UserLoginRequest,
     UserRegisterRequest,
     UserResponse,
 )
 from ticket_api.schemas import TicketStatus as TicketStatusValue
 from ticket_api.services import (
+    AuthenticationService,
     DuplicateTicketError,
     DuplicateUserError,
+    InvalidCredentialsError,
     RegistrationService,
     TicketNotFoundError,
     TicketService,
@@ -49,6 +55,18 @@ TicketServiceDependency = Annotated[
 RegistrationServiceDependency = Annotated[
     RegistrationService,
     Depends(get_registration_service),
+]
+
+
+AuthenticationServiceDependency = Annotated[
+    AuthenticationService,
+    Depends(get_authentication_service),
+]
+
+
+CurrentUserDependency = Annotated[
+    User,
+    Depends(get_current_user),
 ]
 
 
@@ -93,6 +111,39 @@ def register_user(
     return _to_user_response(user)
 
 
+@router.post(
+    "/auth/login",
+    response_model=AccessTokenResponse,
+)
+def login_user(
+    credentials: UserLoginRequest,
+    service: AuthenticationServiceDependency,
+) -> AccessTokenResponse:
+    try:
+        access_token = service.login_user(
+            email=str(credentials.email),
+            plain_password=credentials.password,
+        )
+    except InvalidCredentialsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
+
+    return AccessTokenResponse(access_token=access_token)
+
+
+@router.get(
+    "/users/me",
+    response_model=UserResponse,
+)
+def read_current_user(
+    current_user: CurrentUserDependency,
+) -> UserResponse:
+    return _to_user_response(current_user)
+
+
 @router.get("/health")
 def read_health() -> dict[str, str]:
     return {"status": "ok"}
@@ -122,12 +173,14 @@ def list_tickets(
 )
 def create_ticket(
     ticket_data: TicketCreateRequest,
+    current_user: CurrentUserDependency,
     service: TicketServiceDependency,
 ) -> TicketResponse:
     try:
         ticket = service.create_ticket(
             title=ticket_data.title,
             priority=TicketPriority(ticket_data.priority),
+            owner_id=current_user.user_id,
         )
     except DuplicateTicketError as exc:
         raise HTTPException(

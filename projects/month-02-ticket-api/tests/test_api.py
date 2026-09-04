@@ -3,11 +3,20 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from ticket_api.dependencies import get_ticket_service
+from ticket_api.dependencies import get_current_user, get_ticket_service
 from ticket_api.main import create_app
 from ticket_api.models import Ticket, TicketPriority
 from ticket_api.repositories import InMemoryTicketRepository
 from ticket_api.services import TicketService
+from ticket_api.user_models import User, UserRole
+
+TEST_CURRENT_USER = User(
+    user_id=7,
+    email="ticket-owner@example.com",
+    password_hash="$argon2id$synthetic-ticket-owner",
+    role=UserRole.MEMBER,
+    is_active=True,
+)
 
 
 @pytest.fixture
@@ -20,13 +29,18 @@ def client() -> Iterator[TestClient]:
     def get_test_ticket_service() -> TicketService:
         return service
 
+    def get_test_current_user() -> User:
+        return TEST_CURRENT_USER
+
     test_app.dependency_overrides[get_ticket_service] = get_test_ticket_service
+    test_app.dependency_overrides[get_current_user] = get_test_current_user
 
     try:
         with TestClient(test_app) as test_client:
             yield test_client
     finally:
         test_app.dependency_overrides.pop(get_ticket_service, None)
+        test_app.dependency_overrides.pop(get_current_user, None)
 
 
 def test_read_health(client: TestClient) -> None:
@@ -569,3 +583,43 @@ def test_list_tickets_rejects_limit_above_maximum(
     error = response.json()["detail"][0]
     assert error["loc"] == ["query", "limit"]
     assert error["type"] == "less_than_equal"
+
+
+def test_create_ticket_derives_owner_from_current_user(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/tickets",
+        json={
+            "title": "Owned ticket",
+            "priority": "high",
+        },
+    )
+
+    assert response.status_code == 201
+
+    ticket_id = response.json()["ticket_id"]
+
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    stored_ticket = service_provider().get_ticket(ticket_id)
+
+    assert stored_ticket.owner_id == TEST_CURRENT_USER.user_id
+
+
+def test_create_ticket_rejects_client_supplied_owner_id(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/tickets",
+        json={
+            "title": "Ownership escalation attempt",
+            "priority": "high",
+            "owner_id": 999,
+        },
+    )
+
+    assert response.status_code == 422
+
+    error = response.json()["detail"][0]
+    assert error["loc"] == ["body", "owner_id"]
+    assert error["type"] == "extra_forbidden"

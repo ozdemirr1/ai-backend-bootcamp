@@ -50,6 +50,7 @@ class InMemoryTicketRepository:
             ticket_id=self._next_ticket_id,
             title=ticket.title,
             priority=ticket.priority,
+            owner_id=ticket.owner_id,
         )
 
         if not self.add(new_ticket):

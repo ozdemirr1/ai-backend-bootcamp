@@ -352,20 +352,37 @@ Week 08
   tests. Reconfirmed zero Users, zero Tickets, and Alembic revision
   `e98825c4d6b6` in `opsdesk_test`.
 
-## Next Tasks - Friday, 4 September
+## Week 08 Friday Outcome - 4 September
 
-1. Add and cache a valid Argon2id dummy hash, then compose
-   `AuthenticationService` with real settings, repository, verifier, clock,
-   and token manager. Estimated: 30-45 minutes.
-2. Add `POST /auth/login` with one generic `401` contract and fast plus guarded
-   PostgreSQL tests. Estimated: 60-90 minutes.
-3. Add bearer-token extraction and current active-User resolution. Estimated:
-   75-100 minutes.
-4. Add `GET /users/me` and test missing, invalid, expired, unknown-User,
-   inactive-User, and valid credentials. Estimated: 60-90 minutes.
-5. If authentication is completely green, begin server-derived Ticket
-   ownership and protected Ticket creation. Estimated: 90-120 minutes as a
-   stretch block; do not compress the security review to reach it.
+- Added one process-cached, valid Argon2id dummy hash and composed the real
+  authentication service from settings, SQLAlchemy, pwdlib, the UTC clock,
+  and the fixed-algorithm JWT manager.
+- Added JSON `POST /auth/login` and a single generic `401` contract for missing
+  accounts, incorrect passwords, inactive accounts, and invalid credentials.
+- Added optional HTTP Bearer extraction, strict scheme/token validation, and a
+  current-User service that reloads the persisted User on every request.
+- Added `GET /users/me`; malformed and expired tokens, deleted Users, and
+  inactive Users fail closed even when the token signature remains valid.
+- Protected `POST /tickets` and derived `owner_id` exclusively from the
+  authenticated User. Client-supplied ownership is rejected by the strict
+  request schema, and the service/repository path preserves the owner.
+- Added focused unit, HTTP, and guarded PostgreSQL coverage for login, current
+  identity, stale-token rejection, protected creation, persisted ownership,
+  commit failure, rollback, and exact database cleanup.
+- Passed dependency consistency, Ruff lint, formatting for 106 files, and Git
+  diff checks. Passed `255` tests with `33` integration skips and all `288`
+  tests with guarded database tests enabled.
+
+## Next Tasks - Saturday, 5 September
+
+1. Scope `GET /tickets` to the authenticated User and prove one User cannot
+   list another User's Tickets.
+2. Add object-level ownership checks to Ticket detail, update, and delete;
+   include cross-user BOLA/IDOR tests and deliberate `404` disclosure behavior.
+3. Add the smallest justified role/function-level authorization rule and keep
+   it separate from ownership checks.
+4. Run full dependency, Ruff, migration, fast-test, guarded PostgreSQL, secret,
+   and staged-diff gates; update documentation before committing.
 
 ## Week 08 Guardrails
 

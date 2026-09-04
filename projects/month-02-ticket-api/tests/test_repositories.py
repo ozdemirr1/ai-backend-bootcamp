@@ -9,6 +9,8 @@ from ticket_api.repositories import (
 )
 from ticket_api.user_models import NewUser, UserRole
 
+OWNER_ID = 7
+
 
 def test_repository_adds_ticket() -> None:
     repository = InMemoryTicketRepository()
@@ -117,19 +119,28 @@ def test_repository_returns_false_when_delete_target_is_missing() -> None:
 
 def test_repository_creates_ticket_and_generates_id() -> None:
     repo = InMemoryTicketRepository()
-    new_ticket = NewTicket(title="VPN connection fails", priority=TicketPriority.HIGH)
+    new_ticket = NewTicket(
+        title="VPN connection fails", priority=TicketPriority.HIGH, owner_id=OWNER_ID
+    )
 
     ticket = repo.create(new_ticket)
 
     assert ticket.ticket_id == 1
+    assert ticket.owner_id == OWNER_ID
     assert ticket.title == "VPN connection fails"
     assert ticket.priority is TicketPriority.HIGH
 
 
 def test_repository_generates_consecutive_ids() -> None:
     repo = InMemoryTicketRepository()
-    t1 = repo.create(NewTicket(title="First Ticket", priority=TicketPriority.LOW))
-    t2 = repo.create(NewTicket(title="Second Ticket", priority=TicketPriority.MEDIUM))
+    t1 = repo.create(
+        NewTicket(title="First Ticket", priority=TicketPriority.LOW, owner_id=OWNER_ID)
+    )
+    t2 = repo.create(
+        NewTicket(
+            title="Second Ticket", priority=TicketPriority.MEDIUM, owner_id=OWNER_ID
+        )
+    )
 
     assert t1.ticket_id == 1
     assert t2.ticket_id == 2
@@ -139,7 +150,7 @@ def test_repository_create_rejects_invalid_type() -> None:
     repo = InMemoryTicketRepository()
 
     with pytest.raises(TypeError, match="ticket must be a NewTicket instance"):
-        repo.create(Ticket(ticket_id=1, title="Test", priority=TicketPriority.LOW))
+        repo.create(Ticket(ticket_id=1, title="Test", priority=TicketPriority.LOW))  # type: ignore[arg-type]
 
 
 def test_repository_create_raises_conflict_if_id_exists() -> None:
@@ -147,7 +158,9 @@ def test_repository_create_raises_conflict_if_id_exists() -> None:
 
     repo.add(Ticket(ticket_id=1, title="Manual Ticket", priority=TicketPriority.LOW))
 
-    new_ticket = NewTicket(title="Conflicting Ticket", priority=TicketPriority.HIGH)
+    new_ticket = NewTicket(
+        title="Conflicting Ticket", priority=TicketPriority.HIGH, owner_id=OWNER_ID
+    )
 
     with pytest.raises(TicketRepositoryConflictError):
         repo.create(new_ticket)
@@ -155,7 +168,9 @@ def test_repository_create_raises_conflict_if_id_exists() -> None:
 
 def test_repository_update_stores_modified_ticket() -> None:
     repo = InMemoryTicketRepository()
-    ticket = repo.create(NewTicket(title="Old Title", priority=TicketPriority.LOW))
+    ticket = repo.create(
+        NewTicket(title="Old Title", priority=TicketPriority.LOW, owner_id=OWNER_ID)
+    )
 
     ticket.change_title("New Title")
     ticket.change_status(TicketStatus.IN_PROGRESS)
@@ -180,7 +195,9 @@ def test_repository_update_rejects_invalid_type() -> None:
     repo = InMemoryTicketRepository()
 
     with pytest.raises(TypeError, match="ticket must be a Ticket instance"):
-        repo.update(NewTicket(title="Test", priority=TicketPriority.LOW))
+        repo.update(
+            NewTicket(title="Test", priority=TicketPriority.LOW, owner_id=OWNER_ID)  # type: ignore[arg-type]
+        )
 
 
 def test_user_repository_creates_member_with_generated_id() -> None:
@@ -260,4 +277,4 @@ def test_user_repository_create_rejects_invalid_type() -> None:
     repository = InMemoryUserRepository()
 
     with pytest.raises(TypeError, match="user must be a NewUser instance"):
-        repository.create("not-a-new-user")
+        repository.create("not-a-new-user")  # type: ignore[arg-type]

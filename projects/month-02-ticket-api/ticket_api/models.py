@@ -31,14 +31,25 @@ def _normalize_ticket_title(value: str) -> str:
     return normalized
 
 
+def _validate_positive_owner_id(value: object) -> None:
+    if type(value) is not int:
+        raise TypeError("owner_id must be an int")
+
+    if value <= 0:
+        raise ValueError("owner_id must be positive")
+
+
 @dataclass(frozen=True)
 class NewTicket:
     title: str
     priority: TicketPriority
+    owner_id: int
 
     def __post_init__(self) -> None:
         if not isinstance(self.priority, TicketPriority):
             raise TypeError("priority must be a TicketPriority instance")
+
+        _validate_positive_owner_id(self.owner_id)
 
         object.__setattr__(
             self,
@@ -71,11 +82,7 @@ class Ticket:
             raise ValueError("ticket_id must be positive")
 
         if self.owner_id is not None:
-            if type(self.owner_id) is not int:
-                raise TypeError("owner_id must be an int or None")
-
-            if self.owner_id <= 0:
-                raise ValueError("owner_id must be positive")
+            _validate_positive_owner_id(self.owner_id)
 
     def change_title(self, new_title: str) -> None:
         normalized = _normalize_ticket_title(new_title)

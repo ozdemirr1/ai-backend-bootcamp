@@ -14,6 +14,10 @@ from ticket_api.user_models import (
 )
 
 
+class AccessTokenDecoding(Protocol):
+    def decode_access_token(self, token: str) -> int: ...
+
+
 class PasswordHashing(Protocol):
     def hash_password(self, plain_password: str) -> str: ...
 
@@ -24,6 +28,10 @@ class PasswordVerifying(Protocol):
         plain_password: str,
         password_hash: str,
     ) -> bool: ...
+
+
+class InvalidAuthenticationError(Exception):
+    pass
 
 
 class AccessTokenIssuing(Protocol):
@@ -111,14 +119,40 @@ class AuthenticationService:
         return self._token_issuer.create_access_token(user.user_id)
 
 
+class CurrentUserService:
+    def __init__(
+        self,
+        repository: UserRepository,
+        token_decoder: AccessTokenDecoding,
+    ) -> None:
+        self._repository = repository
+        self._token_decoder = token_decoder
+
+    def get_current_user(self, access_token: str) -> User:
+        user_id = self._token_decoder.decode_access_token(access_token)
+        user = self._repository.get_by_id(user_id)
+
+        if user is None or not user.is_active:
+            raise InvalidAuthenticationError("Invalid authentication credentials")
+
+        return user
+
+
 class TicketService:
     def __init__(self, repository: TicketRepository) -> None:
         self._repository = repository
 
-    def create_ticket(self, title: str, priority: TicketPriority) -> Ticket:
+    def create_ticket(
+        self,
+        title: str,
+        priority: TicketPriority,
+        *,
+        owner_id: int,
+    ) -> Ticket:
         new_ticket = NewTicket(
             title=title,
             priority=priority,
+            owner_id=owner_id,
         )
 
         try:

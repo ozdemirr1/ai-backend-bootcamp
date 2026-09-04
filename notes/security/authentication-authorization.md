@@ -207,7 +207,7 @@ rejects the altered byte sequence.
 `AuthenticationService` depends on three capabilities: User lookup, password
 verification, and access-token issuance. It does not import SQLAlchemy,
 pwdlib, PyJWT, environment configuration, or HTTP types. Recording fakes prove
-the orchestration quickly, while production composition will supply the real
+the orchestration quickly, while the dependency layer supplies the real
 implementations.
 
 Login normalizes the email, looks up the User, verifies the submitted password,
@@ -220,17 +220,45 @@ was encountered.
 Generic text alone is insufficient if a missing User returns much faster than
 a wrong password. The service therefore selects a dummy password hash when no
 User exists and still invokes the password verifier. The dummy hash must be a
-valid Argon2id encoding in production and should be generated once rather than
-rehash a random value on every request. That real cached hash and dependency
-composition are intentionally deferred to the next session.
+valid Argon2id encoding in production. The application generates it from a
+random synthetic value once per process and caches it. Every missing-account
+login therefore performs a real Argon2 verification without paying an
+additional Argon2 hash-generation cost on every request.
+
+## HTTP Login and Current-User Boundary
+
+`POST /auth/login` accepts the project's strict JSON login schema and returns
+only a bearer access token. It maps all credential failures to the same public
+`401` response. The dependency graph composes the SQLAlchemy User repository,
+pwdlib verifier, cached dummy hash, configured JWT secret and lifetime, and
+timezone-aware system clock; the route itself knows none of those details.
+
+Protected endpoints use FastAPI's HTTP Bearer parser only to extract the
+credential. The application still verifies the fixed JWT algorithm, signature,
+required claims, expiration, and positive subject. It then reloads the User by
+`user_id` and checks `is_active`. A signed token is therefore insufficient on
+its own: deleting or deactivating the User immediately causes later requests
+with that token to fail.
+
+## Server-Derived Ticket Ownership
+
+`POST /tickets` requires an authenticated current User. The route obtains
+`owner_id` from that server-controlled identity rather than accepting it in
+request JSON. Strict Pydantic input rejects an injected ownership field, and
+the value travels through `TicketService`, `NewTicket`, and the repository to
+the nullable database foreign key.
+
+This completes safe ownership assignment for new Tickets, not all Ticket
+authorization. Listing, detail, update, and deletion still need explicit
+owner-aware queries and cross-user tests. Those are object-level authorization
+decisions and cannot be inferred merely from successful authentication.
 
 ## Not Implemented Yet
 
-- Production dummy-hash and authentication dependency composition
-- Login HTTP route and real PostgreSQL credential verification
-- Current-user dependency
+- Owner-scoped Ticket collection listing
+- Object-level Ticket detail, update, and delete authorization
+- Bounded role/function-level authorization
 - Ticket ownership backfill and non-null contract
-- Object-level and role/function-level authorization
 
 ## Primary References
 

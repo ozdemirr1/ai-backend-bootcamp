@@ -41,7 +41,12 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - `POST /auth/register` with duplicate-conflict and transaction rollback tests
 - Strict login and bearer-token response contracts
 - Deterministic UTC clock boundary and fixed-algorithm JWT manager
-- Generic, storage-independent authentication service contract
+- Generic, storage-independent authentication service with a cached real
+  Argon2id dummy-verification path
+- JSON `POST /auth/login` with one public invalid-credential contract
+- Bearer-token current-User resolution backed by current database state
+- Protected `GET /users/me`
+- Authenticated Ticket creation with server-derived ownership
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -131,8 +136,10 @@ subjects, and timezone-naive issuance times.
 verification, active-state enforcement, and token issuance behind narrow
 protocols. Missing Users, incorrect passwords, and inactive Users share one
 generic failure and never issue a token. A dummy-hash path prevents an
-immediate missing-User exit; production Argon2id dummy-hash composition and the
-HTTP login route are the next implementation step.
+immediate missing-User exit. Production composition generates and caches a
+valid Argon2id dummy hash once per process. The JSON login route returns a
+bearer token, while protected dependencies decode it and reload the current
+active User from PostgreSQL instead of trusting stale account state in a JWT.
 
 ## User Identity Foundation
 
@@ -293,8 +300,10 @@ available at `http://127.0.0.1:8000/docs`.
 | -------- | ---------------------- | ---------------- | ------- |
 | `GET`    | `/health`              | `200 OK`         | Return application health. |
 | `POST`   | `/auth/register`       | `201 Created`    | Register a member with a hashed password. |
+| `POST`   | `/auth/login`          | `200 OK`         | Exchange valid credentials for a bearer access token. |
+| `GET`    | `/users/me`            | `200 OK`         | Return the current active public User. |
 | `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
-| `POST`   | `/tickets`             | `201 Created`    | Validate and create a ticket. |
+| `POST`   | `/tickets`             | `201 Created`    | Create a Ticket owned by the authenticated User. |
 | `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
 | `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
 | `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
@@ -317,8 +326,11 @@ It trims surrounding title whitespace, enforces title length, restricts priority
 values, and rejects extra fields. It returns `200 OK` because it previews
 validated input without creating or storing a ticket.
 
-`POST /tickets` accepts the same create contract, delegates ticket creation to
-the service, and returns the stored representation through `TicketResponse`.
+`POST /tickets` accepts the same create contract and requires an HTTP Bearer
+credential. It derives ownership from the current persisted User, delegates
+ticket creation to the service, and returns the stored representation through
+`TicketResponse`. An `owner_id` supplied by the client is rejected rather than
+trusted.
 `PATCH /tickets/{ticket_id}` accepts one or more updatable fields. An empty
 update is rejected with `422`, while a missing ticket produces `404` after a
 valid identifier has reached the service.
@@ -333,6 +345,12 @@ The default application uses PostgreSQL storage. In-memory storage is retained
 for isolated unit/API tests, not as the default runtime. Committed CRUD,
 failure rollback, request isolation, and persistence across a real application
 restart have been verified against the dedicated test database.
+
+Registration, login, current-User resolution, stale-token rejection, and
+authenticated Ticket ownership have also been verified through the real
+HTTP/Session/Argon2/PostgreSQL stack. Ticket collection and identified-resource
+authorization are still pending; a valid login must not be interpreted as
+permission to access every Ticket.
 
 The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
@@ -410,3 +428,11 @@ complete suite to `150 passed, 19 skipped` with database tests disabled and
 test-only JWT secret, while the real ignored `.env` remains outside tests and
 Git. Dependency consistency, Ruff lint, formatting for 94 files, and
 `git diff --check` passed.
+
+On 4 September, the completed login/current-User boundary and protected Ticket
+creation increased the complete suite to `255 passed, 33 skipped` with database
+tests disabled and `288 passed` with `RUN_DATABASE_TESTS=1`. The guarded tests
+proved real Argon2 registration-to-login, generic authentication failures,
+expired and stale token rejection, server-derived persisted ownership, rollback
+behavior, and exact cleanup. Dependency consistency, Ruff lint, formatting for
+106 files, and `git diff --check` passed.

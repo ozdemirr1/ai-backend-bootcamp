@@ -112,3 +112,13 @@ def database_session(
 
             if transaction.is_active:
                 transaction.rollback()
+
+
+@pytest.fixture
+def synthetic_auth_settings() -> Settings:
+    return Settings(
+        database_url="postgresql+psycopg://unused",
+        jwt_secret=TEST_JWT_SECRET,
+        access_token_expire_minutes=30,
+        _env_file=None,
+    )

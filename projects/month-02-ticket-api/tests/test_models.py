@@ -60,7 +60,7 @@ def test_ticket_rejects_non_string_title() -> None:
     with pytest.raises(TypeError, match="title"):
         Ticket(
             ticket_id=6,
-            title=123,
+            title=123,  # type: ignore[arg-type]
             priority=TicketPriority.LOW,
         )
 
@@ -70,7 +70,7 @@ def test_ticket_rejects_raw_string_priority() -> None:
         Ticket(
             ticket_id=7,
             title="VPN connection fails",
-            priority="high",
+            priority="high",  # type: ignore[arg-type]
         )
 
 
@@ -94,7 +94,7 @@ def test_ticket_rejects_raw_string_status_change() -> None:
     )
 
     with pytest.raises(TypeError, match="new_status"):
-        ticket.change_status("in_progress")
+        ticket.change_status("in_progress")  # type: ignore[arg-type]
 
     assert ticket.status is TicketStatus.OPEN
 
@@ -144,7 +144,7 @@ def test_ticket_preserves_priority_when_change_is_invalid() -> None:
     )
 
     with pytest.raises(TypeError, match="new_priority"):
-        ticket.change_priority("critical")  # type: ignore
+        ticket.change_priority("critical")  # type: ignore[arg-type]
 
     assert ticket.priority is TicketPriority.LOW
 
@@ -153,6 +153,7 @@ def test_new_ticket_strips_title_whitespace() -> None:
     ticket = NewTicket(
         title=" VPN connection fails ",
         priority=TicketPriority.MEDIUM,
+        owner_id=7,
     )
 
     assert ticket.title == "VPN connection fails"
@@ -163,6 +164,7 @@ def test_new_ticket_rejects_invalid_short_title() -> None:
         NewTicket(
             title="AB",
             priority=TicketPriority.MEDIUM,
+            owner_id=7,
         )
 
 
@@ -170,7 +172,8 @@ def test_new_ticket_rejects_raw_string_priority() -> None:
     with pytest.raises(TypeError, match="priority"):
         NewTicket(
             title="VPN connection fails",
-            priority="high",
+            priority="high",  # type: ignore[arg-type]
+            owner_id=7,
         )
 
 
@@ -211,6 +214,45 @@ def test_ticket_rejects_invalid_owner_id(
     with pytest.raises(expected_exception, match="owner_id"):
         Ticket(
             ticket_id=1,
+            title="Owned ticket",
+            priority=TicketPriority.HIGH,
+            owner_id=owner_id,  # type: ignore[arg-type]
+        )
+
+
+def test_new_ticket_requires_owner_id() -> None:
+    with pytest.raises(TypeError, match="owner_id"):
+        NewTicket(
+            title="Owned ticket",
+            priority=TicketPriority.HIGH,
+        )  # type: ignore[call-arg]
+
+
+def test_new_ticket_accepts_positive_owner_id() -> None:
+    ticket = NewTicket(
+        title="Owned ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=7,
+    )
+
+    assert ticket.owner_id == 7
+
+
+@pytest.mark.parametrize(
+    ("owner_id", "expected_exception"),
+    [
+        (0, ValueError),
+        (-1, ValueError),
+        ("7", TypeError),
+        (True, TypeError),
+    ],
+)
+def test_new_ticket_rejects_invalid_owner_id(
+    owner_id: object,
+    expected_exception: type[Exception],
+) -> None:
+    with pytest.raises(expected_exception, match="owner_id"):
+        NewTicket(
             title="Owned ticket",
             priority=TicketPriority.HIGH,
             owner_id=owner_id,  # type: ignore[arg-type]

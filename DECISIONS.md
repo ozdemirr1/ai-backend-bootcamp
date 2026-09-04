@@ -274,3 +274,33 @@ verification reduces the response-time difference between an unknown account
 and a known account with an incorrect password. Keeping orchestration behind
 narrow protocols allows fast fakes for service tests and preserves clear
 production composition points for pwdlib, PyJWT, SQLAlchemy, and settings.
+
+## Decision 012 - Resolve Current Identity and Derive Ticket Ownership Server-Side
+
+Bearer credentials are extracted at the HTTP boundary, decoded through the
+access-token protocol, and reduced to a positive `user_id`. The application
+then loads the current User from persistent storage on every authenticated
+request and rejects identities that are missing or inactive. Token decoding,
+User lookup, and account-state validation share one public `401` response with
+the `WWW-Authenticate: Bearer` header.
+
+Protected Ticket creation never accepts `owner_id` from the client. The route
+derives it from the authenticated User and passes it explicitly through the
+service and repository boundaries. `NewTicket` therefore requires a positive
+owner identity, while the stored `Ticket` domain model temporarily permits a
+missing owner for legacy rows created before the nullable ownership migration.
+
+## Reason
+
+A valid signature proves that the server issued a token; it does not prove
+that the referenced account still exists or remains active. Loading the User
+for each request makes current database state the authorization truth and
+causes previously issued tokens to fail after deletion or deactivation.
+
+Accepting ownership from request JSON would let a caller create a Ticket for
+another User. Server-derived ownership closes that mass-assignment boundary,
+and strict request schemas reject an injected `owner_id`. Keeping the legacy
+domain field nullable preserves the expand phase of the migration until an
+explicit backfill and non-null contract are safe. Collection filtering and
+detail/update/delete object-level authorization remain separate follow-up
+work; authentication alone does not grant access to every Ticket.

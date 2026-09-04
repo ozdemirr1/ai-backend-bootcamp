@@ -28,6 +28,22 @@ def assert_ticket_table_is_empty(engine: Engine) -> None:
     assert ticket_count == 0
 
 
+def create_ticket_owner(session: Session) -> int:
+    repository = SqlAlchemyUserRepository(session)
+    user = repository.create(
+        NewUser(
+            email="ticket-owner@example.com",
+            password_hash="$argon2id$ticket-owner-example",
+        )
+    )
+    return user.user_id
+
+
+@pytest.fixture
+def ticket_owner_id(database_session: Session) -> int:
+    return create_ticket_owner(database_session)
+
+
 def test_committed_ticket_is_visible_in_new_session(
     postgresql_test_engine: Engine,
 ) -> None:
@@ -35,14 +51,17 @@ def test_committed_ticket_is_visible_in_new_session(
 
     session_factory = create_session_factory(postgresql_test_engine)
     ticket_id: int | None = None
+    owner_id: int | None = None
 
     try:
         with session_factory() as write_session:
+            owner_id = create_ticket_owner(write_session)
             repository = SqlAlchemyTicketRepository(write_session)
             created_ticket = repository.create(
                 NewTicket(
                     title="Committed database ticket",
                     priority=TicketPriority.HIGH,
+                    owner_id=owner_id,
                 )
             )
             ticket_id = created_ticket.ticket_id
@@ -55,10 +74,14 @@ def test_committed_ticket_is_visible_in_new_session(
 
             assert stored_ticket == created_ticket
     finally:
-        if ticket_id is not None:
-            with postgresql_test_engine.begin() as connection:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_id is not None:
                 connection.execute(
                     delete(TicketRecord).where(TicketRecord.ticket_id == ticket_id)
+                )
+            if owner_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == owner_id)
                 )
 
 
@@ -70,11 +93,13 @@ def test_rolled_back_ticket_is_not_visible_in_new_session(
     session_factory = create_session_factory(postgresql_test_engine)
 
     with session_factory() as write_session:
+        owner_id = create_ticket_owner(write_session)
         repository = SqlAlchemyTicketRepository(write_session)
         created_ticket = repository.create(
             NewTicket(
                 title="Rolled back database ticket",
                 priority=TicketPriority.LOW,
+                owner_id=owner_id,
             )
         )
 
@@ -93,14 +118,17 @@ def test_repository_update_advances_updated_at(
 
     session_factory = create_session_factory(postgresql_test_engine)
     ticket_id: int | None = None
+    owner_id: int | None = None
 
     try:
         with session_factory() as create_session:
+            owner_id = create_ticket_owner(create_session)
             repository = SqlAlchemyTicketRepository(create_session)
             ticket = repository.create(
                 NewTicket(
                     title="Timestamp integration ticket",
                     priority=TicketPriority.MEDIUM,
+                    owner_id=owner_id,
                 )
             )
             ticket_id = ticket.ticket_id
@@ -124,15 +152,20 @@ def test_repository_update_advances_updated_at(
             assert record is not None
             assert record.updated_at > record.created_at
     finally:
-        if ticket_id is not None:
-            with postgresql_test_engine.begin() as connection:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_id is not None:
                 connection.execute(
                     delete(TicketRecord).where(TicketRecord.ticket_id == ticket_id)
+                )
+            if owner_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == owner_id)
                 )
 
 
 def test_repository_creates_database_generated_ticket(
     database_session: Session,
+    ticket_owner_id: int,
 ) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
 
@@ -140,22 +173,32 @@ def test_repository_creates_database_generated_ticket(
         NewTicket(
             title="  Database integration ticket  ",
             priority=TicketPriority.HIGH,
+            owner_id=ticket_owner_id,
         )
     )
 
     assert ticket.ticket_id > 0
+    assert ticket.owner_id == ticket_owner_id
     assert ticket.title == "Database integration ticket"
     assert ticket.priority is TicketPriority.HIGH
     assert ticket.status is TicketStatus.OPEN
     assert database_session.in_transaction() is True
 
+    record = database_session.get(TicketRecord, ticket.ticket_id)
+    assert record is not None
+    assert record.owner_id == ticket_owner_id
 
-def test_repository_gets_existing_ticket(database_session: Session) -> None:
+
+def test_repository_gets_existing_ticket(
+    database_session: Session,
+    ticket_owner_id: int,
+) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
     ticket = repository.create(
         NewTicket(
             title="Existing database ticket",
             priority=TicketPriority.MEDIUM,
+            owner_id=ticket_owner_id,
         )
     )
 
@@ -172,13 +215,22 @@ def test_repository_returns_none_for_missing_ticket(database_session: Session) -
     assert fetched_ticket is None
 
 
-def test_repository_lists_all_tickets_in_id_order(database_session: Session) -> None:
+def test_repository_lists_all_tickets_in_id_order(
+    database_session: Session,
+    ticket_owner_id: int,
+) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
     first_ticket = repository.create(
-        NewTicket(title="First ticket", priority=TicketPriority.LOW)
+        NewTicket(
+            title="First ticket", priority=TicketPriority.LOW, owner_id=ticket_owner_id
+        )
     )
     second_ticket = repository.create(
-        NewTicket(title="Second ticket", priority=TicketPriority.HIGH)
+        NewTicket(
+            title="Second ticket",
+            priority=TicketPriority.HIGH,
+            owner_id=ticket_owner_id,
+        )
     )
 
     tickets = repository.list_all()
@@ -186,12 +238,16 @@ def test_repository_lists_all_tickets_in_id_order(database_session: Session) -> 
     assert tickets == [first_ticket, second_ticket]
 
 
-def test_repository_updates_ticket(database_session: Session) -> None:
+def test_repository_updates_ticket(
+    database_session: Session,
+    ticket_owner_id: int,
+) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
     ticket = repository.create(
         NewTicket(
             title="Initial database ticket",
             priority=TicketPriority.LOW,
+            owner_id=ticket_owner_id,
         )
     )
 
@@ -215,17 +271,22 @@ def test_repository_returns_false_when_updating_missing_ticket(
         ticket_id=9_000_000_000,
         title="Missing database ticket",
         priority=TicketPriority.LOW,
+        owner_id=7,
     )
 
     assert repository.update(missing_ticket) is False
 
 
-def test_repository_deletes_ticket(database_session: Session) -> None:
+def test_repository_deletes_ticket(
+    database_session: Session,
+    ticket_owner_id: int,
+) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
     ticket = repository.create(
         NewTicket(
             title="To be deleted ticket",
             priority=TicketPriority.LOW,
+            owner_id=ticket_owner_id,
         )
     )
 
@@ -237,6 +298,7 @@ def test_repository_deletes_ticket(database_session: Session) -> None:
 def test_repository_does_not_commit_created_ticket(
     database_session: Session,
     postgresql_test_engine: Engine,
+    ticket_owner_id: int,
 ) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
 
@@ -244,6 +306,7 @@ def test_repository_does_not_commit_created_ticket(
         NewTicket(
             title="Uncommitted database ticket",
             priority=TicketPriority.LOW,
+            owner_id=ticket_owner_id,
         )
     )
 

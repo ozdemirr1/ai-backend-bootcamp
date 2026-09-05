@@ -10,6 +10,7 @@ from ticket_api.repositories import (
 from ticket_api.user_models import NewUser, UserRole
 
 OWNER_ID = 7
+OTHER_OWNER_ID = 8
 
 
 def test_repository_adds_ticket() -> None:
@@ -60,38 +61,52 @@ def test_repository_returns_none_for_missing_ticket() -> None:
     assert repository.get_by_id(999) is None
 
 
-def test_repository_lists_all_tickets() -> None:
+def test_repository_lists_only_owner_tickets() -> None:
     repository = InMemoryTicketRepository()
-    ticket1 = Ticket(
+
+    first_owned_ticket = Ticket(
         ticket_id=3,
         title="VPN connection fails",
         priority=TicketPriority.HIGH,
+        owner_id=OWNER_ID,
     )
-    ticket2 = Ticket(
+    other_users_ticket = Ticket(
         ticket_id=4,
         title="Email is down",
         priority=TicketPriority.MEDIUM,
+        owner_id=OTHER_OWNER_ID,
+    )
+    second_owned_ticket = Ticket(
+        ticket_id=5,
+        title="Printer is offline",
+        priority=TicketPriority.LOW,
+        owner_id=OWNER_ID,
     )
 
-    repository.add(ticket1)
-    repository.add(ticket2)
+    repository.add(first_owned_ticket)
+    repository.add(other_users_ticket)
+    repository.add(second_owned_ticket)
 
-    assert repository.list_all() == [ticket1, ticket2]
+    assert repository.list_by_owner(OWNER_ID) == [
+        first_owned_ticket,
+        second_owned_ticket,
+    ]
 
 
-def test_repository_list_all_returns_a_new_list() -> None:
+def test_repository_list_by_owner_returns_a_new_list() -> None:
     repository = InMemoryTicketRepository()
     ticket = Ticket(
-        ticket_id=5,
+        ticket_id=6,
         title="VPN connection fails",
         priority=TicketPriority.HIGH,
+        owner_id=OWNER_ID,
     )
     repository.add(ticket)
 
-    returned_tickets = repository.list_all()
+    returned_tickets = repository.list_by_owner(OWNER_ID)
     returned_tickets.clear()
 
-    assert repository.list_all() == [ticket]
+    assert repository.list_by_owner(OWNER_ID) == [ticket]
 
 
 def test_repository_deletes_existing_ticket() -> None:

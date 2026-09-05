@@ -257,8 +257,34 @@ current-user dependency
 - Add minimal CI only if the authentication foundation and its tests are
   complete; do not let CI or deployment dilute security work.
 
+#### Saturday Outcome
+
+- Completed the owner-scoped Ticket collection slice before stopping for the
+  day. `GET /tickets` now requires authentication and passes the current User's
+  ID to an explicit repository capability.
+- Replaced broad collection reads with `list_by_owner(owner_id)` in both
+  in-memory and SQLAlchemy adapters; PostgreSQL applies the ownership predicate
+  before returning records.
+- Added repository, service, HTTP, missing-Bearer, SQLAlchemy, and guarded
+  two-User PostgreSQL coverage. The cross-owner test persisted two distinct
+  owners, returned only the caller's Ticket, and cleaned both tables to zero.
+- Updated the session-isolation test to provide a controlled current User after
+  collection authentication became mandatory; its two-request/two-Session
+  purpose remains unchanged.
+- Passed dependency, Ruff, formatting, diff, fast-test, and guarded database
+  gates: `257 passed, 34 skipped` without database tests and all `291` tests
+  with database tests enabled.
+- Moved detail/update/delete BOLA protection, bounded role authorization, final
+  security review, and Week 08 closure to the longer Sunday session.
+
 ### Sunday - Review and Transition
 
+- Complete owner-aware Ticket detail, update, and delete behavior with
+  non-disclosing cross-User failures.
+- Add the smallest justified privileged role/function rule without weakening
+  ordinary ownership checks.
+- Resolve or explicitly defer the legacy nullable-owner backfill contract with
+  a documented migration decision.
 - Answer authentication, JWT, password, ownership, and authorization interview
   questions.
 - Write the Week 08 report.

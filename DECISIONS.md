@@ -304,3 +304,24 @@ domain field nullable preserves the expand phase of the migration until an
 explicit backfill and non-null contract are safe. Collection filtering and
 detail/update/delete object-level authorization remain separate follow-up
 work; authentication alone does not grant access to every Ticket.
+
+## Decision 013 - Make the Default Ticket Collection Owner-Scoped
+
+The ordinary `GET /tickets` workflow requires an authenticated current User
+and passes that User's immutable identifier through `TicketService` to an
+explicit `TicketRepository.list_by_owner(owner_id)` operation. The SQLAlchemy
+implementation applies `WHERE tickets.owner_id = :owner_id` before records
+leave PostgreSQL; the in-memory implementation follows the same contract.
+
+## Reason
+
+Fetching every Ticket and filtering afterward would move unrelated Users'
+data across the persistence boundary and make omission of an application-side
+filter a disclosure risk. An explicit owner-scoped repository method makes the
+safe query the normal path and preserves correct filtering before the existing
+status and limit behavior is applied.
+
+Authentication and collection isolation do not yet authorize access to an
+identified Ticket. Detail, update, and delete operations require separate
+object-level checks, and privileged cross-owner access requires a separate,
+explicit role/function policy.

@@ -366,3 +366,13 @@ def test_create_ticket_rejects_missing_authorization_header(
     assert response.status_code == 401
     assert response.json() == {"detail": "Invalid authentication credentials"}
     assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_list_tickets_rejects_missing_authorization_header(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.get("/tickets")
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"

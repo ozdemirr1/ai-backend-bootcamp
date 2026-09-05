@@ -151,6 +151,7 @@ def read_health() -> dict[str, str]:
 
 @router.get("/tickets", response_model=list[TicketResponse])
 def list_tickets(
+    current_user: CurrentUserDependency,
     service: TicketServiceDependency,
     status: TicketStatusValue | None = None,
     limit: Annotated[
@@ -158,7 +159,9 @@ def list_tickets(
         Query(ge=1, le=100),
     ] = 10,
 ) -> list[TicketResponse]:
-    tickets = service.list_tickets()
+    tickets = service.list_tickets(
+        owner_id=current_user.user_id,
+    )
 
     if status is not None:
         tickets = [ticket for ticket in tickets if ticket.status.value == status]

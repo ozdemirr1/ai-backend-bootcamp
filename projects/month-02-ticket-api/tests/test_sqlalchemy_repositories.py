@@ -215,27 +215,49 @@ def test_repository_returns_none_for_missing_ticket(database_session: Session) -
     assert fetched_ticket is None
 
 
-def test_repository_lists_all_tickets_in_id_order(
+def test_repository_lists_only_owner_tickets_in_id_order(
     database_session: Session,
     ticket_owner_id: int,
 ) -> None:
     repository = SqlAlchemyTicketRepository(database_session)
-    first_ticket = repository.create(
-        NewTicket(
-            title="First ticket", priority=TicketPriority.LOW, owner_id=ticket_owner_id
+
+    other_owner = SqlAlchemyUserRepository(database_session).create(
+        NewUser(
+            email="other-ticket-owner@example.com",
+            password_hash="$argon2id$other-ticket-owner-example",
         )
     )
-    second_ticket = repository.create(
+
+    first_owned_ticket = repository.create(
         NewTicket(
-            title="Second ticket",
+            title="First owned ticket",
+            priority=TicketPriority.LOW,
+            owner_id=ticket_owner_id,
+        )
+    )
+
+    repository.create(
+        NewTicket(
+            title="Other user's ticket",
+            priority=TicketPriority.MEDIUM,
+            owner_id=other_owner.user_id,
+        )
+    )
+
+    second_owned_ticket = repository.create(
+        NewTicket(
+            title="Second owned ticket",
             priority=TicketPriority.HIGH,
             owner_id=ticket_owner_id,
         )
     )
 
-    tickets = repository.list_all()
+    tickets = repository.list_by_owner(ticket_owner_id)
 
-    assert tickets == [first_ticket, second_ticket]
+    assert tickets == [
+        first_owned_ticket,
+        second_owned_ticket,
+    ]
 
 
 def test_repository_updates_ticket(

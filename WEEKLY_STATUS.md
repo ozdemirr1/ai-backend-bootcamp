@@ -373,16 +373,41 @@ Week 08
   diff checks. Passed `255` tests with `33` integration skips and all `288`
   tests with guarded database tests enabled.
 
-## Next Tasks - Saturday, 5 September
+## Week 08 Saturday Outcome - 5 September
 
-1. Scope `GET /tickets` to the authenticated User and prove one User cannot
-   list another User's Tickets.
-2. Add object-level ownership checks to Ticket detail, update, and delete;
-   include cross-user BOLA/IDOR tests and deliberate `404` disclosure behavior.
-3. Add the smallest justified role/function-level authorization rule and keep
-   it separate from ownership checks.
-4. Run full dependency, Ruff, migration, fast-test, guarded PostgreSQL, secret,
-   and staged-diff gates; update documentation before committing.
+- Replaced the broad Ticket collection repository operation with the explicit
+  `list_by_owner(owner_id)` contract in both in-memory and SQLAlchemy adapters.
+- Applied the ownership predicate inside the PostgreSQL query so another
+  User's Ticket does not cross the persistence boundary.
+- Required authentication for `GET /tickets` and passed the current persisted
+  User's immutable identifier through the route and service layers.
+- Added in-memory repository, service, HTTP, missing-Bearer, SQLAlchemy, and
+  two-User PostgreSQL tests for owner-scoped listing and stable ID ordering.
+- Confirmed two real Users can create separate Tickets while each collection
+  response returns only the caller's Ticket; cleanup left zero Users and zero
+  Tickets.
+- Updated the request-scoped Session isolation test for the newly protected
+  route without weakening its original two-request/two-Session assertion.
+- Passed dependency consistency, Ruff lint, formatting for 106 files, and Git
+  diff checks. Passed `257` tests with `34` integration skips and all `291`
+  tests with guarded database tests enabled.
+- Stopped intentionally after the complete collection-authorization slice;
+  identified-resource and role authorization move to Sunday.
+
+## Next Tasks - Sunday, 6 September
+
+1. Require authentication and owner-aware lookup for Ticket detail, update,
+   and delete; return the deliberate non-disclosing `404` for missing and
+   foreign-owned resources.
+2. Add fast and guarded PostgreSQL BOLA/IDOR tests proving another User cannot
+   read, mutate, or delete a Ticket.
+3. Add the smallest justified role/function-level rule and keep privileged
+   access separate from ordinary ownership policy.
+4. Review the nullable legacy-ownership state; either complete a safe,
+   evidence-backed backfill/non-null contract or document why it must remain
+   an explicit later migration.
+5. Run all quality/security gates, write the Week 08 report, review the pull
+   request, and merge only if the security definition of done is satisfied.
 
 ## Week 08 Guardrails
 

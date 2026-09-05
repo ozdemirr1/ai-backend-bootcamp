@@ -10,11 +10,12 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from ticket_api.config import Settings, get_settings
 from ticket_api.database import create_session_factory
-from ticket_api.dependencies import SessionDependency
+from ticket_api.dependencies import SessionDependency, get_current_user
 from ticket_api.main import create_app
 from ticket_api.passwords import PasswordHasher
 from ticket_api.persistence_models import TicketRecord, UserRecord
 from ticket_api.tokens import JwtAccessTokenManager
+from ticket_api.user_models import User, UserRole
 
 pytestmark = pytest.mark.integration
 
@@ -488,9 +489,23 @@ def test_each_postgresql_request_uses_a_distinct_session(
     application = create_app(lifespan_handler=None)
     application.state.session_factory = tracking_session_factory
 
-    with TestClient(application) as client:
-        first_response = client.get("/tickets")
-        second_response = client.get("/tickets")
+    def get_test_current_user() -> User:
+        return User(
+            user_id=1,
+            email="session-test-user@example.com",
+            password_hash="$argon2id$synthetic-session-test-hash",
+            role=UserRole.MEMBER,
+            is_active=True,
+        )
+
+    application.dependency_overrides[get_current_user] = get_test_current_user
+
+    try:
+        with TestClient(application) as client:
+            first_response = client.get("/tickets")
+            second_response = client.get("/tickets")
+    finally:
+        application.dependency_overrides.pop(get_current_user, None)
 
     assert first_response.status_code == 200
     assert first_response.json() == []
@@ -849,3 +864,89 @@ def test_users_me_rejects_expired_token_with_real_token_manager(
     assert response.status_code == 401
     assert response.json() == {"detail": "Invalid authentication credentials"}
     assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_list_tickets_does_not_expose_another_users_ticket_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"other-list-owner-{marker}@example.com"
+    password = "synthetic-other-owner-password-123"
+    ticket_ids: list[int] = []
+    other_user_id: int | None = None
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_access_token = login_response.json()["access_token"]
+
+        owned_response = postgresql_api_client.post(
+            "/tickets",
+            json={
+                "title": f"Current owner list probe {marker}",
+                "priority": "high",
+            },
+        )
+        assert owned_response.status_code == 201
+        owned_ticket_id = owned_response.json()["ticket_id"]
+        ticket_ids.append(owned_ticket_id)
+
+        other_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_access_token}",
+            },
+            json={
+                "title": f"Other owner list probe {marker}",
+                "priority": "medium",
+            },
+        )
+        assert other_response.status_code == 201
+        other_ticket_id = other_response.json()["ticket_id"]
+        ticket_ids.append(other_ticket_id)
+
+        list_response = postgresql_api_client.get("/tickets")
+
+        assert list_response.status_code == 200
+        listed_ticket_ids = [ticket["ticket_id"] for ticket in list_response.json()]
+        assert listed_ticket_ids == [owned_ticket_id]
+        assert other_ticket_id not in listed_ticket_ids
+
+        with postgresql_test_engine.connect() as connection:
+            stored_owner_ids = connection.scalars(
+                select(TicketRecord.owner_id).where(
+                    TicketRecord.ticket_id.in_(ticket_ids)
+                )
+            ).all()
+
+        assert len(stored_owner_ids) == 2
+        assert len(set(stored_owner_ids)) == 2
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_ids:
+                connection.execute(
+                    delete(TicketRecord).where(TicketRecord.ticket_id.in_(ticket_ids))
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )

@@ -249,13 +249,27 @@ the value travels through `TicketService`, `NewTicket`, and the repository to
 the nullable database foreign key.
 
 This completes safe ownership assignment for new Tickets, not all Ticket
-authorization. Listing, detail, update, and deletion still need explicit
-owner-aware queries and cross-user tests. Those are object-level authorization
-decisions and cannot be inferred merely from successful authentication.
+authorization. Detail, update, and deletion still need explicit owner-aware
+queries and cross-user tests. Those are object-level authorization decisions
+and cannot be inferred merely from successful authentication.
+
+## Owner-Scoped Ticket Collection
+
+The ordinary `GET /tickets` endpoint now requires a current active User. Its
+service calls the explicit `list_by_owner(owner_id)` repository capability,
+and the SQLAlchemy adapter includes the owner predicate in the database query.
+This is intentionally stronger than loading every Ticket and filtering in
+Python: unrelated records never cross the persistence boundary, and forgetting
+a later in-memory filter cannot expose the whole collection.
+
+Fast tests cover missing Bearer credentials and in-memory cross-owner
+isolation. A guarded PostgreSQL test registers and authenticates two Users,
+creates one Ticket with each token, proves that the first User sees only their
+own identifier, confirms two distinct owners were persisted, and deletes the
+exact test records afterward.
 
 ## Not Implemented Yet
 
-- Owner-scoped Ticket collection listing
 - Object-level Ticket detail, update, and delete authorization
 - Bounded role/function-level authorization
 - Ticket ownership backfill and non-null contract

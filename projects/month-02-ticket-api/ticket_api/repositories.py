@@ -18,7 +18,7 @@ class TicketRepository(Protocol):
 
     def get_by_id(self, ticket_id: int) -> Ticket | None: ...
 
-    def list_all(self) -> list[Ticket]: ...
+    def list_by_owner(self, owner_id: int) -> list[Ticket]: ...
 
     def update(self, ticket: Ticket) -> bool: ...
 
@@ -74,8 +74,10 @@ class InMemoryTicketRepository:
     def get_by_id(self, ticket_id: int) -> Ticket | None:
         return self._tickets.get(ticket_id)
 
-    def list_all(self) -> list[Ticket]:
-        return list(self._tickets.values())
+    def list_by_owner(self, owner_id: int) -> list[Ticket]:
+        return [
+            ticket for ticket in self._tickets.values() if ticket.owner_id == owner_id
+        ]
 
     def update(self, ticket: Ticket) -> bool:
         if not isinstance(ticket, Ticket):

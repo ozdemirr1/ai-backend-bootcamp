@@ -160,8 +160,8 @@ class TicketService:
         except TicketRepositoryConflictError as exc:
             raise DuplicateTicketError(str(exc)) from exc
 
-    def list_tickets(self) -> list[Ticket]:
-        return self._repository.list_all()
+    def list_tickets(self, *, owner_id: int) -> list[Ticket]:
+        return self._repository.list_by_owner(owner_id)
 
     def get_ticket(self, ticket_id: int) -> Ticket:
         ticket = self._repository.get_by_id(ticket_id)

@@ -9,6 +9,7 @@ from ticket_api.services import (
 )
 
 OWNER_ID = 7
+OTHER_OWNER_ID = 8
 
 
 def test_service_creates_and_saves_ticket() -> None:
@@ -59,7 +60,7 @@ def test_service_does_not_consume_id_when_creation_fails() -> None:
             owner_id=OWNER_ID,
         )
 
-    assert repository.list_all() == []
+    assert repository.list_by_owner(OWNER_ID) == []
 
     created_ticket = service.create_ticket(
         title="VPN connection fails",
@@ -106,8 +107,17 @@ def test_service_lists_tickets() -> None:
         priority=TicketPriority.MEDIUM,
         owner_id=OWNER_ID,
     )
+    other_users_ticket = service.create_ticket(
+        title="Other user's ticket",
+        priority=TicketPriority.LOW,
+        owner_id=OTHER_OWNER_ID,
+    )
 
-    assert service.list_tickets() == [first_ticket, second_ticket]
+    assert service.list_tickets(owner_id=OWNER_ID) == [
+        first_ticket,
+        second_ticket,
+    ]
+    assert other_users_ticket.owner_id == OTHER_OWNER_ID
 
 
 def test_service_gets_existing_ticket() -> None:
@@ -166,7 +176,7 @@ def test_service_does_not_save_ticket_with_raw_string_priority() -> None:
             owner_id=OWNER_ID,
         )
 
-    assert repository.list_all() == []
+    assert repository.list_by_owner(OWNER_ID) == []
 
 
 def test_service_updates_only_ticket_title() -> None:

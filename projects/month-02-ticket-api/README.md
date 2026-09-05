@@ -47,6 +47,7 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Bearer-token current-User resolution backed by current database state
 - Protected `GET /users/me`
 - Authenticated Ticket creation with server-derived ownership
+- Authenticated, owner-scoped Ticket collection queries
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -302,14 +303,17 @@ available at `http://127.0.0.1:8000/docs`.
 | `POST`   | `/auth/register`       | `201 Created`    | Register a member with a hashed password. |
 | `POST`   | `/auth/login`          | `200 OK`         | Exchange valid credentials for a bearer access token. |
 | `GET`    | `/users/me`            | `200 OK`         | Return the current active public User. |
-| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
+| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit the authenticated User's Tickets. |
 | `POST`   | `/tickets`             | `201 Created`    | Create a Ticket owned by the authenticated User. |
 | `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
 | `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
 | `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
 | `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete a stored ticket without a body. |
 
-`GET /tickets` accepts two optional query parameters:
+`GET /tickets` requires a Bearer credential and returns only Tickets owned by
+the current active User. The ownership predicate is applied in the repository
+query before status filtering and limiting. It accepts two optional query
+parameters:
 
 - `status`: an optional filter restricted to `open`, `in_progress`, `resolved`,
   or `closed`
@@ -346,11 +350,11 @@ for isolated unit/API tests, not as the default runtime. Committed CRUD,
 failure rollback, request isolation, and persistence across a real application
 restart have been verified against the dedicated test database.
 
-Registration, login, current-User resolution, stale-token rejection, and
-authenticated Ticket ownership have also been verified through the real
-HTTP/Session/Argon2/PostgreSQL stack. Ticket collection and identified-resource
-authorization are still pending; a valid login must not be interpreted as
-permission to access every Ticket.
+Registration, login, current-User resolution, stale-token rejection,
+authenticated Ticket ownership, and owner-scoped collection listing have also
+been verified through the real HTTP/Session/Argon2/PostgreSQL stack. Identified-
+resource authorization is still pending; a valid login must not be interpreted
+as permission to access every Ticket.
 
 The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
@@ -436,3 +440,11 @@ proved real Argon2 registration-to-login, generic authentication failures,
 expired and stale token rejection, server-derived persisted ownership, rollback
 behavior, and exact cleanup. Dependency consistency, Ruff lint, formatting for
 106 files, and `git diff --check` passed.
+
+On 5 September, authenticated owner-scoped collection listing increased the
+complete suite to `257 passed, 34 skipped` with database tests disabled and
+`291 passed` with `RUN_DATABASE_TESTS=1`. In-memory and PostgreSQL adapters share
+an explicit `list_by_owner` contract, and a guarded two-User HTTP test proved
+that a caller cannot list another User's Ticket. Dependency consistency, Ruff
+lint, formatting for 106 files, exact database cleanup, and `git diff --check`
+passed.

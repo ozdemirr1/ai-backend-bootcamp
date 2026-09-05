@@ -53,8 +53,12 @@ class SqlAlchemyTicketRepository:
 
         return ticket_record_to_domain(record)
 
-    def list_all(self) -> list[Ticket]:
-        statement = select(TicketRecord).order_by(TicketRecord.ticket_id.asc())
+    def list_by_owner(self, owner_id: int) -> list[Ticket]:
+        statement = (
+            select(TicketRecord)
+            .where(TicketRecord.owner_id == owner_id)
+            .order_by(TicketRecord.ticket_id.asc())
+        )
         records = self._session.scalars(statement).all()
 
         return [ticket_record_to_domain(record) for record in records]

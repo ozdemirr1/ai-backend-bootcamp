@@ -623,3 +623,30 @@ def test_create_ticket_rejects_client_supplied_owner_id(
     error = response.json()["detail"][0]
     assert error["loc"] == ["body", "owner_id"]
     assert error["type"] == "extra_forbidden"
+
+
+def test_list_tickets_returns_only_current_users_tickets(
+    client: TestClient,
+) -> None:
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    service = service_provider()
+
+    service.create_ticket(
+        title="Other user's private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=999,
+    )
+
+    owned_response = client.post(
+        "/tickets",
+        json={
+            "title": "Current user's ticket",
+            "priority": "medium",
+        },
+    )
+    assert owned_response.status_code == 201
+
+    response = client.get("/tickets")
+
+    assert response.status_code == 200
+    assert [ticket["title"] for ticket in response.json()] == ["Current user's ticket"]

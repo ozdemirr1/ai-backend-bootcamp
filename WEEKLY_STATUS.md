@@ -2,22 +2,23 @@
 
 ## Current Week
 
-Week 08
+Week 09
 
 ## Date
 
-31 August - 6 September 2026
+7 September - 13 September 2026
 
 ## Current Focus
 
-- User registration and login
-- Secure password hashing and verification
-- JWT access-token creation and validation
-- Current-user dependency
-- Protected Ticket endpoints
-- Ticket ownership and object-level authorization
-- Bounded role/function-level authorization
-- Authentication and authorization testing
+- Separate OpsDesk product repository
+- Product requirements and explicit non-goals
+- User, Organization, OrganizationMembership, Ticket, Comment, and Attachment
+- Organization-scoped owner, admin, agent, and customer roles
+- Ticket participant and lifecycle terminology
+- Relational ERD
+- Authorization and status-transition matrices
+- Initial API endpoint inventory
+- Prioritized GitHub issue list
 
 ## Completed
 
@@ -74,6 +75,10 @@ Week 08
 - [x] Fast and guarded PostgreSQL authorization tests
 - [x] Explicit deferral of unsafe legacy ownership backfill
 - [x] Week 08 authentication and authorization interview review
+- [x] Week 08 pull request merged and feature branches cleaned
+- [x] Week 08 report
+- [x] Month 02 report
+- [x] Week 09 plan
 
 ## Problems
 
@@ -424,24 +429,42 @@ Week 08
 - Confirmed `opsdesk_test` ended with zero Users and Tickets at Alembic revision
   `e98825c4d6b6`.
 
-## Remaining Week 08 Closure
+## Week 08 Closure and Month 02 Handoff
 
-1. Review the complete diff for secrets and authorization bypasses.
-2. Commit, push, open the pull request, review it, and merge only after all
-   definition-of-done evidence is present.
-3. Write the Week 08 and Month 02 reports and prepare the Week 09 domain-design
-   handoff on synchronized `main` with the final GitHub evidence.
+- Reviewed the complete 43-file pull-request diff for credentials, complete
+  tokens, local paths, test-only production behavior, and authorization
+  bypasses; no merge blocker remained.
+- Committed the final authorization boundary as `a1cf847`.
+- Merged pull request #6, `Week 08: add authentication, Ticket ownership, and
+  authorization`, through merge commit `9876703`.
+- Fast-forwarded local `main` to `origin/main` and deleted both local and
+  remote `feature/week-08-auth-authorization` branches.
+- Recorded the completed Week 08 evidence and Month 02 result without marking
+  the missing CI or deployment milestones as complete.
+- Froze `projects/month-02-ticket-api/` as a bounded learning application.
+- Prepared Week 09 for the separate real OpsDesk product repository.
 
-## Week 08 Guardrails
+## Week 09 Immediate Actions
 
-- Never store, log, return, or commit plaintext passwords, token secrets, or
-  complete access tokens.
-- Do not implement password hashing or JWT cryptography manually.
-- Treat authentication and authorization as separate decisions.
-- Derive Ticket ownership from the authenticated User, not client input.
-- Add explicit object-level and function/role-level authorization checks.
-- Keep routes independent of SQLAlchemy and preserve transaction ownership.
-- Use Alembic for User and Ticket-ownership schema changes.
-- Continue destructive integration testing only against `opsdesk_test`.
-- Do not add OAuth providers, refresh-token rotation, Docker, Redis, React, or
-  AI features before the core Week 08 scope is complete.
+1. Start the Month 03 Codex conversation and read the private handoff.
+2. Confirm this repository remains clean and synchronized on `main`.
+3. Define the OpsDesk problem, actors, requirements, and non-goals.
+4. Create the separate public `opsdesk` repository after its initial purpose
+   and structure are agreed.
+5. Model roles on `OrganizationMembership`, not the global User.
+6. Produce the ERD, permission matrix, endpoint inventory, and issue backlog
+   before beginning Week 10 CRUD implementation.
+
+## Week 09 Guardrails
+
+- Do not copy the Month 02 learning API wholesale into OpsDesk.
+- Do not put organization roles directly on the global User.
+- Do not use an ambiguous owner field for organization ownership, Ticket
+  requester, and Ticket assignment.
+- Do not begin CRUD before domain and authorization rules are reviewable.
+- Keep persistence synchronous unless a demonstrated requirement changes it.
+- Add minimal CI only after executable code and meaningful tests exist.
+- Do not add a Docker build before the scheduled Docker phase creates a real
+  Dockerfile.
+- Do not start Redis, React, or AI integration early.
+- Keep credentials, `.env`, complete URLs, and complete tokens outside Git.

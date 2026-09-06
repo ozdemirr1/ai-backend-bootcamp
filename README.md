@@ -31,19 +31,24 @@ begin. This repository remains the learning log and evidence base.
 
 ## Current Learning Modules
 
-- [Month 02 Ticket API](projects/month-02-ticket-api/README.md) - the living
-  FastAPI application that progresses through validation, persistence, and
-  authentication during Weeks 05-08
+- [Month 02 Ticket API](projects/month-02-ticket-api/README.md) - the completed
+  Weeks 05-08 learning application covering FastAPI, PostgreSQL, SQLAlchemy,
+  Alembic, authentication, and authorization
 - [Week 06 PostgreSQL and SQL](projects/week-06-postgresql-sql/README.md) - a
   bounded SQL laboratory with schema, relationship, query, transaction, and
   index exercises
 
 ## Current Weekly Evidence
 
-- [Week 07 Report](weekly-reports/week-07.md) - SQLAlchemy, Alembic,
-  PostgreSQL persistence, request transactions, and integration testing
-- [Week 08 Plan](weekly-reports/week-08-plan.md) - authentication, JWT,
-  Ticket ownership, and authorization
+- [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
+  identity, Ticket ownership, and authorization
+- [Month 02 Report](monthly-reports/month-02.md) - the complete progression
+  from FastAPI fundamentals to a PostgreSQL-backed secured API
+- [Week 09 Plan](weekly-reports/week-09-plan.md) - OpsDesk requirements,
+  organization-scoped domain design, ERD, access rules, and issue planning
+
+The real OpsDesk product begins in Week 09 in a separate public repository.
+This repository continues to hold the learning evidence and roadmap history.
 
 ## Learning Rule
 

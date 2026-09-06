@@ -318,13 +318,13 @@ current-user dependency
   corrections for overclaiming timing defenses, brute-force resistance, and
   risk elimination; distinguished the current service-side object check from
   a possible future owner-filtered detail query.
-- Reserved the Week 08 report, final secret/diff review, and pull-request merge
-  for the final closure block.
+- Completed the final secret and authorization-bypass diff review without a
+  merge blocker.
+- Merged pull request #6 through merge commit `9876703`, synchronized `main`,
+  and removed both local and remote Week 08 feature branches.
+- Recorded the Week 08 report, Month 02 report, and Week 09 transition plan.
 
-## Planned API Surface
-
-The exact contracts will be finalized after Monday's architecture review.
-Expected additions are:
+## Implemented API Surface
 
 | Method | Path | Purpose |
 | --- | --- | --- |
@@ -333,9 +333,13 @@ Expected additions are:
 | `GET` | `/users/me` | Return the authenticated User's public identity |
 | `GET` | `/tickets` | Return only Tickets visible to the caller |
 | `POST` | `/tickets` | Create a Ticket owned by the caller |
+| `GET` | `/tickets/{ticket_id}` | Read a caller-owned Ticket |
+| `PATCH` | `/tickets/{ticket_id}` | Update a caller-owned Ticket |
+| `DELETE` | `/tickets/{ticket_id}` | Delete a caller-owned Ticket |
+| `GET` | `/admin/tickets` | List Tickets across owners as an admin |
 
-Existing detail, update, and delete Ticket endpoints will receive ownership
-checks instead of parallel duplicate routes.
+The preview route is also authenticated. Existing detail, update, and delete
+routes received ownership checks instead of parallel duplicate routes.
 
 ## Test Plan
 
@@ -424,6 +428,10 @@ Week 08 is complete when:
 - Fast, integration, migration, lint, formatting, and dependency checks pass.
 - The Week 08 architecture can be explained in the interview review.
 - The reviewed feature branch is merged through a pull request.
+
+All Week 08 definition-of-done items were satisfied. Historical nullable
+ownership remains an explicit future data-migration decision rather than an
+unsafe fabricated backfill.
 
 ## Guardrails
 

@@ -1,18 +1,28 @@
 from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
+from ticket_api.config import Settings, get_settings
 from ticket_api.database import create_session_factory
-from ticket_api.dependencies import SessionDependency
+from ticket_api.dependencies import SessionDependency, get_current_user
 from ticket_api.main import create_app
-from ticket_api.persistence_models import TicketRecord
+from ticket_api.passwords import PasswordHasher
+from ticket_api.persistence_models import TicketRecord, UserRecord
+from ticket_api.tokens import JwtAccessTokenManager
+from ticket_api.user_models import User, UserRole
 
 pytestmark = pytest.mark.integration
+
+
+class HistoricalClock:
+    def now(self) -> datetime:
+        return datetime(2020, 1, 1, tzinfo=UTC)
 
 
 class CommitFailingSession(Session):
@@ -23,9 +33,15 @@ class CommitFailingSession(Session):
 @pytest.fixture
 def postgresql_api_client(
     postgresql_test_engine: Engine,
+    synthetic_auth_settings: Settings,
 ) -> Iterator[TestClient]:
     application = create_app(lifespan_handler=None)
     application.state.session_factory = create_session_factory(postgresql_test_engine)
+
+    def get_test_settings() -> Settings:
+        return synthetic_auth_settings
+
+    application.dependency_overrides[get_settings] = get_test_settings
 
     @application.post(
         "/__test__/rollback",
@@ -44,8 +60,55 @@ def postgresql_api_client(
 
         raise RuntimeError("forced rollback probe")
 
-    with TestClient(application) as client:
-        yield client
+    authenticated_user_id: int | None = None
+
+    try:
+        with TestClient(application) as client:
+            marker = uuid4().hex
+            email = f"fixture-owner-{marker}@example.com"
+            password = "synthetic-fixture-password-123"
+
+            registration_response = client.post(
+                "/auth/register",
+                json={
+                    "email": email,
+                    "password": password,
+                },
+            )
+            if registration_response.status_code != 201:
+                raise RuntimeError("could not create authenticated test user")
+
+            authenticated_user_id = registration_response.json()["user_id"]
+
+            login_response = client.post(
+                "/auth/login",
+                json={
+                    "email": email,
+                    "password": password,
+                },
+            )
+            if login_response.status_code != 200:
+                raise RuntimeError("could not authenticate test user")
+
+            access_token = login_response.json()["access_token"]
+            client.headers["Authorization"] = f"Bearer {access_token}"
+
+            yield client
+    finally:
+        if authenticated_user_id is not None:
+            with postgresql_test_engine.begin() as connection:
+                connection.execute(
+                    delete(TicketRecord).where(
+                        TicketRecord.owner_id == authenticated_user_id
+                    )
+                )
+                connection.execute(
+                    delete(UserRecord).where(
+                        UserRecord.user_id == authenticated_user_id
+                    )
+                )
+
+        application.dependency_overrides.pop(get_settings, None)
 
 
 @pytest.fixture
@@ -95,12 +158,16 @@ def test_created_ticket_is_committed_and_readable_in_later_request(
         assert data["status"] == "open"
 
         with postgresql_test_engine.connect() as connection:
-            statement = select(TicketRecord.title).where(
-                TicketRecord.ticket_id == ticket_id
-            )
-            db_title = connection.scalar(statement)
+            statement = select(
+                TicketRecord.title,
+                TicketRecord.owner_id,
+            ).where(TicketRecord.ticket_id == ticket_id)
+
+            db_title, db_owner_id = connection.execute(statement).one()
+            authenticated_user_id = connection.scalar(select(UserRecord.user_id))
 
         assert db_title == title
+        assert db_owner_id == authenticated_user_id
 
         get_response = postgresql_api_client.get(f"/tickets/{ticket_id}")
         assert get_response.status_code == 200
@@ -375,14 +442,14 @@ def test_commit_failure_prevents_201_and_rolls_back_postgresql_write(
     postgresql_commit_failure_client: TestClient,
     postgresql_test_engine: Engine,
 ) -> None:
-    title = f"Commit failure probe {uuid4().hex}"
+    email = f"commit-failure-{uuid4().hex}@example.com"
 
     try:
         response = postgresql_commit_failure_client.post(
-            "/tickets",
+            "/auth/register",
             json={
-                "title": title,
-                "priority": "high",
+                "email": email,
+                "password": "synthetic-commit-failure-password",
             },
         )
 
@@ -390,22 +457,17 @@ def test_commit_failure_prevents_201_and_rolls_back_postgresql_write(
         assert response.text == "Internal Server Error"
 
         with postgresql_test_engine.connect() as connection:
-            matching_statement = (
+            matching_count = connection.scalar(
                 select(func.count())
-                .select_from(TicketRecord)
-                .where(TicketRecord.title == title)
-            )
-            matching_count = connection.scalar(matching_statement)
-            total_count = connection.scalar(
-                select(func.count()).select_from(TicketRecord)
+                .select_from(UserRecord)
+                .where(UserRecord.email == email)
             )
 
         assert matching_count == 0
-        assert total_count == 0
 
     finally:
         with postgresql_test_engine.begin() as connection:
-            connection.execute(delete(TicketRecord).where(TicketRecord.title == title))
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
 
 
 def test_each_postgresql_request_uses_a_distinct_session(
@@ -427,9 +489,23 @@ def test_each_postgresql_request_uses_a_distinct_session(
     application = create_app(lifespan_handler=None)
     application.state.session_factory = tracking_session_factory
 
-    with TestClient(application) as client:
-        first_response = client.get("/tickets")
-        second_response = client.get("/tickets")
+    def get_test_current_user() -> User:
+        return User(
+            user_id=1,
+            email="session-test-user@example.com",
+            password_hash="$argon2id$synthetic-session-test-hash",
+            role=UserRole.MEMBER,
+            is_active=True,
+        )
+
+    application.dependency_overrides[get_current_user] = get_test_current_user
+
+    try:
+        with TestClient(application) as client:
+            first_response = client.get("/tickets")
+            second_response = client.get("/tickets")
+    finally:
+        application.dependency_overrides.pop(get_current_user, None)
 
     assert first_response.status_code == 200
     assert first_response.json() == []
@@ -446,3 +522,654 @@ def test_each_postgresql_request_uses_a_distinct_session(
         )
 
     assert ticket_count_after == 0
+
+
+def test_registered_user_is_committed_with_hashed_password(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"registration-{marker}@example.com"
+    plain_password = "strong-password-123"
+
+    try:
+        response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": plain_password,
+            },
+        )
+
+        assert response.status_code == 201
+
+        response_data = response.json()
+        assert response_data["email"] == email
+        assert response_data["role"] == "member"
+        assert response_data["is_active"] is True
+        assert "password" not in response_data
+        assert "password_hash" not in response_data
+
+        with postgresql_test_engine.connect() as connection:
+            password_hash = connection.scalar(
+                select(UserRecord.password_hash).where(UserRecord.email == email)
+            )
+
+        assert isinstance(password_hash, str)
+        assert password_hash != plain_password
+        assert password_hash.startswith("$argon2id$")
+        assert PasswordHasher().verify_password(
+            plain_password,
+            password_hash,
+        )
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_duplicate_registration_returns_409_and_preserves_original_user(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    normalized_email = f"duplicate-{marker}@example.com"
+    password = "strong-password-123"
+
+    try:
+        first_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": f"Duplicate-{marker}@Example.COM",
+                "password": password,
+            },
+        )
+        assert first_response.status_code == 201
+        assert first_response.json()["email"] == normalized_email
+
+        duplicate_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": normalized_email,
+                "password": password,
+            },
+        )
+        assert duplicate_response.status_code == 409
+        assert duplicate_response.json() == {"detail": "User registration conflict"}
+
+        with postgresql_test_engine.connect() as connection:
+            user_count = connection.scalar(
+                select(func.count())
+                .select_from(UserRecord)
+                .where(UserRecord.email == normalized_email)
+            )
+
+        assert user_count == 1
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(
+                delete(UserRecord).where(UserRecord.email == normalized_email)
+            )
+
+
+def test_registered_user_can_login_with_real_postgresql_and_argon2(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"login-{marker}@example.com"
+    password = "strong-login-password-123"
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+
+        assert login_response.status_code == 200
+
+        response_data = login_response.json()
+        assert response_data["token_type"] == "bearer"
+        assert isinstance(response_data["access_token"], str)
+        assert len(response_data["access_token"].split(".")) == 3
+
+        wrong_password_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": email,
+                "password": "wrong-password",
+            },
+        )
+        missing_user_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": f"missing-{marker}@example.com",
+                "password": password,
+            },
+        )
+
+        expected_error = {"detail": "Invalid email or password"}
+
+        assert wrong_password_response.status_code == 401
+        assert missing_user_response.status_code == 401
+        assert wrong_password_response.json() == expected_error
+        assert missing_user_response.json() == expected_error
+        assert wrong_password_response.headers["www-authenticate"] == "Bearer"
+        assert missing_user_response.headers["www-authenticate"] == "Bearer"
+
+        with postgresql_test_engine.connect() as connection:
+            user_count = connection.scalar(
+                select(func.count())
+                .select_from(UserRecord)
+                .where(UserRecord.email == email)
+            )
+
+        assert user_count == 1
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_authenticated_user_can_read_current_identity_from_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"current-user-{marker}@example.com"
+    password = "strong-current-user-password-123"
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+
+        access_token = login_response.json()["access_token"]
+
+        current_user_response = postgresql_api_client.get(
+            "/users/me",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        assert current_user_response.status_code == 200
+        assert current_user_response.json() == registration_response.json()
+        assert "password" not in current_user_response.json()
+        assert "password_hash" not in current_user_response.json()
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_valid_token_is_rejected_after_user_is_deleted(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"deleted-user-{marker}@example.com"
+    password = "strong-deleted-user-password-123"
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        access_token = login_response.json()["access_token"]
+
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+        response = postgresql_api_client.get(
+            "/users/me",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        assert response.status_code == 401
+        assert response.json() == {"detail": "Invalid authentication credentials"}
+        assert response.headers["www-authenticate"] == "Bearer"
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_valid_token_is_rejected_after_user_is_deactivated(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    email = f"inactive-user-{marker}@example.com"
+    password = "strong-inactive-user-password-123"
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        access_token = login_response.json()["access_token"]
+
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(
+                update(UserRecord)
+                .where(UserRecord.email == email)
+                .values(is_active=False)
+            )
+
+        response = postgresql_api_client.get(
+            "/users/me",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        assert response.status_code == 401
+        assert response.json() == {"detail": "Invalid authentication credentials"}
+        assert response.headers["www-authenticate"] == "Bearer"
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(delete(UserRecord).where(UserRecord.email == email))
+
+
+def test_users_me_rejects_malformed_token_with_real_token_manager(
+    postgresql_api_client: TestClient,
+) -> None:
+    response = postgresql_api_client.get(
+        "/users/me",
+        headers={
+            "Authorization": "Bearer not-a-valid-jwt",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_users_me_rejects_expired_token_with_real_token_manager(
+    postgresql_api_client: TestClient,
+    synthetic_auth_settings: Settings,
+) -> None:
+    token_manager = JwtAccessTokenManager(
+        secret=synthetic_auth_settings.jwt_secret.get_secret_value(),
+        lifetime=timedelta(minutes=1),
+        clock=HistoricalClock(),
+    )
+    expired_token = token_manager.create_access_token(user_id=1)
+
+    response = postgresql_api_client.get(
+        "/users/me",
+        headers={
+            "Authorization": f"Bearer {expired_token}",
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_list_tickets_does_not_expose_another_users_ticket_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"other-list-owner-{marker}@example.com"
+    password = "synthetic-other-owner-password-123"
+    ticket_ids: list[int] = []
+    other_user_id: int | None = None
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_access_token = login_response.json()["access_token"]
+
+        owned_response = postgresql_api_client.post(
+            "/tickets",
+            json={
+                "title": f"Current owner list probe {marker}",
+                "priority": "high",
+            },
+        )
+        assert owned_response.status_code == 201
+        owned_ticket_id = owned_response.json()["ticket_id"]
+        ticket_ids.append(owned_ticket_id)
+
+        other_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_access_token}",
+            },
+            json={
+                "title": f"Other owner list probe {marker}",
+                "priority": "medium",
+            },
+        )
+        assert other_response.status_code == 201
+        other_ticket_id = other_response.json()["ticket_id"]
+        ticket_ids.append(other_ticket_id)
+
+        list_response = postgresql_api_client.get("/tickets")
+
+        assert list_response.status_code == 200
+        listed_ticket_ids = [ticket["ticket_id"] for ticket in list_response.json()]
+        assert listed_ticket_ids == [owned_ticket_id]
+        assert other_ticket_id not in listed_ticket_ids
+
+        with postgresql_test_engine.connect() as connection:
+            stored_owner_ids = connection.scalars(
+                select(TicketRecord.owner_id).where(
+                    TicketRecord.ticket_id.in_(ticket_ids)
+                )
+            ).all()
+
+        assert len(stored_owner_ids) == 2
+        assert len(set(stored_owner_ids)) == 2
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_ids:
+                connection.execute(
+                    delete(TicketRecord).where(TicketRecord.ticket_id.in_(ticket_ids))
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )
+
+
+def test_another_user_cannot_read_update_or_delete_ticket_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"object-owner-{marker}@example.com"
+    password = "synthetic-object-owner-password-123"
+    original_title = f"Private object probe {marker}"
+
+    other_user_id: int | None = None
+    other_ticket_id: int | None = None
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_access_token = login_response.json()["access_token"]
+
+        create_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_access_token}",
+            },
+            json={
+                "title": original_title,
+                "priority": "high",
+            },
+        )
+        assert create_response.status_code == 201
+        other_ticket_id = create_response.json()["ticket_id"]
+
+        expected_not_found = {"detail": f"Ticket {other_ticket_id} not found"}
+
+        read_response = postgresql_api_client.get(f"/tickets/{other_ticket_id}")
+        assert read_response.status_code == 404
+        assert read_response.json() == expected_not_found
+
+        update_response = postgresql_api_client.patch(
+            f"/tickets/{other_ticket_id}",
+            json={
+                "title": "Unauthorized replacement title",
+                "status": "resolved",
+            },
+        )
+        assert update_response.status_code == 404
+        assert update_response.json() == expected_not_found
+
+        delete_response = postgresql_api_client.delete(f"/tickets/{other_ticket_id}")
+        assert delete_response.status_code == 404
+        assert delete_response.json() == expected_not_found
+
+        with postgresql_test_engine.connect() as connection:
+            stored_record = connection.execute(
+                select(
+                    TicketRecord.title,
+                    TicketRecord.status,
+                    TicketRecord.owner_id,
+                ).where(TicketRecord.ticket_id == other_ticket_id)
+            ).one()
+
+        assert stored_record.title == original_title
+        assert stored_record.status == "open"
+        assert stored_record.owner_id == other_user_id
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if other_ticket_id is not None:
+                connection.execute(
+                    delete(TicketRecord).where(
+                        TicketRecord.ticket_id == other_ticket_id
+                    )
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )
+
+
+def test_admin_can_list_tickets_from_multiple_owners_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"admin-list-other-{marker}@example.com"
+    password = "synthetic-admin-list-password-123"
+
+    current_user_id: int | None = None
+    other_user_id: int | None = None
+    ticket_ids: list[int] = []
+
+    try:
+        current_user_response = postgresql_api_client.get("/users/me")
+        assert current_user_response.status_code == 200
+        current_user_id = current_user_response.json()["user_id"]
+
+        own_ticket_response = postgresql_api_client.post(
+            "/tickets",
+            json={
+                "title": f"Admin list own ticket {marker}",
+                "priority": "high",
+            },
+        )
+        assert own_ticket_response.status_code == 201
+        own_ticket_id = own_ticket_response.json()["ticket_id"]
+        ticket_ids.append(own_ticket_id)
+
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_token = login_response.json()["access_token"]
+
+        other_ticket_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_token}",
+            },
+            json={
+                "title": f"Admin list other ticket {marker}",
+                "priority": "medium",
+            },
+        )
+        assert other_ticket_response.status_code == 201
+        other_ticket_id = other_ticket_response.json()["ticket_id"]
+        ticket_ids.append(other_ticket_id)
+
+        member_response = postgresql_api_client.get("/admin/tickets")
+
+        assert member_response.status_code == 403
+        assert member_response.json() == {
+            "detail": "Admin role required",
+        }
+
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(
+                update(UserRecord)
+                .where(UserRecord.user_id == current_user_id)
+                .values(role=UserRole.ADMIN.value)
+            )
+
+        admin_response = postgresql_api_client.get("/admin/tickets")
+
+        assert admin_response.status_code == 200
+
+        owner_scoped_response = postgresql_api_client.get("/tickets")
+
+        assert owner_scoped_response.status_code == 200
+        assert [ticket["ticket_id"] for ticket in owner_scoped_response.json()] == [
+            own_ticket_id
+        ]
+
+        listed_ticket_ids = {ticket["ticket_id"] for ticket in admin_response.json()}
+        assert listed_ticket_ids == {
+            own_ticket_id,
+            other_ticket_id,
+        }
+
+        with postgresql_test_engine.connect() as connection:
+            stored_role = connection.scalar(
+                select(UserRecord.role).where(UserRecord.user_id == current_user_id)
+            )
+            stored_owner_ids = connection.scalars(
+                select(TicketRecord.owner_id).where(
+                    TicketRecord.ticket_id.in_(ticket_ids)
+                )
+            ).all()
+
+        assert stored_role == UserRole.ADMIN.value
+        assert set(stored_owner_ids) == {
+            current_user_id,
+            other_user_id,
+        }
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_ids:
+                connection.execute(
+                    delete(TicketRecord).where(TicketRecord.ticket_id.in_(ticket_ids))
+                )
+
+            if current_user_id is not None:
+                connection.execute(
+                    update(UserRecord)
+                    .where(UserRecord.user_id == current_user_id)
+                    .values(role=UserRole.MEMBER.value)
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )

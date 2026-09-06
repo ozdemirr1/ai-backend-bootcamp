@@ -3,11 +3,20 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from ticket_api.dependencies import get_ticket_service
+from ticket_api.dependencies import get_current_user, get_ticket_service
 from ticket_api.main import create_app
 from ticket_api.models import Ticket, TicketPriority
 from ticket_api.repositories import InMemoryTicketRepository
 from ticket_api.services import TicketService
+from ticket_api.user_models import User, UserRole
+
+TEST_CURRENT_USER = User(
+    user_id=7,
+    email="ticket-owner@example.com",
+    password_hash="$argon2id$synthetic-ticket-owner",
+    role=UserRole.MEMBER,
+    is_active=True,
+)
 
 
 @pytest.fixture
@@ -20,13 +29,18 @@ def client() -> Iterator[TestClient]:
     def get_test_ticket_service() -> TicketService:
         return service
 
+    def get_test_current_user() -> User:
+        return TEST_CURRENT_USER
+
     test_app.dependency_overrides[get_ticket_service] = get_test_ticket_service
+    test_app.dependency_overrides[get_current_user] = get_test_current_user
 
     try:
         with TestClient(test_app) as test_client:
             yield test_client
     finally:
         test_app.dependency_overrides.pop(get_ticket_service, None)
+        test_app.dependency_overrides.pop(get_current_user, None)
 
 
 def test_read_health(client: TestClient) -> None:
@@ -504,6 +518,7 @@ def test_create_ticket_returns_409_for_duplicate_id(
         ticket_id=1,
         title="Existing ticket",
         priority=TicketPriority.LOW,
+        owner_id=TEST_CURRENT_USER.user_id,
     )
 
     repository = InMemoryTicketRepository()
@@ -569,3 +584,143 @@ def test_list_tickets_rejects_limit_above_maximum(
     error = response.json()["detail"][0]
     assert error["loc"] == ["query", "limit"]
     assert error["type"] == "less_than_equal"
+
+
+def test_create_ticket_derives_owner_from_current_user(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/tickets",
+        json={
+            "title": "Owned ticket",
+            "priority": "high",
+        },
+    )
+
+    assert response.status_code == 201
+
+    ticket_id = response.json()["ticket_id"]
+
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    stored_ticket = service_provider().get_ticket(
+        ticket_id,
+        owner_id=TEST_CURRENT_USER.user_id,
+    )
+
+    assert stored_ticket.owner_id == TEST_CURRENT_USER.user_id
+
+
+def test_create_ticket_rejects_client_supplied_owner_id(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/tickets",
+        json={
+            "title": "Ownership escalation attempt",
+            "priority": "high",
+            "owner_id": 999,
+        },
+    )
+
+    assert response.status_code == 422
+
+    error = response.json()["detail"][0]
+    assert error["loc"] == ["body", "owner_id"]
+    assert error["type"] == "extra_forbidden"
+
+
+def test_list_tickets_returns_only_current_users_tickets(
+    client: TestClient,
+) -> None:
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    service = service_provider()
+
+    service.create_ticket(
+        title="Other user's private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=999,
+    )
+
+    owned_response = client.post(
+        "/tickets",
+        json={
+            "title": "Current user's ticket",
+            "priority": "medium",
+        },
+    )
+    assert owned_response.status_code == 201
+
+    response = client.get("/tickets")
+
+    assert response.status_code == 200
+    assert [ticket["title"] for ticket in response.json()] == ["Current user's ticket"]
+
+
+def test_read_ticket_hides_another_users_ticket(
+    client: TestClient,
+) -> None:
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    service = service_provider()
+
+    other_users_ticket = service.create_ticket(
+        title="Other user's private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=999,
+    )
+
+    response = client.get(f"/tickets/{other_users_ticket.ticket_id}")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": f"Ticket {other_users_ticket.ticket_id} not found"
+    }
+
+
+def test_update_ticket_does_not_modify_another_users_ticket(
+    client: TestClient,
+) -> None:
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    service = service_provider()
+
+    other_users_ticket = service.create_ticket(
+        title="Original private title",
+        priority=TicketPriority.HIGH,
+        owner_id=999,
+    )
+
+    response = client.patch(
+        f"/tickets/{other_users_ticket.ticket_id}",
+        json={"title": "Unauthorized title"},
+    )
+
+    assert response.status_code == 404
+
+    stored_ticket = service.get_ticket(
+        other_users_ticket.ticket_id,
+        owner_id=999,
+    )
+    assert stored_ticket.title == "Original private title"
+
+
+def test_delete_ticket_does_not_remove_another_users_ticket(
+    client: TestClient,
+) -> None:
+    service_provider = client.app.dependency_overrides[get_ticket_service]
+    service = service_provider()
+
+    other_users_ticket = service.create_ticket(
+        title="Other user's private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=999,
+    )
+
+    response = client.delete(f"/tickets/{other_users_ticket.ticket_id}")
+
+    assert response.status_code == 404
+    assert (
+        service.get_ticket(
+            other_users_ticket.ticket_id,
+            owner_id=999,
+        )
+        == other_users_ticket
+    )

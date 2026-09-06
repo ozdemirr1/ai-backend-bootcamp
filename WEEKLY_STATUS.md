@@ -57,6 +57,23 @@ Week 08
 - [x] Week 07 pull request merged and feature branches cleaned
 - [x] Week 07 report
 - [x] Week 08 plan
+- [x] Week 08 feature branch
+- [x] Authentication and authorization threat model
+- [x] Argon2id password hashing boundary and behavior tests
+- [x] Secret-aware JWT configuration foundation
+- [x] Monday dependency, lint, formatting, unit, and integration quality gates
+- [x] Strict login and access-token response schemas
+- [x] Deterministic UTC clock boundary for token tests
+- [x] Fixed-algorithm JWT creation and validation
+- [x] Generic authentication service failure contract
+- [x] User registration, login, and persisted current-User resolution
+- [x] Server-derived Ticket ownership
+- [x] Owner-scoped Ticket collection
+- [x] Object-level Ticket detail, update, and delete authorization
+- [x] Bounded admin-only cross-owner Ticket collection
+- [x] Fast and guarded PostgreSQL authorization tests
+- [x] Explicit deferral of unsafe legacy ownership backfill
+- [x] Week 08 authentication and authorization interview review
 
 ## Problems
 
@@ -238,16 +255,182 @@ Week 08
 - Added the Week 07 report and prepared the Week 08 authentication and
   authorization plan.
 
-## Next Tasks - Monday, 31 August
+## Week 08 Monday Outcome - 31 August
 
-1. Create the Week 08 feature branch from synchronized `main`.
-2. Explain authentication, authorization, password hashing, bearer tokens,
-   JWT, and IDOR/BOLA before implementation.
-3. Review the existing dependency and persistence boundaries for reuse.
-4. Verify current compatible security dependencies from primary documentation.
-5. Add environment-based token configuration without tracked secrets.
-6. Implement only the password hashing and verification foundation with focused
-   tests after the architecture review.
+- Created `feature/week-08-auth-authorization` from synchronized `main`.
+- Separated authentication from authorization and threat-modeled database
+  compromise, credential enumeration, bearer-token theft, token tampering,
+  IDOR/BOLA, and role escalation before implementation.
+- Verified `pwdlib`, Argon2id, PyJWT, FastAPI, and OWASP password-storage
+  guidance from primary documentation.
+- Added `pwdlib` 0.3.1 with Argon2 support and PyJWT 2.13.0 through `uv`.
+- Added a focused `PasswordHasher` boundary around the maintained library
+  instead of distributing password-library calls through routes and services.
+- Verified that hashes differ from plaintext, correct credentials verify,
+  incorrect credentials fail, per-hash salts produce distinct values, and the
+  selected encoding identifies Argon2id.
+- Added a required secret-aware JWT setting with a minimum length guard and a
+  bounded access-token lifetime of 1 through 1,440 minutes, defaulting to 30.
+- Kept the real JWT secret out of source, examples, logs, and tests;
+  `.env.example` contains only a deliberately invalid placeholder.
+- Isolated configuration and PostgreSQL tests from machine-specific JWT
+  secrets by providing explicit synthetic test values.
+- Passed dependency consistency, Ruff lint, formatting for 94 files, and Git
+  diff checks.
+- Passed `150` tests with `19` integration skips when database tests were
+  disabled and all `169` tests against the guarded `opsdesk_test` database.
+
+## Week 08 Tuesday Outcome - 1 September
+
+- Selected a stable database-generated `user_id` for identity, Ticket
+  ownership, and the future JWT subject instead of using mutable email data as
+  a relationship key.
+- Defined an explicit case-insensitive account-email policy and added
+  `email-validator` 2.3.0 for maintained syntax validation and normalization
+  without runtime DNS checks.
+- Added `NewUser`, `User`, and the bounded `member`/`admin` `UserRole` enum.
+  Ordinary registration data contains no client-selected role.
+- Added nine User-domain tests covering normalization, invalid input, strict
+  identifiers, role types, active state, and password-hash preservation.
+- Added a typed SQLAlchemy `UserRecord` with database identity, named unique
+  and check constraints, safe `member`/active server defaults, and
+  timezone-aware timestamps.
+- Added five persistence-model tests for the User table alongside the existing
+  Ticket metadata tests.
+- Added explicit mapping from trusted registration data to `UserRecord` and
+  from persisted records to the `User` domain type. Database defaults remain
+  database-owned until `flush()`/`refresh()`.
+- Passed Ruff, `git diff --check`, and 29 focused domain, persistence-model,
+  and mapper tests.
+- Deliberately deferred repository, Ticket ownership, and migration work to a
+  longer Wednesday session rather than rushing database-sensitive changes.
+
+## Week 08 Wednesday Outcome - 2 September
+
+- Added a storage-independent User repository protocol plus in-memory and
+  SQLAlchemy implementations with normalized-email lookup, database-generated
+  defaults, and duplicate-identity exception translation.
+- Added guarded PostgreSQL User repository tests without moving `commit()` or
+  `rollback()` into the repository boundary.
+- Added nullable Ticket `owner_id` metadata, a restrictive foreign key to
+  `users.user_id`, an ownership/status/listing index, and mapper protection
+  against accidental ownership transfer.
+- Added and manually reviewed Alembic revision `e98825c4d6b6` for the User
+  table and Ticket ownership expand phase.
+- Proved upgrade, downgrade, and re-upgrade behavior against
+  `opsdesk_migration_dev`, including preservation of a legacy Ticket while the
+  nullable ownership column was added and removed. `alembic check` reports no
+  metadata drift.
+- Applied the revision to guarded `opsdesk_test` and verified its tables,
+  column, unique constraint, foreign key, empty state, and head revision.
+- Added strict registration request and public User response contracts. Client
+  input cannot select role, identity, active state, or ownership, and responses
+  cannot expose plaintext or hashed passwords.
+- Added an injected `PasswordHashing` protocol and `RegistrationService` that
+  validates identity before the expensive hash, stores only an Argon2id hash,
+  and translates repository conflicts without depending on SQLAlchemy.
+- Added `POST /auth/register`, dependency composition, fast HTTP tests, and
+  guarded PostgreSQL tests for durable registration, password hashing,
+  duplicate conflict rollback, and exact cleanup.
+- Passed dependency consistency, Ruff, formatting for 101 files, and Git diff
+  checks. Passed `205` tests with `27` integration skips and all `232` tests
+  with guarded database tests enabled.
+
+## Week 08 Thursday Outcome - 3 September
+
+- Added strict login and access-token response schemas.
+- Added a small `Clock` protocol and timezone-aware `SystemClock`, allowing
+  deterministic token issuance tests without changing production time code.
+- Added an HS256 JWT manager that issues only `sub`, `iat`, and `exp`, requires
+  those claims during decoding, fixes the accepted algorithm in server code,
+  and returns a validated positive `user_id`.
+- Covered modified signatures, wrong secrets, unsupported algorithms, expired
+  tokens, missing claims, invalid subjects, naive clocks, and invalid creation
+  identities with 17 focused token tests.
+- Added `AuthenticationService` behind repository, password-verification, and
+  token-issuing protocols. Correct credentials issue a token for immutable
+  `user_id`; wrong passwords, missing users, and inactive users produce the
+  same public error and never invoke token issuance.
+- Included a dummy password-hash input in the application contract so missing-
+  user authentication does not take an immediate fast-exit path. Real cached
+  Argon2id dummy-hash composition remains the first Friday task.
+- Passed dependency consistency, Ruff lint, formatting for 105 files, and Git
+  diff checks.
+- Passed `235` tests with `27` integration skips and all `262` guarded database
+  tests. Reconfirmed zero Users, zero Tickets, and Alembic revision
+  `e98825c4d6b6` in `opsdesk_test`.
+
+## Week 08 Friday Outcome - 4 September
+
+- Added one process-cached, valid Argon2id dummy hash and composed the real
+  authentication service from settings, SQLAlchemy, pwdlib, the UTC clock,
+  and the fixed-algorithm JWT manager.
+- Added JSON `POST /auth/login` and a single generic `401` contract for missing
+  accounts, incorrect passwords, inactive accounts, and invalid credentials.
+- Added optional HTTP Bearer extraction, strict scheme/token validation, and a
+  current-User service that reloads the persisted User on every request.
+- Added `GET /users/me`; malformed and expired tokens, deleted Users, and
+  inactive Users fail closed even when the token signature remains valid.
+- Protected `POST /tickets` and derived `owner_id` exclusively from the
+  authenticated User. Client-supplied ownership is rejected by the strict
+  request schema, and the service/repository path preserves the owner.
+- Added focused unit, HTTP, and guarded PostgreSQL coverage for login, current
+  identity, stale-token rejection, protected creation, persisted ownership,
+  commit failure, rollback, and exact database cleanup.
+- Passed dependency consistency, Ruff lint, formatting for 106 files, and Git
+  diff checks. Passed `255` tests with `33` integration skips and all `288`
+  tests with guarded database tests enabled.
+
+## Week 08 Saturday Outcome - 5 September
+
+- Replaced the broad Ticket collection repository operation with the explicit
+  `list_by_owner(owner_id)` contract in both in-memory and SQLAlchemy adapters.
+- Applied the ownership predicate inside the PostgreSQL query so another
+  User's Ticket does not cross the persistence boundary.
+- Required authentication for `GET /tickets` and passed the current persisted
+  User's immutable identifier through the route and service layers.
+- Added in-memory repository, service, HTTP, missing-Bearer, SQLAlchemy, and
+  two-User PostgreSQL tests for owner-scoped listing and stable ID ordering.
+- Confirmed two real Users can create separate Tickets while each collection
+  response returns only the caller's Ticket; cleanup left zero Users and zero
+  Tickets.
+- Updated the request-scoped Session isolation test for the newly protected
+  route without weakening its original two-request/two-Session assertion.
+- Passed dependency consistency, Ruff lint, formatting for 106 files, and Git
+  diff checks. Passed `257` tests with `34` integration skips and all `291`
+  tests with guarded database tests enabled.
+- Stopped intentionally after the complete collection-authorization slice;
+  identified-resource and role authorization move to Sunday.
+
+## Week 08 Sunday Outcome - 6 September
+
+- Protected Ticket preview, detail, update, and delete with the current active
+  User dependency.
+- Added owner-aware service checks and consistent non-disclosing `404`
+  responses for missing and foreign-owned Ticket identifiers.
+- Proved through fast and real PostgreSQL tests that another User cannot read,
+  update, or delete a Ticket and that failed attacks preserve the stored row.
+- Added a dedicated admin dependency and the separate `GET /admin/tickets`
+  function. Members receive `403`; admins can list across owners while normal
+  `/tickets` remains owner-scoped.
+- Verified that JWTs keep only the User subject and that role changes in
+  PostgreSQL affect the next request made with an already-issued token.
+- Deferred the nullable ownership contract rather than inventing a false owner
+  for historical rows; new API writes continue to require authenticated,
+  server-derived ownership.
+- Passed dependency consistency, Ruff lint, formatting for 107 files, Git
+  diff, Alembic-head, and zero-drift checks. Passed `274` tests with `37`
+  integration skips and all `311` guarded database tests.
+- Confirmed `opsdesk_test` ended with zero Users and Tickets at Alembic revision
+  `e98825c4d6b6`.
+
+## Remaining Week 08 Closure
+
+1. Review the complete diff for secrets and authorization bypasses.
+2. Commit, push, open the pull request, review it, and merge only after all
+   definition-of-done evidence is present.
+3. Write the Week 08 and Month 02 reports and prepare the Week 09 domain-design
+   handoff on synchronized `main` with the final GitHub evidence.
 
 ## Week 08 Guardrails
 

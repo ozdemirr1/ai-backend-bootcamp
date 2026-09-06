@@ -34,6 +34,23 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Isolated endpoint, schema, domain, repository, and service tests
 - Dedicated-database PostgreSQL repository integration tests
 - Eight PostgreSQL HTTP transaction and lifecycle integration tests
+- User domain, persistence, mapping, and repository boundaries
+- Nullable Ticket ownership foreign key and reviewed Alembic expand migration
+- Strict registration request and public User response contracts
+- Injected registration service with Argon2id password hashing
+- `POST /auth/register` with duplicate-conflict and transaction rollback tests
+- Strict login and bearer-token response contracts
+- Deterministic UTC clock boundary and fixed-algorithm JWT manager
+- Generic, storage-independent authentication service with a cached real
+  Argon2id dummy-verification path
+- JSON `POST /auth/login` with one public invalid-credential contract
+- Bearer-token current-User resolution backed by current database state
+- Protected `GET /users/me`
+- Authenticated Ticket creation with server-derived ownership
+- Authenticated, owner-scoped Ticket collection queries
+- Owner-aware Ticket detail, update, and delete with non-disclosing `404`
+- Admin-only cross-owner collection access through `GET /admin/tickets`
+- Fast and PostgreSQL BOLA/IDOR and role-authorization tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -56,6 +73,13 @@ The Week 07 persistence foundation adds the following verified versions:
 - Psycopg 3.3.4
 - Alembic 1.19.1
 - Pydantic Settings 2.15.0
+
+The Week 08 authentication foundation adds the following verified versions:
+
+- pwdlib 0.3.1
+- Argon2 CFFI 25.1.0
+- PyJWT 2.13.0
+- email-validator 2.3.0
 
 ## Database Configuration Foundation
 
@@ -81,6 +105,84 @@ tests, documentation, terminal screenshots, or Git history.
 contains testable Engine and Session factory functions. Engine creation is
 lazy: a real connection is opened only when a Connection or Session first
 executes database work.
+
+## Password and Token Configuration Foundation
+
+`ticket_api.passwords.PasswordHasher` is the application boundary around
+pwdlib's recommended Argon2 configuration. `RegistrationService` receives the
+smaller `PasswordHashing` protocol, while dependency composition supplies the
+real implementation. The plaintext password is never recoverable from
+the stored value; verification repeats the password-hashing calculation using
+the algorithm parameters and salt encoded in the stored hash.
+
+The application also requires `JWT_SECRET`. Pydantic represents it as a
+`SecretStr` so ordinary settings representations mask the value. Masking is
+not encryption: application code can still retrieve the value when signing or
+validating a token, so it must not be printed, returned, or committed. A
+minimum length rejects obvious placeholder-sized secrets but does not make a
+predictable value secure; local secrets must be generated randomly.
+
+`ACCESS_TOKEN_EXPIRE_MINUTES` defaults to `30` and accepts values from `1`
+through `1440`. `JwtAccessTokenManager` signs with server-configured HS256 and
+decodes with the same fixed accepted algorithm. It issues only `sub`, `iat`,
+and `exp`, requires those claims during validation, and converts `sub` back to
+a positive User identifier. JWT payloads are signed rather than encrypted and
+must not contain passwords, password hashes, secrets, or other sensitive User
+records.
+
+The time source is injected through a small `Clock` protocol. `SystemClock`
+provides timezone-aware UTC in production, while frozen test clocks make
+expiration behavior deterministic. Token tests reject modified signatures,
+wrong secrets, unsupported algorithms, expired tokens, missing claims, invalid
+subjects, and timezone-naive issuance times.
+
+`AuthenticationService` orchestrates normalized User lookup, password
+verification, active-state enforcement, and token issuance behind narrow
+protocols. Missing Users, incorrect passwords, and inactive Users share one
+generic failure and never issue a token. A dummy-hash path prevents an
+immediate missing-User exit. Production composition generates and caches a
+valid Argon2id dummy hash once per process. The JSON login route returns a
+bearer token, while protected dependencies decode it and reload the current
+active User from PostgreSQL instead of trusting stale account state in a JWT.
+
+## User Identity Foundation
+
+`ticket_api.user_models` defines a stable database-generated User identity,
+normalized email login field, internal password-hash value, active state, and
+the bounded `member`/`admin` role set. Ordinary `NewUser` registration data has
+no role field; elevated access is never accepted from untrusted client input.
+
+Email syntax is validated through the maintained `email-validator` library
+without DNS checks. The application stores and looks up one normalized,
+case-folded account identity. Email remains mutable login data; relationships
+and future JWT subject claims use immutable `user_id` instead.
+
+`UserRecord` is the separate SQLAlchemy persistence representation. PostgreSQL
+owns the generated identity and safe member/active defaults, and named
+constraints protect email uniqueness, normalized storage, allowed roles, and
+timestamp ordering. Explicit mapper functions cross between registration,
+persistence, and domain representations without allowing registration input
+to assign privileged fields.
+
+The User repository has in-memory and SQLAlchemy implementations behind one
+service-facing protocol. Alembic revision `e98825c4d6b6` creates `users` and
+adds nullable Ticket `owner_id` as the safe expand phase for historical rows.
+The foreign key uses `ON DELETE RESTRICT`; backfill and a later non-null
+contract remain future explicit changes.
+
+## Registration Workflow
+
+`POST /auth/register` accepts only a validated email and a 12-to-128-character
+password. Registration validates identity before performing the deliberately
+expensive hash, stores only an Argon2id encoding, and lets PostgreSQL assign the
+User identity, `member` role, and active state. Duplicate normalized identities
+return `409 Conflict` and cause the request transaction to roll back.
+
+The public response exposes only User identity, normalized email, role, and
+active state. Plaintext passwords and password hashes are never returned.
+Fast tests replace repositories and hashing through dependency injection;
+guarded PostgreSQL tests retain the real request-scoped Session, repository,
+Argon2id hashing, commit, conflict rollback, and cleanup chain.
 
 ## Persistence Mapping Foundation
 
@@ -201,14 +303,21 @@ available at `http://127.0.0.1:8000/docs`.
 | Method   | Path                   | Success status   | Purpose |
 | -------- | ---------------------- | ---------------- | ------- |
 | `GET`    | `/health`              | `200 OK`         | Return application health. |
-| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit stored tickets. |
-| `POST`   | `/tickets`             | `201 Created`    | Validate and create a ticket. |
-| `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
-| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
-| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
-| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete a stored ticket without a body. |
+| `POST`   | `/auth/register`       | `201 Created`    | Register a member with a hashed password. |
+| `POST`   | `/auth/login`          | `200 OK`         | Exchange valid credentials for a bearer access token. |
+| `GET`    | `/users/me`            | `200 OK`         | Return the current active public User. |
+| `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit the authenticated User's Tickets. |
+| `GET`    | `/admin/tickets`       | `200 OK`         | Let an authenticated admin list Tickets across owners. |
+| `POST`   | `/tickets`             | `201 Created`    | Create a Ticket owned by the authenticated User. |
+| `POST`   | `/tickets/preview`     | `200 OK`         | Validate authenticated input without storing it. |
+| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one owned Ticket. |
+| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update one owned Ticket. |
+| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete one owned Ticket without a body. |
 
-`GET /tickets` accepts two optional query parameters:
+`GET /tickets` requires a Bearer credential and returns only Tickets owned by
+the current active User. The ownership predicate is applied in the repository
+query before status filtering and limiting. It accepts two optional query
+parameters:
 
 - `status`: an optional filter restricted to `open`, `in_progress`, `resolved`,
   or `closed`
@@ -220,16 +329,28 @@ example, `/tickets/not-a-number` fails path validation,
 `/tickets?limit=not-a-number` fails query validation, and an invalid preview
 payload fails body validation.
 
-`POST /tickets/preview` validates a JSON body containing `title` and `priority`.
-It trims surrounding title whitespace, enforces title length, restricts priority
-values, and rejects extra fields. It returns `200 OK` because it previews
-validated input without creating or storing a ticket.
+`POST /tickets/preview` requires authentication and validates a JSON body
+containing `title` and `priority`. It trims surrounding title whitespace,
+enforces title length, restricts priority values, and rejects extra fields. It
+returns `200 OK` because it previews validated input without creating or
+storing a ticket.
 
-`POST /tickets` accepts the same create contract, delegates ticket creation to
-the service, and returns the stored representation through `TicketResponse`.
-`PATCH /tickets/{ticket_id}` accepts one or more updatable fields. An empty
-update is rejected with `422`, while a missing ticket produces `404` after a
-valid identifier has reached the service.
+`POST /tickets` accepts the same create contract and requires an HTTP Bearer
+credential. It derives ownership from the current persisted User, delegates
+ticket creation to the service, and returns the stored representation through
+`TicketResponse`. An `owner_id` supplied by the client is rejected rather than
+trusted.
+`GET`, `PATCH`, and `DELETE /tickets/{ticket_id}` require the current User to
+own the identified Ticket. Missing and foreign-owned identifiers share one
+non-disclosing `404`; an unauthorized update or delete leaves the stored row
+unchanged. `PATCH` accepts one or more updatable fields and rejects an empty
+update with `422`.
+
+`GET /admin/tickets` is a separate function-level authorization boundary. A
+missing credential returns `401`, an authenticated member receives `403`, and
+an admin may list Tickets across owners. Admin status does not broaden the
+ordinary `/tickets` endpoint, which remains owner-scoped. Roles are loaded
+from current database state rather than copied into access-token claims.
 
 The project has separate presentation, API schema, domain model, repository,
 and service responsibilities. Routes receive a replaceable `TicketService`
@@ -241,6 +362,12 @@ The default application uses PostgreSQL storage. In-memory storage is retained
 for isolated unit/API tests, not as the default runtime. Committed CRUD,
 failure rollback, request isolation, and persistence across a real application
 restart have been verified against the dedicated test database.
+
+Registration, login, current-User resolution, stale-token rejection,
+authenticated Ticket ownership, owner-scoped collection listing, object-level
+authorization, and the bounded admin collection have also been verified
+through the real HTTP/Session/Argon2/PostgreSQL stack. A valid login identifies
+the caller but does not grant access to every Ticket.
 
 The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered
@@ -311,3 +438,26 @@ The final 29 August quality run produced `138 passed, 19 skipped` with database
 tests disabled and `157 passed` with `RUN_DATABASE_TESTS=1`. Dependency checks,
 Ruff lint, formatting for 90 files, `git diff --check`, the zero-row isolation
 check, and Alembic revision `e07f08d4399d` all passed.
+
+On 31 August, the password and token-configuration foundation increased the
+complete suite to `150 passed, 19 skipped` with database tests disabled and
+`169 passed` with `RUN_DATABASE_TESTS=1`. PostgreSQL fixtures use a synthetic
+test-only JWT secret, while the real ignored `.env` remains outside tests and
+Git. Dependency consistency, Ruff lint, formatting for 94 files, and
+`git diff --check` passed.
+
+On 4 September, the completed login/current-User boundary and protected Ticket
+creation increased the complete suite to `255 passed, 33 skipped` with database
+tests disabled and `288 passed` with `RUN_DATABASE_TESTS=1`. The guarded tests
+proved real Argon2 registration-to-login, generic authentication failures,
+expired and stale token rejection, server-derived persisted ownership, rollback
+behavior, and exact cleanup. Dependency consistency, Ruff lint, formatting for
+106 files, and `git diff --check` passed.
+
+On 5 September, authenticated owner-scoped collection listing increased the
+complete suite to `257 passed, 34 skipped` with database tests disabled and
+`291 passed` with `RUN_DATABASE_TESTS=1`. In-memory and PostgreSQL adapters share
+an explicit `list_by_owner` contract, and a guarded two-User HTTP test proved
+that a caller cannot list another User's Ticket. Dependency consistency, Ruff
+lint, formatting for 106 files, exact database cleanup, and `git diff --check`
+passed.

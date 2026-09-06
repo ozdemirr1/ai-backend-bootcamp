@@ -1,8 +1,45 @@
+from typing import Protocol
+
 from ticket_api.models import NewTicket, Ticket, TicketPriority, TicketStatus
 from ticket_api.repositories import (
     TicketRepository,
     TicketRepositoryConflictError,
+    UserRepository,
+    UserRepositoryConflictError,
 )
+from ticket_api.user_models import (
+    NewUser,
+    User,
+    normalize_user_email,
+)
+
+
+class AccessTokenDecoding(Protocol):
+    def decode_access_token(self, token: str) -> int: ...
+
+
+class PasswordHashing(Protocol):
+    def hash_password(self, plain_password: str) -> str: ...
+
+
+class PasswordVerifying(Protocol):
+    def verify_password(
+        self,
+        plain_password: str,
+        password_hash: str,
+    ) -> bool: ...
+
+
+class InvalidAuthenticationError(Exception):
+    pass
+
+
+class AccessTokenIssuing(Protocol):
+    def create_access_token(self, user_id: int) -> str: ...
+
+
+class InvalidCredentialsError(Exception):
+    pass
 
 
 class TicketNotFoundError(Exception):
@@ -13,14 +50,109 @@ class DuplicateTicketError(Exception):
     pass
 
 
+class DuplicateUserError(Exception):
+    pass
+
+
+class RegistrationService:
+    def __init__(
+        self,
+        repository: UserRepository,
+        password_hasher: PasswordHashing,
+    ) -> None:
+        self._repository = repository
+        self._password_hasher = password_hasher
+
+    def register_user(
+        self,
+        email: str,
+        plain_password: str,
+    ) -> User:
+        normalized_email = normalize_user_email(email)
+
+        password_hash = self._password_hasher.hash_password(plain_password)
+
+        new_user = NewUser(
+            email=normalized_email,
+            password_hash=password_hash,
+        )
+
+        try:
+            return self._repository.create(new_user)
+        except UserRepositoryConflictError as exc:
+            raise DuplicateUserError("User registration conflict") from exc
+
+
+class AuthenticationService:
+    def __init__(
+        self,
+        repository: UserRepository,
+        password_verifier: PasswordVerifying,
+        token_issuer: AccessTokenIssuing,
+        dummy_password_hash: str,
+    ) -> None:
+        self._repository = repository
+        self._password_verifier = password_verifier
+        self._token_issuer = token_issuer
+        self._dummy_password_hash = dummy_password_hash
+
+    def login_user(
+        self,
+        email: str,
+        plain_password: str,
+    ) -> str:
+        normalized_email = normalize_user_email(email)
+        user = self._repository.get_by_email(normalized_email)
+
+        password_hash = (
+            user.password_hash if user is not None else self._dummy_password_hash
+        )
+
+        password_matches = self._password_verifier.verify_password(
+            plain_password,
+            password_hash,
+        )
+
+        if user is None or not password_matches or not user.is_active:
+            raise InvalidCredentialsError("Invalid email or password")
+
+        return self._token_issuer.create_access_token(user.user_id)
+
+
+class CurrentUserService:
+    def __init__(
+        self,
+        repository: UserRepository,
+        token_decoder: AccessTokenDecoding,
+    ) -> None:
+        self._repository = repository
+        self._token_decoder = token_decoder
+
+    def get_current_user(self, access_token: str) -> User:
+        user_id = self._token_decoder.decode_access_token(access_token)
+        user = self._repository.get_by_id(user_id)
+
+        if user is None or not user.is_active:
+            raise InvalidAuthenticationError("Invalid authentication credentials")
+
+        return user
+
+
 class TicketService:
     def __init__(self, repository: TicketRepository) -> None:
         self._repository = repository
 
-    def create_ticket(self, title: str, priority: TicketPriority) -> Ticket:
+    def create_ticket(
+        self,
+        title: str,
+        priority: TicketPriority,
+        *,
+        owner_id: int,
+    ) -> Ticket:
         new_ticket = NewTicket(
             title=title,
             priority=priority,
+            owner_id=owner_id,
         )
 
         try:
@@ -28,17 +160,36 @@ class TicketService:
         except TicketRepositoryConflictError as exc:
             raise DuplicateTicketError(str(exc)) from exc
 
-    def list_tickets(self) -> list[Ticket]:
+    def list_tickets(self, *, owner_id: int) -> list[Ticket]:
+        return self._repository.list_by_owner(owner_id)
+
+    def list_all_tickets(self) -> list[Ticket]:
         return self._repository.list_all()
 
-    def get_ticket(self, ticket_id: int) -> Ticket:
+    def get_ticket(
+        self,
+        ticket_id: int,
+        *,
+        owner_id: int,
+    ) -> Ticket:
         ticket = self._repository.get_by_id(ticket_id)
 
-        if ticket is None:
+        if ticket is None or ticket.owner_id != owner_id:
             raise TicketNotFoundError(f"Ticket {ticket_id} not found")
+
         return ticket
 
-    def delete_ticket(self, ticket_id: int) -> None:
+    def delete_ticket(
+        self,
+        ticket_id: int,
+        *,
+        owner_id: int,
+    ) -> None:
+        self.get_ticket(
+            ticket_id,
+            owner_id=owner_id,
+        )
+
         if not self._repository.delete(ticket_id):
             raise TicketNotFoundError(f"Ticket {ticket_id} not found")
 
@@ -46,11 +197,15 @@ class TicketService:
         self,
         ticket_id: int,
         *,
+        owner_id: int,
         title: str | None = None,
         priority: TicketPriority | None = None,
         status: TicketStatus | None = None,
     ) -> Ticket:
-        ticket = self.get_ticket(ticket_id)
+        ticket = self.get_ticket(
+            ticket_id,
+            owner_id=owner_id,
+        )
 
         if title is not None:
             ticket.change_title(title)

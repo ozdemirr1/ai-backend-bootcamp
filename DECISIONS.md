@@ -163,3 +163,197 @@ Test-only failure injection stays inside fixture-created applications. A manual
 Uvicorn stop/start check against `opsdesk_test` proves that committed data
 survives the application process and is cleaned up by its exact identifier
 afterward.
+
+## Decision 008 - Password Hashing and Token Configuration Boundary
+
+The authentication foundation uses pwdlib's maintained recommended Argon2
+configuration through the local `PasswordHasher` boundary. Routes, services,
+and repositories will not call the third-party password library directly.
+
+JWT signing configuration comes from environment-backed Pydantic Settings.
+`JWT_SECRET` is required, represented as `SecretStr`, and guarded against
+obviously short values. Access-token lifetime is bounded and defaults to 30
+minutes. No default signing secret, real secret, complete token, or plaintext
+password is stored in Git. Tracked tests use explicit synthetic secrets.
+
+## Reason
+
+Password hashing is a specialized, deliberately expensive one-way operation;
+it must not be replaced with reversible encryption or a fast general-purpose
+digest. Centralizing the maintained library keeps cryptographic details out of
+HTTP, application, and persistence responsibilities while preserving a clear
+place for later algorithm upgrades.
+
+A signing secret is runtime configuration rather than source code. Requiring
+it makes unsafe omission fail at startup, while `SecretStr` reduces accidental
+display in ordinary representations. The length guard catches obvious
+placeholders but does not replace cryptographically random generation. Test
+secrets remain deterministic and non-sensitive so the suite does not depend
+on a developer's local secret.
+
+## Decision 009 - Stable User Identity and Trusted Registration Defaults
+
+Users use a database-generated `user_id` as their durable identity. Email is a
+normalized, case-insensitive account login field with a named database unique
+constraint, but it is not used as a Ticket relationship key. The current role
+set is limited to `member` and `admin`.
+
+Ordinary registration data contains email and password hash only. It cannot
+select a role, active state, identity, or Ticket owner. PostgreSQL supplies the
+safe `member` and active defaults. Domain and persistence models remain
+separate and cross through explicit mapper functions.
+
+Ticket ownership will reference `users.user_id`. The first migration adds
+`owner_id` as nullable because existing Ticket rows have no trustworthy owner;
+backfill and a later non-null contract remain explicit follow-up steps.
+
+## Reason
+
+Email is mutable business data, while primary-key relationships and token
+subjects require a stable identifier. A client-controlled role would permit
+privilege escalation, so authorization attributes must come from trusted
+server state.
+
+Adding a non-null foreign key immediately would make PostgreSQL invent or
+require an owner for historical Tickets. The expand-backfill-contract sequence
+preserves existing data and makes the ownership decision visible instead of
+hiding it inside a destructive or misleading migration.
+
+## Decision 010 - Registration Composition and Public User Boundary
+
+Registration accepts only email and plaintext password at the HTTP boundary.
+`RegistrationService` depends on a User repository protocol and the narrow
+`PasswordHashing` capability. Production dependencies compose the SQLAlchemy
+repository and pwdlib-backed hasher; fast tests supply in-memory and recording
+implementations. PostgreSQL retains authority for unique email identity and
+safe role/active defaults.
+
+The service translates persistence conflicts, while the route exposes a
+bounded `409 Conflict` and returns a dedicated public User response without
+password fields. Repository methods may `flush()` and `refresh()`, but the
+request-scoped Session dependency continues to own commit and rollback.
+
+## Reason
+
+Keeping cryptographic, persistence, application, and HTTP concerns behind
+separate interfaces prevents routes from handling hashes or SQLAlchemy state.
+It also permits inexpensive service tests without weakening end-to-end proof
+that production registration stores an Argon2id encoding.
+
+The database unique constraint closes race conditions that a preliminary
+lookup alone cannot prevent. Propagating the translated failure as an HTTP
+exception ensures the failed Session transaction reaches the dependency's
+rollback path. A dedicated response model makes accidental password-hash
+disclosure fail validation rather than relying on callers to remember which
+internal User fields are safe.
+
+## Decision 011 - Minimal JWT and Generic Login Boundary
+
+Access tokens use server-selected HS256 with required `sub`, `iat`, and `exp`
+claims. The subject is the immutable positive `user_id`; tokens do not carry
+email, role, password-derived data, or complete User state. Token code depends
+on an injected timezone-aware UTC clock so issuance is deterministic in tests
+without weakening production time behavior.
+
+Login is an application service behind User lookup, password-verification, and
+token-issuing protocols. Missing Users, incorrect passwords, and inactive
+Users share one generic invalid-credential exception. A missing User follows a
+dummy-hash verification path rather than returning before the deliberately
+expensive password check.
+
+## Reason
+
+Fixing the accepted algorithm in trusted server code prevents an unverified
+JWT header from choosing validation behavior. Minimal claims reduce disclosure
+and avoid treating stale authorization attributes in a bearer token as the
+current database truth. Required issuance and expiration timestamps bound the
+credential lifetime and make invalid structures fail closed.
+
+Uniform failure text prevents direct account-state disclosure, while dummy
+verification reduces the response-time difference between an unknown account
+and a known account with an incorrect password. Keeping orchestration behind
+narrow protocols allows fast fakes for service tests and preserves clear
+production composition points for pwdlib, PyJWT, SQLAlchemy, and settings.
+
+## Decision 012 - Resolve Current Identity and Derive Ticket Ownership Server-Side
+
+Bearer credentials are extracted at the HTTP boundary, decoded through the
+access-token protocol, and reduced to a positive `user_id`. The application
+then loads the current User from persistent storage on every authenticated
+request and rejects identities that are missing or inactive. Token decoding,
+User lookup, and account-state validation share one public `401` response with
+the `WWW-Authenticate: Bearer` header.
+
+Protected Ticket creation never accepts `owner_id` from the client. The route
+derives it from the authenticated User and passes it explicitly through the
+service and repository boundaries. `NewTicket` therefore requires a positive
+owner identity, while the stored `Ticket` domain model temporarily permits a
+missing owner for legacy rows created before the nullable ownership migration.
+
+## Reason
+
+A valid signature proves that the server issued a token; it does not prove
+that the referenced account still exists or remains active. Loading the User
+for each request makes current database state the authorization truth and
+causes previously issued tokens to fail after deletion or deactivation.
+
+Accepting ownership from request JSON would let a caller create a Ticket for
+another User. Server-derived ownership closes that mass-assignment boundary,
+and strict request schemas reject an injected `owner_id`. Keeping the legacy
+domain field nullable preserves the expand phase of the migration until an
+explicit backfill and non-null contract are safe. Collection filtering and
+detail/update/delete object-level authorization remain separate follow-up
+work; authentication alone does not grant access to every Ticket.
+
+## Decision 013 - Make the Default Ticket Collection Owner-Scoped
+
+The ordinary `GET /tickets` workflow requires an authenticated current User
+and passes that User's immutable identifier through `TicketService` to an
+explicit `TicketRepository.list_by_owner(owner_id)` operation. The SQLAlchemy
+implementation applies `WHERE tickets.owner_id = :owner_id` before records
+leave PostgreSQL; the in-memory implementation follows the same contract.
+
+## Reason
+
+Fetching every Ticket and filtering afterward would move unrelated Users'
+data across the persistence boundary and make omission of an application-side
+filter a disclosure risk. An explicit owner-scoped repository method makes the
+safe query the normal path and preserves correct filtering before the existing
+status and limit behavior is applied.
+
+Authentication and collection isolation do not yet authorize access to an
+identified Ticket. Detail, update, and delete operations require separate
+object-level checks, and privileged cross-owner access requires a separate,
+explicit role/function policy.
+
+## Decision 014 - Separate Object Authorization From Privileged Collection Access
+
+Ordinary Ticket detail, update, and delete operations require the current
+User's identifier and return the same non-disclosing `404` for a missing
+Ticket and a Ticket owned by another User. The ordinary collection remains
+owner-scoped even when the current User has the `admin` role.
+
+Cross-owner collection access is exposed only through the separate
+`GET /admin/tickets` function. A dedicated dependency first authenticates the
+current persisted User and then requires the current database role to be
+`admin`; an authenticated `member` receives `403`. The JWT continues to carry
+only the immutable User subject and does not cache role state.
+
+The nullable `tickets.owner_id` expand state is deliberately retained. New
+Ticket creation requires a server-derived owner, but historical rows have no
+trustworthy ownership source. A later contract migration may make the column
+non-null only after an explicit, reviewable backfill policy can assign real
+owners without inventing authorization relationships.
+
+## Reason
+
+Returning the same `404` for missing and foreign-owned identifiers avoids
+confirming another User's resource existence. Keeping the privileged endpoint
+separate prevents an admin role from silently weakening the normal ownership
+contract and makes function-level authorization visible in routing, tests,
+and generated API documentation.
+
+Loading the User on every request makes role promotion, demotion, deletion,
+and deactivation take effect independently of an already-issued token. A fake
+legacy owner would make the schema look stricter while encoding false business
+facts, so temporary nullability is safer than a misleading backfill.

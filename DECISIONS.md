@@ -325,3 +325,35 @@ Authentication and collection isolation do not yet authorize access to an
 identified Ticket. Detail, update, and delete operations require separate
 object-level checks, and privileged cross-owner access requires a separate,
 explicit role/function policy.
+
+## Decision 014 - Separate Object Authorization From Privileged Collection Access
+
+Ordinary Ticket detail, update, and delete operations require the current
+User's identifier and return the same non-disclosing `404` for a missing
+Ticket and a Ticket owned by another User. The ordinary collection remains
+owner-scoped even when the current User has the `admin` role.
+
+Cross-owner collection access is exposed only through the separate
+`GET /admin/tickets` function. A dedicated dependency first authenticates the
+current persisted User and then requires the current database role to be
+`admin`; an authenticated `member` receives `403`. The JWT continues to carry
+only the immutable User subject and does not cache role state.
+
+The nullable `tickets.owner_id` expand state is deliberately retained. New
+Ticket creation requires a server-derived owner, but historical rows have no
+trustworthy ownership source. A later contract migration may make the column
+non-null only after an explicit, reviewable backfill policy can assign real
+owners without inventing authorization relationships.
+
+## Reason
+
+Returning the same `404` for missing and foreign-owned identifiers avoids
+confirming another User's resource existence. Keeping the privileged endpoint
+separate prevents an admin role from silently weakening the normal ownership
+contract and makes function-level authorization visible in routing, tests,
+and generated API documentation.
+
+Loading the User on every request makes role promotion, demotion, deletion,
+and deactivation take effect independently of an already-issued token. A fake
+legacy owner would make the schema look stricter while encoding false business
+facts, so temporary nullability is safer than a misleading backfill.

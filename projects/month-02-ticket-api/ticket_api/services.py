@@ -163,14 +163,33 @@ class TicketService:
     def list_tickets(self, *, owner_id: int) -> list[Ticket]:
         return self._repository.list_by_owner(owner_id)
 
-    def get_ticket(self, ticket_id: int) -> Ticket:
+    def list_all_tickets(self) -> list[Ticket]:
+        return self._repository.list_all()
+
+    def get_ticket(
+        self,
+        ticket_id: int,
+        *,
+        owner_id: int,
+    ) -> Ticket:
         ticket = self._repository.get_by_id(ticket_id)
 
-        if ticket is None:
+        if ticket is None or ticket.owner_id != owner_id:
             raise TicketNotFoundError(f"Ticket {ticket_id} not found")
+
         return ticket
 
-    def delete_ticket(self, ticket_id: int) -> None:
+    def delete_ticket(
+        self,
+        ticket_id: int,
+        *,
+        owner_id: int,
+    ) -> None:
+        self.get_ticket(
+            ticket_id,
+            owner_id=owner_id,
+        )
+
         if not self._repository.delete(ticket_id):
             raise TicketNotFoundError(f"Ticket {ticket_id} not found")
 
@@ -178,11 +197,15 @@ class TicketService:
         self,
         ticket_id: int,
         *,
+        owner_id: int,
         title: str | None = None,
         priority: TicketPriority | None = None,
         status: TicketStatus | None = None,
     ) -> Ticket:
-        ticket = self.get_ticket(ticket_id)
+        ticket = self.get_ticket(
+            ticket_id,
+            owner_id=owner_id,
+        )
 
         if title is not None:
             ticket.change_title(title)

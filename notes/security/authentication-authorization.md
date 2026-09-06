@@ -248,10 +248,10 @@ request JSON. Strict Pydantic input rejects an injected ownership field, and
 the value travels through `TicketService`, `NewTicket`, and the repository to
 the nullable database foreign key.
 
-This completes safe ownership assignment for new Tickets, not all Ticket
-authorization. Detail, update, and deletion still need explicit owner-aware
-queries and cross-user tests. Those are object-level authorization decisions
-and cannot be inferred merely from successful authentication.
+This completes safe ownership assignment for new Tickets. Historical rows may
+still have no owner because the expand migration cannot infer a trustworthy
+User. Such rows are excluded from ordinary owner-scoped access until an
+explicit backfill policy is available.
 
 ## Owner-Scoped Ticket Collection
 
@@ -268,11 +268,53 @@ creates one Ticket with each token, proves that the first User sees only their
 own identifier, confirms two distinct owners were persisted, and deletes the
 exact test records afterward.
 
-## Not Implemented Yet
+## Object-Level Ticket Authorization
 
-- Object-level Ticket detail, update, and delete authorization
-- Bounded role/function-level authorization
+Detail, update, and delete operations pass the current User's identifier into
+`TicketService`. A Ticket is returned or mutated only when its stored owner
+matches that identifier. Missing and foreign-owned identifiers intentionally
+share the same `404` response, so an attacker cannot use response differences
+to enumerate another User's Tickets.
+
+Fast service and HTTP tests prove that cross-owner reads are hidden and that
+cross-owner update and delete attempts leave the stored Ticket unchanged. A
+guarded PostgreSQL test repeats the complete read/update/delete attack through
+the real HTTP, JWT, Session, repository, and database stack and then verifies
+the original title, status, and owner directly in PostgreSQL.
+
+## Bounded Role and Function Authorization
+
+The ordinary `member` role may use only owner-scoped Ticket operations. The
+separate `GET /admin/tickets` endpoint is the one bounded privileged function
+in this learning API. It requires a current persisted `admin` User and returns
+`403` for an authenticated member. Missing or invalid authentication still
+returns `401` before any role decision is made.
+
+The JWT stores only `sub`, `iat`, and `exp`; it does not store the role. A real
+PostgreSQL test promotes the current User from `member` to `admin` and proves
+that the next request with the same token observes the current database role.
+The admin collection can see Tickets from multiple owners, while ordinary
+`GET /tickets` remains owner-scoped for that same admin identity.
+
+## Deferred Ownership Contract
+
+Revision `e98825c4d6b6` intentionally keeps `tickets.owner_id` nullable as the
+expand phase. New API writes cannot create an ownerless Ticket because
+ownership is derived from the authenticated User. Legacy rows, however, have
+no reliable source from which to infer an owner.
+
+The project therefore does not create a fake legacy User or assign all old
+Tickets to an administrator. A future migration must first apply an explicit,
+reviewed backfill based on trustworthy product data, verify that no null owner
+remains, and only then alter the column to `NOT NULL`. Until then, owner-scoped
+queries naturally hide legacy null-owned rows.
+
+## Deferred Beyond Week 08
+
 - Ticket ownership backfill and non-null contract
+- Refresh-token rotation and token revocation storage
+- Password reset, account recovery, MFA, and external identity providers
+- Organization-scoped authorization and organization-admin policy
 
 ## Primary References
 

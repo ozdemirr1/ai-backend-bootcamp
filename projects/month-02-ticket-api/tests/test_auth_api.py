@@ -8,8 +8,10 @@ from ticket_api.dependencies import (
     get_current_user_service,
     get_registration_service,
     get_ticket_service,
+    require_admin_user,
 )
 from ticket_api.main import create_app
+from ticket_api.models import TicketPriority
 from ticket_api.repositories import (
     InMemoryTicketRepository,
     InMemoryUserRepository,
@@ -21,6 +23,7 @@ from ticket_api.services import (
     TicketService,
 )
 from ticket_api.tokens import InvalidAccessTokenError
+from ticket_api.user_models import User, UserRole
 
 VALID_PASSWORD = "my_secret_password_123"
 SYNTHETIC_PASSWORD_HASH = "$argon2id$synthetic-api-test-hash"
@@ -124,6 +127,46 @@ def auth_client() -> Iterator[TestClient]:
             get_ticket_service,
             None,
         )
+
+
+@pytest.fixture
+def admin_client() -> Iterator[TestClient]:
+    application = create_app(lifespan_handler=None)
+    ticket_service = TicketService(InMemoryTicketRepository())
+
+    ticket_service.create_ticket(
+        title="First owner's ticket",
+        priority=TicketPriority.LOW,
+        owner_id=1,
+    )
+    ticket_service.create_ticket(
+        title="Second owner's ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=2,
+    )
+
+    admin_user = User(
+        user_id=99,
+        email="admin@example.com",
+        password_hash="$argon2id$synthetic-admin-hash",
+        role=UserRole.ADMIN,
+        is_active=True,
+    )
+
+    def get_test_admin_user() -> User:
+        return admin_user
+
+    def get_test_ticket_service() -> TicketService:
+        return ticket_service
+
+    application.dependency_overrides[require_admin_user] = get_test_admin_user
+    application.dependency_overrides[get_ticket_service] = get_test_ticket_service
+
+    try:
+        with TestClient(application) as client:
+            yield client
+    finally:
+        application.dependency_overrides.clear()
 
 
 def test_register_valid_user_returns_201(auth_client: TestClient) -> None:
@@ -372,6 +415,105 @@ def test_list_tickets_rejects_missing_authorization_header(
     auth_client: TestClient,
 ) -> None:
     response = auth_client.get("/tickets")
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_read_ticket_rejects_missing_authorization_header(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.get("/tickets/1")
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_update_ticket_rejects_missing_authorization_header(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.patch(
+        "/tickets/1",
+        json={"title": "Updated title"},
+    )
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_delete_ticket_rejects_missing_authorization_header(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.delete("/tickets/1")
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Invalid authentication credentials"}
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_admin_ticket_list_rejects_missing_credentials(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.get("/admin/tickets")
+
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_admin_ticket_list_rejects_member(
+    auth_client: TestClient,
+) -> None:
+    auth_client.post(
+        "/auth/register",
+        json={
+            "email": "member@example.com",
+            "password": VALID_PASSWORD,
+        },
+    )
+    login_response = auth_client.post(
+        "/auth/login",
+        json={
+            "email": "member@example.com",
+            "password": VALID_PASSWORD,
+        },
+    )
+
+    token = login_response.json()["access_token"]
+
+    response = auth_client.get(
+        "/admin/tickets",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Admin role required"}
+
+
+def test_admin_ticket_list_returns_tickets_from_multiple_owners(
+    admin_client: TestClient,
+) -> None:
+    response = admin_client.get("/admin/tickets")
+
+    assert response.status_code == 200
+    assert [ticket["title"] for ticket in response.json()] == [
+        "First owner's ticket",
+        "Second owner's ticket",
+    ]
+
+
+def test_preview_ticket_rejects_missing_authorization_header(
+    auth_client: TestClient,
+) -> None:
+    response = auth_client.post(
+        "/tickets/preview",
+        json={
+            "title": "Unauthenticated preview",
+            "priority": "low",
+        },
+    )
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Invalid authentication credentials"}

@@ -293,3 +293,20 @@ def test_user_repository_create_rejects_invalid_type() -> None:
 
     with pytest.raises(TypeError, match="user must be a NewUser instance"):
         repository.create("not-a-new-user")  # type: ignore[arg-type]
+
+
+def test_repository_lists_all_tickets_regardless_of_owner() -> None:
+    repository = InMemoryTicketRepository()
+    repository.add(
+        Ticket(ticket_id=1, title="Ticket 1", priority=TicketPriority.LOW, owner_id=1)
+    )
+    repository.add(
+        Ticket(ticket_id=2, title="Ticket 2", priority=TicketPriority.LOW, owner_id=2)
+    )
+
+    tickets = repository.list_all()
+
+    assert [ticket.owner_id for ticket in tickets] == [1, 2]
+
+    tickets.clear()
+    assert len(repository.list_all()) == 2

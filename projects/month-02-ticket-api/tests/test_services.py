@@ -130,7 +130,10 @@ def test_service_gets_existing_ticket() -> None:
         owner_id=OWNER_ID,
     )
 
-    assert service.get_ticket(created_ticket.ticket_id) == created_ticket
+    assert (
+        service.get_ticket(created_ticket.ticket_id, owner_id=OWNER_ID)
+        == created_ticket
+    )
 
 
 def test_service_raises_when_ticket_is_missing() -> None:
@@ -138,7 +141,7 @@ def test_service_raises_when_ticket_is_missing() -> None:
     service = TicketService(repository)
 
     with pytest.raises(TicketNotFoundError, match="999"):
-        service.get_ticket(999)
+        service.get_ticket(999, owner_id=OWNER_ID)
 
 
 def test_service_deletes_existing_ticket() -> None:
@@ -151,7 +154,7 @@ def test_service_deletes_existing_ticket() -> None:
         owner_id=OWNER_ID,
     )
 
-    result = service.delete_ticket(created_ticket.ticket_id)
+    result = service.delete_ticket(created_ticket.ticket_id, owner_id=OWNER_ID)
 
     assert result is None
     assert repository.get_by_id(created_ticket.ticket_id) is None
@@ -162,7 +165,7 @@ def test_service_raises_when_delete_target_is_missing() -> None:
     service = TicketService(repository)
 
     with pytest.raises(TicketNotFoundError, match="999"):
-        service.delete_ticket(999)
+        service.delete_ticket(999, owner_id=OWNER_ID)
 
 
 def test_service_does_not_save_ticket_with_raw_string_priority() -> None:
@@ -188,7 +191,9 @@ def test_service_updates_only_ticket_title() -> None:
         owner_id=OWNER_ID,
     )
 
-    updated = service.update_ticket(ticket.ticket_id, title="New Title")
+    updated = service.update_ticket(
+        ticket.ticket_id, owner_id=OWNER_ID, title="New Title"
+    )
 
     assert updated.title == "New Title"
     assert updated.priority is TicketPriority.LOW
@@ -204,7 +209,9 @@ def test_service_updates_ticket_priority() -> None:
         owner_id=OWNER_ID,
     )
 
-    updated = service.update_ticket(ticket.ticket_id, priority=TicketPriority.HIGH)
+    updated = service.update_ticket(
+        ticket.ticket_id, owner_id=OWNER_ID, priority=TicketPriority.HIGH
+    )
 
     assert updated.title == "Old Title"
     assert updated.priority is TicketPriority.HIGH
@@ -220,7 +227,9 @@ def test_service_updates_ticket_status() -> None:
         owner_id=OWNER_ID,
     )
 
-    updated = service.update_ticket(ticket.ticket_id, status=TicketStatus.IN_PROGRESS)
+    updated = service.update_ticket(
+        ticket.ticket_id, owner_id=OWNER_ID, status=TicketStatus.IN_PROGRESS
+    )
 
     assert updated.title == "Old Title"
     assert updated.priority is TicketPriority.LOW
@@ -237,7 +246,10 @@ def test_service_updates_multiple_ticket_fields() -> None:
     )
 
     updated = service.update_ticket(
-        ticket.ticket_id, title="New Title", status=TicketStatus.RESOLVED
+        ticket.ticket_id,
+        owner_id=OWNER_ID,
+        title="New Title",
+        status=TicketStatus.RESOLVED,
     )
 
     assert updated.title == "New Title"
@@ -254,7 +266,9 @@ def test_service_persists_updated_ticket() -> None:
         owner_id=OWNER_ID,
     )
 
-    updated = service.update_ticket(ticket.ticket_id, title="New Title")
+    updated = service.update_ticket(
+        ticket.ticket_id, owner_id=OWNER_ID, title="New Title"
+    )
 
     assert repository.get_by_id(ticket.ticket_id) == updated
 
@@ -264,7 +278,7 @@ def test_service_raises_when_update_target_is_missing() -> None:
     service = TicketService(repository)
 
     with pytest.raises(TicketNotFoundError, match="999"):
-        service.update_ticket(999, title="New Title")
+        service.update_ticket(999, owner_id=OWNER_ID, title="New Title")
 
 
 def test_service_preserves_ticket_when_title_update_is_invalid() -> None:
@@ -277,6 +291,85 @@ def test_service_preserves_ticket_when_title_update_is_invalid() -> None:
     )
 
     with pytest.raises(ValueError, match="title"):
-        service.update_ticket(ticket.ticket_id, title=" ")
+        service.update_ticket(ticket.ticket_id, owner_id=OWNER_ID, title=" ")
 
     assert ticket.title == "Old Title"
+
+
+def test_service_hides_ticket_owned_by_another_user() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+
+    other_users_ticket = service.create_ticket(
+        title="Private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=OTHER_OWNER_ID,
+    )
+
+    with pytest.raises(TicketNotFoundError, match=str(other_users_ticket.ticket_id)):
+        service.get_ticket(
+            other_users_ticket.ticket_id,
+            owner_id=OWNER_ID,
+        )
+
+
+def test_service_does_not_delete_another_users_ticket() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+
+    other_users_ticket = service.create_ticket(
+        title="Private ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=OTHER_OWNER_ID,
+    )
+
+    with pytest.raises(TicketNotFoundError):
+        service.delete_ticket(
+            other_users_ticket.ticket_id,
+            owner_id=OWNER_ID,
+        )
+
+    assert repository.get_by_id(other_users_ticket.ticket_id) == other_users_ticket
+
+
+def test_service_does_not_update_another_users_ticket() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+
+    other_users_ticket = service.create_ticket(
+        title="Original private title",
+        priority=TicketPriority.HIGH,
+        owner_id=OTHER_OWNER_ID,
+    )
+
+    with pytest.raises(TicketNotFoundError):
+        service.update_ticket(
+            other_users_ticket.ticket_id,
+            owner_id=OWNER_ID,
+            title="Unauthorized title",
+        )
+
+    stored_ticket = repository.get_by_id(other_users_ticket.ticket_id)
+
+    assert stored_ticket is not None
+    assert stored_ticket.title == "Original private title"
+
+
+def test_service_lists_all_tickets_from_multiple_owners() -> None:
+    repository = InMemoryTicketRepository()
+    service = TicketService(repository)
+
+    service.create_ticket(
+        title="First owner's ticket",
+        priority=TicketPriority.LOW,
+        owner_id=1,
+    )
+    service.create_ticket(
+        title="Second owner's ticket",
+        priority=TicketPriority.HIGH,
+        owner_id=2,
+    )
+
+    tickets = service.list_all_tickets()
+
+    assert {ticket.owner_id for ticket in tickets} == {1, 2}

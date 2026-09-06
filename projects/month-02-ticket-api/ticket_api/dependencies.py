@@ -30,7 +30,7 @@ from ticket_api.tokens import (
     InvalidAccessTokenError,
     JwtAccessTokenManager,
 )
-from ticket_api.user_models import User
+from ticket_api.user_models import User, UserRole
 
 
 def get_session_factory(request: Request) -> sessionmaker[Session]:
@@ -151,6 +151,30 @@ def get_current_user(
         InvalidAuthenticationError,
     ) as exc:
         raise _invalid_authentication_error() from exc
+
+
+CurrentUserDependency = Annotated[
+    User,
+    Depends(get_current_user),
+]
+
+
+def require_admin_user(
+    current_user: CurrentUserDependency,
+) -> User:
+    if current_user.role is not UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin role required",
+        )
+
+    return current_user
+
+
+AdminUserDependency = Annotated[
+    User,
+    Depends(require_admin_user),
+]
 
 
 def get_ticket_service(session: SessionDependency) -> TicketService:

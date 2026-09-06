@@ -66,6 +66,14 @@ Week 08
 - [x] Deterministic UTC clock boundary for token tests
 - [x] Fixed-algorithm JWT creation and validation
 - [x] Generic authentication service failure contract
+- [x] User registration, login, and persisted current-User resolution
+- [x] Server-derived Ticket ownership
+- [x] Owner-scoped Ticket collection
+- [x] Object-level Ticket detail, update, and delete authorization
+- [x] Bounded admin-only cross-owner Ticket collection
+- [x] Fast and guarded PostgreSQL authorization tests
+- [x] Explicit deferral of unsafe legacy ownership backfill
+- [x] Week 08 authentication and authorization interview review
 
 ## Problems
 
@@ -394,20 +402,35 @@ Week 08
 - Stopped intentionally after the complete collection-authorization slice;
   identified-resource and role authorization move to Sunday.
 
-## Next Tasks - Sunday, 6 September
+## Week 08 Sunday Outcome - 6 September
 
-1. Require authentication and owner-aware lookup for Ticket detail, update,
-   and delete; return the deliberate non-disclosing `404` for missing and
-   foreign-owned resources.
-2. Add fast and guarded PostgreSQL BOLA/IDOR tests proving another User cannot
-   read, mutate, or delete a Ticket.
-3. Add the smallest justified role/function-level rule and keep privileged
-   access separate from ordinary ownership policy.
-4. Review the nullable legacy-ownership state; either complete a safe,
-   evidence-backed backfill/non-null contract or document why it must remain
-   an explicit later migration.
-5. Run all quality/security gates, write the Week 08 report, review the pull
-   request, and merge only if the security definition of done is satisfied.
+- Protected Ticket preview, detail, update, and delete with the current active
+  User dependency.
+- Added owner-aware service checks and consistent non-disclosing `404`
+  responses for missing and foreign-owned Ticket identifiers.
+- Proved through fast and real PostgreSQL tests that another User cannot read,
+  update, or delete a Ticket and that failed attacks preserve the stored row.
+- Added a dedicated admin dependency and the separate `GET /admin/tickets`
+  function. Members receive `403`; admins can list across owners while normal
+  `/tickets` remains owner-scoped.
+- Verified that JWTs keep only the User subject and that role changes in
+  PostgreSQL affect the next request made with an already-issued token.
+- Deferred the nullable ownership contract rather than inventing a false owner
+  for historical rows; new API writes continue to require authenticated,
+  server-derived ownership.
+- Passed dependency consistency, Ruff lint, formatting for 107 files, Git
+  diff, Alembic-head, and zero-drift checks. Passed `274` tests with `37`
+  integration skips and all `311` guarded database tests.
+- Confirmed `opsdesk_test` ended with zero Users and Tickets at Alembic revision
+  `e98825c4d6b6`.
+
+## Remaining Week 08 Closure
+
+1. Review the complete diff for secrets and authorization bypasses.
+2. Commit, push, open the pull request, review it, and merge only after all
+   definition-of-done evidence is present.
+3. Write the Week 08 and Month 02 reports and prepare the Week 09 domain-design
+   handoff on synchronized `main` with the final GitHub evidence.
 
 ## Week 08 Guardrails
 

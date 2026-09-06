@@ -48,6 +48,9 @@ ASGI, Uvicorn, route handling, validation, and API documentation.
 - Protected `GET /users/me`
 - Authenticated Ticket creation with server-derived ownership
 - Authenticated, owner-scoped Ticket collection queries
+- Owner-aware Ticket detail, update, and delete with non-disclosing `404`
+- Admin-only cross-owner collection access through `GET /admin/tickets`
+- Fast and PostgreSQL BOLA/IDOR and role-authorization tests
 - Automatic OpenAPI schema and Swagger UI
 - Endpoint testing without a manually running server
 
@@ -304,11 +307,12 @@ available at `http://127.0.0.1:8000/docs`.
 | `POST`   | `/auth/login`          | `200 OK`         | Exchange valid credentials for a bearer access token. |
 | `GET`    | `/users/me`            | `200 OK`         | Return the current active public User. |
 | `GET`    | `/tickets`             | `200 OK`         | List, filter, and limit the authenticated User's Tickets. |
+| `GET`    | `/admin/tickets`       | `200 OK`         | Let an authenticated admin list Tickets across owners. |
 | `POST`   | `/tickets`             | `201 Created`    | Create a Ticket owned by the authenticated User. |
-| `POST`   | `/tickets/preview`     | `200 OK`         | Validate input without storing it. |
-| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one stored ticket. |
-| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update a stored ticket. |
-| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete a stored ticket without a body. |
+| `POST`   | `/tickets/preview`     | `200 OK`         | Validate authenticated input without storing it. |
+| `GET`    | `/tickets/{ticket_id}` | `200 OK`         | Return one owned Ticket. |
+| `PATCH`  | `/tickets/{ticket_id}` | `200 OK`         | Partially update one owned Ticket. |
+| `DELETE` | `/tickets/{ticket_id}` | `204 No Content` | Delete one owned Ticket without a body. |
 
 `GET /tickets` requires a Bearer credential and returns only Tickets owned by
 the current active User. The ownership predicate is applied in the repository
@@ -325,19 +329,28 @@ example, `/tickets/not-a-number` fails path validation,
 `/tickets?limit=not-a-number` fails query validation, and an invalid preview
 payload fails body validation.
 
-`POST /tickets/preview` validates a JSON body containing `title` and `priority`.
-It trims surrounding title whitespace, enforces title length, restricts priority
-values, and rejects extra fields. It returns `200 OK` because it previews
-validated input without creating or storing a ticket.
+`POST /tickets/preview` requires authentication and validates a JSON body
+containing `title` and `priority`. It trims surrounding title whitespace,
+enforces title length, restricts priority values, and rejects extra fields. It
+returns `200 OK` because it previews validated input without creating or
+storing a ticket.
 
 `POST /tickets` accepts the same create contract and requires an HTTP Bearer
 credential. It derives ownership from the current persisted User, delegates
 ticket creation to the service, and returns the stored representation through
 `TicketResponse`. An `owner_id` supplied by the client is rejected rather than
 trusted.
-`PATCH /tickets/{ticket_id}` accepts one or more updatable fields. An empty
-update is rejected with `422`, while a missing ticket produces `404` after a
-valid identifier has reached the service.
+`GET`, `PATCH`, and `DELETE /tickets/{ticket_id}` require the current User to
+own the identified Ticket. Missing and foreign-owned identifiers share one
+non-disclosing `404`; an unauthorized update or delete leaves the stored row
+unchanged. `PATCH` accepts one or more updatable fields and rejects an empty
+update with `422`.
+
+`GET /admin/tickets` is a separate function-level authorization boundary. A
+missing credential returns `401`, an authenticated member receives `403`, and
+an admin may list Tickets across owners. Admin status does not broaden the
+ordinary `/tickets` endpoint, which remains owner-scoped. Roles are loaded
+from current database state rather than copied into access-token claims.
 
 The project has separate presentation, API schema, domain model, repository,
 and service responsibilities. Routes receive a replaceable `TicketService`
@@ -351,10 +364,10 @@ failure rollback, request isolation, and persistence across a real application
 restart have been verified against the dedicated test database.
 
 Registration, login, current-User resolution, stale-token rejection,
-authenticated Ticket ownership, and owner-scoped collection listing have also
-been verified through the real HTTP/Session/Argon2/PostgreSQL stack. Identified-
-resource authorization is still pending; a valid login must not be interpreted
-as permission to access every Ticket.
+authenticated Ticket ownership, owner-scoped collection listing, object-level
+authorization, and the bounded admin collection have also been verified
+through the real HTTP/Session/Argon2/PostgreSQL stack. A valid login identifies
+the caller but does not grant access to every Ticket.
 
 The earlier in-memory CRUD lifecycle was verified manually on 15 August 2026 with
 Uvicorn, curl, Swagger UI, and the generated OpenAPI schema. The checks covered

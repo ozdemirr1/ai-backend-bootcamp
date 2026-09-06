@@ -294,6 +294,33 @@ current-user dependency
   or starting Month 3 product work prematurely.
 - Prepare Week 09 OpsDesk domain design.
 
+#### Sunday Outcome
+
+- Required authentication and current-owner checks for Ticket preview,
+  detail, update, and delete operations.
+- Returned the same non-disclosing `404` for missing and foreign-owned Ticket
+  identifiers; cross-owner update and delete attempts preserve database state.
+- Added a dedicated admin-role dependency and a separate
+  `GET /admin/tickets` function without weakening ordinary owner-scoped
+  collection behavior.
+- Proved member `403`, admin cross-owner listing, current database-role loading,
+  and continued admin ownership isolation through fast and guarded PostgreSQL
+  tests.
+- Deliberately deferred the nullable-owner contract because historical rows
+  have no trustworthy backfill source. New API writes still require a
+  server-derived owner.
+- Passed lock, synchronization, package compatibility, Ruff lint, formatting
+  for 107 files, Git diff, Alembic-head, and metadata-drift checks.
+- Passed `274` tests with `37` guarded integration skips and all `311` tests
+  with database tests enabled. `opsdesk_test` finished with zero Users and
+  Tickets at revision `e98825c4d6b6`.
+- Completed the authentication and authorization interview review, including
+  corrections for overclaiming timing defenses, brute-force resistance, and
+  risk elimination; distinguished the current service-side object check from
+  a possible future owner-filtered detail query.
+- Reserved the Week 08 report, final secret/diff review, and pull-request merge
+  for the final closure block.
+
 ## Planned API Surface
 
 The exact contracts will be finalized after Monday's architecture review.

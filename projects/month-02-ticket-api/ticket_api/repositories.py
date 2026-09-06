@@ -24,6 +24,8 @@ class TicketRepository(Protocol):
 
     def delete(self, ticket_id: int) -> bool: ...
 
+    def list_all(self) -> list[Ticket]: ...
+
 
 class UserRepositoryConflictError(Exception):
     pass
@@ -78,6 +80,9 @@ class InMemoryTicketRepository:
         return [
             ticket for ticket in self._tickets.values() if ticket.owner_id == owner_id
         ]
+
+    def list_all(self) -> list[Ticket]:
+        return list(self._tickets.values())
 
     def update(self, ticket: Ticket) -> bool:
         if not isinstance(ticket, Ticket):

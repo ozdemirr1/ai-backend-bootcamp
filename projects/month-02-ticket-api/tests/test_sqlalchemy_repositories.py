@@ -438,3 +438,37 @@ def test_sqlalchemy_user_repository_rejects_invalid_type(
 
     with pytest.raises(TypeError, match="NewUser"):
         repository.create("not-a-user")  # type: ignore[arg-type]
+
+
+def test_repository_lists_all_tickets_across_owners_in_id_order(
+    database_session: Session,
+    ticket_owner_id: int,
+) -> None:
+    repository = SqlAlchemyTicketRepository(database_session)
+
+    other_owner = SqlAlchemyUserRepository(database_session).create(
+        NewUser(
+            email="admin-list-other-owner@example.com",
+            password_hash="$argon2id$synthetic-other-owner-hash",
+        )
+    )
+
+    first_ticket = repository.create(
+        NewTicket(
+            title="First admin-visible ticket",
+            priority=TicketPriority.LOW,
+            owner_id=ticket_owner_id,
+        )
+    )
+    second_ticket = repository.create(
+        NewTicket(
+            title="Second admin-visible ticket",
+            priority=TicketPriority.HIGH,
+            owner_id=other_owner.user_id,
+        )
+    )
+
+    assert repository.list_all() == [
+        first_ticket,
+        second_ticket,
+    ]

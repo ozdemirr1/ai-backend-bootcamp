@@ -63,6 +63,12 @@ class SqlAlchemyTicketRepository:
 
         return [ticket_record_to_domain(record) for record in records]
 
+    def list_all(self) -> list[Ticket]:
+        statement = select(TicketRecord).order_by(TicketRecord.ticket_id.asc())
+        records = self._session.scalars(statement).all()
+
+        return [ticket_record_to_domain(record) for record in records]
+
     def update(self, ticket: Ticket) -> bool:
         if not isinstance(ticket, Ticket):
             raise TypeError("ticket must be a Ticket instance")

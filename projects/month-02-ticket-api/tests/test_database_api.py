@@ -950,3 +950,226 @@ def test_list_tickets_does_not_expose_another_users_ticket_with_postgresql(
                 connection.execute(
                     delete(UserRecord).where(UserRecord.user_id == other_user_id)
                 )
+
+
+def test_another_user_cannot_read_update_or_delete_ticket_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"object-owner-{marker}@example.com"
+    password = "synthetic-object-owner-password-123"
+    original_title = f"Private object probe {marker}"
+
+    other_user_id: int | None = None
+    other_ticket_id: int | None = None
+
+    try:
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_access_token = login_response.json()["access_token"]
+
+        create_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_access_token}",
+            },
+            json={
+                "title": original_title,
+                "priority": "high",
+            },
+        )
+        assert create_response.status_code == 201
+        other_ticket_id = create_response.json()["ticket_id"]
+
+        expected_not_found = {"detail": f"Ticket {other_ticket_id} not found"}
+
+        read_response = postgresql_api_client.get(f"/tickets/{other_ticket_id}")
+        assert read_response.status_code == 404
+        assert read_response.json() == expected_not_found
+
+        update_response = postgresql_api_client.patch(
+            f"/tickets/{other_ticket_id}",
+            json={
+                "title": "Unauthorized replacement title",
+                "status": "resolved",
+            },
+        )
+        assert update_response.status_code == 404
+        assert update_response.json() == expected_not_found
+
+        delete_response = postgresql_api_client.delete(f"/tickets/{other_ticket_id}")
+        assert delete_response.status_code == 404
+        assert delete_response.json() == expected_not_found
+
+        with postgresql_test_engine.connect() as connection:
+            stored_record = connection.execute(
+                select(
+                    TicketRecord.title,
+                    TicketRecord.status,
+                    TicketRecord.owner_id,
+                ).where(TicketRecord.ticket_id == other_ticket_id)
+            ).one()
+
+        assert stored_record.title == original_title
+        assert stored_record.status == "open"
+        assert stored_record.owner_id == other_user_id
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if other_ticket_id is not None:
+                connection.execute(
+                    delete(TicketRecord).where(
+                        TicketRecord.ticket_id == other_ticket_id
+                    )
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )
+
+
+def test_admin_can_list_tickets_from_multiple_owners_with_postgresql(
+    postgresql_api_client: TestClient,
+    postgresql_test_engine: Engine,
+) -> None:
+    marker = uuid4().hex
+    other_email = f"admin-list-other-{marker}@example.com"
+    password = "synthetic-admin-list-password-123"
+
+    current_user_id: int | None = None
+    other_user_id: int | None = None
+    ticket_ids: list[int] = []
+
+    try:
+        current_user_response = postgresql_api_client.get("/users/me")
+        assert current_user_response.status_code == 200
+        current_user_id = current_user_response.json()["user_id"]
+
+        own_ticket_response = postgresql_api_client.post(
+            "/tickets",
+            json={
+                "title": f"Admin list own ticket {marker}",
+                "priority": "high",
+            },
+        )
+        assert own_ticket_response.status_code == 201
+        own_ticket_id = own_ticket_response.json()["ticket_id"]
+        ticket_ids.append(own_ticket_id)
+
+        registration_response = postgresql_api_client.post(
+            "/auth/register",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert registration_response.status_code == 201
+        other_user_id = registration_response.json()["user_id"]
+
+        login_response = postgresql_api_client.post(
+            "/auth/login",
+            json={
+                "email": other_email,
+                "password": password,
+            },
+        )
+        assert login_response.status_code == 200
+        other_token = login_response.json()["access_token"]
+
+        other_ticket_response = postgresql_api_client.post(
+            "/tickets",
+            headers={
+                "Authorization": f"Bearer {other_token}",
+            },
+            json={
+                "title": f"Admin list other ticket {marker}",
+                "priority": "medium",
+            },
+        )
+        assert other_ticket_response.status_code == 201
+        other_ticket_id = other_ticket_response.json()["ticket_id"]
+        ticket_ids.append(other_ticket_id)
+
+        member_response = postgresql_api_client.get("/admin/tickets")
+
+        assert member_response.status_code == 403
+        assert member_response.json() == {
+            "detail": "Admin role required",
+        }
+
+        with postgresql_test_engine.begin() as connection:
+            connection.execute(
+                update(UserRecord)
+                .where(UserRecord.user_id == current_user_id)
+                .values(role=UserRole.ADMIN.value)
+            )
+
+        admin_response = postgresql_api_client.get("/admin/tickets")
+
+        assert admin_response.status_code == 200
+
+        owner_scoped_response = postgresql_api_client.get("/tickets")
+
+        assert owner_scoped_response.status_code == 200
+        assert [ticket["ticket_id"] for ticket in owner_scoped_response.json()] == [
+            own_ticket_id
+        ]
+
+        listed_ticket_ids = {ticket["ticket_id"] for ticket in admin_response.json()}
+        assert listed_ticket_ids == {
+            own_ticket_id,
+            other_ticket_id,
+        }
+
+        with postgresql_test_engine.connect() as connection:
+            stored_role = connection.scalar(
+                select(UserRecord.role).where(UserRecord.user_id == current_user_id)
+            )
+            stored_owner_ids = connection.scalars(
+                select(TicketRecord.owner_id).where(
+                    TicketRecord.ticket_id.in_(ticket_ids)
+                )
+            ).all()
+
+        assert stored_role == UserRole.ADMIN.value
+        assert set(stored_owner_ids) == {
+            current_user_id,
+            other_user_id,
+        }
+
+    finally:
+        with postgresql_test_engine.begin() as connection:
+            if ticket_ids:
+                connection.execute(
+                    delete(TicketRecord).where(TicketRecord.ticket_id.in_(ticket_ids))
+                )
+
+            if current_user_id is not None:
+                connection.execute(
+                    update(UserRecord)
+                    .where(UserRecord.user_id == current_user_id)
+                    .values(role=UserRole.MEMBER.value)
+                )
+
+            if other_user_id is not None:
+                connection.execute(
+                    delete(UserRecord).where(UserRecord.user_id == other_user_id)
+                )

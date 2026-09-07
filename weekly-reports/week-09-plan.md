@@ -133,11 +133,11 @@ For each entity, document:
 
 ## Required Outputs
 
-- [ ] Separate public `opsdesk` repository
-- [ ] Product problem statement and target users
-- [ ] Functional requirements
-- [ ] Non-functional requirements
-- [ ] Explicit non-goals
+- [x] Separate public `opsdesk` repository
+- [x] Product problem statement and target users
+- [x] Functional requirements (initial scope)
+- [x] Non-functional requirements (initial security requirement)
+- [x] Explicit non-goals
 - [ ] Domain glossary
 - [ ] Entity and relationship decisions
 - [ ] Mermaid ERD
@@ -148,6 +148,12 @@ For each entity, document:
 - [ ] Prioritized GitHub issue list with acceptance criteria
 - [ ] Week 10 implementation sequence
 - [ ] Week 09 report and interview review
+
+Monday evidence: [OpsDesk](https://github.com/ozdemirr1/opsdesk), initial commit
+`eb0e20e`. README and `docs/requirements.md` contain the reviewed initial scope
+and three acceptance scenarios. Assignment, visibility, and status-transition
+policies remain open. The checked scope outputs do not satisfy the full
+implementation gate or complete the Week 09 architecture interview review.
 
 ## Daily Plan
 

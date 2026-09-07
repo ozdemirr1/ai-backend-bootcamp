@@ -444,16 +444,67 @@ Week 09
 - Froze `projects/month-02-ticket-api/` as a bounded learning application.
 - Prepared Week 09 for the separate real OpsDesk product repository.
 
+## Week 09 Monday Outcome - 7 September
+
+- Started the primary Month 03 mentoring conversation and reviewed the Month 02
+  handoff, Week 09 plan, working rules, status, and historical decisions.
+- Confirmed the bootcamp repository was clean and synchronized on `main` before
+  the day's documentation changes.
+- Furkan drafted the product scope, two additional acceptance scenarios, and
+  the README; mentoring review refined wording and security boundaries.
+- Created the separate [OpsDesk repository](https://github.com/ozdemirr1/opsdesk)
+  with README, `.gitignore`, and `docs/requirements.md`. The Month 02 application
+  was not copied.
+- Recorded initial functional requirements, organization-isolation expectations,
+  explicit Month 03 non-goals, three acceptance scenarios, and open decisions.
+- Kept the customer-resolution restriction explicitly proposed until the access
+  and status-transition matrices are reviewed. Attachment scope remains metadata
+  design rather than file-content upload or storage.
+- Furkan reviewed the staged diff, created commit `eb0e20e` with message
+  `week-09: define OpsDesk scope and repository foundation`, configured `origin`,
+  and pushed `main` with upstream tracking.
+- Verified public visibility through the signed-out GitHub repository page.
+  The supplied terminal evidence shows a successful push and a clean, synchronized
+  `main`; the local status was independently checked afterward.
+- Passed Git whitespace checks and verified `.env` and local environment/cache
+  ignore rules. No executable code exists in OpsDesk, so no automated tests ran.
+  Acceptance scenarios are design evidence, not passing test results.
+- Completed the seven-question Monday learning review. Core reasoning was sound;
+  the precision corrections below were recorded for future implementation.
+- Bootcamp documentation closing commit and push remain Furkan's next Git steps.
+
+### Monday Learning Review Corrections
+
+- A membership role models organization-specific authority; the schema alone
+  does not enforce authorization. Backend queries and permission checks must
+  enforce the boundary on every relevant operation.
+- Role checks and identified-Ticket access checks are separate. Two customers
+  with the same organization role can have different access to a specific Ticket.
+- For the ordinary customer creation workflow, derive the requester from the
+  current authenticated User. A validated JWT subject identifies the User to load;
+  check current account state and target membership rather than trusting the token
+  alone. Do not treat a bearer credential as proof of the human operating it.
+- Denied mutations must leave business data unchanged. Prefer authorization before
+  writes; rollback handles failures within a transaction and is not a substitute
+  for authorization. Verify durable state through an independent database read.
+- A lifecycle includes allowed transitions, actors, and preconditions, not just
+  status labels. The exact OpsDesk transition policy remains unresolved.
+- Attachment metadata describes a file and its relationships; it is distinct from
+  a stable attachment identifier and from the file bytes. A local filesystem is
+  a storage option, but is not itself an object-storage service such as S3.
+- Commit records staged changes locally; remote configuration names a repository
+  URL; push sends required objects and updates remote refs. The `-u` option sets
+  upstream tracking. Public visibility is a GitHub setting, not a push effect.
+
 ## Week 09 Immediate Actions
 
-1. Start the Month 03 Codex conversation and read the private handoff.
-2. Confirm this repository remains clean and synchronized on `main`.
-3. Define the OpsDesk problem, actors, requirements, and non-goals.
-4. Create the separate public `opsdesk` repository after its initial purpose
-   and structure are agreed.
-5. Model roles on `OrganizationMembership`, not the global User.
-6. Produce the ERD, permission matrix, endpoint inventory, and issue backlog
-   before beginning Week 10 CRUD implementation.
+1. Review and commit the Monday bootcamp evidence, then push it manually.
+2. Define the domain vocabulary for User, Organization, OrganizationMembership,
+   Ticket, Comment, and Attachment.
+3. Separate organization owner, Ticket requester, assignee, and creator; document
+   lifecycle and invariant candidates before choosing database columns.
+4. Produce the ERD, permission and transition matrices, endpoint inventory, and
+   issue backlog before beginning Week 10 CRUD implementation.
 
 ## Week 09 Guardrails
 

@@ -138,8 +138,8 @@ For each entity, document:
 - [x] Functional requirements (initial scope)
 - [x] Non-functional requirements (initial security requirement)
 - [x] Explicit non-goals
-- [ ] Domain glossary
-- [ ] Entity and relationship decisions
+- [x] Domain glossary
+- [ ] Entity and relationship decisions (domain rules reviewed; relational details pending)
 - [ ] Mermaid ERD
 - [ ] Organization role/permission matrix
 - [ ] Ticket status-transition matrix
@@ -154,6 +154,15 @@ Monday evidence: [OpsDesk](https://github.com/ozdemirr1/opsdesk), initial commit
 and three acceptance scenarios. Assignment, visibility, and status-transition
 policies remain open. The checked scope outputs do not satisfy the full
 implementation gate or complete the Week 09 architecture interview review.
+
+Tuesday evidence: Furkan drafted all six entities and reviewed the ownership,
+membership, Ticket participation, assignment-handover, Comment, and Attachment
+policies. OpsDesk's `docs/domain-model.md` consolidates these decisions in commit
+`0dab9c4`, which has been pushed on `feature/week-09-domain-design`. The previous
+remote branch name was removed. The README and requirements reference
+the model. The seven-question daily review is complete;
+ERD, physical relationships, full access/transition matrices, and the end-of-week
+architecture review remain pending. No executable code or application tests exist.
 
 ## Daily Plan
 

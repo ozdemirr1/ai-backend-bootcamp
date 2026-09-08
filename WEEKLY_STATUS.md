@@ -471,7 +471,8 @@ Week 09
   Acceptance scenarios are design evidence, not passing test results.
 - Completed the seven-question Monday learning review. Core reasoning was sound;
   the precision corrections below were recorded for future implementation.
-- Bootcamp documentation closing commit and push remain Furkan's next Git steps.
+- Furkan committed the Monday bootcamp evidence as `439e24c`, pushed `main`,
+  and supplied terminal evidence of a clean, synchronized working tree.
 
 ### Monday Learning Review Corrections
 
@@ -496,14 +497,54 @@ Week 09
   URL; push sends required objects and updates remote refs. The `-u` option sets
   upstream tracking. Public visibility is a GitHub setting, not a push effect.
 
+## Week 09 Tuesday Outcome - 8 September
+
+- Furkan drafted User, Organization, OrganizationMembership, Ticket, Comment,
+  and Attachment, then explained and refined the associated domain policies.
+- Consolidated the reviewed vocabulary, purposes, identities, relationships,
+  lifecycles, invariants, preconditions, and unresolved decisions in OpsDesk's
+  `docs/domain-model.md` on `feature/week-09-domain-design`.
+- Updated the OpsDesk README link and requirements to distinguish reviewed
+  policies from unresolved relational and authorization choices.
+- Selected exactly one active owner per active Organization, backed by an active
+  User; ownership transfer is atomic and leaves the former owner as admin.
+- Selected one membership record per User-Organization pair across all states,
+  reactivation with an explicitly authorized current role, and ownership checks
+  before global account deactivation.
+- Separated fixed Ticket requester/creator attribution from mutable current
+  assignment. New Tickets are open and may be unassigned.
+- Required handover before changes revoke eligibility for assigned open or
+  in-progress Tickets. Membership and role changes check the target Organization;
+  global account deactivation checks all Organizations. Reopening requires renewed
+  eligibility evaluation, with the exact transition behavior still pending.
+- Selected append-only Comments for all user roles and Ticket-derived reading
+  visibility. Staff-only internal notes are outside Month 03.
+- Selected Attachment metadata linked exclusively to one fixed Ticket; metadata
+  does not establish upload success, physical availability, or verified file type.
+- Passed documentation whitespace, code-fence, and local-link checks. No executable
+  code, migrations, or automated application tests were added or run. The domain
+  document lists future test expectations without claiming passing tests.
+- Completed the seven-question Tuesday review. Answers correctly distinguished
+  atomicity from simultaneous SQL execution, membership identity from audit history,
+  fixed attribution from assignment, scoped from global checks, reactivation from
+  historical eligibility, reading from posting, and metadata from file evidence.
+- Clarified one terminology detail: resolved means the issue is resolved; it is
+  not the separate closed status. Reopening rules remain an explicit open decision.
+- Furkan reviewed and committed the three OpsDesk documentation files as `0dab9c4`.
+  The initial push needed upstream configuration; the retry succeeded and the
+  working tree is clean. Furkan renamed the branch to
+  `feature/week-09-domain-design`, published it with upstream tracking, and removed
+  the old remote branch name. Commit `0dab9c4` was preserved. Only the bootcamp
+  documentation closing commit remains.
+- Recorded Furkan's branch-naming preference: use `feature/week-XX-topic` and
+  product-focused wording without assistant branding in new GitHub work.
+
 ## Week 09 Immediate Actions
 
-1. Review and commit the Monday bootcamp evidence, then push it manually.
-2. Define the domain vocabulary for User, Organization, OrganizationMembership,
-   Ticket, Comment, and Attachment.
-3. Separate organization owner, Ticket requester, assignee, and creator; document
-   lifecycle and invariant candidates before choosing database columns.
-4. Produce the ERD, permission and transition matrices, endpoint inventory, and
+1. Review and commit the Tuesday bootcamp evidence, then push it manually.
+2. Translate the domain into a relational ERD, including keys, nullability,
+   uniqueness, ownership constraints, participant references, and deletion behavior.
+3. Complete the permission and transition matrices, endpoint inventory, and
    issue backlog before beginning Week 10 CRUD implementation.
 
 ## Week 09 Guardrails

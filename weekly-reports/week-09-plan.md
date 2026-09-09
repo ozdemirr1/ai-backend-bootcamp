@@ -139,8 +139,8 @@ For each entity, document:
 - [x] Non-functional requirements (initial security requirement)
 - [x] Explicit non-goals
 - [x] Domain glossary
-- [ ] Entity and relationship decisions (domain rules reviewed; relational details pending)
-- [ ] Mermaid ERD
+- [x] Entity and relationship baseline (validation and workflow details remain open)
+- [x] Mermaid ERD
 - [ ] Organization role/permission matrix
 - [ ] Ticket status-transition matrix
 - [ ] Initial API endpoint inventory
@@ -161,8 +161,22 @@ policies. OpsDesk's `docs/domain-model.md` consolidates these decisions in commi
 `0dab9c4`, which has been pushed on `feature/week-09-domain-design`. The previous
 remote branch name was removed. The README and requirements reference
 the model. The seven-question daily review is complete;
-ERD, physical relationships, full access/transition matrices, and the end-of-week
-architecture review remain pending. No executable code or application tests exist.
+At Tuesday's close, ERD, physical relationships, full access/transition matrices,
+and the end-of-week architecture review remained pending. No executable code or
+application tests existed.
+
+Wednesday evidence: Furkan drafted the six relational tables and Mermaid ERD.
+OpsDesk's `docs/relational-model.md` and `docs/erd.md` now record keys, nullability,
+composite foreign keys, owner-index limitations, restricted parent deletion,
+timestamp behavior, and validation boundaries. The diagram rendered successfully;
+documentation checks passed. The seven-question daily review is complete, with
+precision corrections recorded in [Weekly Status](../WEEKLY_STATUS.md).
+Furkan committed the five OpsDesk documentation files as `e021f17` and pushed
+`feature/week-09-domain-design`; supplied terminal evidence confirms a clean,
+synchronized working tree. The bootcamp evidence awaits manual Git closure.
+No schema was applied and no OpsDesk application tests were run. Exact
+validation limits, email canonicalization, concurrency protocol, full matrices,
+API contracts, and issues remain open; the implementation gate is not satisfied.
 
 ## Daily Plan
 

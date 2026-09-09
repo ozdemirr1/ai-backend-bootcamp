@@ -534,18 +534,65 @@ Week 09
   The initial push needed upstream configuration; the retry succeeded and the
   working tree is clean. Furkan renamed the branch to
   `feature/week-09-domain-design`, published it with upstream tracking, and removed
-  the old remote branch name. Commit `0dab9c4` was preserved. Only the bootcamp
-  documentation closing commit remains.
+  the old remote branch name. Commit `0dab9c4` was preserved.
+- Furkan committed the Tuesday bootcamp evidence as `5f0dad5` and pushed main.
+  Wednesday's local inspection confirmed a clean, synchronized working tree.
 - Recorded Furkan's branch-naming preference: use `feature/week-XX-topic` and
   product-focused wording without assistant branding in new GitHub work.
 
+## Week 09 Wednesday Outcome - 9 September
+
+- Furkan translated all six domain entities into relational tables, then drafted
+  the constraints, composite participant references, child tables, and Mermaid ERD.
+- Recorded the reviewed baseline in OpsDesk's `docs/relational-model.md` and
+  `docs/erd.md`; updated README, requirements, and domain-model references.
+- Selected bigint identity primary keys, database role/status/priority checks,
+  one membership per User-Organization pair across states, and structural UNIQUE
+  groups for organization-scoped composite foreign keys.
+- Selected an optional assignee with MATCH SIMPLE, ten ON DELETE RESTRICT foreign
+  keys, fixed historical participant references, append-only Comment operations,
+  and Ticket-bound Attachment metadata without physical upload/storage behavior.
+- Distinguished the owner partial unique index's at-most-one guarantee from the
+  application's exactly-one active owner and active global User requirements.
+  The cooperating concurrency protocol and lock order remain design prerequisites.
+- Reviewed timestamp defaults, explicit updated_at refresh, nonblank text checks,
+  deletion direction, and the separation between tenant consistency and access.
+- Rendered the corrected Mermaid diagram with six entities and ten relationships.
+  Passed Markdown fence, local-link, whitespace, and Git diff checks. No OpsDesk
+  migrations or application tests were executed; this is documentation evidence.
+- Completed the seven-question Wednesday learning review. Core reasoning was
+  correct; the precision corrections below are part of the review record.
+- Furkan reviewed and committed the five OpsDesk documentation files as `e021f17`
+  with message `week-09: document relational design and ERD`, then pushed
+  `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
+  working tree and synchronization with the remote branch. The bootcamp closing
+  changes still await Furkan's staged review, commit, and push.
+
+### Wednesday Learning Review Corrections
+
+- RESTRICT protects a referenced parent while child references exist. The precise
+  phrase is an unreferenced record, not a record without a parent. The current FK
+  does not stop deleting the Comment itself. The selected application policy
+  enforces append-only behavior; additional database permissions or triggers could
+  provide stronger enforcement if explicitly designed later.
+- DEFAULT does not automatically run on every UPDATE. It can nevertheless be
+  requested explicitly with SET column = DEFAULT. now() is transaction-start
+  time; wall-clock time means actual clock time, not specifically commit time.
+- The POSIX [:space:] class is not a universal guarantee for every Unicode
+  whitespace or invisible character. Non-ASCII classification depends on
+  locale/collation; application normalization and database validation need shared
+  examples. Keep NOT NULL alongside the proposed nonblank CHECK.
+- MATCH SIMPLE skips this composite FK match when an assignee is absent; it does
+  not disable the Ticket's separate Organization FK or other constraints.
+
 ## Week 09 Immediate Actions
 
-1. Review and commit the Tuesday bootcamp evidence, then push it manually.
-2. Translate the domain into a relational ERD, including keys, nullability,
-   uniqueness, ownership constraints, participant references, and deletion behavior.
-3. Complete the permission and transition matrices, endpoint inventory, and
-   issue backlog before beginning Week 10 CRUD implementation.
+1. Review, commit, and push the Wednesday bootcamp evidence manually; the OpsDesk
+   documentation commit and push are complete as `e021f17`.
+2. On Thursday, define and review organization role permissions, Ticket visibility,
+   assignment eligibility, and status transitions using concrete scenarios.
+3. Resolve remaining validation/concurrency decisions and complete the endpoint
+   inventory and issue backlog before beginning Week 10 CRUD implementation.
 
 ## Week 09 Guardrails
 

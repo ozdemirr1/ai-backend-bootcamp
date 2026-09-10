@@ -141,8 +141,8 @@ For each entity, document:
 - [x] Domain glossary
 - [x] Entity and relationship baseline (validation and workflow details remain open)
 - [x] Mermaid ERD
-- [ ] Organization role/permission matrix
-- [ ] Ticket status-transition matrix
+- [x] Organization role/permission matrix (reviewed operations; endpoint coverage pending)
+- [x] Ticket status-transition matrix
 - [ ] Initial API endpoint inventory
 - [ ] Error and pagination contract sketches
 - [ ] Prioritized GitHub issue list with acceptance criteria
@@ -173,10 +173,23 @@ documentation checks passed. The seven-question daily review is complete, with
 precision corrections recorded in [Weekly Status](../WEEKLY_STATUS.md).
 Furkan committed the five OpsDesk documentation files as `e021f17` and pushed
 `feature/week-09-domain-design`; supplied terminal evidence confirms a clean,
-synchronized working tree. The bootcamp evidence awaits manual Git closure.
+synchronized working tree. Bootcamp evidence was committed and pushed as `dc44bef`.
 No schema was applied and no OpsDesk application tests were run. Exact
 validation limits, email canonicalization, concurrency protocol, full matrices,
-API contracts, and issues remain open; the implementation gate is not satisfied.
+API contracts, and issues remained open at Wednesday's close.
+
+Thursday evidence: Furkan drafted the visibility, Ticket-operation, assignment,
+membership-management, ownership-transfer, transition, and status-limit matrices.
+OpsDesk's `docs/access-control.md` and `docs/ticket-lifecycle.md` consolidate the
+reviewed decisions and four learner-authored acceptance scenarios. The earlier
+product documents are aligned with the new policies. Documentation checks passed
+and the seven-question learning review is complete, including the resolved-versus-closed
+correction recorded in Weekly Status. Furkan committed the six OpsDesk documents
+as `196c1b2` and pushed `feature/week-09-domain-design`; supplied terminal evidence
+confirms a clean, synchronized working tree. Bootcamp Git closure remains pending.
+No executable authorization tests or schema changes exist; endpoint coverage,
+public errors, pagination, precise validation,
+transaction coordination, and the issue backlog still precede implementation.
 
 ## Daily Plan
 

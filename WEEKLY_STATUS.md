@@ -565,8 +565,9 @@ Week 09
 - Furkan reviewed and committed the five OpsDesk documentation files as `e021f17`
   with message `week-09: document relational design and ERD`, then pushed
   `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
-  working tree and synchronization with the remote branch. The bootcamp closing
-  changes still await Furkan's staged review, commit, and push.
+  working tree and synchronization with the remote branch.
+- Furkan committed the Wednesday bootcamp evidence as `dc44bef` and pushed main;
+  supplied terminal evidence confirmed a clean, synchronized working tree.
 
 ### Wednesday Learning Review Corrections
 
@@ -585,14 +586,72 @@ Week 09
 - MATCH SIMPLE skips this composite FK match when an assignee is absent; it does
   not disable the Ticket's separate Organization FK or other constraints.
 
+## Week 09 Thursday Outcome - 10 September
+
+- Confirmed both repositories were clean before the day's design work. OpsDesk
+  remains on `feature/week-09-domain-design`; Git mutations remain Furkan's task.
+- Furkan drafted and reviewed Ticket visibility, creation, priority, commenting,
+  assignment, membership management, ownership transfer, and lifecycle matrices.
+- Customers see their requested Tickets; staff see all Tickets in the Organization.
+  Assignment permissions are separate: agents can distribute unassigned work but
+  can only reassign/remove their own existing assignments under status rules.
+- All roles may create for self; creation is always open and unassigned, with
+  medium priority when omitted. Explicit invalid/null priority is not defaulted.
+- Agent/admin/owner are eligible assignee roles. Admin-to-agent preserves active
+  assignments; changes that revoke eligibility require the reviewed handover checks.
+- Admins may manage non-owner peers. Ordinary self-role changes are denied;
+  non-owners may leave subject to handover. Only the current owner can transfer
+  ownership to a different active User with an active same-Organization admin membership.
+- Reviewed peer-management risk and clarified that owner protection is not complete
+  account-abuse prevention. Admin promotion before transfer is a prerequisite, not
+  independent proof of intent or approval by a second person.
+- Defined six allowed state transitions. In_progress requires an eligible assignee;
+  closed is terminal but remains readable. Comments are allowed under resource/role
+  rules until closed; priority and ordinary assignment changes stop at resolved.
+- Returning to open preserves an eligible assignee and clears an ineligible one
+  atomically with the status change. This cleanup grants no general assignment
+  authority to the customer and does not preserve a complete assignment history.
+- Furkan authored four acceptance scenarios covering customer reopening with an
+  inactive assignee, denied reassignment by a different agent, admin-to-agent role
+  change with active work, and rejected commenting on a closed Ticket.
+- Prepared OpsDesk's `docs/access-control.md` and `docs/ticket-lifecycle.md` and
+  aligned the README, requirements, domain, and relational documents. The scenarios
+  are design evidence, not executed tests. No CRUD, migration, or application tests
+  have been added or run. Documentation links, anchors, table widths, code fences,
+  whitespace, and Git diff checks passed.
+- Completed the seven-question Thursday review. Furkan explained separate visibility
+  and mutation permissions, eligibility-preserving role changes, conditional cleanup,
+  atomicity versus concurrency, separate-request outcomes, ownership-transfer limits,
+  and durable unchanged state after rejected commenting.
+- Furkan reviewed and committed the six OpsDesk documentation files as `196c1b2`
+  with message `week-09: define access control and ticket lifecycle`, then pushed
+  `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
+  working tree and synchronization with the remote branch. Only the bootcamp
+  documentation closing commit and push remain pending.
+
+### Thursday Learning Review Corrections
+
+- A customer can reopen their resolved Ticket, not a closed Ticket. Closed is a
+  terminal state for all roles; use exact state names rather than colloquial closed.
+- Active-work handover means transferring responsibility before eligibility is
+  revoked. The rule blocks eligibility revocation while assignments remain, not
+  the handover itself. Admin-to-agent preserves eligibility under this product policy.
+- Transaction atomicity does not by itself coordinate concurrent eligibility and
+  assignment changes. Reads and writes may be separate statements within a correctly
+  coordinated transaction. The concrete concurrency mechanism and lock order have
+  not yet been selected; do not mistake the design requirement for an implementation.
+- An open-and-assigned result after failed ordinary unassignment is valid. This
+  example assumes no additional successful intervening operation; each request must
+  evaluate current state rather than assuming the previous request's snapshot.
+
 ## Week 09 Immediate Actions
 
-1. Review, commit, and push the Wednesday bootcamp evidence manually; the OpsDesk
-   documentation commit and push are complete as `e021f17`.
-2. On Thursday, define and review organization role permissions, Ticket visibility,
-   assignment eligibility, and status transitions using concrete scenarios.
-3. Resolve remaining validation/concurrency decisions and complete the endpoint
-   inventory and issue backlog before beginning Week 10 CRUD implementation.
+1. Review, commit, and push Thursday's bootcamp evidence manually. OpsDesk's
+   documentation commit and push are complete as `196c1b2`; the learning review is complete.
+2. On Friday, define endpoint scope, request/response boundaries, public errors,
+   pagination, and remaining operation permissions without assuming admin bypasses.
+3. Resolve remaining validation/concurrency decisions and complete the issue
+   backlog before beginning Week 10 CRUD implementation.
 
 ## Week 09 Guardrails
 

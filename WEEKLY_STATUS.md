@@ -626,8 +626,9 @@ Week 09
 - Furkan reviewed and committed the six OpsDesk documentation files as `196c1b2`
   with message `week-09: define access control and ticket lifecycle`, then pushed
   `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
-  working tree and synchronization with the remote branch. Only the bootcamp
-  documentation closing commit and push remain pending.
+  working tree and synchronization with the remote branch.
+- Furkan committed the Thursday bootcamp evidence as `23296e7` and pushed main;
+  supplied terminal evidence confirmed a clean, synchronized working tree.
 
 ### Thursday Learning Review Corrections
 
@@ -644,14 +645,73 @@ Week 09
   example assumes no additional successful intervening operation; each request must
   evaluate current state rather than assuming the previous request's snapshot.
 
+## Week 09 Friday Progress - 11 September
+
+- Confirmed clean working trees before Friday consolidation: OpsDesk at `196c1b2`
+  on `feature/week-09-domain-design`, bootcamp at `23296e7` on main. Local tracking
+  references agree; the supplied Thursday terminal output establishes push evidence.
+- Furkan drafted 22 endpoints covering identity, Organizations, Tickets, Comments,
+  memberships, and ownership transfer, then public errors and pagination.
+- Recorded the reviewed baseline in OpsDesk's `docs/api-contract.md` and aligned
+  README, requirements, domain, relational, access-control, and lifecycle documents.
+- Organization creation establishes the actor's owner membership atomically. Basic
+  suspended-Organization information remains visible to active members, while child
+  resources and scoped mutations remain blocked.
+- Reviewed safe response projections, actor-derived creation fields, logical
+  membership deactivation, separate admin promotion, and current target eligibility.
+- Corrected same-status no-op ordering: Ticket visibility alone is insufficient;
+  explicit operation permission is required. Authorized no-ops do not refresh
+  updated_at or execute transition effects. Idempotency does not require equal responses.
+- Exact-email addition uses an existing active User and creates membership directly.
+  Missing/inactive targets share a safe failure, but successful addition can still
+  disclose account existence. No invitation or independent approval is implied.
+- Selected limit/offset, default 20, maximum 100, scoped counts, and Ticket ordering
+  by created_at DESC then ticket_id DESC. Empty collections retain the response
+  envelope. Offset ordering does not guarantee a snapshot under concurrent changes.
+- Deferred Ticket text editing/deletion, Organization renaming/suspension endpoints,
+  global User deactivation, and all Attachment metadata endpoints beyond Month 03.
+  Their relevant domain rules remain; closing a Ticket is not data erasure.
+- Furkan supplied a TicketResponse and a validation-error JSON example. Both match
+  the selected fields; the error does not echo raw rejected input. Added an empty
+  pagination example for the common envelope.
+- Documentation checks passed for JSON syntax, 22 unique endpoints, local links and
+  anchors, Markdown fences/table widths, and whitespace. No API, migration, or
+  executable application tests were added or run.
+- Precise validation, remaining error/response cases, proposed queue/directory
+  filters, other collection orderings, count/items consistency, and transaction
+  coordination are explicitly unfinished. The issue backlog still precedes CRUD.
+- Completed Friday's seven-question learning review. Furkan correctly explained
+  response/request separation, explicit no-op permission, the suspended-Organization
+  visibility exception, logical membership deletion, account-enumeration limits,
+  scoped pagination counts, and safe errors with unchanged durable business state.
+- Furkan reviewed and committed the seven OpsDesk documentation files as `35ba9b5`
+  with message `week-09: define API contracts and release boundaries`, then pushed
+  `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
+  working tree and synchronization with the remote branch. Only the bootcamp
+  documentation closing commit and push remain pending.
+
+### Friday Learning Review Notes
+
+- No substantive answer correction was required. The suspended-Organization
+  visibility exception still requires an active authenticated global User as well
+  as an active membership; it does not weaken authentication.
+- For offset pagination, updates matter when they change ordering or whether a
+  record matches the query's filters or visibility scope. An unrelated field
+  update does not necessarily shift the result set.
+- Rejected-mutation tests should reload persisted state and compare relevant fields
+  and child records: status, assignment, updated_at, and newly created Comments as
+  applicable. An unchanged in-memory object or error response alone is insufficient.
+  This assertion concerns business state; it need not prohibit an intended rejection
+  log or security event.
+
 ## Week 09 Immediate Actions
 
-1. Review, commit, and push Thursday's bootcamp evidence manually. OpsDesk's
-   documentation commit and push are complete as `196c1b2`; the learning review is complete.
-2. On Friday, define endpoint scope, request/response boundaries, public errors,
-   pagination, and remaining operation permissions without assuming admin bypasses.
-3. Resolve remaining validation/concurrency decisions and complete the issue
-   backlog before beginning Week 10 CRUD implementation.
+1. Have Furkan review, commit, and push the bootcamp documentation changes manually;
+   verify terminal evidence before marking Git closure. OpsDesk is complete as `35ba9b5`.
+2. On Saturday, create prioritized issues with acceptance criteria, expected tests,
+   dependencies, and the Week 10 sequence, including bounded remaining design work.
+3. Keep the Week 09 implementation gate open until the required design review and
+   issue plan are complete. Add minimal CI only with executable code and meaningful tests.
 
 ## Week 09 Guardrails
 

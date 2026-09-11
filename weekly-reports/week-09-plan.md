@@ -45,7 +45,7 @@ serious backend foundation, not AI features or a frontend.
 - Organization-scoped roles
 - Tickets and their lifecycle
 - Comments
-- Attachment metadata
+- Attachment metadata domain/relational design (Month 03 metadata API deferred)
 - Access-control rules
 - API contracts and failure behavior
 - Test and delivery strategy
@@ -141,10 +141,10 @@ For each entity, document:
 - [x] Domain glossary
 - [x] Entity and relationship baseline (validation and workflow details remain open)
 - [x] Mermaid ERD
-- [x] Organization role/permission matrix (reviewed operations; endpoint coverage pending)
+- [x] Organization role/permission matrix (aligned with the initial endpoint inventory)
 - [x] Ticket status-transition matrix
-- [ ] Initial API endpoint inventory
-- [ ] Error and pagination contract sketches
+- [x] Initial API endpoint inventory (22-endpoint baseline; remaining details explicit)
+- [x] Error and pagination contract sketches (not final schemas or executed tests)
 - [ ] Prioritized GitHub issue list with acceptance criteria
 - [ ] Week 10 implementation sequence
 - [ ] Week 09 report and interview review
@@ -186,10 +186,26 @@ product documents are aligned with the new policies. Documentation checks passed
 and the seven-question learning review is complete, including the resolved-versus-closed
 correction recorded in Weekly Status. Furkan committed the six OpsDesk documents
 as `196c1b2` and pushed `feature/week-09-domain-design`; supplied terminal evidence
-confirms a clean, synchronized working tree. Bootcamp Git closure remains pending.
-No executable authorization tests or schema changes exist; endpoint coverage,
-public errors, pagination, precise validation,
-transaction coordination, and the issue backlog still precede implementation.
+confirms a clean, synchronized working tree. Bootcamp evidence was committed and
+pushed as `23296e7`.
+At Thursday's close, no executable authorization tests or schema changes existed;
+endpoint coverage, errors, pagination, precise validation, transaction coordination,
+and the issue backlog remained open.
+
+Friday evidence: Furkan drafted 22 endpoints, error and pagination contracts,
+release exclusions, and TicketResponse/validation-error examples. OpsDesk's
+`docs/api-contract.md` consolidates the review, with earlier documents aligned.
+Corrections distinguish visibility from no-op permission, logical deletion from
+physical deletion, canonical-email lookup from enumeration prevention, and stable
+ordering from snapshot pagination. Attachment metadata remains a design artifact;
+its API is deferred. Documentation structure and JSON checks passed; no application
+tests or migrations ran. Remaining validation, response/error cases, query details,
+and transaction coordination are explicit follow-ups. The grouped Friday learning
+review is complete: all seven answers were correct, with precision notes recorded
+in [Weekly Status](../WEEKLY_STATUS.md). Furkan committed the seven OpsDesk documents
+as `35ba9b5` and pushed `feature/week-09-domain-design`; supplied terminal evidence
+confirms a clean, synchronized working tree. Only bootcamp Git closure remains
+pending. The issue backlog is not complete.
 
 ## Daily Plan
 
@@ -264,11 +280,12 @@ The final list is a Week 09 output, but design should cover:
 - Tickets and status changes
 - assignment
 - comments
-- attachment metadata
-- privileged membership and organization administration
+- attachment metadata scope decision: all metadata endpoints deferred for Month 03
+- privileged membership and ownership transfer; Organization rename/suspend deferred
 
-Endpoints will be named only after resource ownership and authorization rules
-are clear.
+Friday's 22-endpoint baseline now maps the reviewed resource and authorization
+rules. Resolve its explicit remaining details in bounded issues before the relevant
+implementation, without treating deferred operations as implicit admin capabilities.
 
 ## Test Strategy to Design
 

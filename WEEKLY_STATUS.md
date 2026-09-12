@@ -687,8 +687,10 @@ Week 09
 - Furkan reviewed and committed the seven OpsDesk documentation files as `35ba9b5`
   with message `week-09: define API contracts and release boundaries`, then pushed
   `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
-  working tree and synchronization with the remote branch. Only the bootcamp
-  documentation closing commit and push remain pending.
+  working tree and synchronization with the remote branch.
+- Furkan committed the Friday bootcamp evidence as `5edc020` and pushed main.
+  Supplied terminal evidence confirmed a clean, synchronized working tree;
+  Saturday's opening local inspection also confirmed both repositories were clean.
 
 ### Friday Learning Review Notes
 
@@ -704,14 +706,72 @@ Week 09
   This assertion concerns business state; it need not prohibit an intended rejection
   log or security event.
 
+## Week 09 Saturday Progress - 12 September
+
+- Furkan drafted and revised four bounded issues: Ticket creation validation,
+  authenticated-member Ticket creation, backend application foundation, and guarded
+  PostgreSQL integration-test infrastructure. The first three drafts are reviewed;
+  the guarded-test draft still needs its concrete isolation method and verification
+  of application commits, exception cleanup, and resource release.
+- Preserved the drafts and preliminary dependency map in OpsDesk's
+  `docs/issue-plan.md`, linked from README. These are local planning documents,
+  not published GitHub issues or completed implementation.
+- Distinguished defining validation policy from implementing it. Creation rejects
+  server-controlled fields rather than ignoring them, derives tenant membership
+  references, and tests durable state as well as status codes.
+- Reviewed foundation acceptance criteria: reproducible installation, documented
+  configuration, actual startup/shutdown, isolated tests, and safe errors. Minimal
+  CI waits for executable code and meaningful tests; no health endpoint is added
+  solely to satisfy a superficial test.
+- Reviewed dependencies: independent design work, required schema and authentication
+  inputs, and guarded test infrastructure before business-schema verification.
+  Identity validation/authentication contracts need their own bounded design work.
+- Restricted integration-test targeting to exact opsdesk_test plus an explicitly
+  allowed server. A _test suffix is insufficient. Guard tests must verify that
+  rejected targets never reach destructive setup/cleanup.
+- Isolation verification uses successive scopes with a probe table, not two tests
+  that depend on execution order or an assertion that the whole database is empty.
+  App/test configuration remains separate; engine/session setup is assigned to the
+  guarded-test issue rather than silently assumed to exist in foundation.
+- Furkan explicitly chose to stop new drafting and begin daily closure. Moved
+  remaining issues, isolation follow-up, priorities/labels, Week 10 sequencing,
+  GitHub publication, and the full weekly review/report to Sunday, 13 September.
+- No application, schema, executable tests, CI, or GitHub issues were created
+  during this session. Documentation checks passed.
+- Completed Saturday's four-question learning review. Furkan correctly explained
+  a ready issue versus completed decisions, exact database/server targeting,
+  rollback limitations after a real commit, and independence from test order.
+- Furkan reviewed and committed README and the issue-plan document as `8d546bd`
+  with message `week-09: draft implementation issues and dependencies`, then pushed
+  `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean,
+  synchronized working tree. Only the bootcamp closing commit and push remain pending.
+
+### Saturday Learning Review Notes
+
+- A real committed database transaction cannot be undone by rolling back a later
+  transaction. A Session commit in a deliberately configured test harness can have
+  different boundaries when joined to an externally owned transaction; the concrete
+  method remains Sunday's design work, not an implemented isolation guarantee.
+- Test independence is the requirement; pytest need not be described as inherently
+  random. Tests must work when selected alone or reordered. The chosen isolation
+  verification exercises successive scopes in one controlled test; this is a useful
+  technique, not the only possible way to verify isolation. Concurrent test execution
+  additionally requires its own resource-isolation policy and is not promised here.
+
 ## Week 09 Immediate Actions
 
-1. Have Furkan review, commit, and push the bootcamp documentation changes manually;
-   verify terminal evidence before marking Git closure. OpsDesk is complete as `35ba9b5`.
-2. On Saturday, create prioritized issues with acceptance criteria, expected tests,
-   dependencies, and the Week 10 sequence, including bounded remaining design work.
-3. Keep the Week 09 implementation gate open until the required design review and
-   issue plan are complete. Add minimal CI only with executable code and meaningful tests.
+1. Have Furkan review, commit, and push the bootcamp documentation changes.
+   Saturday's learning review and OpsDesk push (`8d546bd`) are complete;
+   record bootcamp terminal evidence before marking Git closure.
+2. On Sunday, resume the saved drafts rather than starting over. Resolve guarded-test
+   isolation and complete remaining bounded issues, priorities, labels, and dependencies.
+3. Have Furkan publish reviewed GitHub issues and record their real links. Complete
+   Week 10 sequencing, the Week 09 architecture review, weekly report, and handoff.
+4. Keep the implementation gate open until the required design and issue review is
+   complete. Include minimal CI and the Month 03 backend preview in the delivery plan.
+
+Sunday estimate: 3-4 hours of active work including carried-over planning and weekly
+review; keep any unfinished work explicit if the available session is shorter.
 
 ## Week 09 Guardrails
 

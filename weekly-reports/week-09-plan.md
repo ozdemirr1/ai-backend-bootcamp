@@ -204,8 +204,21 @@ and transaction coordination are explicit follow-ups. The grouped Friday learnin
 review is complete: all seven answers were correct, with precision notes recorded
 in [Weekly Status](../WEEKLY_STATUS.md). Furkan committed the seven OpsDesk documents
 as `35ba9b5` and pushed `feature/week-09-domain-design`; supplied terminal evidence
+confirms a clean, synchronized working tree. Furkan committed the Friday bootcamp
+evidence as `5edc020` and pushed main; supplied terminal evidence confirmed a clean,
+synchronized working tree. The issue backlog is not complete.
+
+Saturday evidence: Furkan drafted four issues and a preliminary dependency map.
+OpsDesk's `docs/issue-plan.md` preserves the reviewed Ticket validation, Ticket
+creation, and foundation drafts, plus the guarded PostgreSQL test draft with its
+isolation-method follow-up. No GitHub issues were published and no application or
+test code was implemented. Furkan chose to stop here; the remaining backlog and
+publication work moves to Sunday. The four-question Saturday learning review is
+complete, with transaction-boundary and test-order precision notes recorded in
+[Weekly Status](../WEEKLY_STATUS.md). Furkan committed README and the issue plan as
+`8d546bd` and pushed `feature/week-09-domain-design`; supplied terminal evidence
 confirms a clean, synchronized working tree. Only bootcamp Git closure remains
-pending. The issue backlog is not complete.
+pending. The complete prioritized backlog output remains unchecked.
 
 ## Daily Plan
 
@@ -261,7 +274,17 @@ pending. The issue backlog is not complete.
   the first suitable Week 10 issue.
 - Do not add a Docker build before a real Dockerfile exists.
 
-### Sunday - Review, Report, and Career Routine (1.5-2 hours)
+### Sunday - Backlog Carry-Over, Review, and Report (3-4 hours)
+
+Revised after Furkan ended Saturday drafting early. This includes the original
+weekly review plus unfinished planning, not additional implementation work.
+
+- Resume the four saved drafts; finalize guarded-test isolation and verification.
+- Complete remaining design, schema, identity, feature, test, CI, and preview-delivery
+  issue drafts with priorities, labels, acceptance criteria, and dependencies.
+- Have Furkan publish reviewed GitHub issues, record real links, and sequence Week 10.
+- Keep the implementation gate open until required design and backlog review is complete.
+
 
 - Review ERD, matrices, endpoints, issues, and unresolved questions together.
 - Complete the Week 09 architecture interview review.

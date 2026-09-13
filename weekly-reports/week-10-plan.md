@@ -17,7 +17,8 @@ when its prerequisites and remaining capacity permit.
 
 Continue in the Month 03 conversation. Furkan writes the learning implementation
 and performs Git/GitHub mutations; mentoring starts with rationale and a small example.
-Use a `feature/week-10-...` branch after resolving the Week 09 branch/PR handoff.
+OpsDesk PR #27 is merged as `c3a45ed`; local main was verified synchronized.
+Use a `feature/week-10-...` branch from the verified current main after final cleanup.
 
 ## Monday — Contracts and Foundation Start (2.5-3 hours)
 

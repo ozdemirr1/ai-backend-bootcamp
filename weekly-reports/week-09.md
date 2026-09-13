@@ -27,7 +27,7 @@ in design issues #1-#4, rather than silently treated as settled.
 - Mermaid ERD with organization-scoped participant relationships
 - Role/resource access matrix and Ticket state-transition rules
 - API baseline covering 22 endpoints, errors, pagination, and response examples
-- [Published issue index](https://github.com/ozdemirr1/opsdesk/blob/feature/week-09-domain-design/docs/issue-plan.md)
+- [Published issue index](https://github.com/ozdemirr1/opsdesk/blob/c3a45ed2fba366de9d3fe8236228fc19a697d17c/docs/issue-plan.md)
 - [GitHub backlog](https://github.com/ozdemirr1/opsdesk/issues): 26 issues, eight labels
 - Completed daily learning reviews and Sunday architecture review
 - [Week 10 implementation handoff](week-10-plan.md)
@@ -105,9 +105,13 @@ OpsDesk feature branch: `feature/week-09-domain-design`.
 
 Furkan supplied successful commit/push evidence for these milestones. The final
 OpsDesk publication commit `08717e6` is pushed; the supplied terminal output confirms
-a clean working tree synchronized with the remote feature branch. Bootcamp closing
-documents still await his staged review, commit, and push. Final PR/merge evidence
-is not yet recorded here.
+a clean working tree synchronized with the remote feature branch. Furkan committed
+and pushed the bootcamp report and handoff as `ae8133a`; its working tree was clean.
+
+[OpsDesk PR #27](https://github.com/ozdemirr1/opsdesk/pull/27) was merged as
+`c3a45ed2fba366de9d3fe8236228fc19a697d17c`. Furkan switched to main and pulled
+with `--ff-only`; supplied terminal evidence confirms clean, synchronized main.
+Feature-branch deletion is a remaining housekeeping step, not a missing merge.
 
 ## Variance and Carry-Over
 
@@ -123,7 +127,8 @@ is not yet recorded here.
 
 ## Closure Status
 
-Technical review, published backlog, report, and Week 10 handoff are prepared.
-OpsDesk publication commit/push is verified; bootcamp closing Git evidence is pending.
-No implementation issue is marked complete merely
-because its description has been published.
+Week 09 design, architecture review, published backlog, report, and Week 10 handoff
+are complete with explicit design and career carry-over. OpsDesk PR #27 is merged;
+the initial bootcamp closure is committed as `ae8133a`. This follow-up records the
+subsequent merge evidence. Feature-branch cleanup and committing this evidence are
+the final housekeeping steps. Implementation issues remain open.

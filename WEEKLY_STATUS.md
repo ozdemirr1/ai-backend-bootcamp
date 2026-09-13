@@ -806,8 +806,8 @@ Week 09
   Foundation, guarded tests, and initial schema take priority; authentication is
   capacity-dependent. D01-D04 still require decisions before dependent implementation.
 - No completed career action was evidenced; explicitly carried a bounded internship
-  preparation task into Week 10. Bootcamp closing commit/push and PR/merge handoff
-  evidence remain pending.
+  preparation task into Week 10. The subsequent bootcamp push and PR merge are
+  verified below.
 - Furkan committed the 28 OpsDesk publication/review documents as `08717e6`
   (`week-09: link published backlog and record review completion`) and pushed
   `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
@@ -818,6 +818,13 @@ Week 09
   were created. The temporary publication helper was checked with an offline
   simulation for existing-issue reuse, repeat execution, and dependency-link mapping;
   that is tooling verification, not evidence of a tested product API.
+
+- Furkan committed and pushed the five bootcamp closing documents as `ae8133a`;
+  supplied terminal evidence confirmed clean, synchronized main.
+- Furkan created and merged [OpsDesk PR #27](https://github.com/ozdemirr1/opsdesk/pull/27)
+  as `c3a45ed`. The PR state is MERGED. He switched to main and pulled with
+  `--ff-only`; supplied evidence confirms clean main synchronized with origin/main.
+  Feature-branch cleanup remains the final repository housekeeping step.
 
 ### Sunday Learning Review Corrections
 
@@ -838,11 +845,11 @@ Week 09
 
 ## Week 09 Immediate Actions
 
-1. Have Furkan review and commit/push the bootcamp report, status, README, and
-   Week 09/10 plans. OpsDesk publication commit/push is verified as `08717e6`.
-2. Confirm the OpsDesk branch/PR handoff before Week 10.
-3. Start Week 10 from the completed review and published backlog. Resolve remaining
-   design prerequisites before their dependent implementation; track actual progress.
+1. Remove the merged OpsDesk feature branch locally and remotely, then verify main.
+2. Have Furkan commit/push this final merge-evidence update in the bootcamp repository.
+3. Begin Week 10 from OpsDesk main at `c3a45ed` (or its verified successor), create
+   the agreed Week 10 feature branch, and resolve design prerequisites before their
+   dependent implementation. The reviewed plan is in `weekly-reports/week-10-plan.md`.
 4. Complete the explicitly carried-over bounded career task during Week 10.
 
 Sunday estimate: 3-4 hours of active work including carried-over planning and weekly

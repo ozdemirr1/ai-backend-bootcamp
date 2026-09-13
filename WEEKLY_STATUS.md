@@ -744,7 +744,10 @@ Week 09
 - Furkan reviewed and committed README and the issue-plan document as `8d546bd`
   with message `week-09: draft implementation issues and dependencies`, then pushed
   `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean,
-  synchronized working tree. Only the bootcamp closing commit and push remain pending.
+  synchronized working tree.
+- Furkan committed the Saturday bootcamp evidence as `40df4cc` and pushed main.
+  Supplied terminal evidence confirmed a clean, synchronized working tree;
+  Sunday's opening local inspection also confirmed both repositories were clean.
 
 ### Saturday Learning Review Notes
 
@@ -758,17 +761,89 @@ Week 09
   technique, not the only possible way to verify isolation. Concurrent test execution
   additionally requires its own resource-isolation policy and is not promised here.
 
+## Week 09 Sunday Progress - 13 September
+
+- Opening checks confirmed OpsDesk at `8d546bd` and bootcamp at `40df4cc`, both
+  initially clean. Recorded Saturday's completed bootcamp push evidence.
+- Reviewed explicit test isolation: real application commits, independent-session
+  verification, validated allowlisted DELETE cleanup before/after scopes, preserved
+  migration history, and one suite per test database. Controlled multi-session
+  concurrency belongs inside one test and must finish before cleanup.
+- Furkan drafted identity/authentication contract, initial schema, Ticket schema,
+  and registration issues; mentoring corrections clarified token-validation tests
+  target protected requests, migration predecessor boundaries, password verification,
+  known-constraint conflict mapping, and real concurrent registration checks.
+- At Furkan's request, prepared login and current-user issue drafts, then continued
+  Organization creation/read, staff directory, and member addition/reactivation.
+  Four Saturday drafts plus ten additions made 14, correcting the earlier estimate
+  of 12 drafts. No GitHub issues had been created.
+- Following Furkan's request to continue with grouped drafting, prepared twelve
+  further proposals covering remaining membership/Ticket/Comment workflows, contract
+  and concurrency design, shared errors/logging, CI, and the Month 03 preview.
+- Consolidated 26 English issue bodies in OpsDesk's `docs/issues/`; `docs/issue-plan.md`
+  now contains local IDs, suggested priorities/labels, an acyclic dependency graph,
+  exact coverage of all 22 API endpoints, and a proposed Week 10 sequence. The four
+  original drafts remain in individual files rather than being discarded.
+- Updated the API baseline with the reviewed common login 401 outcome. Exact identity
+  policies and remaining API/concurrency choices are still design work, not resolved
+  merely by creating an issue about them.
+- Furkan reviewed and committed the consolidated 26-issue backlog as `3ad42fe`
+  (`week-09: consolidate issue drafts and implementation plan`) and pushed the
+  OpsDesk feature branch. Supplied terminal evidence confirmed a clean working tree.
+- Furkan installed GitHub CLI, authenticated, verified an empty issue list, created
+  D01 as #1, then ran the prepared batch publication. All 26 issues and eight labels
+  now exist. Read-only GitHub verification confirmed exact titles, local IDs, labels,
+  and dependency links. See the [published backlog](https://github.com/ozdemirr1/opsdesk/issues).
+- Linked real issue numbers in the product issue index and marked local issue bodies
+  as initial-publication snapshots. GitHub owns live task status; product contracts
+  must still be updated when accepted behavior changes. Dependency links are Markdown
+  references, not native GitHub blocking relationships.
+- Completed Sunday's seven-question architecture review. Furkan correctly explained
+  tenant consistency versus authorization, owner-index limits, real commit boundaries,
+  persisted identity, design prerequisites, and durable-state checks. Precision notes
+  are recorded below and in the [Week 09 report](weekly-reports/week-09.md).
+- Prepared the [Week 10 handoff](weekly-reports/week-10-plan.md) for 15-20 active hours.
+  Foundation, guarded tests, and initial schema take priority; authentication is
+  capacity-dependent. D01-D04 still require decisions before dependent implementation.
+- No completed career action was evidenced; explicitly carried a bounded internship
+  preparation task into Week 10. Bootcamp closing commit/push and PR/merge handoff
+  evidence remain pending.
+- Furkan committed the 28 OpsDesk publication/review documents as `08717e6`
+  (`week-09: link published backlog and record review completion`) and pushed
+  `feature/week-09-domain-design`. Supplied terminal evidence confirms a clean
+  working tree synchronized with the remote feature branch.
+- Documentation checks passed for local links/anchors, Markdown structure/whitespace,
+  existing JSON examples, required issue sections, dependency cycles, and endpoint
+  coverage. No OpsDesk runtime code, migrations, application tests, CI, or deployment
+  were created. The temporary publication helper was checked with an offline
+  simulation for existing-issue reuse, repeat execution, and dependency-link mapping;
+  that is tooling verification, not evidence of a tested product API.
+
+### Sunday Learning Review Corrections
+
+- Atomic ownership transfer does not execute every SQL statement simultaneously.
+  Coordinate constraint timing and concurrent workflows; locks do not replace actor
+  authorization or target eligibility checks.
+- Cleanup requires exact `opsdesk_test` and allowed-server validation before writes,
+  a fixed table allowlist, FK-safe deletion, preserved migration history, and closed
+  sessions. Surface cleanup failures and stop subsequent scopes; ordinary teardown
+  cannot be guaranteed after hard process termination.
+- Issue closure is bookkeeping, not proof. Design tasks require reviewed decisions
+  and contract examples; implementation tasks require relevant code/test evidence.
+  Ticket creation #18 depends on #1, #3, #4, #8, #13, and #10, not only validation #1.
+- Independent-session checks should compare all relevant durable business fields;
+  permitted rejection logs are not forbidden by the unchanged-business-state rule.
+- Current accepted behavior belongs in product documents. Closed design issues are
+  historical rationale and may be superseded; local drafts are publication snapshots.
+
 ## Week 09 Immediate Actions
 
-1. Have Furkan review, commit, and push the bootcamp documentation changes.
-   Saturday's learning review and OpsDesk push (`8d546bd`) are complete;
-   record bootcamp terminal evidence before marking Git closure.
-2. On Sunday, resume the saved drafts rather than starting over. Resolve guarded-test
-   isolation and complete remaining bounded issues, priorities, labels, and dependencies.
-3. Have Furkan publish reviewed GitHub issues and record their real links. Complete
-   Week 10 sequencing, the Week 09 architecture review, weekly report, and handoff.
-4. Keep the implementation gate open until the required design and issue review is
-   complete. Include minimal CI and the Month 03 backend preview in the delivery plan.
+1. Have Furkan review and commit/push the bootcamp report, status, README, and
+   Week 09/10 plans. OpsDesk publication commit/push is verified as `08717e6`.
+2. Confirm the OpsDesk branch/PR handoff before Week 10.
+3. Start Week 10 from the completed review and published backlog. Resolve remaining
+   design prerequisites before their dependent implementation; track actual progress.
+4. Complete the explicitly carried-over bounded career task during Week 10.
 
 Sunday estimate: 3-4 hours of active work including carried-over planning and weekly
 review; keep any unfinished work explicit if the available session is shorter.

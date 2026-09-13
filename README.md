@@ -46,6 +46,9 @@ begin. This repository remains the learning log and evidence base.
   from FastAPI fundamentals to a PostgreSQL-backed secured API
 - [Week 09 Plan](weekly-reports/week-09-plan.md) - OpsDesk requirements,
   organization-scoped domain design, ERD, access rules, and issue planning
+- [Week 09 Report](weekly-reports/week-09.md) - reviewed product design and 26 published issues
+- [Week 10 Plan](weekly-reports/week-10-plan.md) - executable foundation, guarded tests,
+  schema prerequisites, and capacity-bounded authentication work
 
 The real OpsDesk product begins in Week 09 in a separate public repository.
 This repository continues to hold the learning evidence and roadmap history.

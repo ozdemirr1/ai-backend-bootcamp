@@ -145,9 +145,9 @@ For each entity, document:
 - [x] Ticket status-transition matrix
 - [x] Initial API endpoint inventory (22-endpoint baseline; remaining details explicit)
 - [x] Error and pagination contract sketches (not final schemas or executed tests)
-- [ ] Prioritized GitHub issue list with acceptance criteria
-- [ ] Week 10 implementation sequence
-- [ ] Week 09 report and interview review
+- [x] Prioritized GitHub issue list with acceptance criteria (26 published issues)
+- [x] Week 10 implementation sequence ([handoff](week-10-plan.md))
+- [x] Week 09 report and interview review ([report](week-09.md))
 
 Monday evidence: [OpsDesk](https://github.com/ozdemirr1/opsdesk), initial commit
 `eb0e20e`. README and `docs/requirements.md` contain the reviewed initial scope
@@ -217,8 +217,27 @@ publication work moves to Sunday. The four-question Saturday learning review is
 complete, with transaction-boundary and test-order precision notes recorded in
 [Weekly Status](../WEEKLY_STATUS.md). Furkan committed README and the issue plan as
 `8d546bd` and pushed `feature/week-09-domain-design`; supplied terminal evidence
-confirms a clean, synchronized working tree. Only bootcamp Git closure remains
-pending. The complete prioritized backlog output remains unchecked.
+confirms a clean, synchronized working tree. Furkan committed the Saturday bootcamp
+evidence as `40df4cc` and pushed main; supplied terminal evidence confirmed a clean,
+synchronized working tree. The complete prioritized backlog output remains unchecked.
+
+Sunday progress: Reviewed real-commit test isolation and expanded the four Saturday
+issue drafts into 26 individually stored English bodies in OpsDesk's `docs/issues/`.
+Furkan reviewed, committed, and pushed the consolidated backlog as `3ad42fe`, then
+published all 26 issues and eight labels using GitHub CLI. Read-only verification
+confirmed titles, local-ID mappings, priorities/types, and dependency links. The
+[GitHub backlog](https://github.com/ozdemirr1/opsdesk/issues) is now the live work
+tracker; local issue bodies preserve their initial published scope.
+
+All 22 endpoints are covered. The Sunday architecture review is complete; precision
+corrections are recorded in the [Week 09 report](week-09.md). The
+[Week 10 handoff](week-10-plan.md) bounds implementation to 15-20 active hours. D01-D04
+remain explicit design prerequisites; publication does not complete their decisions.
+Documentation and offline publication-helper checks passed; no product application
+tests, migrations, CI, or deployment ran. Furkan committed and pushed the OpsDesk
+publication/review updates as `08717e6`; supplied terminal evidence confirms a clean,
+synchronized feature branch. Bootcamp closing commit/push and branch/PR handoff
+remain pending. The unverified career action is explicitly carried into Week 10.
 
 ## Daily Plan
 

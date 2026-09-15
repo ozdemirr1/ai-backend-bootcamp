@@ -8,6 +8,26 @@ Target: 15-20 active hours including review, documentation, and Git work. Daily
 estimates below total approximately 16-20 hours. This is a capacity plan, not a
 promise to finish every P0 issue or all 22 endpoints.
 
+## Schedule Adjustment — Tuesday, 15 September
+
+Furkan could not access the system on Monday, 14 September; no work is recorded
+for that day. At his request, Monday and Tuesday work is combined into one session
+on 15 September. Aim to complete the scheduled scope with approximately 5-6 active
+hours plus breaks; this remains an estimate, not completed-work evidence.
+
+| Work block | Target time |
+| --- | --- |
+| Repository checks and Furkan's feature-branch setup | 15 minutes |
+| #1 Ticket creation validation decisions and examples | 45 minutes |
+| #2 Identity/authentication contract decisions and examples | 75 minutes |
+| #5 Executable foundation, settings, tests, and README | 120 minutes |
+| #9 Fast CI after meaningful tests pass locally | 45 minutes |
+| Grouped learning review, documentation, and Git closure | 30 minutes |
+
+Preserve review and test gates during the combined session. Feature-specific design
+issues do not block independent foundation work; #9 requires #5's meaningful tests.
+If a blocker remains, record it rather than declaring the combined scope complete.
+
 ## Outcome
 
 Move from reviewed design into a small executable OpsDesk foundation: reproducible
@@ -38,6 +58,23 @@ Use a `feature/week-10-...` branch from the verified current main after final cl
   startup/configuration/docs tests. No database or authentication dependency yet.
 - Add [#9 fast CI](https://github.com/ozdemirr1/opsdesk/issues/9) only once meaningful
   executable tests exist. Verify locked installation, Ruff, and pytest.
+
+## Tuesday Completion Evidence — 15 September
+
+- Reviewed #1 Ticket validation (`fc81057`) and #2 identity/authentication contracts
+  (`8959911`); these are design outcomes, not implemented business endpoints.
+- Furkan implemented #5's package, app factory, settings, and seven tests (`a5461a4`),
+  then explicit tool configuration and #9's minimal CI (`0bc43d5`). All commits were
+  pushed to feature/week-10-backend-foundation; the product working tree is clean.
+- Locked installation, Ruff lint/format, and seven tests passed locally. Hosted
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/35004969487) passed
+  for `0bc43d5`. Intentional lint/format/test failures returned exit code 1 in local
+  temporary copies; no hosted failure experiment or production readiness is claimed.
+- The existing dependency deprecation warning remains visible. Grouped learning
+  review is complete, with precision notes on factory isolation, validation timing,
+  lockfile guarantees, and evidence boundaries recorded in WEEKLY_STATUS.md.
+  Bootcamp closing commit/push is pending; issue closure/PR merge remain separate
+  user actions. No actual duration was recorded for the combined session.
 
 ## Wednesday — Guarded Database Testing (2.5-3 hours)
 

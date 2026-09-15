@@ -2,23 +2,19 @@
 
 ## Current Week
 
-Week 09
+Week 10
 
 ## Date
 
-7 September - 13 September 2026
+14 September - 20 September 2026
 
 ## Current Focus
 
-- Separate OpsDesk product repository
-- Product requirements and explicit non-goals
-- User, Organization, OrganizationMembership, Ticket, Comment, and Attachment
-- Organization-scoped owner, admin, agent, and customer roles
-- Ticket participant and lifecycle terminology
-- Relational ERD
-- Authorization and status-transition matrices
-- Initial API endpoint inventory
-- Prioritized GitHub issue list
+- Finalize Ticket validation and identity/authentication contracts (#1 and #2)
+- Establish the executable OpsDesk foundation (#5)
+- Add fast CI only after meaningful executable tests (#9)
+- Continue synchronous persistence and guarded PostgreSQL testing as scheduled
+- Keep remaining API and concurrency decisions as explicit implementation prerequisites
 
 ## Completed
 
@@ -868,3 +864,127 @@ review; keep any unfinished work explicit if the available session is shorter.
   Dockerfile.
 - Do not start Redis, React, or AI integration early.
 - Keep credentials, `.env`, complete URLs, and complete tokens outside Git.
+
+## Week 10 Tuesday Opening — 15 September
+
+- Furkan could not access the system on Monday, 14 September. At his request,
+  Monday and Tuesday work is combined today; no Monday completion is claimed.
+- Opening local checks: OpsDesk main at `c3a45ed`, bootcamp main at `f136471`,
+  both clean and matching their local origin/main tracking references. The previously
+  supplied terminal output confirms the Week 09 pushes and feature-branch deletion.
+- Week 09 housekeeping is complete: PR #27 merged, feature branch deleted locally
+  and remotely, and final bootcamp handoff evidence pushed as `f136471`.
+- Revised today's plan to approximately 5-6 active hours: #1, #2, #5, #9, then
+  grouped learning review and Git closure. No Week 10 issue is completed yet.
+- Git and GitHub mutations remain Furkan's task; no implementation was generated
+  during the opening repository and schedule checks.
+
+### Tuesday — Ticket Creation Validation Review
+
+- Furkan created `feature/week-10-backend-foundation`; supplied terminal evidence
+  confirmed a clean branch before design changes.
+- Reviewed title length 1..255 and description length 1..10000 after Python str.strip(),
+  measured in Unicode code points with no additional Unicode normalization.
+- Reject title tab/CR/LF and both fields' NUL before trimming; preserve internal
+  description formatting and store trimmed text. Corrected the sample description
+  to retain four- and two-space internal indentation.
+- Priority is an exact enum with no trimming/case conversion; only omission defaults
+  to medium. Required field types are strict and every unlisted field is rejected,
+  including server-controlled values matching creation defaults.
+- Furkan correctly classified the supplied boundary and invalid-input cases. Recorded
+  the reviewed contract in OpsDesk's `docs/ticket-creation-validation.md` and aligned
+  API, relational, requirements, and issue-index references.
+- Clarified validation acceptance versus successful authorized commit; the field
+  policy does not resolve shared authentication/authorization error precedence (#3).
+- Documentation links, JSON examples, and whitespace checked. No endpoint, migration,
+  or application tests implemented. Furkan committed/pushed the five contract documents
+  as `fc81057` on `feature/week-10-backend-foundation`; supplied terminal evidence
+  confirms a clean working tree and upstream tracking. GitHub issue closure remains
+  separate from this commit. #2, #5, and #9 remain in today's combined session.
+
+### Tuesday — Identity and Authentication Contract Review
+
+- Furkan selected lowercase canonical ASCII email, edge trimming, preserved dots/tags,
+  exact shared identity lookup, and 409 email_already_exists for duplicate registration.
+  Reviewed format examples, 254-character limit, bare addresses, and no DNS checks.
+- Furkan defined NFC-normalized Unicode passwords of 15..128 code points, preserved
+  whitespace/case, no truncation, and consistent registration/login preprocessing.
+  Clarified valid UTF-8 input and hashing at registration versus verification at login.
+- Furkan defined HS256-only access tokens with 30-minute lifetime, zero leeway,
+  mandatory sub/iat/exp/iss/aud, environment secret, and current persisted active User.
+  Corrected algorithm-header wording: reject unsupported alg rather than ignore it;
+  claim types require strict validation beyond presence checks.
+- Consolidated the reviewed outcomes in OpsDesk's
+  `docs/identity-authentication-contract.md`, including examples, canonical email
+  storage obligations, generic login failures, and separate authorization checks.
+  Updated API/relational/requirements/index references and checked documentation.
+- Furkan committed and pushed the reviewed identity contract and aligned documents
+  as `8959911`. No login, JWT, password hashing, or database implementation is claimed.
+
+### Tuesday — Executable Foundation and CI Evidence
+
+- Furkan initialized the independent OpsDesk package with uv and Python 3.14.7,
+  wrote the application factory and Pydantic Settings, and implemented seven tests.
+  Reviewed settings defaults, environment parsing, invalid configuration rejection,
+  hidden input in exception text, documentation visibility, and explicit settings
+  overriding invalid ambient configuration. TestClient context managers exercise
+  application startup/shutdown; no artificial lifecycle resource was introduced.
+- Review corrections covered the main.py module location, case-sensitive keyword
+  arguments, an unused TestClient instance, explicit test settings, and separation
+  of application tests from configuration tests. Furkan requested direct file review
+  rather than repeatedly pasting code into the conversation.
+- Recorded settings and local commands in README. No automatic .env loading or
+  required database/JWT setting is introduced. Production environment selection does
+  not implicitly disable documentation or establish production readiness.
+- Furkan committed and pushed foundation code, tests, dependency lockfile, and README
+  as `a5461a4`. Added explicit Ruff and pytest configuration before CI publication.
+- Furkan authored the GitHub Actions workflow with read-only contents permission,
+  checkout credentials disabled, pinned uv version, locked installation, and explicit
+  selection of the two foundation test files. Database integration tests are excluded.
+  He committed and pushed the workflow, tool configuration, and CI README as `0bc43d5`.
+- Local checks passed: seven tests, Ruff lint, five Python files formatted, and
+  git diff --check. The Starlette/AnyIO deprecation warning remains visible.
+  Updated the test-client dependency to httpx2 following the installed Starlette
+  compatibility warning; no warning-suppression rule was added.
+- Hosted [Backend CI run 35004969487](https://github.com/ozdemirr1/opsdesk/actions/runs/35004969487)
+  completed successfully for `0bc43d570b80e1cdd631bed7781f947a2ba5a938`.
+  Read-only API verification and Furkan's terminal output both confirm success.
+  gh run list with a workflow filename initially returned 404 because the workflow
+  was absent from default main; listing the feature branch without that filter worked.
+- Controlled failure checks in temporary copies confirmed exit code 1 for an unused
+  import, formatting violation, and intentionally incorrect test expectation. These
+  are local negative checks, not failed hosted runs. The product checkout stayed clean.
+- Combined Monday/Tuesday technical scope (#1, #2, #5, #9) has reviewed evidence on
+  feature/week-10-backend-foundation. GitHub issue closure and PR merge have not been
+  performed or claimed. The grouped learning review is complete; the bootcamp closing
+  commit/push remains pending. No actual total session duration was measured.
+
+### Tuesday — Grouped Learning Review
+
+- Furkan explained factory-based configuration, monkeypatch restoration, integration
+  of settings validation with application creation, exception-text redaction limits,
+  dependency/configuration files, non-mutating format checks, and CI evidence scope.
+- A new app instance supports isolation but does not automatically isolate shared
+  globals, caches, databases, or external services. These require explicit ownership
+  and cleanup. Module-level Settings captures configuration at initialization.
+- In the current code, invalid settings fail inside create_app before a FastAPI
+  instance is returned; this is before ASGI lifespan startup, not an exception raised
+  by a lifespan startup handler. TestClient contexts separately exercise lifespan.
+- uv.lock records resolved dependencies, hashes, and platform conditions for
+  reproducible resolution; it cannot guarantee identical behavior across operating
+  systems, architectures, environment values, or external services. .python-version
+  is honored by supporting tools in the chosen workflow, not by every CI/tool
+  automatically; pyproject.toml separately declares the supported Python range.
+- monkeypatch restores changes made through that fixture, not arbitrary test side
+  effects. Current secret-redaction evidence concerns str(ValidationError), not all
+  structured error representations or logs.
+- CI may support other automation, but this quality-check job must report formatting
+  violations rather than silently modify its checkout. A green run proves only the
+  selected checks; authentication and tenant data isolation remain unimplemented.
+
+### Week 10 Next Actions
+
+1. Have Furkan review, commit, and push the bootcamp status and Week 10 plan.
+2. Handle issue closure and branch/PR bookkeeping with the recorded evidence;
+   successful CI does not automatically merge the feature branch or close issues.
+3. Continue Wednesday with #6 guarded PostgreSQL tests; no database setup has started.

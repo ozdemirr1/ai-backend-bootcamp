@@ -10,10 +10,9 @@ Week 10
 
 ## Current Focus
 
-- Finalize Ticket validation and identity/authentication contracts (#1 and #2)
-- Establish the executable OpsDesk foundation (#5)
-- Add fast CI only after meaningful executable tests (#9)
-- Continue synchronous persistence and guarded PostgreSQL testing as scheduled
+- Consolidate guarded PostgreSQL infrastructure and its review evidence (#6)
+- Build on merged contracts, application foundation, and minimal CI (#1/#2/#5/#9)
+- Prepare identity/Organization schema work after the guarded-test handoff (#7)
 - Keep remaining API and concurrency decisions as explicit implementation prerequisites
 
 ## Completed
@@ -957,7 +956,8 @@ review; keep any unfinished work explicit if the available session is shorter.
 - Combined Monday/Tuesday technical scope (#1, #2, #5, #9) has reviewed evidence on
   feature/week-10-backend-foundation. GitHub issue closure and PR merge have not been
   performed or claimed. The grouped learning review is complete; the bootcamp closing
-  commit/push remains pending. No actual total session duration was measured.
+  commit/push was subsequently completed as `5275f70`, confirmed at Wednesday opening.
+  No actual total session duration was measured.
 
 ### Tuesday — Grouped Learning Review
 
@@ -984,7 +984,169 @@ review; keep any unfinished work explicit if the available session is shorter.
 
 ### Week 10 Next Actions
 
-1. Have Furkan review, commit, and push the bootcamp status and Week 10 plan.
-2. Handle issue closure and branch/PR bookkeeping with the recorded evidence;
-   successful CI does not automatically merge the feature branch or close issues.
-3. Continue Wednesday with #6 guarded PostgreSQL tests; no database setup has started.
+1. Commit/push the bootcamp evidence after the PostgreSQL infrastructure handoff;
+   OpsDesk commit/push is verified as a91e2fd and grouped learning review is complete.
+2. Remove the merged feature/week-10-postgresql-tests branch locally/remotely.
+   PR #29 is merged and #6 is closed; main is synchronized at 3f85571.
+3. Extend fast CI test selection in a bounded follow-up; the current job still
+   runs only seven foundation tests. PostgreSQL CI remains #25.
+4. Begin #7 only after the guarded-test handoff; preserve the Week 10 capacity plan.
+
+## Week 10 Wednesday Opening — 16 September
+
+- Confirmed clean working trees: bootcamp main at `5275f70` and OpsDesk
+  feature/week-10-backend-foundation at `0bc43d5`, matching local tracking refs.
+  Furkan's supplied Tuesday terminal evidence confirms the bootcamp closing push.
+- Read-only GitHub checks confirm no PR for the foundation branch, open issues
+  #1/#2/#5/#9, and successful hosted CI run 35004969487 for the current branch commit.
+- First complete the agreed foundation PR review/merge and verify issue closure.
+  Prepared an English PR description with acceptance evidence and closing keywords;
+  Furkan will create and merge it. No PR creation or merge is claimed yet.
+- Then begin #6 with database lifecycle reasoning, exact target guards, synchronous
+  engine/session setup, and probe-table isolation that survives real commits.
+  Allow 3-3.5 hours including the carried-over PR work and grouped daily closure.
+  Database provisioning and destructive test operations have not started.
+
+### Wednesday — Foundation PR Merged
+
+- Furkan created PR #28, targeting main from feature/week-10-backend-foundation.
+  Review confirmed the expected 16-file scope, closing links to #1/#2/#5/#9,
+  no conflicts, and successful PR checks for head `0bc43d5`.
+- Furkan merged PR #28 with a head-commit match and preserved commit history.
+  Merge commit: `64b14eb515fcb49091c2b02e77bd85b1cdff40a8`. He switched to main
+  and pulled with --ff-only; terminal evidence confirms clean synchronized main.
+- Read-only GitHub verification confirms issues #1, #2, #5, and #9 are CLOSED.
+  [Main CI run 35118215125](https://github.com/ozdemirr1/opsdesk/actions/runs/35118215125)
+  passed for the merge commit. This is merged foundation evidence, not deployment.
+- Feature-branch cleanup and the new #6 working branch remain Furkan's next Git steps.
+
+### Wednesday — Test Target Guard and Dependency Warning
+
+- Furkan deleted the merged foundation branch locally/remotely and created
+  feature/week-10-postgresql-tests from clean main. He wrote validate_test_target
+  and six unit tests covering the exact localhost IPv4/port/database target and
+  rejected alternatives. Corrected a function-name typo and formatting; 13 tests pass.
+  These unit tests do not yet prove integration with connection or cleanup code.
+- Local PostgreSQL 18 is running and 127.0.0.1:5432 accepts connections. No database
+  creation, schema changes, or destructive test operations have been performed.
+- At Furkan's request, investigated the Starlette/AnyIO warning before proceeding.
+  Installed Starlette 1.6.0 references anyio.abc.BlockingPortal; upstream main has
+  changed to anyio.from_thread.BlockingPortal, but the published release checked
+  on 16 September remains 1.6.0.
+- Added a temporary pytest warning filter restricted to the exact message,
+  DeprecationWarning category, and starlette.testclient module, with rationale and
+  removal condition in README. No dependency downgrade, site-packages patch, or
+  dependency version change. This filters known test output; it is not an upstream fix.
+- Verification: 13 tests pass without warnings; Ruff lint/format and diff checks pass.
+  A temporary warning-emission check confirms other messages, modules, and categories
+  remain visible. Product changes are uncommitted; database configuration is next.
+
+
+### Wednesday — Product Database Provisioning and Guarded Test Evidence
+
+- Furkan chose new product database names to preserve the Month 02 application:
+  opsdesk_product_dev and opsdesk_product_test on 127.0.0.1:5432. The older
+  opsdesk_dev/opsdesk_test databases remain unchanged and are rejected by the new
+  integration guard. The explicit decision supersedes earlier test-target names.
+- Furkan provisioned separate non-superuser owners opsdesk_product_app and
+  opsdesk_product_test_runner, set passwords interactively, and revoked PUBLIC
+  database access. Read-only checks confirmed ownership and denied cross-access
+  between the two new roles/databases. This does not establish server password
+  authentication policy or isolation from every legacy database.
+- Preserved fresh-install provisioning in scripts/postgresql/bootstrap_local.sql:
+  preflight target/name checks, no stored passwords, no automatic drop/reset, and
+  no business tables. The script was reviewed, not rerun on the provisioned server.
+- Furkan implemented separate environment-based database settings, URL.create,
+  synchronous engine/session factories, an exact test target guard, explicit caller
+  commits, and Session closure. Added SQLAlchemy/psycopg dependencies and lock updates.
+- Real PostgreSQL tests verify target identity, committed writes through independent
+  Sessions, rollback of uncommitted writes, exception cleanup, and pool return.
+  Probe isolation uses separate committed DELETE transactions before/after scopes;
+  only public.integration_probe is touched. A final read-only check found zero
+  remaining probe rows and no business tables in the new test database.
+- Subprocess tests verify cleanup failure interrupts subsequent tests, including
+  failures before the body and after it; ExceptionGroup retains body/cleanup errors.
+  Tests run sequentially with one suite per database; no cross-process lock exists.
+- Synthetic-secret checks cover connection/statement failures and cleanup reports.
+  Pytest enhanced tracebacks exposed exception argument values despite from None.
+  The reviewed --tb=native --no-showlocals policy retains standard tracebacks and
+  exception groups. A temporary negative check without chain suppression still
+  detected leakage. This is a bounded reporting policy, not universal log safety.
+- Furkan's final terminal evidence: Ruff lint passes, 20 files formatted, 37 tests
+  pass with six integration tests skipped by default; explicit integration opt-in
+  passes all six against the product test database. These are local results.
+  The existing hosted workflow still selects only the seven foundation tests.
+- README now records provisioning, required DB settings, hidden password input,
+  opt-in execution, transaction/cleanup ownership, and error-reporting limitations.
+  Local B02/F01 scope amendments record the new target; publishing the amendment to
+  GitHub remains Furkan's task. No issue closure, commit/push, PR, schema migration,
+  or business endpoint completion is claimed for this infrastructure work yet.
+- Grouped Wednesday learning review subsequently completed, with corrections below.
+  Git closure remains pending; no actual total session duration was measured.
+
+
+### Wednesday — Grouped Learning Review
+
+- Furkan explained explicit transaction ownership, separate-session verification,
+  independent cleanup transactions, paired body/cleanup errors, stopping after
+  cleanup failure, and the limits of exception-chain suppression.
+- Exact database/host/port allowlisting rejects mismatching configured targets;
+  it is not absolute server authentication or proof of isolation. Local tunnels,
+  server replacement, privileges, and overlapping runs remain separate concerns.
+- Caller-owned commits are this project's explicit policy. Correctly scoped
+  commit-on-success context managers can also be valid; automatic commit is not
+  inherently unsafe. Session closure rolls back unfinished transactional work,
+  not previously committed data or external side effects.
+- A Session is not a general query-result cache. Our probe uses SQL text, which
+  executes against PostgreSQL even in the same Session. The key reason for the
+  independent read is that a transaction can see its own uncommitted writes.
+  A fresh Session/transaction verifies visibility after commit and may reuse the
+  same physical connection from the pool.
+- A Python RuntimeError alone does not put PostgreSQL into the failed-transaction
+  state. Database statement errors can do so. Closing test Sessions first and
+  cleaning in a separate committed transaction separates cleanup from both normal
+  and failed test transaction lifecycles; it cannot guarantee cleanup succeeds.
+- Cleanup failure means isolation is uncertain, not necessarily that rows remain.
+  Preserve both failures and stop later tests rather than trust that uncertain state.
+- from None suppresses displayed implicit chaining; it does not erase exception
+  context, redact the replacement message, or control custom logs/debug output.
+- Staging revealed trailing whitespace in a newly added test's embedded source.
+  Earlier unstaged diff checks did not cover untracked files. Removed only those
+  three whitespace runs, checked Ruff, and Furkan re-staged the file. Final staged
+  diff --check is clean; the existing 37+6 test evidence is unchanged.
+
+
+### Wednesday — PostgreSQL Infrastructure Commit and Push
+
+- Furkan committed the 21 reviewed OpsDesk files as `a91e2fd`
+  (`week-10: establish guarded PostgreSQL test infrastructure`) and pushed
+  feature/week-10-postgresql-tests with upstream tracking. Supplied terminal output
+  and local inspection confirm a clean checkout synchronized with its tracking ref.
+- Prepared an issue #6 target-amendment/evidence comment and PR description for
+  Furkan to publish. Neither publication nor PR creation/merge is claimed yet.
+  Issue #6 was verified OPEN before the commit; passing local tests do not close it.
+- Hosted [Backend CI run 35140729238](https://github.com/ozdemirr1/opsdesk/actions/runs/35140729238)
+  passed for full head a91e2fdc024557cd842e5d35baa512e64f78be00. This verifies
+  the existing Ruff checks and seven foundation tests, not the expanded local suite.
+
+- Furkan published the [#6 target amendment and evidence](https://github.com/ozdemirr1/opsdesk/issues/6#issuecomment-5703322462)
+  and created [PR #29](https://github.com/ozdemirr1/opsdesk/pull/29).
+  Read-only review confirms main as base, head a91e2fdc024557cd842e5d35baa512e64f78be00,
+  recognized closing reference to #6, and CLEAN/MERGEABLE status.
+  PR [CI run 35140889645](https://github.com/ozdemirr1/opsdesk/actions/runs/35140889645)
+  passed. Merge and issue closure remain pending Furkan's action.
+
+
+### Wednesday — PostgreSQL Infrastructure Merged
+
+- Furkan merged PR #29 with the reviewed head-commit match, switched to main,
+  and pulled with --ff-only. Merge commit: 3f855717bfe0b893e46e107fa1b43151b3262e94.
+- Supplied GitHub CLI output confirms #6 CLOSED at 2026-09-16T19:30:43Z.
+  Terminal evidence confirms clean main synchronized with origin/main; local
+  inspection also confirms the merge commit and clean working tree.
+- The #6 target amendment and evidence are published. Branch cleanup and the
+  bootcamp closing commit/push remain the final housekeeping steps. Main-branch
+  post-merge CI has not been independently checked in this closing entry; the
+  recorded successful push/PR checks concern the reviewed feature head.
+- Next scheduled product work is #7 identity/Organization schema, with a bounded
+  fast-CI selection follow-up still tracked. No schema implementation is claimed.

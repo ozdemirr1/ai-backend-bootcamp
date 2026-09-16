@@ -73,16 +73,50 @@ Use a `feature/week-10-...` branch from the verified current main after final cl
 - The existing dependency deprecation warning remains visible. Grouped learning
   review is complete, with precision notes on factory isolation, validation timing,
   lockfile guarantees, and evidence boundaries recorded in WEEKLY_STATUS.md.
-  Bootcamp closing commit/push is pending; issue closure/PR merge remain separate
-  user actions. No actual duration was recorded for the combined session.
+  Bootcamp closing commit/push completed as `5275f70`; Wednesday opening confirms
+  clean main. Issue closure/PR merge remain separate user actions. No actual duration
+  was recorded for the combined session.
 
 ## Wednesday — Guarded Database Testing (2.5-3 hours)
+
+Allow an additional 20-30 minutes for the foundation PR handoff agreed with Furkan
+at Tuesday closure: create the PR, review its checks, merge, and verify closure of
+#1/#2/#5/#9 before branching for #6. Total Wednesday estimate: 3-3.5 hours including
+daily review and Git closure; record any incomplete acceptance criteria explicitly.
+
+Foundation handoff completed on 16 September: PR #28 merged as `64b14eb`, issues
+#1/#2/#5/#9 closed, local main clean and synchronized, and merge-commit CI passed.
+Branch cleanup and #6 implementation follow this verified baseline.
 
 - Implement [#6](https://github.com/ozdemirr1/opsdesk/issues/6): synchronous engine and
   session factories, separate application/test settings, exact database/host guards.
 - Verify real commits with independent sessions and allowlisted cleanup using a
   probe table, including exception cleanup and resource release.
 - Stop here if the safety and isolation checks fail; schema work depends on them.
+
+## Wednesday Progress Evidence — 16 September
+
+- Furkan removed the merged foundation branch and began feature/week-10-postgresql-tests.
+- Provisioned new opsdesk_product_dev/test databases with separate restricted owner
+  roles; the old Month 02 databases remain untouched. README preserves fresh setup
+  SQL, environment configuration, and hidden password-entry instructions.
+- Implemented sync database settings/engine/session helpers, exact target guards,
+  probe cleanup before/after scopes, and explicit transaction ownership.
+- Local checks: Ruff passes, 20 files formatted, 37 non-database tests pass, and
+  six opt-in PostgreSQL tests pass. Real commits, independent-session visibility,
+  rollback, exception cleanup, and connection return are covered.
+- Subprocess checks cover cleanup failure and stopping later tests. Synthetic
+  secrets remain absent under the documented native-traceback/no-locals policy;
+  this does not guarantee every possible debug or logging format is safe.
+- Evidence and limitations are documented; grouped learning review is complete.
+  Furkan committed/pushed OpsDesk as a91e2fd with a clean synchronized branch.
+  The #6 target amendment is published and PR #29 has passing checks for a91e2fd.
+  PR #29 merged as 3f85571 and #6 closed; main is clean and synchronized. Branch
+  cleanup and bootcamp closing commit/push remain. The existing hosted workflow
+  only runs seven foundation tests; expanding fast-test selection
+  is a bounded follow-up, while database CI remains #25.
+- No business schema or migrations were introduced. Do not compress #7 review to
+  compensate for the time spent on infrastructure; actual duration is unmeasured.
 
 ## Thursday — Identity and Organization Schema (2.5-3 hours)
 
@@ -128,7 +162,8 @@ Use a `feature/week-10-...` branch from the verified current main after final cl
 - Design tasks require reviewed decisions/examples; implementation tasks require
   relevant passing tests and committed code. A green unrelated test is insufficient.
 - Retain synchronous SQLAlchemy, request-scoped sessions, explicit transaction
-  ownership, Alembic, and guarded `opsdesk_test` verification.
+  ownership, Alembic, and guarded `opsdesk_product_test` verification. The renamed
+  target refers to the new product database; old Month 02 databases stay unchanged.
 - Ticket schema #8 and creation #18 follow their actual dependencies; they are not
   required to fit this week. Remaining features, database CI #25, and preview #26
   stay in the Month 03 backlog.

@@ -1,5 +1,8 @@
 # Technical Decisions
 
+Decisions are historical records. Decision 015 refines the career wording and
+AI learning sequence from Decision 001 without replacing the backend foundation.
+
 ## Decision 001 - Main Career Direction
 
 I will focus on becoming an AI-assisted Backend / Full-Stack Developer.
@@ -357,3 +360,32 @@ Loading the User on every request makes role promotion, demotion, deletion,
 and deactivation take effect independently of an already-issued token. A fake
 legacy owner would make the schema look stricter while encoding false business
 facts, so temporary nullability is safer than a misleading backfill.
+
+## Decision 015 - September Market Review: Evals Before Agent Complexity
+
+Reviewed 17 September 2026. Keep the direction of backend-focused development for
+production AI applications, with practical full-stack skills and junior/internship
+entry roles. Preserve Python, FastAPI, PostgreSQL, and the existing product sequence.
+
+Introduce evaluation with the first AI feature in Month 06, then extend it to
+retrieval and grounded answers in Months 07–08. Tool authorization, failure cases,
+cost/latency limits, and safe traces accompany implementation. Study MCP after
+direct tool calling; compare bounded agent workflows and managed Agents API only
+after a simpler baseline exists. Agents API is a verified public-beta release,
+not an immediate required dependency. SDK-first means maintained SDKs before
+orchestration frameworks, not handwritten protocol or cryptographic implementations.
+
+Keep React + TypeScript, Month 05 Docker/Redis, and synchronous persistence.
+Teach async Python through a bounded HTTP exercise after transaction/session
+fundamentals; do not convert the database layer by default. Prefer practical AWS
+deployment learning over an early certification sprint. Kubernetes stays optional
+and later. Existing weekly capacity and project acceptance gates remain in force.
+
+## Reason
+
+The [September review](monthly-reports/2026-09-market-review.md) records the supplied
+research, checked sources, sampling limits, and detailed sequencing. Market signals
+support stronger evaluation and operational skills, but do not justify replacing
+core backend learning with a list of frameworks. Several reported additions were
+already planned, and the proposed post-October introduction to FastAPI/PostgreSQL
+does not match the learner's demonstrated progress.

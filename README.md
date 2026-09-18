@@ -1,10 +1,18 @@
 # AI Backend / Full-Stack Bootcamp
 
-This repository tracks my 12-month learning journey to become an AI-assisted Backend / Full-Stack Developer.
+This repository tracks my 12-month learning journey toward backend development
+for production AI applications, with practical full-stack capability.
 
 ## Goal
 
-My goal is to become a job-ready AI-assisted Backend / Full-Stack Developer by building real-world projects with backend, database, cloud, AI integration, and frontend skills.
+My goal is to become job-ready for junior backend/full-stack roles by building
+projects with backend, database, cloud, AI integration, and frontend skills.
+Production AI engineering is the direction of the roadmap, not a claim that
+the current learning projects are production-ready.
+
+See the [12-month roadmap](ROADMAP.md) and the
+[September 2026 market review](monthly-reports/2026-09-market-review.md) for the
+latest sourced review, adopted changes, and preserved learning priorities.
 
 ## Main Stack
 

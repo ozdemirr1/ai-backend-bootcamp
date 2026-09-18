@@ -120,11 +120,29 @@ Branch cleanup and #6 implementation follow this verified baseline.
 
 ## Thursday — Identity and Organization Schema (2.5-3 hours)
 
+- Opening adjustment, 17 September: record the requested
+  [September market review](../monthly-reports/2026-09-market-review.md) before
+  schema work. The direction and #7 scope remain unchanged; account for this
+  review within weekly capacity rather than compress migration/test verification.
 - Implement [#7](https://github.com/ozdemirr1/opsdesk/issues/7) after #2 and #6 evidence.
 - Initialize Alembic; add Users, Organizations, Memberships, reviewed constraints,
   canonical-email uniqueness, and the partial owner index.
 - Verify upgrade/downgrade/re-upgrade separately from ordinary data tests and restore
   the expected schema. No unguarded destructive database commands.
+
+## Thursday Carry-over Completed — Friday 18 September
+
+- Initial identity migration, constraints, guarded Alembic configuration, identity
+  cleanup, and isolated migration-cycle tests are implemented on the feature branch.
+- Local evidence: 51 non-database tests, 60 PostgreSQL data tests, and 2 separate
+  schema tests pass; Ruff passes for 34 Python files. Ordinary runs skip 62 database
+  tests. Existing hosted CI covers only the seven foundation tests.
+- Thursday exceeded its estimate. Friday completed #7 through PR #30, merged as
+  d5147fe; #7 is closed, main is clean/synchronized, and the feature branch was
+  removed locally/remotely. Bootcamp evidence commit/push remains pending. Do not
+  compress Friday's remaining work to hide the carry-over.
+- Continue with bounded #3/#10 work only after the handoff. Unfinished Friday scope
+  remains explicit; no new authentication work is implied by the schema milestone.
 
 ## Friday — Shared Contracts and Errors (2.5-3 hours)
 

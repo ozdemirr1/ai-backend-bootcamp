@@ -10,9 +10,9 @@ Week 10
 
 ## Current Focus
 
-- Consolidate guarded PostgreSQL infrastructure and its review evidence (#6)
-- Build on merged contracts, application foundation, and minimal CI (#1/#2/#5/#9)
-- Prepare identity/Organization schema work after the guarded-test handoff (#7)
+- Record completed identity/Organization schema handoff (#7, merged PR #30)
+- Build on merged contracts, foundation, CI, and PostgreSQL infrastructure (#1/#2/#5/#6/#9)
+- Resume Friday shared-contract/error work after the schema handoff (#3/#10)
 - Keep remaining API and concurrency decisions as explicit implementation prerequisites
 
 ## Completed
@@ -1150,3 +1150,95 @@ review; keep any unfinished work explicit if the available session is shorter.
   recorded successful push/PR checks concern the reviewed feature head.
 - Next scheduled product work is #7 identity/Organization schema, with a bounded
   fast-CI selection follow-up still tracked. No schema implementation is claimed.
+
+## Week 10 Thursday Opening and Monthly Review — 17 September
+
+- Furkan's Wednesday closing output confirms deletion of the merged PostgreSQL
+  feature branch locally/remotely and bootcamp commit/push ec55874 on clean,
+  synchronized main. OpsDesk's verified handoff remains merged PR #29 / 3f85571
+  and closed issue #6.
+- At Furkan's request, recorded the external September market research in
+  monthly-reports/2026-09-market-review.md and checked its cited claim families
+  against publisher/official sources. Preserved sampling and verification limits;
+  this is not a fresh labor-market census or proof of individual job prospects.
+- Updated ROADMAP.md, README.md, and Decision 015: retain backend/product focus,
+  start AI evals in Month 06, extend them through RAG, and keep later agent/MCP
+  work bounded. Official sources confirm Agents API public beta and the announced
+  DVA-C03 update; neither creates an immediate implementation/certification task.
+- React/TypeScript, security, and testing were already planned. Docker/Redis stay
+  Month 05; current persistence stays synchronous. A bounded async HTTP exercise
+  follows lifecycle understanding. Junior/internship applications remain appropriate.
+- The supplied October beginner checklist does not reset completed FastAPI and
+  PostgreSQL work. Today's next technical task remains #7 schema/Alembic; the
+  monthly review introduced no code, migrations, or completed feature claims.
+- Roadmap review documentation is prepared for Furkan's review/commit; it has not
+  been committed or pushed by the assistant.
+
+
+## Week 10 Thursday Work and Friday Carry-over — 17–18 September
+
+- On feature/week-10-identity-schema, Furkan implemented Alembic configuration,
+  separate SQLAlchemy persistence models, and revision 6a3066cd5538 for Users,
+  Organizations, and Memberships. Online migrations use the exact guarded product
+  test target; offline SQL generation requires no credentials or connection.
+- Reviewed the Organization-name subset of #3 needed by #7. Remaining #3 decisions
+  and endpoint implementation are still open. Schema checks do not replace request
+  normalization, authorization, or coordinated ownership-transfer rules.
+- Thursday's work exceeded the mentoring estimate and was not committed/pushed.
+  Friday resumed the remaining acceptance work in batches rather than treating #7
+  as complete. Same-file tests are now grouped and explained together; completion
+  estimates are updated at package boundaries. No measured Thursday active-work
+  total is claimed.
+- Corrected the mentor-supplied expected SQLSTATE for RESTRICT deletion to 23001;
+  missing-parent inserts retain 23503. Constraint tests verify unchanged persisted
+  state after rejected writes using fresh sessions.
+- Identity cleanup uses a revision-checked fixed DELETE allowlist. Subprocess tests
+  verify stopping after initial/final cleanup failure, both body/cleanup errors,
+  synthetic-secret masking under the documented traceback policy, and rejection of
+  an unexpected revision before DELETE.
+- Separate schema tests require empty identity tables, expected role/server/revision,
+  and no unexpected public tables. Both the ordinary downgrade/re-upgrade cycle and
+  restoration after an injected post-downgrade test error passed. Restoration-failure
+  stopping/error preservation was code-reviewed; no live restoration failure was
+  intentionally induced. Forceful termination and concurrent suites remain unsupported.
+- Furkan's 18 September terminal evidence: 2 schema tests passed, followed by all
+  60 PostgreSQL data tests. Final local review: Ruff passes, 34 Python files already
+  formatted, and 51 non-database tests pass with 62 database/schema tests skipped.
+- README now documents the implemented schema, fresh migration setup, separate
+  schema/data test commands, and cleanup boundaries. Existing hosted CI still runs
+  only seven foundation tests; expanded fast-test CI and PostgreSQL CI are not claimed.
+- GitHub #7 was verified OPEN and no PR existed for this branch at closing review.
+  Product commit/push, PR creation/checks/merge, issue closure, and the bootcamp
+  commit remain pending Furkan's terminal evidence. Friday's new feature work has
+  not started; finish this handoff before continuing #3/#10.
+
+### Friday — Identity Schema Published for Review
+
+- Furkan committed the 26 reviewed product files as
+  `6bf2ff1139436e2c420e32b0cf62af810699c04c` and pushed
+  `feature/week-10-identity-schema`. Local checkout is clean and the supplied
+  terminal output confirms upstream synchronization.
+- Created [PR #30](https://github.com/ozdemirr1/opsdesk/pull/30). GitHub confirms
+  the expected head, main base, mergeability, and a recognized closing reference
+  to #7. At first inspection both hosted checks were running; merge and issue
+  closure remain pending.
+- Both hosted push/PR checks subsequently passed for the same full head; PR status
+  is CLEAN. Runs: [35376542747](https://github.com/ozdemirr1/opsdesk/actions/runs/35376542747)
+  and [35376547766](https://github.com/ozdemirr1/opsdesk/actions/runs/35376547766).
+  These runs cover the existing workflow, not the local PostgreSQL suites.
+
+
+### Friday — Identity Schema Merged and Branch Cleaned
+
+- Furkan merged PR #30 with the verified head-commit match. Merge commit:
+  `d5147fe25da43736e7ce9778d65852dd142175d3`.
+- Supplied GitHub output confirms #7 CLOSED at 2026-09-18T17:51:13Z.
+  Furkan switched to main, pulled with --ff-only, and deleted the feature branch
+  locally and remotely. Local inspection confirms the merge commit and clean main;
+  supplied terminal output confirms synchronization with origin/main.
+- Product #7 handoff is complete. The September market review and Week 10 evidence
+  remain to be committed/pushed in this bootcamp repository. No new Friday feature
+  work or post-merge main CI result is claimed in this entry.
+- Friday carry-over resumed around 20:24 Istanbul time; merge evidence arrived at
+  20:51 (about 27 minutes elapsed, not a measurement of uninterrupted active work).
+  Proceed to the bounded #3/#10 contract/error work after the bootcamp commit.

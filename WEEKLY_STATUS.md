@@ -1242,3 +1242,38 @@ review; keep any unfinished work explicit if the available session is shorter.
 - Friday carry-over resumed around 20:24 Istanbul time; merge evidence arrived at
   20:51 (about 27 minutes elapsed, not a measurement of uninterrupted active work).
   Proceed to the bounded #3/#10 contract/error work after the bootcamp commit.
+
+
+## Friday — Shared Error Contract and First Implementation Slice
+
+- Furkan committed/pushed the September review and schema handoff as 16b4f09;
+  supplied terminal evidence confirms clean synchronized bootcamp main.
+- Began feature/week-10-api-errors after #7 closure. Reviewed the #3 subset needed
+  for #10: fixed error envelope/messages, safe field paths, transport errors,
+  protocol headers, server-generated request IDs, and bounded request diagnostics.
+  Remaining #3 feature contracts and business-failure precedence stay open.
+- Implemented an ApiError catalog, fixed-message JSON response helper, and factory
+  handler registration. The public response has code/message/details; bearer 401
+  retains WWW-Authenticate. Test-only routes do not add product endpoints.
+- Supplied terminal evidence: Ruff fixes/formatting completed and 23 focused tests
+  passed (16 API-error cases plus 7 existing application/configuration cases).
+  Code review confirms the factory wiring and no raw exception-cause serialization.
+- Catalog entries for validation/JSON/media/framework/500 errors do not mean those
+  errors are automatically handled yet. Only explicitly raised ApiError is mapped.
+  Request IDs, safe request logging, and runtime access-log configuration are pending.
+- Learning corrections: route templates and controlled messages reduce disclosure
+  risk but do not secure every logger; 422 covers input validation, 409 business
+  state conflict, and 403 authorization. A 500 does not prove prior input validity.
+- Ended the session at Furkan's request. Preserve this passing slice with an interim
+  feature-branch commit/push; do not merge or close #10. #3 also remains open.
+  Product and bootcamp checkpoint commits are pending terminal evidence.
+
+### Next Session — Resume Before Adding New Features
+
+1. Verify checkpoint commits and continue feature/week-10-api-errors.
+2. Implement validation/transport and framework mappings with safe field details,
+   malformed JSON/media-type cases, and required response headers.
+3. Implement unexpected-error handling with request ID and bounded safe diagnostics;
+   check runtime access logs as well as application logs and startup reporting.
+4. Run grouped tests, update documentation, then review #10 acceptance before PR
+   merge/closure. Keep remaining #3/#4 work explicit; registration is not yet ready.

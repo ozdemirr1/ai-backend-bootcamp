@@ -187,3 +187,16 @@ Branch cleanup and #6 implementation follow this verified baseline.
   stay in the Month 03 backlog.
 - Docker/Compose, Redis/jobs, React, AI, and Attachment APIs remain out of scope.
 - Update estimates as evidence arrives; reduce scope before skipping review or tests.
+
+
+## Friday Closing Checkpoint — 18 September
+
+#7 is merged/closed. The bootcamp schema/market-review handoff was pushed as
+16b4f09. Friday's new #3/#10 work stops at an accepted shared-error contract and
+passing ApiError implementation slice (23 focused tests). Product branch:
+feature/week-10-api-errors. Interim product/bootcamp commits are pending evidence.
+
+Saturday first resumes validation/transport/framework mappings, unexpected-error
+handling, request IDs, safe diagnostics, and #10 verification/closure. These replace
+any assumption that Saturday starts registration. Keep #3's unrelated contracts
+and #4 coordination decisions open; do not compress or skip tests to reclaim time.

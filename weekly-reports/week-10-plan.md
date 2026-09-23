@@ -200,3 +200,86 @@ Saturday first resumes validation/transport/framework mappings, unexpected-error
 handling, request IDs, safe diagnostics, and #10 verification/closure. These replace
 any assumption that Saturday starts registration. Keep #3's unrelated contracts
 and #4 coordination decisions open; do not compress or skip tests to reclaim time.
+
+
+## Monday Recovery Outcome — 21 September
+
+Friday checkpoints were pushed as c8fbcfe (product) and 36109bc (bootcamp).
+Completed #10 through PR #31, merge c07a48f, with issue closure and branch cleanup
+verified. Local validation: 101 non-integration tests pass, 62 database/schema
+cases deselected, and Ruff checks 41 Python files. Expanded push/PR CI passed.
+A real Uvicorn safe-404 request/log check matched server IDs without synthetic
+path/query/header secrets. Database migrations were unchanged and not rerun.
+
+Calendar Week 11 has begun; Week 10 closure still requires the grouped learning
+review, remaining-prerequisite inventory/design review, weekly report, and next-week
+capacity plan. Preserve open #3/#4 decisions and conditional authentication work;
+do not claim all backlog issues finished merely to align calendar labels.
+
+
+### 22 September carry-over — concurrency decision
+
+- D04 protocol accepted and documented in OpsDesk, including 2-second per-lock
+  waits and 503 concurrency_busy with no automatic retries.
+- Documentation publication/issue closure remains pending. Executable concurrency
+  behavior and tests belong to the corresponding feature implementations; remaining
+  D03 decisions, weekly closure and Week 11 capacity planning remain explicit.
+
+
+## Closing handoff — 22 September 2026
+
+PR #32 merged as 9bf8726d96bcb13fb69ddee5ddc37bb306616be8. Furkan's output
+confirms #4 CLOSED at 2026-09-22T13:57:11Z, synchronized main and branch removal.
+Local inspection confirms the merge and clean working tree. Push and PR CI passed
+for 00a7ea8a10697f51f6a87973616150916a2e0728 before merge. This closes design #4,
+not the executable locking or concurrency-test work.
+
+### D03 remaining-prerequisite inventory
+
+Source: OpsDesk docs/issues/d03.md and docs/api-contract.md at the merge above.
+These are open decisions to resolve before the affected implementation, not newly
+accepted behavior. D03 is not closed by this handoff.
+
+| Open decision group | Affected work | Required decision before implementation |
+| --- | --- | --- |
+| Membership and Comment inputs | #17, #22, #23, #24 | Exact types, bounds, normalization, accepted/forbidden fields and examples; reuse D02 canonical-email rules |
+| Collections and filters | #15, #16, #19, #24 | Non-Ticket ordering, count/items consistency, queue/directory filter inclusion and contradictory-filter behavior |
+| Response structures | #14, #15, #23 | Final nested Organization/member wrappers and ownership-transfer response examples |
+| Repeated requests and failure precedence | #14–#24 as applicable | Same-role/assignee, active reactivation, repeated deactivation, missing/foreign membership and overlapping authorization/state failures; preserve already approved no-ops |
+| Timestamp semantics | #8 and Ticket mutation work #18, #20, #21; consider #24 explicitly | updated_at expression, which actions change it, whether Comment creation affects the parent, and no-op preservation |
+| Attachment schema timing | Subsequent schema work | Explicitly include or defer the executable table; no metadata API or file-storage feature is added |
+
+Already resolved: Organization name bounds; shared error envelope, safe field
+projection, JSON/media errors, generic server errors and request diagnostics;
+coordinated locking and recognized contention policy. Current safe field conventions
+must be reused; they do not need another redesign. Remaining business precedence is
+not settled by transport error ordering.
+
+Registration #11, login #12 and current identity #13 use reviewed D02, applied #7
+and merged #10. Unrelated Organization/Comment decisions do not block that bounded
+slice. Confirm each endpoint's actual acceptance criteria before coding; global
+D03 closure is not a blanket prerequisite for independent authentication work.
+
+Inventory is complete. Weekly report/capacity plan and the original internship
+research/outreach-draft action remain before full Week 10 administrative closure.
+
+
+## Report prepared — 23 September
+
+[Week 10 report](week-10.md), [remaining-week plan](week-11-plan.md), and
+[career research with unsent draft](week-10-career-targets.md) are prepared.
+This supersedes earlier pending report/research entries. Bootcamp Git publication
+remains pending; neither unfinished product features nor outreach are marked done.
+
+
+## Consolidated recovery scope — 23 September revision
+
+At Furkan's request, all remaining D03 decisions and Week 10 Git publication are
+assigned to [Week 11](week-11-plan.md), alongside #11/#12/#13. Target closure is
+27 September with no planned carry-over of this fixed scope into Week 12.
+Earlier selective D03 deferral is superseded; already completed work is not repeated.
+
+
+Late 23 September adjustment: tonight is Git closure only. Technical recovery work
+is scheduled for 24–27 September in the revised Week 11 plan; no Wednesday coding
+progress is claimed.

@@ -61,6 +61,11 @@ begin. This repository remains the learning log and evidence base.
 The real OpsDesk product begins in Week 09 in a separate public repository.
 This repository continues to hold the learning evidence and roadmap history.
 
+## Latest Handoff
+
+- [Week 10 report](weekly-reports/week-10.md) — merged foundation and documented limits
+- [Week 11 plan](weekly-reports/week-11-plan.md) — 23–27 September identity slice
+
 ## Learning Rule
 
 I will not jump between random technologies.  

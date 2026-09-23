@@ -2,18 +2,19 @@
 
 ## Current Week
 
-Week 10
+Week 11 — identity implementation; Week 10 evidence ready for Git closure
 
 ## Date
 
-14 September - 20 September 2026
+21 September - 27 September 2026
 
 ## Current Focus
 
-- Record completed identity/Organization schema handoff (#7, merged PR #30)
-- Build on merged contracts, foundation, CI, and PostgreSQL infrastructure (#1/#2/#5/#6/#9)
-- Resume Friday shared-contract/error work after the schema handoff (#3/#10)
-- Keep remaining API and concurrency decisions as explicit implementation prerequisites
+- Publish the [Week 10 report](weekly-reports/week-10.md) and closing evidence
+- Follow the [23–27 September Week 11 plan](weekly-reports/week-11-plan.md)
+- Implement reviewed registration #11, login #12 and current-user resolution #13
+- Complete all remaining D03 decisions alongside #11/#12/#13 by 27 September
+- #4 design is merged; business locking remains dependent feature work
 
 ## Completed
 
@@ -1277,3 +1278,137 @@ review; keep any unfinished work explicit if the available session is shorter.
    check runtime access logs as well as application logs and startup reporting.
 4. Run grouped tests, update documentation, then review #10 acceptance before PR
    merge/closure. Keep remaining #3/#4 work explicit; registration is not yet ready.
+
+
+## Monday Carry-over — 21 September 2026
+
+- Friday checkpoints were pushed: OpsDesk c8fbcfe and bootcamp 36109bc, both clean
+  at Monday opening. Continue feature/week-10-api-errors; no work is claimed for
+  the intervening weekend. Calendar Week 11 begins while Week 10 carry-over closes.
+- Agreed a two-day capacity plan of about 6–8 active hours for remaining mandatory
+  Week 10 work and review. Registration was capacity-dependent, not a completed or
+  mandatory Week 10 deliverable; remaining #3/#4 prerequisites remain explicit.
+- Furkan implemented JSON media/syntax gates, safe validation paths/messages,
+  framework error mapping, request-ID middleware, and bounded safe diagnostics.
+  Corrected a mentor-supplied FastAPI compatibility assumption: ModelField's model
+  annotation is accessed through field_info.annotation, not type_.
+- Tests progressed to 45, then 57 focused passes. Full non-integration selection
+  passed 101 tests with 62 database/schema tests deselected. Ruff passes and 41
+  Python files are formatted. Workflow now selects this broader non-database suite
+  and includes migrations in lint/format checks; hosted results are still pending.
+- Actual Uvicorn request verification with synthetic path/query/Authorization/ID
+  markers returned safe 404 and a new UUID. Supplied JSON log matched the response
+  ID, used <unmatched>, and excluded the markers. Startup alone was not treated as
+  evidence of request-log safety. Runtime startup used --no-access-log.
+- README/contract reflect implementation limits: top-level safe field projection,
+  bounded details/log metadata, separately configured routers, and no replacement
+  response after headers have started. Generic errors are not mapped to business
+  conflicts. Existing startup-validation tests remain in the passing suite.
+- Prepared #10 PR description. Product commit/push, hosted CI, merge/issue closure,
+  Week 10 report, and Week 11 detailed plan remain pending. Do not close #3/#4 or
+  claim business endpoints on the strength of these shared infrastructure tests.
+
+
+### Monday — Shared Errors and Diagnostics Merged
+
+- Furkan committed/pushed completion as 842614d74e1af9ef065ee82ed9fb0b4d3babaa91
+  and created [PR #31](https://github.com/ozdemirr1/opsdesk/pull/31). Read-only review
+  confirmed main base, the expected head, mergeability, and the #10 closing reference.
+- Both expanded hosted CI checks passed for that head:
+  [push run 35614549302](https://github.com/ozdemirr1/opsdesk/actions/runs/35614549302)
+  and [PR run 35614554549](https://github.com/ozdemirr1/opsdesk/actions/runs/35614554549).
+  Workflow selection now covers non-integration tests, with migrations included in
+  Ruff checks. These runs do not establish PostgreSQL CI.
+- Furkan merged with the reviewed head match. Merge commit:
+  c07a48f68f7fdc4b9e6949652a25aa692d85cb18. Supplied output confirms #10 CLOSED at
+  2026-09-21T14:49:09Z. Main was pulled with --ff-only and the feature branch deleted
+  locally/remotely. Local inspection confirms clean main at that merge commit;
+  supplied terminal output confirms upstream synchronization.
+- The resumed implementation began around 17:13 Istanbul and merge completed at
+  17:49, about 36 minutes elapsed, not uninterrupted active-time measurement.
+- #10 is complete. #3/#4 remaining decisions, grouped learning review, Week 10 report,
+  and a capacity-bounded Week 11 plan remain. Registration/login/current-user features
+  are not claimed complete. Bootcamp evidence changes are not yet committed/pushed.
+
+
+### Monday — Grouped Error/Diagnostics Learning Review
+
+- Furkan correctly distinguished a known email conflict from infrastructure errors:
+  mapping all persistence failures to 409 would mislead clients and hide operational
+  failures. OperationalError covers several driver/database conditions; this project's
+  currently unmapped operational failures use generic 500, not a universal taxonomy.
+- Explained server-issued X-Request-ID correlation and route-template grouping.
+  UUIDs are correlation identifiers, not authorization credentials. Templates avoid
+  raw path values in this logger but do not eliminate every disclosure path or create
+  a metrics/monitoring system by themselves.
+- Explained why an already-started final response cannot be replaced with a new
+  500 JSON response. Precision: our flag records the ASGI response-start attempt,
+  not proof of client receipt. unexpected_error=true with status 200 can indicate a
+  partial response or a later failure after the body; it does not prove database
+  data loss, rollback, or even a failed business commit. Informational HTTP responses
+  are outside this simplified final-response explanation.
+- Grouped #10 learning review is complete; no additional code/tests are required
+  solely for these wording corrections. Continue the bounded #4 design review.
+
+
+### Tuesday — Accepted concurrency design recorded
+
+- Recorded Furkan's acceptance of the Organization coordination protocol in OpsDesk
+  docs/concurrency-contract.md and aligned the API, logging, access-control, relational
+  model, README and D04 references. The decision includes ordered locks, fresh reads,
+  owner-transfer flush ordering, 2-second per-lock waits, fixed 503 concurrency_busy,
+  full rollback, and no automatic transaction retries.
+- This is accepted design, not executable feature evidence. Contention mapping,
+  lock-wait measurements and controlled concurrent business tests remain future work.
+  Global User lifecycle coordination remains a gate before its deferred endpoint.
+- No new tests were needed for these documentation changes; GitHub publication and
+  #4 closure remain pending. Remaining #3 choices are not claimed resolved.
+
+
+### Tuesday — Concurrency merge and remaining-contract handoff
+
+- PR #32 merged as 9bf8726d96bcb13fb69ddee5ddc37bb306616be8; user output confirms
+  #4 CLOSED at 2026-09-22T13:57:11Z, main synchronization and branch cleanup.
+  Local inspection confirms clean main at that merge. Pre-merge push/PR CI passed
+  for 00a7ea8a10697f51f6a87973616150916a2e0728; no concurrency execution is claimed.
+- Completed the D03 inventory in [Week 10 handoff](weekly-reports/week-10-plan.md#d03-remaining-prerequisite-inventory):
+  inputs, collections/filters, response structures, repeated requests/precedence,
+  timestamps and Attachment migration timing. Each group maps to dependent work.
+- D03 remains open; independent #11/#12/#13 work is not blocked by unrelated
+  Organization/Comment decisions. Weekly report, realistic Week 11 plan and original
+  career action remain; documentation changes have not yet been committed/pushed.
+
+
+### Wednesday — Week 10 report and Week 11 scheduling
+
+- Prepared Week 10 report with distinct historical test runs and merge evidence.
+- Completed two career-target investigations and one unsent English enquiry; see
+  [career research](weekly-reports/week-10-career-targets.md). Roles and availability
+  limitations are explicit; no outreach/application was performed.
+- Planned 15–18 active hours over 23–27 September for the bounded identity slice,
+  including tests, review and Git work; registration is the fallback completion floor.
+- Report, handoff and career research are ready. Bootcamp commit/push remains pending
+  user execution; no new product implementation or test run is claimed this session.
+
+
+### Wednesday — Fixed combined completion scope
+
+- Furkan requested completion of Week 10 carry-over and Week 11 within 23–27
+  September, prioritizing completion over the previous hours budget.
+- Revised plan includes all six D03 decision groups, Week 10 Git publication,
+  registration/login/current-user implementation and Week 11 closure. Estimate:
+  25–32 active hours including a Sunday correction buffer, not a guarantee.
+- Supersedes the earlier 15–18-hour plan and registration-only fallback. No planned
+  transfer of this fixed scope to Week 12; blockers must be surfaced early and no
+  tests or acceptance gates are waived. Remaining Month 03 product features are
+  distinct backlog work, not silently claimed delivered by this identity slice.
+
+
+### Late Wednesday — Git-only closing session
+
+- At 23:19 reported local time, Furkan requested only Week 10 Git closure tonight.
+- Wednesday's D03 fields/responses and registration schemas/hash work are reassigned
+  across 24–27 September. No technical work from that block is claimed completed.
+- Revised four-day estimate is 24–31 active hours with unchanged #3/#11/#12/#13
+  completion scope and Sunday closure target; no planned Week 12 transfer.
+- Bootcamp publication remains pending user command output. Stop after Git closure.

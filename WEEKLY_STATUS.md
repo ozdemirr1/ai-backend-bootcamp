@@ -1412,3 +1412,32 @@ review; keep any unfinished work explicit if the available session is shorter.
 - Revised four-day estimate is 24–31 active hours with unchanged #3/#11/#12/#13
   completion scope and Sunday closure target; no planned Week 12 transfer.
 - Bootcamp publication remains pending user command output. Stop after Git closure.
+
+
+### Thursday — Registration implementation and contract progress
+
+- Week 10 evidence and the revised Week 11 schedule were committed/pushed to
+  bootcamp main as `f5bc070`; the supplied terminal output confirmed a clean,
+  synchronized checkout.
+- On OpsDesk `feature/week-11-registration`, implemented strict canonical email and
+  NFC password inputs, maintained Argon2id hashing, repository/service transaction
+  boundaries, `POST /users`, dependency wiring and application-owned engine cleanup.
+  Registration creates only an active global User and returns the public profile;
+  it does not accept User ID, active state or role from the client.
+- Only the named `uq_users_email` violation becomes `409 email_already_exists`.
+  Unknown persistence and commit failures retain server-error behavior and rollback;
+  plaintext passwords and hashes are excluded from public projections.
+- Local evidence supplied by Furkan: Ruff passes; 57 Python files are formatted;
+  147 non-integration tests pass with 68 database/schema tests deselected; all 66
+  ordinary PostgreSQL integration tests pass. No schema changed, so the two destructive
+  migration-cycle tests were intentionally not rerun.
+- Reviewed and recorded two D03 groups: Comment/membership input contracts and named
+  Organization/ownership-transfer response structures. Four groups remain, so #3 is
+  open.
+- Product commits `c2eef64cc4331b649df4c7032da64f21459ea42e` and
+  `3ad877175dfee24e9804e60ce9fc094754758d01` were pushed to the tracked feature
+  branch. Local inspection and Furkan's output confirm a clean synchronized worktree.
+- #11 remains open pending the controlled simultaneous duplicate-email test with two
+  independent Sessions, PR review, hosted CI and merge. Login #12, current User #13,
+  four D03 groups and Week 11 closure remain scheduled for Friday–Sunday. Revised
+  remaining estimate: 17–23 active hours, excluding external CI wait time.

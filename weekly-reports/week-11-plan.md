@@ -96,3 +96,30 @@ business locking, database CI #25 and preview deployment remain in the Month 03
 backlog. This five-day plan does not claim to deliver the entire monthly milestone.
 Reconcile those remaining monthly deliverables at the Week 12 planning gate; do not
 call them complete or promise an unchanged Month 03 delivery date without sizing.
+
+## Thursday progress — 24 September 2026
+
+- Completed the registration architecture and implementation slice: strict email and
+  password schemas, shared normalization, pwdlib Argon2id hashing, domain/repository
+  boundaries, explicit commit/rollback ownership, SQLAlchemy persistence, dependency
+  wiring and `POST /users`.
+- Verified safe projection, rejected client-controlled fields, known-constraint-only
+  duplicate mapping, rollback paths, fresh-Session persistence, absence of membership
+  side effects and the application-owned engine lifecycle.
+- Local final checks passed: Ruff lint; 57 formatted Python files; 147
+  non-integration tests with 68 database/schema tests deselected; and all 66 ordinary
+  PostgreSQL integration tests. The two schema-cycle tests were intentionally not
+  rerun because no schema or migration changed.
+- Completed two D03 groups: Comment/membership input fields and Organization/
+  ownership-transfer response structures. Collections/filter/count consistency,
+  repeated-operation/error precedence, timestamps and Attachment migration timing
+  remain open.
+- Published clean synchronized product commits `c2eef64` (registration) and
+  `3ad8771` (contract refinements) on `feature/week-11-registration`. No PR, hosted
+  CI, merge or issue closure is claimed yet.
+
+Registration still requires the controlled independent-Session duplicate race before
+#11 review. The remaining fixed Week 11 scope is estimated at 17–23 active hours over
+Friday–Sunday: finish and merge #11, resolve four D03 groups and #3, implement/merge
+#12 and #13, run the complete identity-flow review, and close weekly evidence. This
+replaces the pre-Thursday remaining estimate; it does not reduce acceptance criteria.

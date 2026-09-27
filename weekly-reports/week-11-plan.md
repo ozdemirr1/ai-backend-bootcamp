@@ -123,3 +123,68 @@ Registration still requires the controlled independent-Session duplicate race be
 Friday–Sunday: finish and merge #11, resolve four D03 groups and #3, implement/merge
 #12 and #13, run the complete identity-flow review, and close weekly evidence. This
 replaces the pre-Thursday remaining estimate; it does not reduce acceptance criteria.
+
+## Registration closure — resumed Friday package on 26 September 2026
+
+- Added the final controlled duplicate-email race through the HTTP boundary. Two
+  independent Sessions synchronized before insertion and joined before cleanup; the
+  result was one 201, one documented 409 and exactly one persisted User whose hash
+  verified only the winning password.
+- Final merge-candidate evidence: Ruff and formatting checks passed; 147
+  non-integration tests passed with 69 database/schema tests deselected; all 67
+  ordinary PostgreSQL integration tests passed. The unchanged migration was not
+  rerun through the destructive schema-cycle suite.
+- Product commit `00d5b65d8122a0a82e279b13a626b4c7b94ba8dd` completed the
+  race evidence. Both hosted Backend CI checks passed against that head.
+- [PR #33](https://github.com/ozdemirr1/opsdesk/pull/33) merged as
+  `4d8a9f1`; supplied GitHub output confirms issue #11 CLOSED at
+  `2026-09-25T22:45:35Z`. Main is synchronized and the feature branch was deleted
+  locally and remotely.
+
+Registration #11 is complete. Continue the remaining Friday package with D03
+collection/filter/count policy and login/JWT #12; do not repeat registration tests
+without a new relevant change.
+
+## Sunday checkpoint and final closure day — 27–28 September 2026
+
+The original Sunday 27 September completion target was missed. Furkan chose to stop
+after preserving the passing login/JWT slice and to consolidate all remaining Friday,
+Saturday and Sunday work on Monday 28 September. This is a one-day Week 11 schedule
+delay; it is recorded explicitly rather than represented as on-time completion.
+Week 12 begins on Tuesday 29 September after the Week 11 evidence and repositories
+are closed. No acceptance criterion or test gate is removed to create that boundary.
+
+Completed and preserved before stopping:
+
+- The D03 collection/filter/count contract was accepted and pushed separately as
+  product commit `7f4f625` on `feature/week-11-api-contracts`. The final D03 PR is
+  intentionally still pending the other contract groups.
+- Login request/response schemas, canonical input handling, Argon2id verification,
+  generic credential failure, dummy-hash verification for unknown users, HS256 token
+  issuance, environment-backed token settings, dependency wiring and the HTTP login
+  boundary were implemented.
+- Focused application/login regression passed 122 tests. Product checkpoint
+  `579550a929d71c09f3a4b6b54f7cd4a53afb5754` was pushed to
+  `feature/week-11-login`. This is a recoverable Git checkpoint, not a PR merge or
+  issue closure.
+
+Monday 28 September is divided into four sequential completion blocks:
+
+1. Finish #12 with controlled-time PostgreSQL login tests, full relevant regression,
+   documentation, PR review, hosted CI and merge.
+2. Finish the remaining D03 decisions for repeated operations/error precedence,
+   timestamps and Attachment migration timing; reconcile the existing contract
+   branch, review all six groups, publish/merge the design PR and close #3 only if
+   every acceptance criterion is satisfied.
+3. Implement #13 bearer verification and `/users/me` from the merged base. Validate
+   signature and all required claims, re-read active User state, keep authentication
+   separate from organization authorization, and cover rejection/database paths.
+4. Run register → login → current-user integration and the final relevant regression;
+   update product/bootcamp documentation, write the Week 11 report, publish Git
+   evidence and prepare the Week 12 plan for Tuesday.
+
+Estimated active work is 12–17 hours, with breaks and external CI wait time additional.
+This is an unusually long recovery day rather than the new weekly baseline. Work stays
+in the order above so #13 starts from merged login behavior and Git evidence remains
+reviewable. Any real blocker is reported explicitly; tests, review and failure-path
+coverage are not skipped to force a calendar claim.

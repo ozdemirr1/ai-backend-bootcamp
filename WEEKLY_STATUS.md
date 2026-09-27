@@ -1441,3 +1441,49 @@ review; keep any unfinished work explicit if the available session is shorter.
   independent Sessions, PR review, hosted CI and merge. Login #12, current User #13,
   four D03 groups and Week 11 closure remain scheduled for Friday–Sunday. Revised
   remaining estimate: 17–23 active hours, excluding external CI wait time.
+
+
+### Resumed Friday package — Registration merged
+
+- On 26 September, resumed the Friday package before beginning Saturday's scheduled
+  work. The controlled duplicate-email race used two HTTP requests, independent
+  Sessions and a barrier before insertion. Both attempts joined before cleanup; one
+  returned 201, one returned `409 email_already_exists`, and a fresh Session found
+  exactly one User whose hash matched only the winning password.
+- Final local merge-candidate run: Ruff and formatting checks passed; 147
+  non-integration tests passed with 69 database/schema tests deselected; all 67
+  ordinary PostgreSQL integration tests passed. No schema changed, so the two
+  destructive migration-cycle tests were not rerun.
+- Product head `00d5b65d8122a0a82e279b13a626b4c7b94ba8dd` passed both
+  hosted Backend CI checks. [PR #33](https://github.com/ozdemirr1/opsdesk/pull/33)
+  merged as `4d8a9f1`; user output confirms #11 CLOSED at
+  `2026-09-25T22:45:35Z`, clean synchronized main and local/remote branch deletion.
+- Registration #11 is complete. Continue with the D03 collection/filter/count group
+  and login/JWT #12; no further registration regression is needed unless related code
+  changes.
+
+
+### Sunday — Login checkpoint and revised closure date
+
+- The Week 11 Sunday completion target was missed. The remaining Friday, Saturday
+  and Sunday scope is consolidated on Monday 28 September; Week 12 starts Tuesday
+  29 September after an evidence-based Week 11 closure. This is recorded as a
+  one-day delay, not hidden as an on-time finish.
+- D03 collection/filter/count decisions are preserved in product commit `7f4f625`
+  on `feature/week-11-api-contracts`. No PR or #3 closure is claimed because three
+  contract groups and the final cross-check remain.
+- Implemented the login/JWT core through the HTTP boundary: strict normalized input,
+  Argon2id verification, one public credential failure, dummy-hash verification for
+  unknown users, environment-backed HS256 settings, bounded claims, application
+  lifecycle wiring and safe error behavior.
+- Furkan's final focused command passed 122 application/login tests in 1.17 seconds
+  after Ruff fixed one issue and formatting changed one file. This is focused local
+  evidence; PostgreSQL login integration and the complete merge-candidate regression
+  remain pending.
+- Product checkpoint `579550a929d71c09f3a4b6b54f7cd4a53afb5754` was committed
+  as `week-11: implement login service and token issuance` and pushed to tracked
+  branch `feature/week-11-login`. No PR, hosted CI, merge or #12 closure is claimed.
+- Monday completion order is fixed: finish/merge #12; finish/review/merge all D03
+  groups; implement/merge #13; then run the full identity-flow review and close Week
+  11 evidence. Estimated active work is 12–17 hours plus breaks and external CI waits.
+  No test or acceptance requirement is waived. Tuesday 29 September begins Week 12.

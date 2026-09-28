@@ -188,3 +188,24 @@ This is an unusually long recovery day rather than the new weekly baseline. Work
 in the order above so #13 starts from merged login behavior and Git evidence remains
 reviewable. Any real blocker is reported explicitly; tests, review and failure-path
 coverage are not skipped to force a calendar claim.
+
+## Final closure — 28 September 2026
+
+All four completion blocks closed without reducing acceptance criteria:
+
+- Login issue #12 merged through PR #34 as `d321e14` after controlled PostgreSQL
+  tests, full local regression, and two successful hosted CI checks.
+- All remaining D03 groups were reviewed and merged through PR #35 as `03f689c`;
+  issue #3 closed with the accepted repeat/error/timestamp/Attachment policies.
+- Current-user issue #13 merged through PR #36 as `1641bc2`. Strict bearer
+  validation, fresh persisted User lookup, safe 401 behavior, and `GET /users/me`
+  are implemented.
+- Final merge-candidate checks passed Ruff and formatting, 218 non-integration tests,
+  and all 78 ordinary PostgreSQL integration tests. The seven new database cases
+  include `register -> login -> /users/me` and same-token rejection after User
+  deactivation.
+
+OpsDesk `main` is clean and synchronized; issues #3, #11, #12, and #13 are closed,
+and their feature branches were deleted locally and remotely. Week 11 closes one day
+after its original target, with no Week 11 technical work transferred into Week 12.
+See the [Week 11 report](week-11.md) and [Week 12 plan](week-12-plan.md).

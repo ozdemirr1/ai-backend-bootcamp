@@ -2,19 +2,19 @@
 
 ## Current Week
 
-Week 11 — identity implementation; Week 10 evidence ready for Git closure
+Week 12 — Ticket schema and first tenant-scoped business slice
 
 ## Date
 
-21 September - 27 September 2026
+29 September - 4 October 2026
 
 ## Current Focus
 
-- Publish the [Week 10 report](weekly-reports/week-10.md) and closing evidence
-- Follow the [23–27 September Week 11 plan](weekly-reports/week-11-plan.md)
-- Implement reviewed registration #11, login #12 and current-user resolution #13
-- Complete all remaining D03 decisions alongside #11/#12/#13 by 27 September
-- #4 design is merged; business locking remains dependent feature work
+- Follow the [Week 12 plan](weekly-reports/week-12-plan.md)
+- Implement and migrate the tenant-consistent Ticket schema in issue #8
+- Implement atomic Organization creation in issue #14
+- Implement membership-scoped Organization list/detail in issue #15
+- Begin authenticated Ticket creation #18 only after its prerequisites merge
 
 ## Completed
 
@@ -75,6 +75,13 @@ Week 11 — identity implementation; Week 10 evidence ready for Git closure
 - [x] Week 08 report
 - [x] Month 02 report
 - [x] Week 09 plan
+- [x] Week 10 report, career action and Git closure
+- [x] Final D03 API contract and concurrency design
+- [x] OpsDesk registration with concurrent duplicate protection
+- [x] OpsDesk login and maintained-library JWT issuance
+- [x] Strict bearer validation and persisted current-User resolution
+- [x] Complete register → login → current-user PostgreSQL flow
+- [x] Week 11 report and Week 12 handoff prepared
 
 ## Problems
 
@@ -1487,3 +1494,32 @@ review; keep any unfinished work explicit if the available session is shorter.
   groups; implement/merge #13; then run the full identity-flow review and close Week
   11 evidence. Estimated active work is 12–17 hours plus breaks and external CI waits.
   No test or acceptance requirement is waived. Tuesday 29 September begins Week 12.
+
+
+### Monday — Week 11 final closure
+
+- Login issue #12 completed controlled PostgreSQL verification and full regression.
+  [PR #34](https://github.com/ozdemirr1/opsdesk/pull/34) passed both hosted CI
+  checks and merged as `d321e14`; supplied evidence confirms issue closure and branch
+  cleanup.
+- The remaining D03 collection, repeat/error-precedence, timestamp, and Attachment
+  decisions were cross-checked together. [PR #35](https://github.com/ozdemirr1/opsdesk/pull/35)
+  passed both hosted checks and merged as `03f689c`; issue #3 is closed.
+- Implemented strict bearer-token validation, current persisted active-User lookup,
+  reusable authentication dependency, and `GET /users/me`. A valid token does not
+  cache active state or grant Organization authorization.
+- Focused current-user validation passed 101 unit/HTTP tests without warnings. Seven
+  new PostgreSQL cases covered controlled tokens, invalid token classes, missing and
+  newly inactive Users, no authentication writes, and the real registration-to-login-
+  to-current-user flow.
+- Final product regression passed Ruff, formatting for 67 files, 218 non-integration
+  tests with 80 database/schema cases deselected, and all 78 ordinary PostgreSQL
+  integration tests.
+- [PR #36](https://github.com/ozdemirr1/opsdesk/pull/36) passed both hosted CI
+  checks at `3325827477584b9d0bd5354cbc81dae497750122` and merged as
+  `1641bc2`. Supplied output confirms issue #13 CLOSED, synchronized clean product
+  `main`, and local/remote feature-branch deletion.
+- All fixed Week 11 scope is complete on 28 September, one day after the original
+  target. No Week 11 technical item transfers to Week 12. The
+  [Week 11 report](weekly-reports/week-11.md) and
+  [Week 12 plan](weekly-reports/week-12-plan.md) are prepared for bootcamp Git closure.

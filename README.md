@@ -57,14 +57,20 @@ begin. This repository remains the learning log and evidence base.
 - [Week 09 Report](weekly-reports/week-09.md) - reviewed product design and 26 published issues
 - [Week 10 Plan](weekly-reports/week-10-plan.md) - executable foundation, guarded tests,
   schema prerequisites, and capacity-bounded authentication work
+- [Week 10 Report](weekly-reports/week-10.md) - executable foundation, identity schema,
+  safe API errors, request diagnostics, and concurrency design
+- [Week 11 Report](weekly-reports/week-11.md) - registration, login, finalized API
+  contracts, bearer validation, and persisted current-User resolution
 
 The real OpsDesk product begins in Week 09 in a separate public repository.
 This repository continues to hold the learning evidence and roadmap history.
 
 ## Latest Handoff
 
-- [Week 10 report](weekly-reports/week-10.md) — merged foundation and documented limits
-- [Week 11 plan](weekly-reports/week-11-plan.md) — 23–27 September identity slice
+- [Week 11 report](weekly-reports/week-11.md) — merged identity boundary and documented
+  one-day schedule variance
+- [Week 12 plan](weekly-reports/week-12-plan.md) — Ticket schema and the first
+  tenant-scoped Organization/Ticket business slice
 
 ## Learning Rule
 

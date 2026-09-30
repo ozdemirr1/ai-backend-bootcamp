@@ -35,8 +35,7 @@ frontend, and AI work are outside this week's implementation scope.
 
 | Date | Estimate | Package and evidence |
 | --- | ---: | --- |
-| Tue 29 Sep | 3–4 h | Review B04 against D01/ERD; implement Ticket row and migration; inspect generated SQL before applying |
-| Wed 30 Sep | 4–5 h | Prove Ticket participant tenant constraints, defaults and invalid vocabularies; guarded upgrade/downgrade/re-upgrade; PR/CI/merge #8 |
+| Tue 29–Wed 30 Sep | Completed | Combined Ticket-schema package: model, migration, PostgreSQL constraints, guarded migration cycle, PR/CI/merge #8 |
 | Thu 1 Oct | 3–4 h | Explain atomic aggregate creation; implement Organization creation service/repositories/schemas/endpoint and rollback tests |
 | Fri 2 Oct | 3–4 h | Real PostgreSQL success/failure/concurrency evidence for Organization creation; PR/CI/merge #14 |
 | Sat 3 Oct | 3–4 h | Implement scoped Organization list/detail with pagination/snapshot contract and tenant-safe tests; PR/CI/merge #15 |
@@ -46,6 +45,26 @@ At the end of each package, record completed behavior, tests, actual remaining w
 and any scope effect. Group changes and tests by file or behavior. Do not repeat the
 entire suite after every small edit; run focused tests first and one complete regression
 per merge candidate.
+
+## 29–30 September combined outcome
+
+- Added `TicketRow` and Alembic revision `31be9023cfb2` with the reviewed identity,
+  tenant-participant, text, status, priority, timestamp, and deletion constraints.
+- Kept tenant consistency in composite foreign keys while leaving active membership,
+  eligible role, authorization, assignment, and lifecycle transitions to services.
+- Extended the guarded cleanup policy and migration revision checks for `tickets`,
+  preserving child-before-parent cleanup order.
+- Proved catalog structure, valid/invalid boundaries, nullable assignee behavior,
+  cross-tenant and missing-membership rejection, restrictive deletion, timestamp
+  behavior, and predecessor-data preservation through real PostgreSQL tests.
+- Final merge-candidate snapshots passed separately: `222` non-integration tests,
+  `127` integration tests, and `3` schema-changing migration tests. Alembic reported
+  revision `31be9023cfb2 (head)` with no pending upgrade operations.
+- GitHub PR [#37](https://github.com/ozdemirr1/opsdesk/pull/37) passed hosted Backend
+  CI at reviewed head `efd2bc5`, merged as `5151c29`, closed issue #8, and left local
+  and remote feature branches removed with clean synchronized `main`.
+- No Week 12 scope was skipped. The next dependency-respecting package is Organization
+  creation in issue #14 on 1 October.
 
 ## Architecture and security gates
 

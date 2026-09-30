@@ -61,6 +61,8 @@ begin. This repository remains the learning log and evidence base.
   safe API errors, request diagnostics, and concurrency design
 - [Week 11 Report](weekly-reports/week-11.md) - registration, login, finalized API
   contracts, bearer validation, and persisted current-User resolution
+- [Week 12 Plan](weekly-reports/week-12-plan.md) - Ticket schema, Organization creation,
+  scoped Organization reads, and dependency-gated Ticket creation
 
 The real OpsDesk product begins in Week 09 in a separate public repository.
 This repository continues to hold the learning evidence and roadmap history.
@@ -69,8 +71,8 @@ This repository continues to hold the learning evidence and roadmap history.
 
 - [Week 11 report](weekly-reports/week-11.md) — merged identity boundary and documented
   one-day schedule variance
-- [Week 12 plan](weekly-reports/week-12-plan.md) — Ticket schema and the first
-  tenant-scoped Organization/Ticket business slice
+- [Week 12 plan](weekly-reports/week-12-plan.md) — issue #8 Ticket schema merged with
+  guarded PostgreSQL and migration evidence; Organization creation is next
 
 ## Learning Rule
 

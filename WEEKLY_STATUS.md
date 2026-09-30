@@ -11,7 +11,7 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 ## Current Focus
 
 - Follow the [Week 12 plan](weekly-reports/week-12-plan.md)
-- Implement and migrate the tenant-consistent Ticket schema in issue #8
+- Use the merged tenant-consistent Ticket schema from issue #8
 - Implement atomic Organization creation in issue #14
 - Implement membership-scoped Organization list/detail in issue #15
 - Begin authenticated Ticket creation #18 only after its prerequisites merge
@@ -82,6 +82,29 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 - [x] Strict bearer validation and persisted current-User resolution
 - [x] Complete register → login → current-user PostgreSQL flow
 - [x] Week 11 report and Week 12 handoff prepared
+- [x] OpsDesk tenant-consistent Ticket model and Alembic revision `31be9023cfb2`
+- [x] Guarded Ticket catalog, constraint, cleanup, and migration-cycle evidence
+- [x] Week 12 PR #37 hosted CI, merge, issue #8 closure, and branch cleanup
+
+## Week 12 Ticket Schema Outcome — 29–30 September
+
+- Combined the planned Tuesday and Wednesday packages without dropping acceptance
+  criteria. The model and migration cover required Organization/requester/creator,
+  optional assignee with `MATCH SIMPLE`, bounded text/state vocabulary, database
+  defaults, named constraints, composite tenant keys, and restrictive deletion.
+- Confirmed that database constraints prove existence and tenant consistency while
+  active state, eligible role, assignment authority, and transitions remain explicit
+  application responsibilities.
+- Passed `222` non-integration tests, `127` guarded PostgreSQL integration tests, and
+  `3` schema-changing tests as separate final snapshots. Alembic was at
+  `31be9023cfb2 (head)` with no metadata drift.
+- PR [#37](https://github.com/ozdemirr1/opsdesk/pull/37) passed hosted Backend CI and
+  merged into OpsDesk `main` as `5151c29`; issue #8 closed and the feature branch was
+  removed locally and remotely. OpsDesk `main` finished clean and synchronized with
+  `origin/main`.
+- The remaining fixed Week 12 sequence is issue #14 Organization creation followed by
+  issue #15 scoped Organization reads. Issue #18 Ticket creation starts only after
+  those gates close.
 
 ## Problems
 

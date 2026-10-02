@@ -36,8 +36,8 @@ frontend, and AI work are outside this week's implementation scope.
 | Date | Estimate | Package and evidence |
 | --- | ---: | --- |
 | Tue 29–Wed 30 Sep | Completed | Combined Ticket-schema package: model, migration, PostgreSQL constraints, guarded migration cycle, PR/CI/merge #8 |
-| Thu 1 Oct | 3–4 h | Explain atomic aggregate creation; implement Organization creation service/repositories/schemas/endpoint and rollback tests |
-| Fri 2 Oct | 3–4 h | Real PostgreSQL success/failure/concurrency evidence for Organization creation; PR/CI/merge #14 |
+| Thu 1 Oct | Completed | Explained atomic aggregate creation; implemented Organization creation service/repositories/schemas/endpoint and fast rollback tests |
+| Fri 2 Oct | Completed | Added real PostgreSQL success/failure/concurrency evidence; completed PR/CI/merge #14 |
 | Sat 3 Oct | 3–4 h | Implement scoped Organization list/detail with pagination/snapshot contract and tenant-safe tests; PR/CI/merge #15 |
 | Sun 4 Oct | 2–3 h | Start or complete #18 according to closed gates; full relevant regression, interview review, report, Git closure, next-week handoff |
 
@@ -65,6 +65,32 @@ per merge candidate.
   and remote feature branches removed with clean synchronized `main`.
 - No Week 12 scope was skipped. The next dependency-respecting package is Organization
   creation in issue #14 on 1 October.
+
+## 1–2 October Organization creation outcome
+
+- Implemented a protected name-only `POST /organizations` boundary with normalized
+  input and a public nested Organization/own-membership response. User identity,
+  ownership role, and active states are derived on the server.
+- Kept transaction ownership in the application service. The SQLAlchemy adapter sets a
+  transaction-local two-second lock timeout, locks the actor User `FOR SHARE`, rechecks
+  current activity, flushes the Organization and owner membership, and commits once.
+- Added the fixed `503 concurrency_busy` catalog entry for PostgreSQL 55P03, 40P01,
+  and 40001 only. Unknown database failures retain generic server-error behavior and
+  all handled failures roll back the complete transaction.
+- Fast validation, service, repository, HTTP, error, and regression tests passed. Eleven
+  guarded PostgreSQL feature cases then proved durable success, unrelated-role
+  independence, duplicate display names, fresh-session rollback, real lock contention
+  observed through `pg_blocking_pids`, fixed timeout behavior, and independent-User
+  progress.
+- Final snapshots passed separately: `283` non-integration tests with `141` cases
+  deselected and `138` integration tests. Alembic remained at `31be9023cfb2 (head)`
+  with no metadata drift.
+- [PR #38](https://github.com/ozdemirr1/opsdesk/pull/38) passed hosted Backend CI at
+  reviewed head `7b32358a6906caf2566eeb427b6977b19d14ec4d`, merged as `57ae5f1`,
+  closed issue #14, and left synchronized clean `main` with both feature branches
+  removed.
+- Issue #15 Organization list/detail is now the next dependency-respecting package.
+  No Organization-read or Ticket-creation behavior is claimed by this outcome.
 
 ## Architecture and security gates
 

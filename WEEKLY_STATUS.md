@@ -12,7 +12,7 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 
 - Follow the [Week 12 plan](weekly-reports/week-12-plan.md)
 - Use the merged tenant-consistent Ticket schema from issue #8
-- Implement atomic Organization creation in issue #14
+- Use the merged atomic Organization creation boundary from issue #14
 - Implement membership-scoped Organization list/detail in issue #15
 - Begin authenticated Ticket creation #18 only after its prerequisites merge
 
@@ -85,6 +85,9 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 - [x] OpsDesk tenant-consistent Ticket model and Alembic revision `31be9023cfb2`
 - [x] Guarded Ticket catalog, constraint, cleanup, and migration-cycle evidence
 - [x] Week 12 PR #37 hosted CI, merge, issue #8 closure, and branch cleanup
+- [x] Atomic Organization creation with server-derived initial ownership
+- [x] Real PostgreSQL rollback and User-lock contention evidence
+- [x] Week 12 PR #38 hosted CI, merge, issue #14 closure, and branch cleanup
 
 ## Week 12 Ticket Schema Outcome — 29–30 September
 
@@ -105,6 +108,34 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 - The remaining fixed Week 12 sequence is issue #14 Organization creation followed by
   issue #15 scoped Organization reads. Issue #18 Ticket creation starts only after
   those gates close.
+
+## Week 12 Organization Creation Outcome — 1–2 October
+
+- Implemented strict Organization-name normalization, explicit public request/response
+  schemas, domain and repository boundaries, service-owned transactions, synchronous
+  SQLAlchemy persistence, FastAPI dependency wiring, and protected
+  `POST /organizations`.
+- Derived the initial owner from the authenticated User. The client cannot select a
+  User ID, role, membership ID, or active state. The service locks and rechecks the
+  actor User before creating the active Organization and active owner membership.
+- Added the accepted transaction-local two-second lock timeout and translated only
+  PostgreSQL 55P03, 40P01, and 40001 into the fixed `503 concurrency_busy` response.
+  Other database failures remain unexpected errors.
+- Eleven guarded PostgreSQL Organization-creation cases proved fresh-session
+  persistence, duplicate display names, creation without a prior membership, all four
+  unrelated Organization roles, inactive-User rejection, rollback after intermediate
+  and commit-boundary failures, preservation of unknown constraint errors, a real lock
+  wait observed with `pg_blocking_pids`, no partial blocked-request data, and progress
+  for a different User.
+- Final merge-candidate snapshots passed separately: `283` non-integration tests with
+  `141` database/schema cases deselected and `138` ordinary integration tests. Alembic
+  reported `31be9023cfb2 (head)` with no pending upgrade operations.
+- PR [#38](https://github.com/ozdemirr1/opsdesk/pull/38) passed both hosted Backend CI
+  checks at reviewed head `7b32358a6906caf2566eeb427b6977b19d14ec4d` and merged as
+  `57ae5f1`; issue #14 closed and the feature branch was removed locally and remotely.
+  OpsDesk `main` finished clean and synchronized with `origin/main`.
+- The next fixed Week 12 package is issue #15 membership-scoped Organization list and
+  detail. Ticket creation #18 remains dependency-gated until that boundary merges.
 
 ## Problems
 

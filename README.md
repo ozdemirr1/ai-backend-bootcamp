@@ -71,8 +71,9 @@ This repository continues to hold the learning evidence and roadmap history.
 
 - [Week 11 report](weekly-reports/week-11.md) — merged identity boundary and documented
   one-day schedule variance
-- [Week 12 plan](weekly-reports/week-12-plan.md) — issue #8 Ticket schema merged with
-  guarded PostgreSQL and migration evidence; Organization creation is next
+- [Week 12 plan](weekly-reports/week-12-plan.md) — issues #8 and #14 merged with
+  guarded schema, atomicity, rollback, and real lock-contention evidence;
+  membership-scoped Organization reads are next
 
 ## Learning Rule
 

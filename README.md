@@ -63,17 +63,19 @@ begin. This repository remains the learning log and evidence base.
   contracts, bearer validation, and persisted current-User resolution
 - [Week 12 Plan](weekly-reports/week-12-plan.md) - Ticket schema, Organization creation,
   scoped Organization reads, and dependency-gated Ticket creation
+- [Week 12 Report](weekly-reports/week-12.md) - tenant-consistent Ticket persistence,
+  atomic Organization creation, membership-scoped reads, and authenticated Ticket
+  creation
 
 The real OpsDesk product begins in Week 09 in a separate public repository.
 This repository continues to hold the learning evidence and roadmap history.
 
 ## Latest Handoff
 
-- [Week 11 report](weekly-reports/week-11.md) — merged identity boundary and documented
-  one-day schedule variance
-- [Week 12 plan](weekly-reports/week-12-plan.md) — issues #8 and #14 merged with
-  guarded schema, atomicity, rollback, and real lock-contention evidence;
-  membership-scoped Organization reads are next
+- [Week 12 report](weekly-reports/week-12.md) — all four planned product packages
+  merged with guarded PostgreSQL evidence and an explicit one-day calendar variance
+- Week 13 planning starts on 6 October from clean OpsDesk `main` at `ec418f9`; its
+  detailed scope is intentionally deferred to that planning review
 
 ## Learning Rule
 

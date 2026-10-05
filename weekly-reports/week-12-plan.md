@@ -2,7 +2,8 @@
 
 ## Dates and objective
 
-29 September–4 October 2026 — Month 03 continuation.
+Planned: 29 September–4 October 2026. Evidence-based closure: 5 October 2026.
+Month 03 continuation.
 
 Build the first tenant-scoped OpsDesk business vertical slice on the completed identity
 foundation: Ticket persistence prerequisites, atomic Organization creation, scoped
@@ -38,8 +39,8 @@ frontend, and AI work are outside this week's implementation scope.
 | Tue 29–Wed 30 Sep | Completed | Combined Ticket-schema package: model, migration, PostgreSQL constraints, guarded migration cycle, PR/CI/merge #8 |
 | Thu 1 Oct | Completed | Explained atomic aggregate creation; implemented Organization creation service/repositories/schemas/endpoint and fast rollback tests |
 | Fri 2 Oct | Completed | Added real PostgreSQL success/failure/concurrency evidence; completed PR/CI/merge #14 |
-| Sat 3 Oct | 3–4 h | Implement scoped Organization list/detail with pagination/snapshot contract and tenant-safe tests; PR/CI/merge #15 |
-| Sun 4 Oct | 2–3 h | Start or complete #18 according to closed gates; full relevant regression, interview review, report, Git closure, next-week handoff |
+| Sat 3 Oct | Completed 5 Oct | Implement scoped Organization list/detail with pagination/snapshot contract and tenant-safe tests; PR/CI/merge #15 |
+| Sun 4 Oct | Completed 5 Oct | Complete #18 after closed gates; full relevant regression, interview review, report, Git closure, next-week handoff |
 
 At the end of each package, record completed behavior, tests, actual remaining work,
 and any scope effect. Group changes and tests by file or behavior. Do not repeat the
@@ -89,8 +90,49 @@ per merge candidate.
   reviewed head `7b32358a6906caf2566eeb427b6977b19d14ec4d`, merged as `57ae5f1`,
   closed issue #14, and left synchronized clean `main` with both feature branches
   removed.
-- Issue #15 Organization list/detail is now the next dependency-respecting package.
-  No Organization-read or Ticket-creation behavior is claimed by this outcome.
+- At this checkpoint, issue #15 Organization list/detail was the next
+  dependency-respecting package. Its later completion is recorded below.
+
+## 5 October Organization read outcome
+
+- Implemented membership-scoped Organization collection and detail endpoints with
+  strict filters, bounded pagination, deterministic ordering, and reviewed public
+  response envelopes.
+- Enforced active-membership visibility, preserved the accepted suspended-Organization
+  behavior, and returned tenant-safe denial for foreign, missing, and inactive
+  membership cases.
+- Produced collection count and page rows from one SQL statement so both values share
+  one database snapshot.
+- Final snapshots passed separately: `337` non-integration tests with `150` cases
+  deselected, `147` ordinary PostgreSQL integration tests, and `3` guarded schema
+  tests. Alembic remained at `31be9023cfb2 (head)` without drift.
+- [PR #39](https://github.com/ozdemirr1/opsdesk/pull/39) passed hosted Backend CI,
+  merged as `3355928`, closed issue #15, and left clean synchronized `main` after local
+  and remote branch removal.
+
+## 5 October Ticket creation outcome
+
+- Implemented authenticated Ticket creation with strict title, description, and
+  priority validation. Requester and creator come from the authenticated User; initial
+  status and assignment remain server controlled.
+- Used the shared coordination protocol: Organization `FOR UPDATE`, actor User
+  `FOR SHARE`, then Membership `FOR UPDATE`, followed by fresh state validation.
+- Translated only recognized PostgreSQL lock/deadlock/serialization failures into the
+  fixed 503 response. Unknown infrastructure failures remain 500 and every failure
+  rolls back the transaction.
+- Final snapshots passed separately: `439` non-integration tests with `160` cases
+  deselected, `157` ordinary PostgreSQL integration tests, and `3` guarded schema
+  tests. Alembic remained at `31be9023cfb2 (head)` without drift.
+- [PR #40](https://github.com/ozdemirr1/opsdesk/pull/40) passed hosted Backend CI,
+  merged as `ec418f9`, closed issue #18, and left clean synchronized `main` after local
+  and remote branch removal.
+
+## Week 12 closure and variance
+
+All four planned product packages merged. The Saturday and Sunday work finished on
+Monday 5 October, creating a one-day calendar variance without reducing scope or test
+coverage. Actual active hours were not measured. Week 13 planning begins on 6 October
+from clean OpsDesk `main`; no Week 12 technical item is carried into it.
 
 ## Architecture and security gates
 
@@ -154,7 +196,7 @@ branches locally and remotely after synchronizing `main`.
 
 ## Week-end decision gate
 
-Sunday records what actually merged and the remaining Month 03 backlog. Do not call the
-backend preview deployed or Month 03 complete without its required feature, database-CI,
-and delivery evidence. If #18 is incomplete, preserve a clean tested checkpoint and
-size the remaining work explicitly; do not hide it by starting React early.
+The decision gate is satisfied for Week 12: issues #8, #14, #15, and #18 merged with
+their required evidence and Git cleanup. This does not claim that Month 03, database
+CI, deployment, or the backend preview is complete. Remaining product work will be
+ordered in the Week 13 plan rather than hidden by starting React early.

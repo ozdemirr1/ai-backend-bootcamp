@@ -2,19 +2,17 @@
 
 ## Current Week
 
-Week 12 — Ticket schema and first tenant-scoped business slice
+Week 12 — Closed; Week 13 planning starts 6 October
 
 ## Date
 
-29 September - 4 October 2026
+29 September - 5 October 2026 (evidence-based closure)
 
 ## Current Focus
 
-- Follow the [Week 12 plan](weekly-reports/week-12-plan.md)
-- Use the merged tenant-consistent Ticket schema from issue #8
-- Use the merged atomic Organization creation boundary from issue #14
-- Implement membership-scoped Organization list/detail in issue #15
-- Begin authenticated Ticket creation #18 only after its prerequisites merge
+- Review the [Week 12 report](weekly-reports/week-12.md) and recorded one-day variance
+- Preserve clean OpsDesk `main` at merge commit `ec418f9`
+- Prepare the detailed Week 13 plan on 6 October from the remaining Month 03 backlog
 
 ## Completed
 
@@ -88,6 +86,12 @@ Week 12 — Ticket schema and first tenant-scoped business slice
 - [x] Atomic Organization creation with server-derived initial ownership
 - [x] Real PostgreSQL rollback and User-lock contention evidence
 - [x] Week 12 PR #38 hosted CI, merge, issue #14 closure, and branch cleanup
+- [x] Membership-scoped Organization collection and detail
+- [x] Week 12 PR #39 hosted CI, merge, issue #15 closure, and branch cleanup
+- [x] Authenticated, tenant-consistent Ticket creation
+- [x] Real PostgreSQL Ticket rollback and Organization-lock contention evidence
+- [x] Week 12 PR #40 hosted CI, merge, issue #18 closure, and branch cleanup
+- [x] Week 12 interview review, report, and Week 13 handoff boundary
 
 ## Week 12 Ticket Schema Outcome — 29–30 September
 
@@ -134,8 +138,43 @@ Week 12 — Ticket schema and first tenant-scoped business slice
   checks at reviewed head `7b32358a6906caf2566eeb427b6977b19d14ec4d` and merged as
   `57ae5f1`; issue #14 closed and the feature branch was removed locally and remotely.
   OpsDesk `main` finished clean and synchronized with `origin/main`.
-- The next fixed Week 12 package is issue #15 membership-scoped Organization list and
-  detail. Ticket creation #18 remains dependency-gated until that boundary merges.
+- At this checkpoint issue #15 was next. Its completion and the dependent Ticket
+  creation outcome are recorded below.
+
+## Week 12 Organization Read Outcome — 5 October
+
+- Implemented strict collection filters, bounded pagination, deterministic ordering,
+  one-statement count/page snapshot behavior, and membership-scoped detail access.
+- Proved active-member visibility, the accepted suspended-Organization behavior, and
+  safe exclusion or denial for foreign and inactive memberships.
+- Passed `337` non-integration tests with `150` database/schema cases deselected,
+  `147` ordinary PostgreSQL integration tests, and `3` guarded schema tests.
+- PR [#39](https://github.com/ozdemirr1/opsdesk/pull/39) passed hosted Backend CI and
+  merged as `3355928`; issue #15 closed and the feature branch was removed locally and
+  remotely.
+
+## Week 12 Ticket Creation Outcome — 5 October
+
+- Implemented authenticated Ticket creation with strict inputs, server-derived
+  requester/creator, safe initial state, current active membership checks, and the
+  shared Organization coordination-lock protocol.
+- Preserved the error boundary: only recognized PostgreSQL contention failures become
+  fixed 503 responses; unknown database failures remain 500 and all failures roll back.
+- Passed `439` non-integration tests with `160` database/schema cases deselected,
+  `157` ordinary PostgreSQL integration tests, and `3` guarded schema tests. Alembic
+  remained at `31be9023cfb2 (head)` without drift.
+- PR [#40](https://github.com/ozdemirr1/opsdesk/pull/40) passed hosted Backend CI and
+  merged as `ec418f9`; issue #18 closed and the feature branch was removed locally and
+  remotely. OpsDesk `main` ended clean and synchronized.
+
+## Week 12 Closure
+
+- All four fixed product packages merged: Ticket schema, Organization creation,
+  Organization reads, and Ticket creation.
+- The planned Sunday closure moved to Monday 5 October. No acceptance criterion or
+  test group was removed; actual active hours were not measured.
+- Week 13 planning begins on 6 October. Detailed scope is intentionally deferred until
+  that planning review, with no Week 12 technical carry-over.
 
 ## Problems
 

@@ -48,6 +48,9 @@ begin. This repository remains the learning log and evidence base.
 
 ## Current Weekly Evidence
 
+- [Week 13 Plan](weekly-reports/week-13-plan.md) - React + TypeScript foundations,
+  mock Ticket rendering, controlled forms, and frontend behavior checks
+- [Week 13 Report](weekly-reports/week-13.md) - in-progress evidence and remaining work
 - [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
   identity, Ticket ownership, and authorization
 - [Month 02 Report](monthly-reports/month-02.md) - the complete progression
@@ -74,8 +77,8 @@ This repository continues to hold the learning evidence and roadmap history.
 
 - [Week 12 report](weekly-reports/week-12.md) — all four planned product packages
   merged with guarded PostgreSQL evidence and an explicit one-day calendar variance
-- Week 13 planning starts on 6 October from clean OpsDesk `main` at `ec418f9`; its
-  detailed scope is intentionally deferred to that planning review
+- [Week 13 plan](weekly-reports/week-13-plan.md) — Month 04 starts on 6 October
+  from clean OpsDesk `main` at `ec418f9`, with 18 active hours planned through 11 October
 
 ## Learning Rule
 

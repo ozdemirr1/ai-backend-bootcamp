@@ -1,0 +1,142 @@
+# Week 13 Plan
+
+## Dates, objective, and boundaries
+
+6–11 October 2026. Month 04 starts in this month's primary project conversation.
+Budget: 18 active hours, within the normal 15–20 hour weekly capacity. Breaks,
+downloads, and external CI waits are additional. Durations are planning estimates,
+not measured time logs. The learner is not required to report active time; optional
+feedback about a package taking longer or shorter can refine future estimates.
+Close packages by learning outcomes, implementation, checks, documentation, and Git
+evidence, not by a time-report requirement.
+
+Learn React + TypeScript through three small OpsDesk outputs: login screen,
+register screen, and a Ticket list backed only by synthetic mock data. Build in
+the product monorepo's `frontend/`, on `feature/week-13-react-foundation`.
+Use Vite's current `react-ts` template and ordinary CSS.
+
+Week 12 closed on 5 October with no technical carry-over. Ticket list/detail APIs,
+workflow, assignment, membership mutations, comments, database CI, and deployment
+remain explicit Month 03/product backlog. Review only necessary backend dependencies
+during Week 14 integration planning. No real API calls, token storage, protected
+routes, Tailwind, broad dashboard, Docker, Redis, or AI integration this week.
+
+## Daily packages
+
+| Date | Active budget | Learning, implementation, and evidence |
+| --- | ---: | --- |
+| Tue 6 Oct | 3.5 h | Components, JSX, typed props; learner-run Vite setup; static shell/header; browser, build, lint; notes and Git review |
+| Wed 7 Oct | 3 h | State, events, conditional rendering; simple local screen selection; introduce a minimal Vitest/React Testing Library setup and test a visible interaction |
+| Thu 8 Oct | 3 h | Typed mock Tickets, array map, stable keys, list and empty state; tests for populated and empty lists |
+| Fri 9 Oct | 3 h | Controlled login form, labels, email/password inputs, submit event, local validation and explicit demo feedback; interaction tests |
+| Sat 10 Oct | 3 h | Controlled register form using reviewed API field vocabulary; accessible local feedback and behavior tests; no authentication claim |
+| Sun 11 Oct | 2.5 h | Relevant frontend regression, build/lint, browser/keyboard review, README, interview review, weekly report, Git closure and Week 14 dependencies |
+| Total | 18 h | All budgets include explanation, implementation, review, and notes |
+
+Allow at most 2 additional hours of buffer within the 20-hour ceiling. If needed,
+reduce styling and optional refactoring first. Never quietly drop form/list behavior
+tests or expand into backend work. Record unfinished acceptance criteria and revised
+dates explicitly. Do not count reading time as implementation evidence.
+
+## Tuesday package — 3–4 active hours
+
+1. Planning and baseline review: 20 minutes.
+2. Components, JSX, props, TypeScript shapes, and a small non-OpsDesk analogy:
+   40 minutes. Explain unfamiliar destructuring and imports before using them.
+3. Learner-run Vite setup and generated-file tour: 35 minutes.
+4. Learner implementation of the static shell/header: 65 minutes.
+5. Browser check, lint/build, README, learning notes, Git diff: 35 minutes.
+6. Understanding check and daily checkpoint: 15 minutes.
+
+The nominal total is 210 minutes. Track remaining work by these packages; revise
+estimates from remaining scope, observed blockers, and optional learner feedback.
+
+Tuesday closure: completed on 6 October in local product commit `781e74b`, with
+successful build/lint, browser smoke verification, the deliberate prop-type error
+experiment, documentation, and a clean product working tree. No Tuesday technical
+carry-over; Wednesday's package remains next.
+
+### First real exercise and file-level package
+
+- `frontend/src/components/AppHeader.tsx`: define a props type with required
+  `productName: string` and `subtitle: string`; render a semantic header containing
+  one h1 and a paragraph from those props. No state or side effects.
+- `frontend/src/App.tsx`: compose AppHeader with OpsDesk text and a main region
+  explaining that this week's screens use mock data. Remove the demo counter and
+  unused starter imports together, then verify the whole file once.
+- `frontend/src/App.css` and `frontend/src/index.css`: replace conflicting demo
+  styles with minimal readable spacing and typography. No design-system work.
+- `frontend/index.html`: set the page title to OpsDesk and the document language
+  to the language actually used for visible UI text.
+- `frontend/README.md`: explain setup, scripts, directory purpose, and mock-only
+  scope. Keep commands portable and record resolved versions from package files.
+- `notes/react/react-typescript-foundations.md` in the bootcamp repository: mentor
+  records explanations and reviewed learner answers. On 6 October the learner
+  delegated README/documentation maintenance to the mentor; implementation and
+  concept exercises remain learner-owned.
+
+Acceptance: the header uses parent-provided strings, the shell is visible without
+the backend, there is no starter counter, and there are no browser-console errors.
+Temporarily pass a number to the string prop, observe a TypeScript diagnostic,
+then restore it. This exercise does not prove runtime input validation.
+
+### Verification boundary
+
+- Inspect the generated package scripts before relying on their names. Expected
+  checks are `npm run build` (TypeScript check plus production bundle in the usual
+  template) and `npm run lint`. A dev server alone does not prove type correctness.
+- Tuesday's presentation-only shell uses browser inspection plus build/lint;
+  no snapshot test is required for static text. Lint/build are not behavior tests.
+- From Wednesday, introduce behavior tests with the first stateful interaction.
+  Test the visible result rather than component internals. For forms cover editing,
+  invalid submit, valid demo submit, and accessible feedback; for Tickets cover
+  populated and empty states. Add filters only if time remains, with their tests.
+- Never log, render, persist, or commit plaintext passwords or access tokens.
+  Demo password input exists only in transient form state and is cleared on successful
+  demo submission. Feedback must state that no account/session was created.
+- No PostgreSQL or backend test run is needed for frontend-only changes. If shared
+  configuration changes, assess the affected checks before declaring completion.
+
+## Notes, commits, and closure
+
+Append daily concept notes, one mistake/fix, verification outcomes, remaining work,
+and Git status. Record optional duration feedback only when provided. Suggested product commits after verification:
+`week-13: add React TypeScript frontend shell`, `week-13: render mock ticket list`,
+and `week-13: add controlled authentication demo forms`. Group behavior tests with
+their feature. Commit mentor-maintained bootcamp evidence at daily or milestone
+closure after reviewing the diff; do not leave it pending solely for a time report.
+Tuesday evidence commit message: `week-13: record React shell and Tuesday closure`.
+Do not commit node_modules, dist, secrets, or machine-specific paths. Keep the npm
+lockfile under version control. Review exact changed files before staging.
+
+Sunday closure requires evidence for all three screens, meaningful behavior tests,
+build/lint and browser checks, README and notes, weekly report, and recorded
+commit/PR/CI status where applicable. Do not claim merge or remote synchronization
+without evidence.
+
+## Interview review and next week
+
+1. What makes a function a React component, and what does JSX describe?
+2. How do parent-provided props differ from component state?
+3. Why does a TypeScript prop type not validate an HTTP response at runtime?
+4. Why do lists need stable keys rather than array indexes?
+5. What makes an input controlled, and why prevent the default form submission?
+6. What do lint, type checking, behavior tests, and a browser check each prove?
+7. Why do local form validation and hidden UI controls not enforce authorization?
+
+Before Week 14, inspect existing auth and Organization contracts and decide whether
+Ticket reads are required for the first connected screen. Scope backend dependencies
+explicitly and retain backend object-level authorization and validation. Plan token
+lifecycle, error/loading states, and API configuration before connecting the UI.
+
+## Official reading
+
+Reviewed on 6 October 2026:
+
+- [React Quick Start](https://react.dev/learn)
+- [React with TypeScript](https://react.dev/learn/typescript)
+- [Thinking in React](https://react.dev/learn/thinking-in-react)
+- [Vite guide](https://vite.dev/guide/)
+
+Read the portions needed for the current exercise, then apply them. Do not turn this
+week into an unbounded documentation or tutorial sprint.

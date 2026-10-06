@@ -2,19 +2,62 @@
 
 ## Current Week
 
-Week 12 — Closed; Week 13 planning starts 6 October
+Week 13 — Month 04 / React + TypeScript foundations
 
 ## Date
 
-29 September - 5 October 2026 (evidence-based closure)
+6–11 October 2026; opening checkpoint recorded 6 October
 
 ## Current Focus
 
-- Review the [Week 12 report](weekly-reports/week-12.md) and recorded one-day variance
-- Preserve clean OpsDesk `main` at merge commit `ec418f9`
-- Prepare the detailed Week 13 plan on 6 October from the remaining Month 03 backlog
+- Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
+- Learn components, JSX, typed props, state, events, lists, and controlled forms
+- Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
+- Keep real API calls, token storage, protected routes, and Tailwind outside Week 13
+- Track actual work and pending evidence in the [Week 13 report](weekly-reports/week-13.md)
+
+## Week 13 Opening — 6 October
+
+- Reviewed the Week 12 closure and handoff at bootcamp commit `5119d8d`.
+- Read-only local inspection confirmed clean OpsDesk `main` at `ec418f9`, equal to
+  the locally recorded `origin/main`; no fresh remote fetch was performed.
+- No `frontend/` exists yet. Local Node is `v25.2.1`; npm is `11.6.2`.
+- Saved the six-day plan. Setup, learner implementation, browser verification,
+  build, lint, frontend behavior tests, and product commits remain pending.
+- Planned product branch: `feature/week-13-react-foundation`.
+- Week 12's test counts remain historical evidence and have not been rerun today.
+- Durations are planning estimates; active-time reporting is optional, not a closure gate.
+
+## Week 13 Setup Checkpoint — 6 October
+
+- Learner created `feature/week-13-react-foundation` and generated `frontend/`
+  using Vite `react-ts` with ESLint; npm installation completed.
+- Supplied terminal output confirms Vite `8.3.3` started on local port 5173.
+- Local inspection confirms the branch and untracked frontend template files.
+- Static shell implementation, browser verification, build/lint, notes, and product
+  commit remain pending. No frontend behavior-test script is configured yet.
+- Estimated remaining Tuesday work at this checkpoint: 2–2.5 active hours.
+
+## Week 13 Tuesday Closure — 6 October
+
+- Static shell, typed props, deliberate TS2322 experiment, and restored successful
+  build complete. Lint and browser smoke checks passed.
+- Product commit `781e74b`: `week-13: add React TypeScript frontend shell`.
+- Local `feature/week-13-react-foundation` working tree is clean; remote publication,
+  PR, and merge are not verified. Bootcamp evidence is grouped in the daily
+  documentation commit, `week-13: record React shell and Tuesday closure`.
+- No Tuesday technical carry-over. No active-time report is required; estimates
+  support planning and are not recorded as measured time spent.
+- Next: 7 October state/events, conditional rendering, local screen selection, and
+  first behavior test; 3 planned active hours. Wednesday–Sunday allocation: 14.5 hours.
 
 ## Completed
+
+- [x] Week 13 intentional prop-type error observed (TS2322) and string restored
+- [x] Week 13 learner-implemented static React shell and typed header props
+- [x] Week 13 shell build/lint and browser smoke verification
+- [x] Week 13 frontend/product README updates and foundation review notes
+- [x] Week 13 Tuesday post-experiment build and local product commit `781e74b`
 
 - [x] Week 06 PostgreSQL 18.6 learning environment
 - [x] Dedicated non-superuser application role and development database

@@ -27,6 +27,15 @@ synchronous; a bounded async HTTP exercise follows lifecycle understanding.
 ### Month 4
 React, TypeScript, frontend integration, and a deployed full-stack demo.
 
+Week 13 (6–11 October): [React foundation plan](weekly-reports/week-13-plan.md),
+with a static shell, mock Ticket list, and controlled login/register forms inside
+OpsDesk's `frontend/`. Budget 18 active hours within the normal 15–20 hour capacity.
+Week 14 planning will review API integration prerequisites, including missing Ticket
+reads; Week 13 does not absorb the remaining Month 03 product backlog. Tailwind,
+authentication integration, protected routes, and deployment remain later work.
+The deployed backend/full-stack milestones remain unverified until delivery evidence
+exists; beginning Month 04 does not imply those milestones are complete.
+
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking
 cost and project fit; practical IAM, secrets, logs, and budget controls precede any

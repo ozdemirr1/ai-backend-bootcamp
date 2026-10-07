@@ -10,6 +10,8 @@ Week 13 — Month 04 / React + TypeScript foundations
 
 ## Current Focus
 
+- 7 October: state, events, conditional rendering, local screen selection, and the
+  first meaningful frontend behavior test (approximately 3 planned hours)
 - Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
 - Learn components, JSX, typed props, state, events, lists, and controlled forms
 - Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
@@ -52,6 +54,15 @@ Week 13 — Month 04 / React + TypeScript foundations
   first behavior test; 3 planned active hours. Wednesday–Sunday allocation: 14.5 hours.
 
 ## Completed
+
+- [x] Week 13 Wednesday screen selection, state/events, and union-state learning review
+- [x] Three frontend behavior tests; TypeScript/build, ESLint, and browser evidence
+- [x] Wednesday whitespace cleanup and README/learning evidence updates
+
+Wednesday technical work is complete. Commit/push for both repositories is the
+remaining closing step; next learning package is 8 October mock Ticket rendering.
+
+- [x] Week 13 Tuesday bootcamp `ef0e94f` and OpsDesk feature branch pushed by learner
 
 - [x] Week 13 intentional prop-type error observed (TS2322) and string restored
 - [x] Week 13 learner-implemented static React shell and typed header props

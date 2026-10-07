@@ -97,6 +97,51 @@ then restore it. This exercise does not prove runtime input validation.
 - No PostgreSQL or backend test run is needed for frontend-only changes. If shared
   configuration changes, assess the affected checks before declaring completion.
 
+## Wednesday package — 7 October, approximately 3 hours
+
+1. State, event handlers, conditional rendering, and literal union types through a
+   small reading-panel analogy: 35 minutes.
+2. Learner implementation and focused review of local screen selection: 45 minutes.
+3. Explain and configure Vitest, React Testing Library, user-event, and a DOM test
+   environment; learner writes meaningful interaction tests: 60 minutes.
+4. Test/build/lint, browser and keyboard smoke check, learning review, documentation,
+   commit, push, and verification: 40 minutes.
+
+These are planning estimates, not time-report requirements. Continue on
+`feature/week-13-react-foundation` from `781e74b`.
+
+### Implementation package
+
+- `frontend/src/App.tsx`: use one `activeScreen` state with a literal union of
+  `tickets`, `login`, and `register`, initially `tickets`. Keep the existing header
+  and mock-data explanation. Render three explicitly typed buttons in a labelled
+  navigation region; each click selects its corresponding state. Use `aria-pressed`
+  to expose the current selection. Render exactly one heading/placeholder paragraph
+  for the selected screen inside main. Do not implement the forms or Ticket rows yet.
+- `frontend/src/App.css`: use a dedicated class for the selector, modest spacing,
+  visible selected state, and a clear keyboard focus indicator. Leave global styles
+  and AppHeader unchanged unless review identifies a concrete need.
+- Keep event handlers as functions passed to onClick; do not invoke setters during
+  render. Call useState at the component's top level. No effects or duplicated boolean
+  flags are needed. Selection is local UI state; it resets on a full reload and does
+  not change the URL or grant authentication/authorization.
+
+### Test package and acceptance
+
+After reviewing the implementation, explain the test tools before the learner runs
+installation commands. Group package scripts, test configuration/setup, and the App
+test file as one coherent package. Test default Tickets rendering, switching to Login
+and Register, disappearance of the previous heading, returning to Tickets, and the
+selected-button state. Query elements by role/name; simulate awaited user interactions.
+Do not test React's internal state or add snapshot tests for this behavior.
+
+Acceptance: only one screen is rendered, all three choices work via normal buttons,
+the current selection is exposed and visible, keyboard focus is visible, and the
+header remains intact. Final checks are behavior tests, TypeScript/build, ESLint,
+browser/keyboard smoke check, and reviewed Git changes. The mentor maintains README,
+learning notes, and evidence; record today's Git closure for both repositories in the
+same closing package.
+
 ## Notes, commits, and closure
 
 Append daily concept notes, one mistake/fix, verification outcomes, remaining work,

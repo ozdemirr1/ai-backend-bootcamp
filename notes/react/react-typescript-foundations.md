@@ -50,3 +50,34 @@ The learner restored `productName="OpsDesk"`; the editor reports no problems and
 local source inspection confirms the restoration. Subsequent learner terminal evidence
 confirms a successful post-experiment build. The final shell is recorded in product
 commit `781e74b`; earlier lint and browser smoke checks also passed.
+
+## 7 October — State and screen selection
+
+- Props supply inputs; state remembers the component's current selection between
+  renders. Calling the setter requests a render with the updated value.
+- A local variable assignment does not notify React to render. Call useState at the
+  top level, and pass event handlers to onClick rather than calling setters in render.
+- Learner used `Screen = 'tickets' | 'login' | 'register'`. Their explanation was
+  correct: three independent booleans can encode contradictory active screens; one
+  union state selects one value. Matching conditional rendering must still implement
+  that selection correctly.
+- Current screen selection changes only local UI state. It is neither routing nor
+  authentication; refreshing initializes the selection again.
+- Review verified click transitions, one visible screen heading at a time, updated
+  aria-pressed, and keyboard activation/focus. Behavior tests are the next exercise.
+
+## 7 October — First behavior tests completed
+
+- Vitest runs the tests; React Testing Library renders components and finds DOM
+  elements by accessible role/name. user-event applies awaited interactions.
+- jsdom supplies a DOM environment inside Node, not a full visual browser.
+  jest-dom adds assertions such as toBeInTheDocument and toHaveAttribute.
+- getByRole throws when the expected element is absent; queryByRole returns null
+  when absent, which makes it appropriate for disappearance assertions.
+- Role-specific queries distinguish a Tickets button from a Tickets heading.
+- afterEach cleanup removes the rendered tree so tests do not inherit prior DOM.
+- Three learner-written tests verify initial selection, Login and return to Tickets,
+  and Register with other screen content absent and other buttons unpressed.
+  They assert observable behavior without reaching into activeScreen state.
+- Test/build/lint passed in the learner's terminal. Git diff checks whitespace
+  separately; its trailing-space warnings were fixed without changing behavior.

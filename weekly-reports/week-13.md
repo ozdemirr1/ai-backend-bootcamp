@@ -38,8 +38,10 @@ Wednesday–Sunday. These are planning estimates, not measured durations. Active
 reporting is optional and is not a closure requirement. Bootcamp planning, notes, and
 Tuesday evidence are grouped in the daily documentation commit.
 
-The rest of the week: state/events, mock Ticket rendering, controlled login/register
-forms, behavior tests, documentation, interview review, and Git closure.
+As of 7 October, state/events and the first behavior tests are complete. Wednesday's
+remaining work is the two-repository commit/push checkpoint (approximately 5–10
+minutes). Thursday–Sunday retains 11.5 planned hours for mock Tickets, controlled
+login/register forms and their tests, documentation, review, and weekly closure.
 
 ## 6 October static-shell review
 
@@ -99,3 +101,64 @@ Week 13 mandatory time-report requirement; optional feedback can improve estimat
 but missing duration data is not unfinished work. The mentor owns documentation and
 its daily/milestone Git checkpoint. Tuesday's documentation commit was initially
 omitted from the closure and is being completed with this evidence package.
+
+## 6 October publication evidence
+
+- Learner terminal output confirms bootcamp `main` pushed from `5119d8d` to `ef0e94f`.
+- OpsDesk `feature/week-13-react-foundation` was pushed and upstream tracking set;
+  its current product commit is `781e74b`. This is branch publication, not a PR/merge.
+
+## 7 October opening checkpoint
+
+- Local inspection confirms clean bootcamp at `ef0e94f` and clean OpsDesk on
+  `feature/week-13-react-foundation` at `781e74b`. OpsDesk HEAD equals its locally
+  recorded upstream; no fresh fetch was performed.
+- Reviewed the shell, header, package scripts, and Vite/TypeScript configuration.
+  No test script is configured yet.
+- Prepared the approximately 3-hour state/events/screen-selection/test package.
+  Wednesday implementation and verification are pending learner work.
+- Documentation remains mentor-owned. Daily closure includes review, documents,
+  commit, push, and verification; active-time reporting is optional.
+
+## 7 October screen-selection review
+
+- Learner implemented one `Screen` union state with initial Tickets, three button
+  handlers, conditional screen sections, aria-pressed selection, and focus styles.
+- Learner correctly explained why independent boolean flags could represent multiple
+  active screens, whereas one union state represents a single selected screen.
+- Browser review verified Tickets → Login → Register → Tickets, replacement of old
+  content, corresponding pressed states, and Tab/Enter activation of Register with
+  a visible focus ring. Captured warning/error logs were empty.
+- ESLint passed. Git whitespace check found trailing spaces in App.tsx; learner
+  cleanup is pending. Current diff has only App.tsx and App.css changes.
+- Existing visual design is sufficient for this foundation. Suggested only wrapping
+  the button row on narrow widths and narrowing CSS transitions to intended properties.
+  No broader dashboard or styling framework is needed.
+- Next: learner installs the test dependencies and implements the grouped config,
+  cleanup setup, and App behavior tests. Tests and final build are not yet verified.
+
+## 7 October test review and technical completion
+
+- Learner supplied Vitest 4.1.11 output: one test file and three passing tests.
+  The same terminal package passed TypeScript/Vite build and ESLint. Its final
+  warnings came from `git diff --check`, not ESLint.
+- Reviewed all tests: initial Tickets with absent Login/Register headings; Login
+  selection and return to Tickets; Register selection with other headings absent
+  and the other buttons unpressed. Queries use accessible roles/names, interactions
+  are awaited, and afterEach cleanup isolates each rendered tree.
+- Configuration correctly reuses the React Vite plugin, sets jsdom, imports DOM
+  matchers through the Vitest entry point, and exposes run-once/watch scripts.
+- Learner added navigation wrapping and targeted color transitions. Mentor removed
+  only App.tsx trailing whitespace; Git whitespace check then passed. No behavior
+  changed after the supplied passing test/build/lint package, so those checks were
+  not repeated for documentation/whitespace-only edits.
+- Updated product and frontend READMEs with actual screen-selection/test scope,
+  scripts, source layout, and browser/jsdom/CI boundaries. Forms and Ticket rows are
+  still future work; no backend/API or authentication changes were made.
+- Wednesday's implementation, learning review, behavior tests, and browser evidence
+  are complete. Product and bootcamp commit/push evidence remains pending; do not
+  claim a clean published state until those operations finish.
+- Suggested product commit: `week-13: add screen selection and behavior tests`.
+  Suggested evidence commit: `week-13: record screen selection and test evidence`.
+- Next learning package: 8 October typed mock Tickets, list rendering, stable keys,
+  and populated/empty list tests (approximately 3 planned hours).

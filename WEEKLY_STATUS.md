@@ -10,8 +10,8 @@ Week 13 — Month 04 / React + TypeScript foundations
 
 ## Current Focus
 
-- 7 October: state, events, conditional rendering, local screen selection, and the
-  first meaningful frontend behavior test (approximately 3 planned hours)
+- 8 October: typed mock Tickets, map, stable keys, populated/empty list tests,
+  and App wiring regression (approximately 3 planned hours)
 - Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
 - Learn components, JSX, typed props, state, events, lists, and controlled forms
 - Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
@@ -59,8 +59,14 @@ Week 13 — Month 04 / React + TypeScript foundations
 - [x] Three frontend behavior tests; TypeScript/build, ESLint, and browser evidence
 - [x] Wednesday whitespace cleanup and README/learning evidence updates
 
-Wednesday technical work is complete. Commit/push for both repositories is the
-remaining closing step; next learning package is 8 October mock Ticket rendering.
+Wednesday is complete: product `5f7f5c3` and bootcamp `b32dadf` were committed and
+pushed by the learner. Thursday's mock Ticket list now passes five tests, build,
+lint, whitespace, and browser checks. Stable-key learning review and Thursday's
+two-repository commit/push evidence remain pending.
+
+- [x] Typed mock Ticket list with stable IDs and explicit empty state
+- [x] Independent row-field/empty-list tests and App list-navigation regression
+- [x] Narrow-screen wrapping and Safari list semantics correction
 
 - [x] Week 13 Tuesday bootcamp `ef0e94f` and OpsDesk feature branch pushed by learner
 

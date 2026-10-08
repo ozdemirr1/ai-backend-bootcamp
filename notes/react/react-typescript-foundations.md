@@ -81,3 +81,22 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   They assert observable behavior without reaching into activeScreen state.
 - Test/build/lint passed in the learner's terminal. Git diff checks whitespace
   separately; its trailing-space warnings were fixed without changing behavior.
+
+## 8 October — Typed mock lists
+
+- TicketSummary[] describes an array of display records; status and priority unions
+  match the current product vocabulary. This display type is not runtime API validation.
+- Data flows mockTickets → App → TicketList. The list receives props rather than
+  importing a global mock array or copying unchanged props into local state.
+- map creates JSX items; a callback block with braces needs an explicit return.
+- Each rendered li uses ticketId as key. Stable IDs track record identity even when
+  positions change; an index tracks a position. React keys are not DOM attributes.
+  Learner's own explanation remains pending; code usage is correct.
+- Empty data is a normal UI state: show the message with no list/listitems.
+- Independent test fixtures plus within(row) prove that fields belong to the correct
+  row, not just that those strings occur somewhere in the document.
+- Five tests passed: two list tests plus three App navigation tests. Browser smoke
+  checks additionally verified the list and 375px metadata wrapping.
+- list-style:none can remove Safari's list semantics; role="list" preserves them.
+  See [MDN list accessibility](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/list-style#accessibility).
+  DOM tests do not establish real-browser layout or accessibility behavior.

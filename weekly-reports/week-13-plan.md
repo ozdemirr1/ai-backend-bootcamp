@@ -142,6 +142,54 @@ browser/keyboard smoke check, and reviewed Git changes. The mentor maintains REA
 learning notes, and evidence; record today's Git closure for both repositories in the
 same closing package.
 
+## Thursday package — 8 October, approximately 3 hours
+
+1. Typed arrays, map, stable keys, and a small book-list analogy: 30 minutes.
+2. Learner implements typed mock data, a props-driven TicketList, App wiring, and
+   minimal list styling: 60 minutes.
+3. Learner writes populated/empty component tests and extends the existing App
+   navigation test to prove the list is wired and removed/restored: 45 minutes.
+4. Review, test/build/lint/browser checks, documentation, commit/push for both
+   repositories, and verification: 45 minutes.
+
+Continue on `feature/week-13-react-foundation` from `5f7f5c3`. No dependencies or
+backend changes are needed. No fetch, effects, duplicated list state, filtering,
+pagination, CRUD, or routing in this bounded package.
+
+### Grouped file package
+
+- `frontend/src/types/ticket.ts`: export TicketStatus (`open`, `in_progress`,
+  `resolved`, `closed`), TicketPriority (`low`, `medium`, `high`, `urgent`), and
+  TicketSummary with ticketId: number, title: string, status, and priority. This is
+  a small frontend display model, not a claim about an implemented list API contract.
+- `frontend/src/data/mockTickets.ts`: export a typed TicketSummary array with three
+  synthetic records and fixed unique ticketId values. Import types with import type.
+- `frontend/src/components/TicketList.tsx`: accept tickets: TicketSummary[] via props,
+  show `No tickets yet.` for an empty array, otherwise render one labelled native
+  unordered list with one li per Ticket using ticketId as key. Each row shows its
+  title as h3 and visible ID/status/priority text. Keep the Tickets h2 in App.
+  Do not import mock data here, mutate props, or copy props into state.
+- `frontend/src/App.tsx`: import mockTickets and TicketList; replace the Tickets
+  placeholder paragraph with the list, preserving screen state, heading, and forms'
+  placeholders. One-way data flow is mockTickets → App → TicketList.
+- `frontend/src/App.css`: scoped list/row spacing and readable borders/typography;
+  preserve navigation/focus styles. Avoid styling expansion.
+- `frontend/src/components/TicketList.test.tsx`: use independent typed fixtures,
+  not the application's mock array. Verify populated item count and title/ID/status/
+  priority association within each row; verify empty message with no list items.
+  Explain within() before asking the learner to scope repeated status/priority text.
+- `frontend/src/App.test.tsx`: extend existing initial/navigation checks to prove
+  the named list is initially present, absent on Login, and present after returning
+  to Tickets; preserve all previous screen-selection checks.
+
+Stable keys identify siblings across insertion/removal/reordering. Do not generate
+keys during render or use array positions. Keys are React metadata, not a DOM
+attribute to assert. Verify this choice in code review and learning explanation.
+
+Final commands from frontend: npm test, npm run build, npm run lint, git diff --check.
+Browser checks include all three mock rows, switching away/back, and no console/key
+warnings. Mentor maintains READMEs and notes after reviewing implemented behavior.
+
 ## Notes, commits, and closure
 
 Append daily concept notes, one mistake/fix, verification outcomes, remaining work,

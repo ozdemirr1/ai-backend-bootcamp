@@ -38,10 +38,11 @@ Wednesday–Sunday. These are planning estimates, not measured durations. Active
 reporting is optional and is not a closure requirement. Bootcamp planning, notes, and
 Tuesday evidence are grouped in the daily documentation commit.
 
-As of 7 October, state/events and the first behavior tests are complete. Wednesday's
-remaining work is the two-repository commit/push checkpoint (approximately 5–10
-minutes). Thursday–Sunday retains 11.5 planned hours for mock Tickets, controlled
-login/register forms and their tests, documentation, review, and weekly closure.
+As of 8 October, screen selection and the mock Ticket list are implemented and
+verified. Remaining Thursday steps are the learner's stable-key explanation and
+the two-repository commit/push checkpoint (approximately 5–10 minutes).
+Friday–Sunday retains 8.5 planned hours for controlled login/register forms and their
+tests, documentation, review, and weekly closure.
 
 ## 6 October static-shell review
 
@@ -162,3 +163,51 @@ omitted from the closure and is being completed with this evidence package.
   Suggested evidence commit: `week-13: record screen selection and test evidence`.
 - Next learning package: 8 October typed mock Tickets, list rendering, stable keys,
   and populated/empty list tests (approximately 3 planned hours).
+
+## 7 October publication evidence
+
+- Learner terminal output confirms OpsDesk `5f7f5c3` committed and pushed on
+  `feature/week-13-react-foundation`, and bootcamp `b32dadf` committed and pushed
+  on main. Both final working-tree status outputs were empty.
+- Wednesday's Git closing step is complete. PR/merge is not claimed.
+
+## 8 October opening checkpoint
+
+- Local inspection confirms clean bootcamp at `b32dadf` and clean OpsDesk at
+  `5f7f5c3`, still on `feature/week-13-react-foundation`. Product HEAD equals the
+  locally recorded upstream; no new remote fetch was performed.
+- Prepared a 3-hour typed mock Ticket-list package with populated/empty tests and
+  App navigation regression. Current three tests are previous evidence, not rerun
+  results for Thursday.
+- Checked backend Ticket vocabulary: open/in_progress/resolved/closed and
+  low/medium/high/urgent. The frontend display type is deliberately smaller than
+  the backend Ticket representation; this week still has no real API integration.
+- Implementation and Thursday checks remain learner work. No time report is required.
+
+## 8 October mock Ticket review and verification
+
+- Learner implemented typed status/priority/summary declarations, three synthetic
+  records, and a props-driven TicketList. It uses fixed ticketId keys, displays each
+  row's title/ID/status/priority, and renders an explicit empty-state message.
+- App now supplies mock data to the list in the Tickets screen. Existing navigation
+  tests also verify list presence, removal on Login/Register, and restoration.
+- Two isolated TicketList tests use independent fixtures and within() to verify
+  each row's own fields; the empty test confirms no list or items are rendered.
+- Learner's test/build/lint package passed with five tests in two files. Git reported
+  trailing spaces in App; review also found them in the new untracked list test.
+- Mentor removed trailing spaces, added flex-wrap to Ticket metadata for narrow
+  screens, and added role="list" because list-style:none can suppress native list
+  accessibility semantics in Safari. No list/business logic was replaced.
+- After those fixes, mentor reran all five frontend tests, TypeScript/Vite build,
+  ESLint, and Git whitespace checks successfully.
+- Browser verification displayed all three mock records, exposed the named list,
+  removed it on Login, and restored it on Tickets. A 375px viewport confirmed
+  readable wrapped metadata. Captured warning/error logs were empty.
+- The development server was initially stopped; mentor started a loopback-only
+  temporary server for inspection and stopped it afterwards. Browser startup had a
+  prolonged tool delay; it is not learner active time.
+- Product and frontend READMEs now describe actual mock-list scope and five tests.
+  Forms, API requests, token handling, and backend mutations remain outside this slice.
+- Remaining: stable-key learning answer and product/bootcamp commit and push evidence.
+  Suggested messages: `week-13: add typed mock ticket list and tests` and
+  `week-13: record mock ticket list evidence`. No Thursday publication claimed yet.

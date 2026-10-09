@@ -38,11 +38,11 @@ Wednesday–Sunday. These are planning estimates, not measured durations. Active
 reporting is optional and is not a closure requirement. Bootcamp planning, notes, and
 Tuesday evidence are grouped in the daily documentation commit.
 
-As of 8 October, screen selection and the mock Ticket list are implemented and
-verified. Remaining Thursday steps are the learner's stable-key explanation and
-the two-repository commit/push checkpoint (approximately 5–10 minutes).
-Friday–Sunday retains 8.5 planned hours for controlled login/register forms and their
-tests, documentation, review, and weekly closure.
+As of 9 October, Tuesday–Thursday are committed and pushed in both repositories.
+Friday's controlled Login demo, 12-test verification, browser review, learning answer,
+and documentation are complete; Friday commit/push evidence remains pending.
+Saturday–Sunday retains 5.5 planned hours for the Register demo, its tests, review,
+and weekly closure. These allocations are estimates, not measured time spent.
 
 ## 6 October static-shell review
 
@@ -211,3 +211,69 @@ omitted from the closure and is being completed with this evidence package.
 - Remaining: stable-key learning answer and product/bootcamp commit and push evidence.
   Suggested messages: `week-13: add typed mock ticket list and tests` and
   `week-13: record mock ticket list evidence`. No Thursday publication claimed yet.
+
+## 8 October closure and learning correction
+
+- Learner terminal evidence confirms product commit `dcae2ba` pushed on the feature
+  branch and bootcamp commit `e355fa0` pushed on main, with empty final status output.
+- Learner correctly identified index-key state misassociation after inserting a row.
+  Clarified that index keys do not necessarily rebuild the whole list and stable keys
+  do not prevent renders or guarantee a performance gain; preserving item identity
+  and associated state is the central purpose. Thursday is complete.
+
+## 9 October opening checkpoint
+
+- Local inspection confirms clean bootcamp at `e355fa0` and clean OpsDesk at
+  `dcae2ba` on the existing feature branch. Product HEAD equals its locally recorded
+  upstream; no fresh fetch or test rerun at opening.
+- Reviewed backend LoginRequest and normalization: email/password fields, strict
+  email normalization, and NFC password validation with a 15–128-code-point bound.
+- Friday's local form has an explicitly smaller UX-validation scope (required fields
+  and a basic email-shape check). It must not claim backend validation parity or
+  actual credential verification. Real integration remains Week 14 planning work.
+- Saved the 3-hour controlled-login-form package; implementation and checks pending.
+
+## 9 October Login form first review
+
+- Learner implemented controlled email/password fields, form-owned feedback,
+  preventDefault/noValidate submission, ordered local checks, alert/status messages,
+  stale-feedback clearing, and password clearing after demo success. App wiring and
+  form styles are present; no network/storage/authentication logic was introduced.
+- Supplied terminal evidence reports 11 passing tests (6 LoginForm, 3 App, 2 TicketList),
+  successful TypeScript/Vite build and ESLint. Tracked-file whitespace check is clean.
+- Code review found the final LoginForm test's name claims error/success clearing,
+  but its body only verifies error clearing when email changes. Request one additional
+  test for clearing a success status when password is edited, and rename the existing
+  test to describe its actual coverage. Product behavior appears correct; regression
+  evidence is incomplete for the accepted success-feedback requirement.
+- The two new untracked LoginForm files still contain trailing whitespace, which
+  plain git diff --check does not inspect. Include their cleanup in the same learner
+  edit package; no need for new formatter dependencies.
+- Remaining: focused test correction, browser/keyboard verification, final docs,
+  controlled-input learning answer, and both repositories' commit/push closure.
+
+## 9 October Login form final review
+
+- Learner renamed the error-clearing test and added an independent test proving that
+  editing password after demo success removes the status and leaves no alert.
+- Supplied terminal output at 14:31 reports 12 passing tests across three files:
+  seven LoginForm, three App, and two TicketList. TypeScript/Vite build and ESLint
+  passed; tracked-file git diff --check produced no warnings. These checks were
+  learner-run; the mentor did not rerun the suite for documentation-only changes.
+- Browser verification confirmed empty-submit feedback, corrected synthetic input
+  submitted with Enter, the explicit demo status, retained email, cleared password,
+  and status removal after password editing. Tab moved focus from email to password
+  with a visible focus indicator. Captured warning/error logs were empty.
+- Reviewed source and tests: form state stays local, validation is bounded UX only,
+  and there is no request, storage, token, or authentication behavior.
+- Learner correctly explained that value makes React state authoritative. Refined
+  the explanation: React restores the input to the supplied value when synchronous
+  onChange state updates are missing; lack of a render alone is not the cause.
+  Rendering for another reason would still supply the same unchanged value.
+- Mentor updated both product READMEs and learning records and removed three
+  trailing-whitespace lines from the new LoginForm file without changing behavior.
+  Plain git diff --check does not inspect untracked files; inspect them separately
+  and use git diff --cached --check after staging.
+- Friday implementation/review is complete. Both repositories' commits, pushes,
+  and clean-status outputs remain pending. No Friday commit ID, hosted CI, PR, or
+  merge is claimed. Next learning package: 10 October controlled Register demo.

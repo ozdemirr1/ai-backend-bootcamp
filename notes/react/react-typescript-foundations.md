@@ -91,7 +91,9 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
 - map creates JSX items; a callback block with braces needs an explicit return.
 - Each rendered li uses ticketId as key. Stable IDs track record identity even when
   positions change; an index tracks a position. React keys are not DOM attributes.
-  Learner's own explanation remains pending; code usage is correct.
+  Learner correctly explained state misassociation with shifted index keys. Clarified
+  that index keys do not necessarily rebuild the whole list, and stable keys neither
+  prevent renders nor guarantee performance gains; preserving identity is the goal.
 - Empty data is a normal UI state: show the message with no list/listitems.
 - Independent test fixtures plus within(row) prove that fields belong to the correct
   row, not just that those strings occur somewhere in the document.
@@ -100,3 +102,29 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
 - list-style:none can remove Safari's list semantics; role="list" preserves them.
   See [MDN list accessibility](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/list-style#accessibility).
   DOM tests do not establish real-browser layout or accessibility behavior.
+
+## 9 October — Controlled Login demo
+
+- value supplies the input's displayed value; onChange reads currentTarget.value
+  and synchronously calls the matching state setter. Initialize controlled text
+  fields with empty strings. Without the state update, React restores the supplied
+  value after editing, so the field behaves as read-only. This is not simply a lack
+  of re-rendering: another render still supplies the unchanged state value.
+- Form onSubmit handles button and Enter submission. preventDefault stops native
+  navigation; noValidate bypasses native constraint-validation blocking so this
+  exercise can show its own consistent messages. Neither validates credentials.
+- Validate required email, a bounded email-shape heuristic, then non-empty password.
+  Trim only the email for checks; do not trim the password. This demo deliberately
+  does not reproduce the backend's full normalization and validation contract.
+- A Feedback union represents an error, success, or no message. Use role=alert for
+  errors and role=status for demo completion. Editing clears stale feedback; demo
+  completion clears the password and retains email. Switching screens unmounts the
+  form and discards its local state.
+- Client validation helps correct input; only the backend can verify credentials
+  and enforce access rules. This demo sends no request and establishes no session.
+- Test names must match assertions. The first review found a test named for both
+  error and success clearing but checking only an email edit after an error. Renamed
+  that case and added password-edit-after-success coverage. Final evidence: seven
+  form tests plus the existing five tests, with build/lint and browser checks passing.
+- git diff --check omits untracked files. Check new source separately, then run
+  git diff --cached --check after git add so the commit candidate is covered.

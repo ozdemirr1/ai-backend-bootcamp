@@ -190,6 +190,72 @@ Final commands from frontend: npm test, npm run build, npm run lint, git diff --
 Browser checks include all three mock rows, switching away/back, and no console/key
 warnings. Mentor maintains READMEs and notes after reviewing implemented behavior.
 
+## Friday package — 9 October, approximately 3 hours
+
+1. Controlled inputs, change events, form submit, preventDefault, and a small
+   non-authentication analogy: 30 minutes.
+2. Learner implements an isolated LoginForm and integrates it into App: 60 minutes.
+3. Learner writes input/validation/feedback tests and extends App wiring evidence:
+   45 minutes.
+4. Review, browser/keyboard checks, test/build/lint, docs, and both repositories'
+   commit/push verification: 45 minutes.
+
+Continue the existing feature branch from `dcae2ba`; no new dependency. The form
+owns email/password strings initialized to empty and transient feedback. App keeps
+screen-selection state and the existing Login h2. No fetching, fake tokens, storage,
+protected route, form library, effects, timers, or backend changes.
+
+### Grouped file package and demo contract
+
+- `frontend/src/components/LoginForm.tsx`: labelled Email and Password controls,
+  type=email/password, name=email/password, autoComplete=username/current-password,
+  value/onChange, and an enabled `Continue demo` submit button. Use explicit label
+  associations and visible required markers. Use form onSubmit with preventDefault
+  and noValidate so the component consistently renders its own validation feedback.
+- Initialize feedback to null; a small union of error/success messages is sufficient.
+  Changing either input clears stale feedback. Validate on submit in this order:
+  trimmed email empty → `Email is required.`; basic email-shape mismatch →
+  `Enter a valid email address.`; password exactly empty → `Password is required.`.
+  Use `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` only as an explicitly bounded demo heuristic.
+  Do not trim the password. Do not claim parity with backend email validation,
+  ASCII/NFC rules, or the backend's 15–128-code-point password limits.
+- Failure renders a role=alert message and keeps input available for correction.
+  Valid demo input renders role=status with `Demo only: no sign-in request was sent.`
+  and clears password state. Keep email for convenience. Never echo/log/store a
+  password, submit credentials over the network, or claim an authenticated session.
+  Use synthetic test values, never real credentials.
+- `frontend/src/App.tsx`: replace only the Login placeholder paragraph with LoginForm;
+  keep the existing h2, navigation, Ticket list, and Register placeholder.
+- `frontend/src/App.css`: scoped auth-form styles for readable width, vertical labels,
+  controls, feedback and visible keyboard focus. Avoid altering navigation buttons.
+- `frontend/src/components/LoginForm.test.tsx`: isolated tests cover editable fields,
+  missing email, missing password with a valid email, malformed email, valid demo
+  submit with password clearing and retained email, and stale feedback removal when
+  editing. Use getByLabelText for fields and awaited user-event interactions. Click
+  the submit button; do not invoke handler functions directly. Check invalid input
+  has no success status and success has no error alert. Do not enforce an arbitrary
+  test count if a focused table-driven case is clearer.
+- `frontend/src/App.test.tsx`: extend the Login navigation test to find the labelled
+  controls after switching in and confirm they are absent after returning to Tickets.
+  Retain the existing list and navigation assertions.
+
+Keep all changes and checks for each file in one package. Final checks: npm test,
+npm run build, npm run lint, git diff --check; browser submit via button and Enter,
+labels/focus, invalid/corrected submission, password clearing, no console errors.
+Mentor updates README and learning notes after implementation review. Completion
+requires both repos' Git closure and a short explanation of value/onChange and why
+client-side validation does not establish authentication or authorization.
+
+### Friday review checkpoint
+
+Implementation and learning review are complete on 9 October. Learner evidence:
+12 frontend tests passed (7 LoginForm, 3 App, 2 TicketList), build and lint passed.
+Browser checks verified button/Enter submission, feedback transitions, password
+clearing, and visible keyboard focus. Both READMEs and bootcamp records are updated.
+Both repositories' commit/push/clean-status evidence is the remaining closure step.
+Continue with the Saturday Register demo after that checkpoint; no new library or
+real authentication integration is needed for Week 13.
+
 ## Notes, commits, and closure
 
 Append daily concept notes, one mistake/fix, verification outcomes, remaining work,

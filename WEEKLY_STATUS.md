@@ -10,8 +10,8 @@ Week 13 — Month 04 / React + TypeScript foundations
 
 ## Current Focus
 
-- 8 October: typed mock Tickets, map, stable keys, populated/empty list tests,
-  and App wiring regression (approximately 3 planned hours)
+- 9 October: controlled Login form, submit handling, local validation, accessible
+  demo feedback, and behavior tests (approximately 3 planned hours)
 - Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
 - Learn components, JSX, typed props, state, events, lists, and controlled forms
 - Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
@@ -60,9 +60,17 @@ Week 13 — Month 04 / React + TypeScript foundations
 - [x] Wednesday whitespace cleanup and README/learning evidence updates
 
 Wednesday is complete: product `5f7f5c3` and bootcamp `b32dadf` were committed and
-pushed by the learner. Thursday's mock Ticket list now passes five tests, build,
-lint, whitespace, and browser checks. Stable-key learning review and Thursday's
-two-repository commit/push evidence remain pending.
+pushed by the learner. Thursday is also closed: five tests and all checks passed,
+stable-key learning review completed, product `dcae2ba` and bootcamp `e355fa0`
+committed/pushed. Friday's controlled Login form is implemented and reviewed:
+12 frontend tests, build, and lint passed in the learner's terminal. Browser checks
+confirmed empty-submit feedback, Enter submission, password clearing, stale-feedback
+removal, and visible keyboard focus, with no captured warning/error logs. Documentation
+is updated; both repositories' Friday commit/push evidence remains pending.
+
+- [x] Controlled Login demo and seven isolated form behavior tests
+- [x] Controlled-input learning answer reviewed and refined
+- [x] Friday README, learning notes, and whitespace cleanup
 
 - [x] Typed mock Ticket list with stable IDs and explicit empty state
 - [x] Independent row-field/empty-list tests and App list-navigation regression

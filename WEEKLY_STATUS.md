@@ -10,8 +10,8 @@ Week 13 — Month 04 / React + TypeScript foundations
 
 ## Current Focus
 
-- 9 October: controlled Login form, submit handling, local validation, accessible
-  demo feedback, and behavior tests (approximately 3 planned hours)
+- 10 October: controlled Register demo, cross-field confirmation, accessible local
+  feedback, and behavior tests (approximately 3 planned hours)
 - Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
 - Learn components, JSX, typed props, state, events, lists, and controlled forms
 - Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
@@ -66,7 +66,18 @@ committed/pushed. Friday's controlled Login form is implemented and reviewed:
 12 frontend tests, build, and lint passed in the learner's terminal. Browser checks
 confirmed empty-submit feedback, Enter submission, password clearing, stale-feedback
 removal, and visible keyboard focus, with no captured warning/error logs. Documentation
-is updated; both repositories' Friday commit/push evidence remains pending.
+is updated. Friday closed with learner-supplied commit/push evidence for product
+`7dab029` and bootcamp `1febb25`; both final status outputs were clean. Read-only
+inspection on 10 October confirms those local HEADs and clean working trees before
+Saturday planning edits. Saturday's Register form is implemented: learner evidence
+reports 23 passing tests plus build/lint after the focused review corrections.
+Browser checks passed; final source review confirms feedback coverage and App cleanup.
+Both READMEs and learning records are updated. Saturday's remaining step is both
+repositories' commit/push/clean-status evidence; see the Week 13 report.
+
+- [x] Controlled Register demo with UI-only confirmation and eleven isolated tests
+- [x] Register field/feedback reset regression and cross-field learning review
+- [x] Saturday README and final review evidence updates
 
 - [x] Controlled Login demo and seven isolated form behavior tests
 - [x] Controlled-input learning answer reviewed and refined

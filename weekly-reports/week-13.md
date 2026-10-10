@@ -40,7 +40,7 @@ Tuesday evidence are grouped in the daily documentation commit.
 
 As of 9 October, Tuesday–Thursday are committed and pushed in both repositories.
 Friday's controlled Login demo, 12-test verification, browser review, learning answer,
-and documentation are complete; Friday commit/push evidence remains pending.
+documentation, and both repositories' commit/push closure are complete.
 Saturday–Sunday retains 5.5 planned hours for the Register demo, its tests, review,
 and weekly closure. These allocations are estimates, not measured time spent.
 
@@ -277,3 +277,69 @@ omitted from the closure and is being completed with this evidence package.
 - Friday implementation/review is complete. Both repositories' commits, pushes,
   and clean-status outputs remain pending. No Friday commit ID, hosted CI, PR, or
   merge is claimed. Next learning package: 10 October controlled Register demo.
+
+## 9 October Git closure
+
+- Learner supplied successful commit/push output for OpsDesk `7dab029` on
+  `feature/week-13-react-foundation` and bootcamp `1febb25` on main.
+- Both staged whitespace checks and final short-status outputs were clean.
+  Friday is complete; no PR/merge or frontend hosted CI result is claimed.
+
+## 10 October opening checkpoint
+
+- Read-only local inspection confirms clean product at `7dab029` on the same weekly
+  feature branch and clean bootcamp at `1febb25` before planning changes. No fresh
+  remote fetch or test run was performed at opening.
+- Reviewed RegisterUserRequest: only email/password are accepted; extra fields are
+  forbidden. Backend normalizes email and NFC password with a 15–128-code-point
+  bound. Today's demo retains Friday's smaller local UX-validation scope.
+- Saturday adds RegisterForm with a UI-only confirmPassword field to practice
+  comparing two controlled values. Confirmation is not an API field, and no request
+  or account/session is created. App retains screen state; form owns field state.
+- Saved the approximately 3-hour exercise, tests, browser acceptance, and learning
+  question in the weekly plan. Implementation and verification remain learner work.
+
+## 10 October Register first review
+
+- Learner implemented local controlled email/password/confirmation state, ordered
+  validation, field-edit feedback clearing, explicit demo status, and both-password
+  clearing. App renders RegisterForm; existing form styles are reused.
+- Learner terminal evidence at 17:46 reports 21 passing tests (9 RegisterForm,
+  7 LoginForm, 3 App, 2 TicketList), successful build and lint. Mentor inspection
+  confirms clean tracked diff whitespace and no trailing whitespace in TSX files,
+  including the new untracked files. No test suite was rerun during this review.
+- Browser verified mismatched-password alert, correction and Enter submission,
+  explicit demo status, both-password clearing, and fresh fields/no feedback after
+  switching to Tickets and back. Keyboard focus is visible; warning/error logs empty.
+- Two existing feedback tests only edit confirmation despite names implying all
+  fields. Request accurate names plus email-after-error and password-after-success
+  coverage. App's reset test must establish feedback before leaving and assert it is
+  absent on return. Group these changes with App's Register indentation cleanup and
+  removal of obsolete edit-history JSX comments. No form logic bug found.
+- Learner correctly distinguishes UI confirmation from account creation. Clarify
+  that backend schemas need not mirror storage models; this API explicitly accepts
+  only email/password and forbids extra fields. OpsDesk currently uses NFC password
+  normalization and 15–128 code points, without special-symbol/breach-list checks.
+  Account creation occurs at successful database commit; a 201 response acknowledges
+  it, but response delivery can fail after commit. A timeout does not prove rollback.
+- Remaining: focused learner test/format corrections, final verification, product
+  README updates, and both repositories' commit/push closure.
+
+## 10 October Register final review
+
+- Learner corrected both confirmation-test names and added email-after-error and
+  password-after-success clearing tests. Each establishes feedback before editing.
+- App's Register test now creates a mismatch alert before leaving, then verifies
+  empty fields and absent alert/status after returning. Register indentation and
+  obsolete edit-history JSX comments are corrected. No form behavior change needed.
+- Supplied terminal evidence at 17:57 reports 23 passing tests in four files:
+  11 RegisterForm, 7 LoginForm, 3 App, 2 TicketList. TypeScript/Vite build and ESLint
+  passed; git diff --check was silent. Source review confirms the requested changes.
+  Earlier same-day browser evidence remains applicable: no form logic/styles changed.
+- Mentor updated product-root/frontend READMEs for both implemented demos, test
+  coverage, source layout, browser checks, and the explicit mock-only API boundary.
+  Learning notes include the API-schema and commit-versus-response clarifications.
+- Saturday implementation, learning review, tests, browser review, and documentation
+  are complete. Commit/push and final clean-status evidence for both repositories
+  remain pending. No Saturday commit, hosted frontend CI, PR, or merge is claimed.
+- Next scheduled package is Sunday's weekly review and Week 14 dependency planning.

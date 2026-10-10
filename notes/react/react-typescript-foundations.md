@@ -128,3 +128,28 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   form tests plus the existing five tests, with build/lint and browser checks passing.
 - git diff --check omits untracked files. Check new source separately, then run
   git diff --cached --check after git add so the commit candidate is covered.
+
+## 10 October — Register and cross-field validation
+
+- Keep confirmation in local state because the form needs its current value for
+  rendering and comparison. Compute password equality from current fields rather
+  than storing another synchronized boolean. Check required values before equality:
+  two empty strings also match.
+- confirmPassword is a UX correction aid. OpsDesk's RegisterUserRequest accepts
+  only email/password and forbids extras; confirmation is not a request field.
+  Absence from a database model alone does not decide an API schema: other APIs may
+  deliberately accept transient fields. Client form validation is bypassable.
+- Matching passwords neither verifies the backend's full rules nor creates an
+  account. OpsDesk's current password rules are NFC normalization and 15–128 code
+  points, not special-symbol requirements or breached-password lookups.
+- Successful database commit creates the persisted account. A 201 response reports
+  that outcome; if delivery fails after commit, the account can exist even though
+  the client saw a network error. Do not infer rollback from a timeout.
+- Register fields use anchored label queries to distinguish Password from Confirm
+  password. Tests should prove each claimed field-edit behavior; two tests editing
+  only confirmation cannot establish email/password feedback clearing.
+- A reset test should first create the state it claims to reset: type into fields
+  and establish feedback before switching screens, then assert empty fields and no
+  alert/status after return. Learner completed these additions and corrected the
+  confirmation-test names. Final evidence: 11 Register tests and 23 frontend tests
+  overall, with successful build/lint and applicable same-day browser verification.

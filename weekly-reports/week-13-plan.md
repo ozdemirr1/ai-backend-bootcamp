@@ -252,9 +252,79 @@ Implementation and learning review are complete on 9 October. Learner evidence:
 12 frontend tests passed (7 LoginForm, 3 App, 2 TicketList), build and lint passed.
 Browser checks verified button/Enter submission, feedback transitions, password
 clearing, and visible keyboard focus. Both READMEs and bootcamp records are updated.
-Both repositories' commit/push/clean-status evidence is the remaining closure step.
-Continue with the Saturday Register demo after that checkpoint; no new library or
-real authentication integration is needed for Week 13.
+Friday closure is verified from learner terminal output: product `7dab029` and
+bootcamp `1febb25` committed/pushed, with both working trees clean. Continue with
+the Saturday Register demo; no new library or real authentication integration is
+needed for Week 13.
+
+## Saturday package — 10 October, approximately 3 hours
+
+1. Review local state, derived comparisons, and the registration API boundary:
+   25 minutes; use a small repeated-text example before the real exercise.
+2. Learner implements RegisterForm and App integration: 65 minutes.
+3. Isolated form tests and App navigation regression: 45 minutes.
+4. Review, browser/keyboard check, test/build/lint, documentation, and both repos'
+   Git closure: 45 minutes. Durations remain estimates, not time-report gates.
+
+Continue feature/week-13-react-foundation from `7dab029`. Backend registration accepts
+only email/password. Add confirmPassword solely as a frontend correction aid and
+cross-field exercise; it is not part of an eventual request payload. No display name,
+role, organization, account persistence, network call, token, or automatic login.
+Keep today's checks explicitly smaller than backend normalization/password policy.
+
+### Grouped implementation and acceptance contract
+
+- Create frontend/src/components/RegisterForm.tsx and RegisterForm.test.tsx. The form
+  owns email, password, confirmPassword (initially empty strings), and Feedback
+  (error/success/null as in LoginForm). Compute equality from current values; do not
+  add separate passwordsMatch state or an effect to synchronize it.
+- Visible labels: Email, Password, Confirm password, with unique register-prefixed
+  input IDs and associated labels. Email type=email, autoComplete=email; both password
+  controls type=password, autoComplete=new-password. All required, with names and
+  controlled value/onChange. Editing any field clears stale feedback.
+- Use form onSubmit, preventDefault, noValidate, and enabled Create demo account
+  button. Ordered local errors: trimmed email empty → Email is required.; bad basic
+  email shape → Enter a valid email address.; password empty → Password is required.;
+  confirmation empty → Confirm your password.; unequal raw password strings →
+  Passwords do not match. Use Friday's basic email-shape heuristic. Do not trim either
+  password or add an arbitrary length policy. Full backend parity is later integration
+  work; this is not a password-strength or authentication implementation.
+- Failures render role=alert and retain inputs. Success renders role=status with
+  Demo only: no account was created. Clear both password fields, retain email, and
+  stay on Register. Never echo/log/persist passwords. Use only synthetic demo values.
+- App.tsx keeps the Register h2 and renders RegisterForm instead of its placeholder
+  paragraph. Reuse existing auth-form/form-group/feedback CSS. Separate Login/Register
+  components for now; no generic form framework, new dependency, or broad redesign.
+- RegisterForm tests: typing in all fields; each of the five error paths with no
+  success; correcting a mismatch and submitting (including an Enter path); explicit
+  success, retained email, both passwords cleared; feedback removal when editing each
+  field, including confirmation, across error/success scenarios. Use awaited user-event
+  and accessible queries. Disambiguate Password from Confirm password with anchored
+  label patterns; /password/i alone matches both. Parameterize similar cases if useful;
+  assertion coverage matters more than a fixed count.
+- Extend App's Register test: controls appear, Tickets content is absent, returning
+  to Tickets removes controls, returning to Register starts with empty fields and no
+  feedback. Enter synthetic field content before leaving so the reset assertion
+  proves something. Preserve Login/list/navigation tests.
+
+Run npm test, npm run build, npm run lint, git diff --check. Inspect untracked source
+whitespace too; after staging, git diff --cached --check includes new files. Browser
+review covers Tab/Enter, mismatch correction, both-password clearing, screen switching,
+readable layout, and console errors. Mentor updates READMEs and final learning evidence
+after review; both repos' commit/push confirmation completes the package.
+
+Learning question: Why does confirmPassword belong in local UI state but not the
+registration API payload, and why does matching it not prove that an account exists?
+
+### Saturday final review checkpoint
+
+Learner completed the form, learning answer, and focused review corrections on
+10 October. Final supplied evidence: 23 tests passed (11 RegisterForm, 7 LoginForm,
+3 App, 2 TicketList), successful build/lint and clean whitespace check. Browser review
+verified mismatch correction, Enter submission, both-password clearing, screen reset,
+visible keyboard focus, and no captured console errors. Both product READMEs and
+bootcamp learning records are updated. Both repositories' commit/push/clean-status
+evidence remains the closure step; Sunday review is the next scheduled package.
 
 ## Notes, commits, and closure
 

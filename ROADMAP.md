@@ -36,6 +36,13 @@ authentication integration, protected routes, and deployment remain later work.
 The deployed backend/full-stack milestones remain unverified until delivery evidence
 exists; beginning Month 04 does not imply those milestones are complete.
 
+11 October checkpoint: Week 13 technical review passed with 23 frontend tests and
+built-bundle browser evidence; product PR #41 merged as 511715d. The
+[Week 14 plan](weekly-reports/week-14-plan.md) starts with frontend CI and the existing
+registration/login/current-User APIs. Missing Ticket reads remain a separately scoped
+dependency. Week 14 includes a hosting decision checkpoint; Week 15 targets a first
+hosted identity-flow preview, subject to integration and deployment gates.
+
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking
 cost and project fit; practical IAM, secrets, logs, and budget controls precede any

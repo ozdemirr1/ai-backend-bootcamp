@@ -153,3 +153,22 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   alert/status after return. Learner completed these additions and corrected the
   confirmation-test names. Final evidence: 11 Register tests and 23 frontend tests
   overall, with successful build/lint and applicable same-day browser verification.
+
+## 11 October — Final assessment and integration boundary
+
+- Learner correctly explained type erasure: a TypeScript TicketSummary annotation
+  cannot inspect an HTTP response at runtime. Treat decoded data as untrusted and
+  validate required fields before use. Small explicit type guards or a schema tool
+  can serve this purpose; Zod is an option, not a new mandatory dependency.
+- A null value may cause an exception or incorrect UI depending on how it is used;
+  null itself does not always throw. Tests should exercise the intended failure path.
+- Learner correctly located authorization on the backend. Hidden buttons are UX;
+  direct HTTP calls still need current identity and resource/organization/role checks.
+- Test/build/lint results prove their checked scope. jsdom does not render visual
+  layout; mocked responses do not prove the real API/CORS deployment works. However,
+  HTTP errors, expiration, network rejection, and malformed payloads can and should
+  have deliberate tests. Real browser/integration checks complement those tests.
+- The learner reviewed the built bundle using npm run preview and reported all
+  requested flows and layout/focus checks passed. Preview is local serving of dist,
+  not public deployment. Sunday terminal evidence again shows 23 tests/build/lint
+  passing; GitHub's Backend CI is separately verified and does not run frontend tests.

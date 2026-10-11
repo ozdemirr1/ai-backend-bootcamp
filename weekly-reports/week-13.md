@@ -1,4 +1,4 @@
-# Week 13 Report — In Progress
+# Week 13 Report — Product Merged, Documentation Publication Pending
 
 ## Dates and scope
 
@@ -32,17 +32,12 @@ See the [18-hour plan](week-13-plan.md) for daily packages and acceptance criter
 
 ## Remaining work and time
 
-Tuesday's learning, implementation, verification, and local product commit are
-complete. The full week remains budgeted at 18 hours, with 14.5 planned hours for
-Wednesday–Sunday. These are planning estimates, not measured durations. Active-time
-reporting is optional and is not a closure requirement. Bootcamp planning, notes, and
-Tuesday evidence are grouped in the daily documentation commit.
-
-As of 9 October, Tuesday–Thursday are committed and pushed in both repositories.
-Friday's controlled Login demo, 12-test verification, browser review, learning answer,
-documentation, and both repositories' commit/push closure are complete.
-Saturday–Sunday retains 5.5 planned hours for the Register demo, its tests, review,
-and weekly closure. These allocations are estimates, not measured time spent.
+As of 11 October review, all Week 13 implementation and learning packages are complete.
+The learner's final Sunday run passed 23 tests, build, lint, and whitespace checks;
+the learner also verified the generated bundle through Vite preview. Daily changes
+through Saturday are committed and pushed. Product PR #41 is merged as 511715d;
+Sunday's bootcamp commit/push remains the final checkpoint. The week was budgeted at
+18 hours; these are planning estimates, not measured durations.
 
 ## 6 October static-shell review
 
@@ -343,3 +338,80 @@ omitted from the closure and is being completed with this evidence package.
   are complete. Commit/push and final clean-status evidence for both repositories
   remain pending. No Saturday commit, hosted frontend CI, PR, or merge is claimed.
 - Next scheduled package is Sunday's weekly review and Week 14 dependency planning.
+
+## 10 October Git closure
+
+- Learner supplied successful commit/push evidence for product `a874957` on
+  feature/week-13-react-foundation and bootcamp `e970fc9` on main.
+- Both staged whitespace checks and final short-status outputs were clean.
+  Saturday is complete; the Week 13 feature branch has not been claimed merged.
+
+## 11 October opening checkpoint
+
+- Local inspection confirms clean OpsDesk at `a874957` on the existing feature
+  branch and clean bootcamp at `e970fc9` before today's documentation changes.
+  No fresh remote fetch, hosted-CI lookup, or test run was performed at opening.
+- Existing executable routes cover registration, login, current User, Organization
+  creation/list/detail, and Ticket creation. Ticket list/detail routes are absent.
+- Existing GitHub Actions workflow runs backend checks only; it cannot establish
+  frontend test/build/lint success. Final learner frontend checks and production-build
+  browser review are today's first package. PR and hosted check status remain to inspect.
+- Week 14's proposed first connected flow is register → login → current User, followed
+  by bounded Organization reads if capacity permits. Ticket reads are not required
+  for this first flow; keep mock Tickets explicitly labelled until their backend work
+  is scheduled. Auth lifecycle, API configuration, error/loading states, and runtime
+  response checks need a reviewed implementation plan before integration.
+- Sunday implementation scope remains review and closure, not new product features.
+  The final concept answers, weekly delivery evidence, and handoff are still pending.
+
+## 11 October final technical and learning review
+
+- Learner terminal evidence at 16:51: 23 tests passed across 4 files (3 App, 2 list,
+  7 Login, 11 Register); TypeScript/Vite build and ESLint passed; whitespace check
+  silent. Vite preview started for the built bundle and was stopped by the learner.
+- Learner reports all requested production-bundle browser checks passed: navigation,
+  Ticket fields, invalid/corrected forms, Enter submission, password clearing,
+  Register reset, keyboard focus, and narrow layout. This is learner-reported
+  evidence; the mentor did not rerun the preview browser checks on Sunday.
+- Final answers correctly distinguish erased TypeScript types from runtime data,
+  server authorization from hidden UI, and jsdom/static checks from actual layout
+  and integration. Clarified that null does not inevitably throw; failure depends
+  on use. Runtime guards need not use Zod. HTTP/network/error behavior can be tested
+  deliberately, while mocks alone do not prove actual server/origin integration.
+- Read-only GitHub lookup confirms Backend CI passed at product head
+  a874957fea08f9cfd669ce69e4e1ef5d2c4743c3:
+  [push run](https://github.com/ozdemirr1/opsdesk/actions/runs/38061872991).
+  Existing CI does not run frontend checks; local frontend results remain separate.
+- Created [draft PR #41](https://github.com/ozdemirr1/opsdesk/pull/41),
+  `week-13: add React TypeScript frontend foundation`, targeting main at that head.
+  GitHub reports mergeable. The PR-triggered Backend CI also completed successfully:
+  [PR run](https://github.com/ozdemirr1/opsdesk/actions/runs/38145402929).
+  PR remains draft/open; no merge is claimed.
+- Prepared the [Week 14 plan](week-14-plan.md): frontend CI first, then bounded
+  registration/login/current-User integration against existing endpoints; optional
+  Organization reads. Ticket reads remain separate missing backend work.
+- Hosting remains undelivered. Week 14 closes with a cost/origin/database/deployment
+  plan; Week 15 targets the first hosted identity preview subject to explicit gates.
+- Remaining delivery steps: final PR check/review and merge decision, then Sunday
+  bootcamp commit/push and clean-status evidence. Do not mark the feature merged or
+  open a Week 14 implementation branch until that checkpoint is resolved.
+
+## 11 October product merge and final handoff
+
+- Learner marked PR #41 ready and squash-merged the reviewed head a874957 with an
+  explicit head match. Product main is now `511715ddaef9570c177e2f21760e4cb30fecde23`.
+- Learner switched to main and pulled with --ff-only. Read-only local inspection
+  confirms a clean working tree and identical HEAD/origin/main at that merge commit.
+- Pre-merge push and PR Backend CI passed. No post-merge main CI run or hosted
+  frontend check is claimed. Week 13 feature-branch deletion was not performed or
+  required for this delivery checkpoint; the branch may remain as a historical ref.
+- Completed product scope: typed React shell, local screen selection, synthetic
+  Ticket list/empty state, controlled Login/Register demos, 23 behavior tests, and
+  README instructions. The demos remain disconnected from the backend by design.
+- All Week 13 learning, implementation, review, and product merge requirements are
+  complete. This report, final assessment notes, status/roadmap updates, and Week 14
+  plan are grouped in the final bootcamp documentation commit. Its commit/push and
+  clean-status output are the remaining publication evidence, not additional coding.
+- Next implementation starts from updated product main on the planned Week 14 branch
+  after bootcamp publication. Follow week-14-plan.md: frontend CI, real identity flow,
+  optional scoped Organization reads, and the dated deployment preparation checkpoint.

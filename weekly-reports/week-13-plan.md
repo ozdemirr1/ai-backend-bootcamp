@@ -323,8 +323,62 @@ Learner completed the form, learning answer, and focused review corrections on
 3 App, 2 TicketList), successful build/lint and clean whitespace check. Browser review
 verified mismatch correction, Enter submission, both-password clearing, screen reset,
 visible keyboard focus, and no captured console errors. Both product READMEs and
-bootcamp learning records are updated. Both repositories' commit/push/clean-status
-evidence remains the closure step; Sunday review is the next scheduled package.
+bootcamp learning records are updated. Learner supplied successful commit/push and
+clean-status evidence for product `a874957` and bootcamp `e970fc9`. Saturday is closed.
+
+## Sunday closure package — 11 October, approximately 2.5 hours
+
+1. Final learner regression and production-build preview: 35 minutes. Run npm test,
+   npm run build, npm run lint, and git diff --check; then npm run preview and open
+   the printed local URL. Review the actual built bundle, not only the Vite dev page.
+   Check navigation, populated Tickets, both forms, Enter submission, explicit demo
+   feedback, password clearing, Register reset, keyboard focus, and narrow layout.
+2. Scenario-based concept assessment: 25 minutes. Review runtime API data versus
+   TypeScript types; hidden UI versus server authorization; distinguish test/build/
+   lint/browser evidence. Earlier props/state/key/form answers are already recorded.
+3. Weekly evidence and delivery review: 45 minutes. Mentor updates the report and
+   README if needed, inspects PR/hosted checks, and prepares the weekly diff for
+   review. Backend CI does not cover frontend; never present a backend green check
+   as frontend verification. Any workflow change needs its own explained, bounded
+   exercise and checks. Do not claim PR creation, merge, or branch cleanup prematurely.
+4. Week 14 dependency handoff and bootcamp Git closure: 45 minutes. Scope the first
+   connected flow against existing endpoints. Record unresolved delivery work if
+   external checks prevent closure; estimates do not override acceptance evidence.
+
+Continue the current weekly branch until its review/delivery checkpoint is complete.
+Do not begin Week 14 implementation or a new branch today. No new UI feature or
+framework is required for Sunday's assessment.
+
+### Week 14 direction to finalize at handoff
+
+- First connected flow: POST /users → POST /auth/login → GET /users/me. All three
+  exist. Extend to GET /organizations only after identity flow and failure handling
+  are verified; Organization creation can be separately scoped if needed for the demo.
+- Plan request/response mapping, runtime response checks, API base configuration,
+  local proxy or explicit CORS origin policy, and loading/error/duplicate-submit UX.
+  No frontend secret; avoid mixing demo and real-success messages.
+- Review token lifetime, in-memory session state as a bounded starting proposal,
+  logout, refresh/reload behavior, expired-token handling, and backend authorization.
+  Frontend screen guards cannot replace server checks. Do not adopt persistent token
+  storage or a new authentication library without the integration design review.
+- Reconcile the demos' deliberately small validation rules with the existing backend
+  contract before presenting them as real registration/login screens.
+- Ticket reads are missing and are not a prerequisite for the identity flow. Keep
+  mock Tickets explicit and schedule their backend dependency separately. Do not
+  expand the first integration package into the whole remaining backend backlog.
+- A hosted full-stack demo remains the Month 04 target, with deployment still
+  undelivered. Set a concrete delivery checkpoint during Week 14 planning; no exact
+  release date or completed deployment is claimed by this opening plan.
+
+### Sunday technical review outcome
+
+Learner supplied 23 passing tests, successful build/lint, clean whitespace checks,
+and confirmed every requested production-bundle preview behavior. Concept assessment
+passed with clarifications recorded in the React notes. Product PR #41 was squash-
+merged as 511715d after both push/PR Backend CI runs succeeded at a874957. Frontend CI remains
+the first Week 14 exercise; its absence is explicitly documented in the PR. Product
+merge is complete; Sunday bootcamp commit/push evidence remains pending. See the
+[Week 14 plan](week-14-plan.md) for the reviewed next scope and delivery checkpoints.
 
 ## Notes, commits, and closure
 

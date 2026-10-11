@@ -50,7 +50,10 @@ begin. This repository remains the learning log and evidence base.
 
 - [Week 13 Plan](weekly-reports/week-13-plan.md) - React + TypeScript foundations,
   mock Ticket rendering, controlled forms, and frontend behavior checks
-- [Week 13 Report](weekly-reports/week-13.md) - in-progress evidence and remaining work
+- [Week 13 Report](weekly-reports/week-13.md) - React foundation, 23 frontend tests,
+  completed learning review, and product PR #41 merge evidence
+- [Week 14 Plan](weekly-reports/week-14-plan.md) - frontend CI, first real identity
+  integration, and the deployment preparation checkpoint
 - [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
   identity, Ticket ownership, and authorization
 - [Month 02 Report](monthly-reports/month-02.md) - the complete progression
@@ -75,6 +78,11 @@ This repository continues to hold the learning evidence and roadmap history.
 
 ## Latest Handoff
 
+- [Week 13 report](weekly-reports/week-13.md) — frontend foundation merged into
+  OpsDesk main at `511715d`; local test/build/lint, preview, and pre-merge Backend CI
+  evidence recorded
+- [Week 14 plan](weekly-reports/week-14-plan.md) — frontend CI and the first real
+  register/login/current-User flow, with a dated deployment preparation checkpoint
 - [Week 12 report](weekly-reports/week-12.md) — all four planned product packages
   merged with guarded PostgreSQL evidence and an explicit one-day calendar variance
 - [Week 13 plan](weekly-reports/week-13-plan.md) — Month 04 starts on 6 October

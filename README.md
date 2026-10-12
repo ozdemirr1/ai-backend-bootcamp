@@ -54,6 +54,7 @@ begin. This repository remains the learning log and evidence base.
   completed learning review, and product PR #41 merge evidence
 - [Week 14 Plan](weekly-reports/week-14-plan.md) - frontend CI, first real identity
   integration, and the deployment preparation checkpoint
+- [Week 14 Report](weekly-reports/week-14.md) - daily evidence and integration progress
 - [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
   identity, Ticket ownership, and authorization
 - [Month 02 Report](monthly-reports/month-02.md) - the complete progression

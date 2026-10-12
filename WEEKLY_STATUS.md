@@ -2,21 +2,33 @@
 
 ## Current Week
 
-Week 13 — Month 04 / React + TypeScript foundations
+Week 14 — Month 04 / Frontend CI and first API integration
 
 ## Date
 
-6–11 October 2026; opening checkpoint recorded 6 October
+12–18 October 2026; opening checkpoint recorded 12 October
 
 ## Current Focus
 
-- 11 October: Week 13 final regression, browser/keyboard review, concept assessment,
-  delivery evidence, and Week 14 integration dependency planning (2.5 planned hours)
-- Follow the [Week 13 plan](weekly-reports/week-13-plan.md), budgeted at 18 active hours
-- Learn components, JSX, typed props, state, events, lists, and controlled forms
-- Build OpsDesk's frontend foundation, login/register screens, and mock Ticket list
-- Keep real API calls, token storage, protected routes, and Tailwind outside Week 13
-- Track actual work and pending evidence in the [Week 13 report](weekly-reports/week-13.md)
+- 12 October: move the planned frontend CI package one day earlier at the learner's
+  request; Tuesday becomes optional rest/catch-up, with 18 planned hours unchanged
+- Follow the [Week 14 plan](weekly-reports/week-14-plan.md): hosted frontend checks,
+  real registration/login/current User, and a deployment preparation checkpoint
+- Keep Ticket reads separately scoped; use normal merge for the weekly PR
+- Track evidence in the [Week 14 report](weekly-reports/week-14.md)
+
+## Week 14 Monday Checkpoint — 12 October
+
+- Learner created feature/week-14-api-integration and wrote the separate Frontend CI
+  workflow. Source review passed; both product READMEs are updated.
+- Local clean install, 23 frontend tests, build/lint and whitespace check passed.
+- Product commit da695c0 was pushed; the working tree is clean. Frontend CI and
+  Backend CI both succeeded at that exact SHA. Hosted logs confirm Node 24.21.0,
+  npm 11.19.0, 23 passing tests, successful build and lint.
+- Cache learning answer reviewed: package cache accelerates installation; npm ci
+  still builds node_modules from the lockfile. Missing entries may require downloads.
+- Monday technical/learning work is complete; final bootcamp commit/push is pending.
+  Keep the weekly branch open. Local Node 24 alignment precedes API integration.
 
 ## Week 13 Sunday Review — 11 October
 
@@ -26,7 +38,9 @@ Week 13 — Month 04 / React + TypeScript foundations
   checks remain local; first Week 14 package adds their hosted automation.
 - [PR #41](https://github.com/ozdemirr1/opsdesk/pull/41) merged as `511715d` on
   11 October. Local inspection confirms clean product main equal to origin/main.
-  Sunday's bootcamp documentation commit/push is the remaining publication step.
+  Sunday's bootcamp documentation was committed/pushed as 1bdca71 with clean status.
+  The product feature branch was subsequently deleted locally and remotely after
+  confirming the merged contents; main stayed clean. Week 13 is closed.
 - [Week 14 plan](weekly-reports/week-14-plan.md) starts with frontend CI and the
   existing register/login/current-User APIs. Ticket reads and hosting are explicit
   outstanding work; first hosted identity preview is a gated Week 15 target.

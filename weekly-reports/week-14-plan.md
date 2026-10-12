@@ -3,8 +3,10 @@
 ## Dates and outcome
 
 12–18 October 2026, Month 04. Prepared during Week 13's 11 October review.
-18 planned hours across Tuesday–Sunday; Monday is an optional rest/catch-up day,
-not extra mandatory capacity. Estimates are not measured time logs.
+18 planned hours. On 12 October the learner chose to start on Monday: move the
+3-hour frontend CI package from Tuesday to Monday, keeping Tuesday as the optional
+rest/catch-up day. Other packages and total capacity stay unchanged. Estimates are
+not measured time logs.
 
 Deliver a locally verified register → login → current-User flow against OpsDesk's
 existing API, with explicit loading/error states and frontend CI. Extend to the
@@ -13,11 +15,17 @@ This plan does not claim that integration or hosting has already been delivered.
 
 ## Starting gate
 
+- User decision on 11 October: use normal PR merges (`gh pr merge --merge`) from
+  Week 14 onward to preserve meaningful daily commits and their original history.
+  Keep weekly branches, reviewed-head checks, and post-merge branch cleanup. Discuss
+  any future strategy change first. Retain Week 13's squash merge as a completed
+  learning example; do not rewrite that history.
 - Week 13 PR #41 merged as 511715d on 11 October after reviewed-head push/PR Backend
   CI passed. Product main is clean and matches locally recorded origin/main. Create
   feature/week-14-api-integration from updated main when Week 14 work begins; that
-  branch does not exist yet. Bootcamp Saturday head: e970fc9;
-  Sunday learning/report changes require their own commit/push evidence.
+  branch does not exist yet at Monday opening. Bootcamp Sunday closure was committed
+  and pushed as 1bdca71; two subsequent merge-strategy note edits remain uncommitted
+  and will join the Monday documentation package.
 - The learner implemented 23 passing frontend tests, typed mock Tickets, and both
   controlled demo forms. Preserve those behaviors unless intentionally replacing
   the demo behavior with the reviewed real flow and updating tests together.
@@ -72,7 +80,8 @@ for the first connected identity screen.
 
 | Day | Budget | Package |
 | --- | --- | --- |
-| Tue 13 Oct | 3 h | Verify merged baseline and create weekly branch; explained frontend CI exercise (npm ci, tests, build, lint), compatible Node selection, hosted evidence; inspect identity API/error contracts |
+| Mon 12 Oct | 3 h | Verify merged baseline and create weekly branch; explained frontend CI exercise (npm ci, tests, build, lint), compatible Node selection, hosted evidence; inspect identity API/error contracts |
+| Tue 13 Oct | Optional | Rest/catch-up; no additional required hours |
 | Wed 14 Oct | 3 h | Small fetch example, public API configuration and local origin strategy, response/error guards and focused tests |
 | Thu 15 Oct | 3 h | Connect registration; payload excludes confirmation, handle validation/conflict/network states and duplicate-submit prevention; tests |
 | Fri 16 Oct | 3 h | Connect login and current User; in-memory session, loading/failure paths and tests |
@@ -82,6 +91,49 @@ for the first connected identity screen.
 
 Trim optional Organization UI or cosmetic work first if capacity is tight. Record
 any unfinished required flow and its revised date; do not silently claim closure.
+
+## Monday implementation package — Frontend CI
+
+Opening evidence: product main clean at 511715d; bootcamp at 1bdca71 with only the
+two acknowledged merge-strategy note edits. Existing workflow runs Backend CI only.
+Local Node is 25.2.1/npm 11.6.2; inspected lockfile engines for Vite, Vitest, ESLint,
+plugin-react, TypeScript, and jsdom permit Node 24. Official release guidance lists
+24 as LTS and 25 as EOL. Adopt Node 24 for hosted checks and plan local runtime
+alignment before integration; do not claim local Node 25 runs prove Node 24 behavior.
+
+- Learner updates main with a fast-forward pull, creates the planned weekly branch,
+  and writes .github/workflows/frontend-ci.yml. Keep Backend CI unchanged.
+- Workflow name Frontend CI; events push and pull_request, initially without path or
+  branch filters. permissions contents: read. One frontend-checks job on ubuntu-latest
+  with timeout-minutes: 10; defaults.run.working-directory: frontend.
+- Checkout using actions/checkout@v7, persist-credentials: false. Setup Node using
+  actions/setup-node@v7 with node-version: '24', cache: npm, and cache-dependency-path:
+  frontend/package-lock.json. Action inputs remain repository-relative: defaults.run
+  changes only run steps. Official action docs were checked on 12 October.
+- Separate named run steps: npm ci, npm test, npm run build, npm run lint. Failures
+  must fail the job; no continue-on-error, background/watch/dev/preview server,
+  secret, database, deployment, artifact upload, or dependency upgrade is required.
+- Explain with a small analogous subdirectory job first. npm cache holds package
+  data, not a ready node_modules tree; npm ci remains necessary even on a cache hit.
+- Learner runs npm ci/test/build/lint and whitespace checks locally, then mentor
+  reviews workflow, updates product READMEs, and prepares commit/push. Confirm the
+  actual Frontend CI run at the pushed SHA. Configured YAML or local tests alone do
+  not establish hosted success. Read runner Node/npm output if environments differ.
+- Keep the feature branch open for the week's remaining work. Daily meaningful
+  commits and push; eventual weekly PR merges with --merge, not --squash.
+- Learning question: Why is npm ci still needed when the setup-node npm cache hits?
+
+Sources: [setup-node](https://github.com/actions/setup-node),
+[run defaults](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/set-default-values-for-jobs),
+[Node release status](https://nodejs.org/en/about/previous-releases).
+
+### Monday outcome
+
+Product da695c0 is committed/pushed. Frontend and Backend CI both passed at the exact
+head; frontend logs show Node 24.21.0/npm 11.19.0 and 23 passing tests, build and lint.
+Workflow review, README updates, local checks, and cache learning review are complete.
+Bootcamp documentation publication remains the daily closure step. Keep the weekly
+branch open; align local Node with CI before the next integration package.
 
 ## Verification and acceptance
 

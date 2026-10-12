@@ -1,4 +1,4 @@
-# Week 13 Report — Product Merged, Documentation Publication Pending
+# Week 13 Report — Complete
 
 ## Dates and scope
 
@@ -36,7 +36,7 @@ As of 11 October review, all Week 13 implementation and learning packages are co
 The learner's final Sunday run passed 23 tests, build, lint, and whitespace checks;
 the learner also verified the generated bundle through Vite preview. Daily changes
 through Saturday are committed and pushed. Product PR #41 is merged as 511715d;
-Sunday's bootcamp commit/push remains the final checkpoint. The week was budgeted at
+Sunday's bootcamp closure was committed/pushed as 1bdca71 with clean status. The week was budgeted at
 18 hours; these are planning estimates, not measured durations.
 
 ## 6 October static-shell review
@@ -415,3 +415,13 @@ omitted from the closure and is being completed with this evidence package.
 - Next implementation starts from updated product main on the planned Week 14 branch
   after bootcamp publication. Follow week-14-plan.md: frontend CI, real identity flow,
   optional scoped Organization reads, and the dated deployment preparation checkpoint.
+
+## Final publication and branch cleanup evidence
+
+- Learner supplied successful bootcamp commit/push at 1bdca71 and clean final status.
+- At the learner's request, verified PR #41 was merged and product main had the same
+  file contents as the old feature head. Deleted feature/week-13-react-foundation
+  locally and remotely; read-only remote verification confirmed main remained 511715d.
+- Learner accepted preserving the squash outcome as a Git lesson and chose normal
+  merges from Week 14 onward. The follow-up note changes are included in the next
+  documentation package; they do not reopen Week 13 implementation or rewrite history.

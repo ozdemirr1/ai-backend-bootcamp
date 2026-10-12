@@ -172,3 +172,32 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   requested flows and layout/focus checks passed. Preview is local serving of dist,
   not public deployment. Sunday terminal evidence again shows 23 tests/build/lint
   passing; GitHub's Backend CI is separately verified and does not run frontend tests.
+
+## 11 October — Merge strategy lesson
+
+- Week 13 used squash merge for PR #41: five daily product commits became one new
+  main commit, 511715d, dated 11 October. Code was preserved, while the original
+  daily commit identities were not incorporated into main's ancestry. This explains
+  the different history graph and daily contribution attribution compared with the
+  normal merges used in earlier weeks. Deleting the feature branch was not the cause.
+- The learner accepted retaining this squash merge as a useful comparison between
+  strategies. It was not a planned experiment before merging; its effects were
+  discussed afterward. No history rewrite is requested.
+- Agreed practice from Week 14: normal merge (`--merge`) for the weekly PR so meaningful
+  daily commits remain in main's history. Discuss any future strategy change first.
+
+## 12 October — Frontend CI and npm cache
+
+- GitHub Actions now checks the same frontend install/test/build/lint sequence on
+  pushes and pull requests. defaults.run.working-directory applies to shell steps;
+  setup-node's cache-dependency-path remains relative to the repository root.
+- npm's package cache is not a ready node_modules tree. npm ci installs the locked
+  dependency tree, replacing an existing node_modules directory when present.
+  Cached data can reduce downloads, but a cache hit does not guarantee zero network
+  activity or every required package being available. Do not skip installation.
+- Learner explained that distinction correctly, with the network-traffic caveat
+  clarified in review. Actual first hosted run had no npm cache hit and saved a cache
+  afterward; subsequent reuse is possible but was not tested by this first run.
+- At product da695c0, hosted Node 24.21.0/npm 11.19.0 passed 23 tests, build, and lint.
+  This proves the configured hosted checks at that commit, not real API integration,
+  browser layout, deployment, or local runtime alignment. Backend CI passed separately.

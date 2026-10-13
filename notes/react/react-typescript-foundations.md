@@ -201,3 +201,36 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
 - At product da695c0, hosted Node 24.21.0/npm 11.19.0 passed 23 tests, build, and lint.
   This proves the configured hosted checks at that commit, not real API integration,
   browser layout, deployment, or local runtime alignment. Backend CI passed separately.
+
+## 13 October — API boundary, configuration and runtime evidence
+
+- Local Node 24.21.0/npm 11.19.0 now matches the inspected CI runtime. PATH selects
+  an installed executable; adding a nonexistent directory does not install Node.
+  Homebrew's partially linked OpenSSL dependency had to be repaired before install.
+- typeof object includes null and arrays and proves no nested field shape. Guards
+  narrow unknown by checking object/null/array boundaries, required string fields
+  and details entries. Excluding null/arrays alone does not prove a plain prototype.
+- Error codes map to fixed client messages; arbitrary server messages are not shown.
+  Successful parsed JSON remains unknown until an endpoint-specific guard checks it.
+- VITE_ configuration is public browser data, never a place for backend secrets.
+  The local /api proxy removes that prefix before forwarding to the backend.
+  This configuration does not automatically provision production routing or CORS.
+- fetch resolving does not mean an HTTP operation succeeded. Inspect response.ok
+  and preserve status. JSON decoding is another asynchronous step and can fail.
+  AbortError can occur during fetch or body reading; both paths need deliberate tests.
+- Network failure does not prove the server never processed a request. CORS may hide
+  a response and connections can fail after commit. Do not blindly retry registration.
+- Login 401 and expired-session 401 need context-specific UI/session handling.
+  The generic request helper classifies results; it does not navigate or clear sessions.
+- A describe-scoped afterEach only cleans tests within that scope. Keep fetch-mocking
+  tests inside the cleanup scope. Green tests alone do not establish isolation.
+- Safari console verification used a dynamic import with .then callbacks after the
+  top-level await form failed to parse. Console logging returns undefined; a fulfilled
+  logging Promise is separate from the logged ApiResult's ok=false HTTP outcome.
+- Local evidence: 41 tests, build/lint, and browser /api/users/me -> backend /users/me
+  returning 401 with safe message. This proves proxy/error transport, not completed
+  identity integration, database connectivity, or a hosted deployment.
+- Hosted follow-up at product 2b7da04: Frontend CI restored the npm package cache
+  and still ran the dependency installation step before 41 passing tests, build
+  and lint. Backend CI also passed. This supplies concrete cache-hit evidence in
+  addition to Monday's first-run miss.

@@ -10,8 +10,10 @@ Week 14 — Month 04 / Frontend CI and first API integration
 
 ## Current Focus
 
-- 12 October: move the planned frontend CI package one day earlier at the learner's
-  request; Tuesday becomes optional rest/catch-up, with 18 planned hours unchanged
+- 13 October: Node 24 alignment and API request/configuration/error handling verified
+  locally, including 41 tests and a browser-to-backend 401 probe. Product 2b7da04 is
+  pushed and both CI workflows passed; bootcamp publication remains. Wednesday stays optional
+  rest/catch-up, with 18 planned hours unchanged
 - Follow the [Week 14 plan](weekly-reports/week-14-plan.md): hosted frontend checks,
   real registration/login/current User, and a deployment preparation checkpoint
 - Keep Ticket reads separately scoped; use normal merge for the weekly PR
@@ -27,8 +29,38 @@ Week 14 — Month 04 / Frontend CI and first API integration
   npm 11.19.0, 23 passing tests, successful build and lint.
 - Cache learning answer reviewed: package cache accelerates installation; npm ci
   still builds node_modules from the lockfile. Missing entries may require downloads.
-- Monday technical/learning work is complete; final bootcamp commit/push is pending.
-  Keep the weekly branch open. Local Node 24 alignment precedes API integration.
+- Monday is complete: bootcamp 1979854 was committed/pushed with clean final status.
+  Continue the existing weekly branch. Local Node 24 alignment is today's first step.
+
+## Week 14 Runtime Checkpoint — 13 October
+
+- Resolved repeated Homebrew OpenSSL dependency lock failure by completing the
+  installed OpenSSL 4 link step, then installing Node 24 successfully.
+- Mentor backed up the shell configuration and added persistent Node 24 PATH
+  selection. A fresh login/interactive shell reports Node 24.21.0/npm 11.19.0.
+- On that runtime, npm ci, all 23 frontend tests, build, lint and diff whitespace
+  checks passed. API integration exercise remains pending.
+
+## Week 14 API Boundary Checkpoint — 13 October
+
+- Learner implemented public API configuration, Vite local proxy, runtime API error
+  guards and a JSON request helper with explicit HTTP/network/invalid-response/abort
+  outcomes. Cancellation during body reading and test mock cleanup were corrected.
+- 41 tests across six files pass; build/lint passed. Final test-only placement fix
+  was followed by another successful test/lint run. Staged whitespace check remains
+  part of publication, especially for the new files.
+- Learner's Safari console shows /api/users/me returned the safe HTTP 401 result;
+  backend log confirms GET /users/me, 401, unexpected_error=false. Backend startup
+  required restoring terminal-scoped development settings and a local JWT secret.
+- This proves local proxy/error handling, not database connectivity, successful login,
+  registration or deployment. Forms and Tickets remain demos; identity wiring follows.
+- Product 2b7da04 is committed/pushed with a clean tree. Exact-SHA
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908289) and
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908140) succeeded.
+  Hosted frontend logs show Node 24.21.0/npm 11.19.0, npm cache hit, 41 passing tests,
+  build and lint. Product READMEs and bootcamp evidence are updated.
+- Next: bootcamp documentation commit/push. Weekly branch stays open and normal
+  merge remains the agreed strategy.
 
 ## Week 13 Sunday Review — 11 October
 

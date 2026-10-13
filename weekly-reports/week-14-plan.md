@@ -4,9 +4,10 @@
 
 12–18 October 2026, Month 04. Prepared during Week 13's 11 October review.
 18 planned hours. On 12 October the learner chose to start on Monday: move the
-3-hour frontend CI package from Tuesday to Monday, keeping Tuesday as the optional
-rest/catch-up day. Other packages and total capacity stay unchanged. Estimates are
-not measured time logs.
+3-hour frontend CI package from Tuesday to Monday. On 13 October the learner chose
+to continue: move Wednesday's runtime/request-boundary package to Tuesday and keep
+Wednesday as optional rest/catch-up. Other packages and the 18-hour total stay
+unchanged. Estimates are not measured time logs.
 
 Deliver a locally verified register → login → current-User flow against OpsDesk's
 existing API, with explicit loading/error states and frontend CI. Extend to the
@@ -81,8 +82,8 @@ for the first connected identity screen.
 | Day | Budget | Package |
 | --- | --- | --- |
 | Mon 12 Oct | 3 h | Verify merged baseline and create weekly branch; explained frontend CI exercise (npm ci, tests, build, lint), compatible Node selection, hosted evidence; inspect identity API/error contracts |
-| Tue 13 Oct | Optional | Rest/catch-up; no additional required hours |
-| Wed 14 Oct | 3 h | Small fetch example, public API configuration and local origin strategy, response/error guards and focused tests |
+| Tue 13 Oct | 3 h | Align local Node with CI; small fetch example, public API configuration and local origin strategy, response/error guards and focused tests |
+| Wed 14 Oct | Optional | Rest/catch-up; no additional required hours |
 | Thu 15 Oct | 3 h | Connect registration; payload excludes confirmation, handle validation/conflict/network states and duplicate-submit prevention; tests |
 | Fri 16 Oct | 3 h | Connect login and current User; in-memory session, loading/failure paths and tests |
 | Sat 17 Oct | 3 h | Logout/expired-token/stale-request behavior, real local browser verification; optional Organization list only if core gates pass |
@@ -135,6 +136,32 @@ Workflow review, README updates, local checks, and cache learning review are com
 Bootcamp documentation publication remains the daily closure step. Keep the weekly
 branch open; align local Node with CI before the next integration package.
 
+## Tuesday opening — 13 October
+
+Monday is closed: product da695c0 has successful Frontend/Backend CI and bootcamp
+publication is 1979854. Local inspection confirms both trees clean at opening.
+Continue feature/week-14-api-integration; no new branch or dependency upgrade.
+
+First checkpoint: local Node 25.2.1 is installed via Homebrew's unversioned node
+formula. No Node 24 executable exists at the inspected Homebrew opt path. Learner
+installs the separate node@24 formula, then puts its bin directory first in PATH
+for the working terminal. Verify node/npm paths and versions before npm ci/test/
+build/lint. This shell selection is temporary; revisit persistent/project selection
+after proving the runtime works, without unlinking other Node installations.
+
+Checkpoint completed 13 October: mentor resolved the OpenSSL link blocker, installed
+Node 24.21.0/npm 11.19.0, and verified persistent shell selection after backing up
+the shell configuration. Clean dependency installation, 23 tests, build, lint and
+whitespace checks passed under Node 24. No frontend package/lockfile change required.
+
+After that checkpoint, teach a small analogous fetch example and issue the grouped
+API boundary/configuration exercise. Reviewed current backend errors: JSON envelope
+error.code/message/details; fetch HTTP errors and network failures must be handled
+separately. Do not implement form wiring or token persistence in this first package.
+
+Sources checked 13 October: [Homebrew node@24](https://formulae.brew.sh/formula/node@24)
+and [Fetch behavior](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
+
 ## Verification and acceptance
 
 - Request tests cover valid shapes, malformed response data, known HTTP failures,
@@ -163,3 +190,22 @@ Target a first hosted identity-flow preview during Week 15 (19–25 October), su
 to the integration and hosting gates; this is a planning target, not a promised launch.
 Do not defer every hosting task to Month 10 or make the first preview depend on the
 entire Ticket backlog. Month 10 remains later production-engineering improvements.
+
+### Tuesday outcome — 13 October
+
+Runtime alignment, error guards/messages, public API base configuration, local Vite
+proxy and requestJson are implemented and reviewed. The learner corrected redundant
+assignment, cancellation during body reading and test cleanup scope. Local evidence:
+41 tests in six files, successful build/lint, and a real Safari request through the
+proxy receiving the expected unauthenticated HTTP 401 confirmed by backend logs.
+The generic helper returns unknown success data; endpoint-specific success validation
+and form payload construction (including omitted confirmation) remain later work.
+No authenticated session, DB connectivity or deployment is established by this probe.
+Documentation prepared; product commit/push, hosted CI and bootcamp publication are
+pending. Wednesday remains optional rest/catch-up; Thursday's core is real registration.
+
+Tuesday publication update: product `2b7da04` is pushed with a clean tree. Both
+[Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908289) and
+[Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908140) passed
+at that SHA; hosted frontend logs confirm 41 tests, build/lint and an npm cache hit.
+Only bootcamp documentation publication remains for Tuesday's daily closure.

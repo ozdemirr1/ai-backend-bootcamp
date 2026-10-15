@@ -234,3 +234,26 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   and still ran the dependency installation step before 41 passing tests, build
   and lint. Backend CI also passed. This supplies concrete cache-hit evidence in
   addition to Monday's first-run miss.
+
+## 15 October — Real registration and persistence readiness
+
+- TypeScript types do not validate network responses. The registration adapter
+  checks unknown data and only accepts HTTP 201 plus the public profile shape.
+  Confirmation stays in form state; the request explicitly includes email/password.
+- A malformed or lost response can follow a committed account. Show an uncertain
+  outcome instead of claiming no account exists or blindly repeating creation.
+- Controlled registration normalizes passwords to NFC, checks code-point length,
+  compares confirmation and leaves final validation/uniqueness to the backend.
+- State disables pending controls; an immediate request ref prevents duplicate
+  submissions before the next render. Unmount aborts and stale-result ownership
+  checks prevent old responses updating a fresh form. Abort is not server rollback.
+- Provisioning roles/databases, migrating tables and running an API are separate
+  steps. Startup and a token-free 401 do not prove persistence readiness. The local
+  development target now has an explicit guarded Alembic path; destructive tests
+  remain isolated in the product test database.
+- Learner Safari evidence after migration: public profile and success feedback,
+  retained email and cleared passwords; repeat submission returns duplicate-email
+  feedback. Registration creates an account but does not create a frontend session.
+- Local frontend evidence: 68 tests across seven files, build and lint passed.
+  Browser screenshots show response bodies; direct HTTP status headers are separate
+  evidence. Login remains a demo until its own integration is implemented.

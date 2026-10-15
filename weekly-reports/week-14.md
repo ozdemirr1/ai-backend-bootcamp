@@ -226,3 +226,141 @@ remain explicitly tracked dependencies/deliverables, not assumed completed work.
   Remaining daily closure is bootcamp documentation commit/push and clean status.
   Keep the weekly feature branch open; normal merge is still the Sunday strategy.
   Wednesday is optional rest/catch-up; the next core feature is real registration.
+
+## 13 October Git closure and 14 October rest
+
+- Learner supplied bootcamp f7a1d3c push to main and clean status. Tuesday is closed;
+  product 2b7da04 and hosted checks are recorded above. No weekly merge occurred.
+- Learner reports taking 14 October off, matching the optional rest/catch-up day.
+  No work or actual working-time estimate is attributed to that date.
+
+## 15 October opening — real registration
+
+- Local read-only inspection confirms clean bootcamp main at f7a1d3c and clean
+  OpsDesk feature/week-14-api-integration at 2b7da04. No fresh fetch/test run at opening.
+- Keep the planned three-hour Thursday package and existing weekly branch. Review
+  confirms POST /users accepts only email/password and returns 201 with user_id,
+  email and is_active. Email canonicalization and NFC/15–128-code-point password
+  policy remain server-authoritative. No additional symbol rule is invented.
+- Architecture: RegisterForm owns inputs/submission state; an identity API module
+  constructs the explicit payload and validates successful response shape/status;
+  requestJson owns transport. Registration does not create a frontend login session.
+- First learner exercise: UserProfile type/guard plus registerUser adapter and
+  focused mocked-fetch tests. Guard rejects unsafe numeric identifiers rather than
+  accepting rounded IDs; the wider backend bigint contract remains a known boundary.
+- Subsequent work: form validation/loading/duplicate-submission handling, accurate
+  mixed demo/real labels, component tests, browser success/conflict evidence against
+  the development database and documentation/Git closure. No implementation or
+  real registration success is claimed at opening.
+
+## 15 October identity adapter review
+
+- Learner implemented UserProfile, isUserProfile and registerUser; supplied 54 tests
+  across seven files, successful build/lint and silent tracked whitespace check.
+- Source review confirms positive safe integer IDs, required profile field types
+  (including valid false), exact 201 success, explicit email/password serialization,
+  AbortSignal forwarding and preserved transport failures. No blocking source issue.
+- Suggested removing an unnecessary as-unknown-as cast from the extra-field test:
+  structural typing already permits passing a variable with additional fields. Mock
+  fixtures do not prove backend password-policy acceptance.
+- Learning answer correctly rejects unvalidated success data. Refined its scope:
+  a malformed response can follow a committed account; neither guard success nor
+  failure independently verifies database state. Registration does not auto-login.
+- Next learner exercise: wire RegisterForm, bounded server-aligned validation,
+  immediate duplicate-submit gate, disabled pending controls, cancellation/unmount
+  ownership, honest success/uncertain-outcome messaging and updated UI tests/labels.
+  No real registration browser evidence or form completion is claimed yet.
+
+## 15 October connected form review — fixes pending
+
+- Learner supplied 54 passing tests and successful production build, but lint failed
+  on an ASCII-range regex containing a control-character escape. Reviewed actual
+  RegisterForm, replacement tests, App changes and the committed baseline.
+- The pasted old source is RegisterForm.test.tsx, not the component. Replacing demo
+  success expectations with mocked registration is appropriate; unchanged test count
+  does not prove all previous behavior coverage was retained.
+- Requested character-code ASCII validation instead of disabling lint; clear stale
+  feedback when a validated request begins; reset mock implementations between tests.
+- Coverage gaps identified: the combined email case omits malformed ASCII input;
+  the network/invalid_response case exercises network only; unmount test checks
+  abort but does not await late resolution or verify a fresh form. Restore meaningful
+  Enter submission and feedback-clear assertions from the earlier tests.
+- Registration response, disabled pending inputs, controller identity checks,
+  NFC/code-point validation and safe uncertain-outcome handling are present. No
+  real registration browser evidence or final acceptance is claimed yet.
+
+## 15 October mentor-applied form repair
+
+- Learner expanded form coverage to 25 tests and requested direct repair after a
+  retry-feedback regression failed and the original ASCII-regex lint error remained.
+- With filesystem approval, mentor changed only RegisterForm.tsx: replaced the
+  control-character regex with an ASCII character-code check and added
+  setFeedback(null) when a validated request begins. Preserved learner test changes.
+- Mentor ran the full frontend sequence on Node 24: all 68 tests across seven files,
+  production build, lint and tracked diff whitespace check passed. No test disabling
+  or lint suppression was introduced. Real browser registration/conflict evidence
+  and product README/Git closure still remain pending.
+
+## 15 October real registration blocker — missing development schema
+
+- Learner browser screenshot shows POST registration returning internal_error and
+  the frontend generic HTTP error. No successful account creation is established.
+- Read-only local inspection confirms PostgreSQL is listening, and a local admin
+  connection to opsdesk_product_dev finds no application tables or alembic_version.
+  This is a confirmed blocker, not proof that credentials have also been validated.
+- Existing migrations/env.py online mode intentionally uses guarded test settings.
+  Mentor did not weaken that guard or point destructive tests at development data.
+- Generated and inspected offline Alembic SQL for both existing revisions up to
+  31be9023cfb2. Prepared a temporary transactional script requiring the exact local
+  development DB, application role, host/port and empty schema before DDL. No database
+  changes have been made by these diagnostic steps. Learner application and subsequent
+  real browser registration/conflict evidence remain pending.
+- This exposes a missed development provisioning step: prior token-free 401 checks
+  did not access the DB. Document a repeatable development migration workflow before
+  closing this package; retain the separate destructive-test guard.
+
+## 15 October development database setup completed
+
+- At the learner's request, completed the missing development migration workflow
+  before continuing browser registration. Existing roles/databases were retained;
+  no bootstrap rerun, password reset, manual table creation or destructive dev test.
+- Added explicit `alembic -x target=development` selection. Default online commands
+  still use the guarded product test target. Development requires the exact local
+  DB, application role, host and port, then checks actual connection identity before
+  selecting public schema and running DDL in one transaction. Errors close the engine
+  and database-operation failures keep connection details out of the public message.
+- Migration-only settings can omit the password to use existing libpq authentication;
+  server authentication rules were not changed. Runtime DatabaseSettings still
+  requires a password. Successful local connections do not prove password checking.
+- Initial real run stopped before DDL because inet_server_addr()::text included /32.
+  Corrected the query to host(inet_server_addr()), reran 27 focused migration tests,
+  and successfully applied 6a3066cd5538 followed by 31be9023cfb2.
+- Real verification: current reports 31be9023cfb2 (head); repeated upgrade runs no
+  revisions; check reports no new upgrade operations. Users, organizations,
+  organization_memberships, tickets and alembic_version belong to opsdesk_product_app.
+  Users count was zero. App role lacks superuser/CREATEDB/CREATEROLE/BYPASSRLS and
+  CONNECT to opsdesk_product_test. No existing rows were deleted.
+- Full backend regression before the final address-query correction: 455 passed,
+  160 deliberately skipped database/schema tests. Focused tests and real migration
+  checks passed after the correction; final Ruff/format/whitespace checks passed.
+- Product README includes the development setup and repeatable upgrade/current/check
+  commands. The temporary offline SQL scripts were not applied; the maintained
+  Alembic path performed the setup. Real browser registration 201 and duplicate-email
+  409, daily publication and hosted CI remain pending.
+
+## 15 October Safari registration evidence
+
+- Learner screenshots after development migration show a public profile containing
+  user_id=1, the synthetic email and is_active=true, together with `Account created.
+  You are not signed in.` Email is retained and both password fields are empty.
+- Repeating registration shows error.code=email_already_exists and `An account with
+  this email already exists.` The form is usable again and no success is claimed.
+- Screenshots display response previews, not HTTP status headers. Source review
+  confirms the registration adapter only accepts 201 plus a valid profile. The
+  duplicate-email backend contract is 409; direct status-header evidence is not
+  visible in these images. No additional account was created by the mentor.
+- Local browser success/conflict behavior is now demonstrated after the schema fix.
+  This does not establish login/session integration or hosted deployment. Product
+  READMEs now describe real registration, remaining demos, 68 local frontend tests,
+  setup requirements and the evidence limits. Product/bootcamp commit and push,
+  staged whitespace review and exact-SHA hosted CI remain outstanding.

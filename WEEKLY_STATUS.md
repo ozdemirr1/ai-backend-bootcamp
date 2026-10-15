@@ -10,10 +10,13 @@ Week 14 — Month 04 / Frontend CI and first API integration
 
 ## Current Focus
 
-- 13 October: Node 24 alignment and API request/configuration/error handling verified
-  locally, including 41 tests and a browser-to-backend 401 probe. Product 2b7da04 is
-  pushed and both CI workflows passed; bootcamp publication remains. Wednesday stays optional
-  rest/catch-up, with 18 planned hours unchanged
+- 15 October: registration adapter/form implemented and tested; missing development
+  schema is migrated and verified. Safari now shows created-profile/success feedback
+  and duplicate-email feedback. READMEs/evidence updated; publication and exact-SHA
+  CI remain. Screenshots show response bodies rather than HTTP status headers.
+- Today's original 3-hour package was registration integration; local database setup
+  was added after the live check exposed the missing schema. Actual active time has
+  not been reported and must not be inferred from terminal timestamps.
 - Follow the [Week 14 plan](weekly-reports/week-14-plan.md): hosted frontend checks,
   real registration/login/current User, and a deployment preparation checkpoint
 - Keep Ticket reads separately scoped; use normal merge for the weekly PR
@@ -59,8 +62,30 @@ Week 14 — Month 04 / Frontend CI and first API integration
   [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908140) succeeded.
   Hosted frontend logs show Node 24.21.0/npm 11.19.0, npm cache hit, 41 passing tests,
   build and lint. Product READMEs and bootcamp evidence are updated.
-- Next: bootcamp documentation commit/push. Weekly branch stays open and normal
-  merge remains the agreed strategy.
+- Bootcamp documentation was committed/pushed as f7a1d3c; Tuesday is closed.
+  Weekly branch stays open and normal merge remains the agreed strategy.
+
+## Week 14 Development Database Checkpoint — 15 October
+
+- Registration adapter and connected form have 68 passing frontend tests plus
+  successful build/lint. Real browser registration exposed a missing development
+  schema; earlier token-free 401 evidence had not exercised persistence.
+- Existing product databases/roles were already provisioned. Added an explicit
+  `alembic -x target=development` path, preserving the default guarded test target.
+  Development migrations verify the configured and connected database/role/server
+  before DDL; they use a transaction and dispose the engine on success or failure.
+- Applied the two existing revisions to opsdesk_product_dev. Current head is
+  31be9023cfb2; four application tables and alembic_version are owned by the app
+  role. Repeated upgrade was a no-op; Alembic check found no model/schema changes.
+  The app role has no superuser, CREATEDB, CREATEROLE or BYPASSRLS privileges and
+  cannot connect to the product test database. No database was recreated or reset.
+- Backend regression: 455 passed, 160 database/schema tests skipped deliberately;
+  Ruff and formatting passed. After correcting PostgreSQL address normalization,
+  27 focused migration tests passed and the real migration/check sequence succeeded.
+- README now documents provisioning versus migrations and repeatable setup.
+  Subsequent Safari screenshots show successful registration with cleared passwords
+  and duplicate-email rejection. Frontend README is updated. Commits/push and
+  exact-SHA CI remain pending. No login, session or deployment success is claimed.
 
 ## Week 13 Sunday Review — 11 October
 

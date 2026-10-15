@@ -209,3 +209,32 @@ Tuesday publication update: product `2b7da04` is pushed with a clean tree. Both
 [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38414908140) passed
 at that SHA; hosted frontend logs confirm 41 tests, build/lint and an npm cache hit.
 Only bootcamp documentation publication remains for Tuesday's daily closure.
+
+## Thursday opening — 15 October
+
+Tuesday closed with bootcamp f7a1d3c; learner took Wednesday off as planned. Start
+from clean product 2b7da04 on the existing weekly branch. Keep the three-hour budget.
+First implement/test the identity API adapter: unknown -> checked UserProfile,
+explicit email/password request, exact 201 success, safe failure propagation and
+no confirmation field leakage. Then wire RegisterForm with loading/error/success,
+server-aligned bounded validation, duplicate-submit prevention and cancellation on
+unmount. Update labels so real registration is distinguishable from remaining demos.
+Finish with component tests, real development registration/conflict evidence and
+README/report/publication checks. Registration must not imply automatic login.
+
+### Thursday setup correction
+
+The live registration check exposed an empty development schema despite existing
+roles/databases. Added and tested an explicit guarded development Alembic target;
+applied both existing revisions through 31be9023cfb2 and verified a repeat upgrade,
+model/schema alignment and app-role isolation. The test migration target remains
+the default and destructive tests remain restricted to the product test database.
+Resume the learner's browser check: first registration must show 201 and the checked
+profile/success message; repeating the same email must show 409 and its safe message.
+Do not mark real registration complete based only on schema setup or mocked tests.
+
+Learner follow-up: Safari response previews now show a created public profile and
+success message with cleared passwords, then email_already_exists with correct form
+feedback. Local behavior is demonstrated; HTTP status headers are not visible in
+those screenshots. READMEs and evidence updated. Proceed with daily Git publication
+and exact-SHA frontend/backend CI before closing this package.

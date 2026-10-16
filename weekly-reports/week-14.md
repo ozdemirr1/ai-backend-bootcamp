@@ -364,3 +364,74 @@ remain explicitly tracked dependencies/deliverables, not assumed completed work.
   READMEs now describe real registration, remaining demos, 68 local frontend tests,
   setup requirements and the evidence limits. Product/bootcamp commit and push,
   staged whitespace review and exact-SHA hosted CI remain outstanding.
+
+## Thursday publication and Friday opening
+
+- Learner supplied backend logs confirming POST /users 201 and 409, both with
+  unexpected_error=false. This completes the previously missing HTTP-status evidence.
+- Product ea6f6f49a7981552d468fc281f640f35a4ac988d was committed/pushed; Frontend CI
+  https://github.com/ozdemirr1/opsdesk/actions/runs/38753920743 and Backend CI
+  https://github.com/ozdemirr1/opsdesk/actions/runs/38753920720 both passed at that SHA.
+  Bootcamp publication e75cdf3 and clean working trees were verified on 15 October.
+- Learner psql output confirmed the persisted synthetic User, all five public tables
+  and revision 31be9023cfb2. pgAdmin was installed and connection instructions supplied;
+  no completed pgAdmin query is claimed without further evidence.
+- 16 October opening: clean product ea6f6f4 on the existing weekly branch. Plan
+  login/current-user adapters, connected form and in-memory session with tests.
+  Budget remains 3 hours, estimated 3–4 with debugging, not a measured time record.
+
+## 16 October login/current-user adapter review
+
+- Learner implemented AccessTokenResponse guard, loginUser and getCurrentUser in
+  the existing identity module. Source review found no blocking implementation
+  defect: explicit email/password payload, exact 200 checks, runtime response guards,
+  bearer header, AbortSignal forwarding and preserved client errors are present.
+- Mentor ran the complete frontend sequence on Node 24.21.0: 82 tests across seven
+  files passed, production build/lint and tracked whitespace checks passed.
+- Before form wiring, requested bounded coverage additions: getCurrentUser must
+  reject a valid profile under an unexpected successful status; both adapters should
+  demonstrate network and abort result propagation, beyond signal-forwarding tests.
+  Token guard wrong-type fixtures can extend the existing guard test.
+- isUserProfile deliberately accepts a boolean false. Session wiring must separately
+  require an active current User before displaying an authenticated state. No real
+  login/session or browser verification is claimed at this adapter checkpoint.
+
+## 16 October connected login and final local review
+
+- At the learner's request, added the six bounded adapter cases: numeric token
+  rejection, current-user wrong successful status, and network/abort propagation
+  for both login and current-user. The suite reached 88 passing tests.
+- Learner wired LoginForm, Session and App state; the supplied check showed 93
+  passing tests, build and lint. Token retrieval is followed by current-user lookup;
+  only a runtime-checked active profile can establish the authenticated UI.
+- Mentor completed the requested fixes: clear old feedback before a retry, suppress
+  aborted-result alerts, reset identity mocks per test, and await late Promise/React
+  completion before making negative assertions. Added coverage for pending controls
+  and duplicate prevention across both requests, silent cancellation and recovery,
+  and late profile completion after unmount/replacement.
+- Final mentor-run checks on Node 24.21.0: 98 tests across seven files passed;
+  TypeScript/production build, ESLint and whitespace checks passed. Breakdown:
+  identity 33, client 9, errors 9, LoginForm 16, RegisterForm 25, App 4, TicketList 2.
+- The token/profile pair is held in App memory, above screen selection. Nothing is
+  persisted in browser storage. Registration remains separate from sign-in; mock
+  Tickets remain explicitly labelled. Logout/expiry handling is not yet implemented.
+
+## 16 October real browser evidence
+
+- Learner backend logs confirm POST /auth/login 401, POST /users 201,
+  POST /auth/login 200 and GET /users/me 200. All four entries report
+  unexpected_error=false. The successful login used a newly registered synthetic
+  account, not a demonstrated successful retry of the previous day's account.
+- Safari shows the checked active public profile and signed-in feedback. Navigating
+  Tickets → Login retains that feedback without an additional login request in the
+  supplied evidence. Full reload restores the empty Login form.
+- The initial failed-login response is visible; its form alert is outside the
+  screenshot crop. The fixed user-facing message is covered by source/tests.
+- Evidence retained here is limited to statuses, public-profile shape and observable
+  behavior. No password, bearer token, Authorization header or screenshot is copied
+  into this repository. Local development signing-key rotation was recommended after
+  an access token appeared in a supplied screenshot; completion is not yet confirmed.
+- Product READMEs, weekly status/plan and learning notes now reflect the local result.
+  Friday commits/pushes and exact-SHA hosted Frontend/Backend CI are still pending.
+  This is local integration evidence, not a hosted deployment or complete session
+  lifecycle. Thursday's successful CI does not verify Friday's uncommitted changes.

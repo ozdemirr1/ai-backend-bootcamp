@@ -10,13 +10,17 @@ Week 14 — Month 04 / Frontend CI and first API integration
 
 ## Current Focus
 
-- 15 October: registration adapter/form implemented and tested; missing development
-  schema is migrated and verified. Safari now shows created-profile/success feedback
-  and duplicate-email feedback. READMEs/evidence updated; publication and exact-SHA
-  CI remain. Screenshots show response bodies rather than HTTP status headers.
-- Today's original 3-hour package was registration integration; local database setup
-  was added after the live check exposed the missing schema. Actual active time has
-  not been reported and must not be inferred from terminal timestamps.
+- 16 October: login/current User and the bounded in-memory session are implemented.
+  All 98 frontend tests, build/lint and whitespace checks pass locally. Learner
+  browser/backend evidence confirms login 401, registration 201, login/current-user
+  200, session survival across navigation and reset after full reload.
+- Friday README/report updates are prepared; commit/push and exact-SHA hosted CI
+  remain pending. Saturday retains logout and expired-session handling.
+- Thursday closed with product ea6f6f4 and bootcamp e75cdf3 pushed; both CI workflows
+  passed at the exact product SHA. Backend logs confirmed registration 201 and
+  duplicate-email 409 with unexpected_error=false. Development schema is verified.
+- Friday budget is 3 active hours; allow 3–4 hours if debugging is required, excluding
+  breaks/CI waits. Actual active time is not inferred from terminal timestamps.
 - Follow the [Week 14 plan](weekly-reports/week-14-plan.md): hosted frontend checks,
   real registration/login/current User, and a deployment preparation checkpoint
 - Keep Ticket reads separately scoped; use normal merge for the weekly PR

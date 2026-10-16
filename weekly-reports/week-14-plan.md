@@ -238,3 +238,39 @@ success message with cleared passwords, then email_already_exists with correct f
 feedback. Local behavior is demonstrated; HTTP status headers are not visible in
 those screenshots. READMEs and evidence updated. Proceed with daily Git publication
 and exact-SHA frontend/backend CI before closing this package.
+
+## Friday opening — 16 October
+
+Thursday is closed: backend request logs confirmed POST /users 201 then 409, both
+with unexpected_error=false. Product ea6f6f4 and bootcamp e75cdf3 were pushed; both
+CI workflows passed at the exact product SHA. Product remains clean at Friday opening
+on feature/week-14-api-integration. The learner also read the persisted synthetic
+User and migration revision through psql; pgAdmin connection walkthrough followed.
+
+Friday retains a 3-hour active-work budget, with a practical 3–4-hour estimate if
+debugging is needed; breaks and CI waiting are separate and this is not measured time.
+Implement login/current-user adapters first, then connect the form and hold the
+reviewed session above screens. Accept login only after 200 plus a checked bearer
+reply; use the token for GET /users/me and establish authenticated UI only after a
+checked active profile. Do not persist or log tokens. Loading, failure, unmount and
+stale-result handling are part of the feature, with meaningful tests. Saturday
+retains logout, expired-session and expanded stale-request/browser checks.
+
+Start with a small analogous runtime response guard, then learner edits the existing
+identity adapter and tests. Preserve registration coverage. No new branch, dependency,
+database reprovisioning or UI redesign is needed. Review the adapter before form wiring.
+
+### Friday outcome — local verification complete
+
+- Adapter coverage additions passed, followed by connected LoginForm and App session
+  wiring. Mentor completed the explicitly requested cancellation/retry/test fixes.
+- Final local check: 98 tests across seven files, production build, lint and whitespace
+  checks passed on Node 24. The session is accepted only after a checked active profile.
+- Learner browser/backend evidence: wrong login 401; a new synthetic registration 201;
+  correct login 200 and current-user 200, all unexpected_error=false. Tickets → Login
+  preserved the signed-in state; full reload restored the empty form.
+- Product READMEs and bootcamp evidence are updated. Publish the daily changes on the
+  existing weekly branch, then verify both hosted workflows at the new commit SHA.
+- Logout, expired-session handling and remaining lifecycle checks are still Saturday
+  work. No optional Organization reads or real Ticket reads are claimed complete.
+  Keep normal merge for the weekly PR; local browser verification is not deployment.

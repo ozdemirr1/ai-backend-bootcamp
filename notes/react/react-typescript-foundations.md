@@ -257,3 +257,30 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
 - Local frontend evidence: 68 tests across seven files, build and lint passed.
   Browser screenshots show response bodies; direct HTTP status headers are separate
   evidence. Login remains a demo until its own integration is implemented.
+
+## 16 October — Login, current User and in-memory session
+
+- Login success requires the endpoint's exact HTTP 200 and a checked bearer-response
+  shape. A token string guard does not verify its signature or prove authorization.
+  GET /users/me verifies the current identity through the backend; frontend session
+  establishment also requires an active profile. A boolean false is valid profile
+  data but does not satisfy the rule for entering the signed-in UI.
+- Form state owns email/password/feedback; App state owns the checked session above
+  the screens. Unmounting LoginForm discards form state while navigation preserves
+  App's session. Full reload creates fresh App state and requires another sign-in.
+- One AbortController and an immediate request ref cover login plus profile lookup.
+  Disable controls throughout both requests and verify result ownership after each
+  await. An old response must not authenticate a newly mounted form. Abort cannot
+  guarantee that the server undid a request it already processed.
+- Clear stale feedback when a retry begins, including when inputs are unchanged.
+  Expected cancellation should not produce a misleading error alert. Resetting mocks
+  clears queued implementations as well as call history; clearing calls alone does
+  not provide that isolation. Await controlled Promise completion inside act before
+  asserting that a late response did not call the session callback.
+- Final local evidence: 98 tests, build/lint and whitespace checks passed. Browser
+  evidence covers 401 login, 201 registration, 200 login and 200 current-user, plus
+  navigation survival and reload reset. Logout and expiry handling remain separate.
+- Removing a token from browser memory does not revoke a still-valid server JWT.
+  Keep full tokens out of screenshots/logs/reports. Rotating a local development
+  signing secret invalidates tokens signed with the previous secret, without deleting
+  database users; this is not a replacement for the application's logout design.

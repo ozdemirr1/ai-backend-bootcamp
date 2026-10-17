@@ -284,3 +284,22 @@ commit `781e74b`; earlier lint and browser smoke checks also passed.
   Keep full tokens out of screenshots/logs/reports. Rotating a local development
   signing secret invalidates tokens signed with the previous secret, without deleting
   database users; this is not a replacement for the application's logout design.
+
+## 17 October — Session checks, logout and stale responses
+
+- Local logout clears App's session and cancels its pending check; it does not revoke
+  the JWT at the server. A page without new protected requests cannot automatically
+  discover that its token has become invalid. Check session explicitly asks /users/me.
+- A 401 or inactive checked profile clears the session. Network failures, 500 and
+  invalid response data do not establish invalid credentials, so preserve the session
+  and offer safe retry feedback. A successful login clears the previous warning.
+- Keep session refs synchronized in event/result handlers rather than writing refs
+  during render. State drives the UI; the request ref and AbortSignal establish which
+  asynchronous response still owns permission to update it. A replacement login must
+  invalidate earlier work even if that work eventually completes.
+- Type deferred test Promises with CurrentUserResult rather than any. Test both the
+  abort signal and completed late responses: cancellation and stale-result suppression
+  are related but distinct protections. Await React updates before negative assertions.
+- Verified locally: 110 tests plus build/lint/whitespace checks. Real browser evidence
+  shows check 200, invalid signature 401 after local key rotation, and recovery via
+  login/profile 200. It does not prove elapsed-time expiry or hosted deployment.

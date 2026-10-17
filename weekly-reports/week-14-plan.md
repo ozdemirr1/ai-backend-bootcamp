@@ -274,3 +274,34 @@ database reprovisioning or UI redesign is needed. Review the adapter before form
 - Logout, expired-session handling and remaining lifecycle checks are still Saturday
   work. No optional Organization reads or real Ticket reads are claimed complete.
   Keep normal merge for the weekly PR; local browser verification is not deployment.
+
+## Saturday opening — 17 October
+
+Friday publication is complete: product 842b10e, bootcamp 152718c and both product
+CI workflows successful at the exact SHA. Continue the existing weekly branch.
+Retain the 3-hour active-work budget; optional Organizations are not a prerequisite.
+
+1. Explain local session cleanup with a small analogous state-reset example. Learner
+   adds Sign out to App and tests absence before login, cleanup and screen navigation
+   after logout, plus ability to sign in again.
+2. Add explicit current-user revalidation using the existing adapter. A protected
+   request's 401 clears the session; network/5xx failures alone do not prove expiry.
+   An inactive checked profile also prevents continued authenticated UI. No automatic
+   expiry timer, token decoding or refresh-token feature is implied by this step.
+3. Keep Sign out usable while checking; cancel/invalidate pending work and ignore
+   results belonging to an old session. Test success/failure completion after logout
+   and replacement, alongside pending/retry behavior.
+4. Run regression and real browser checks, update evidence and publish. Local logout
+   discards the session; it does not revoke the server-side validity of a bearer JWT.
+
+### Saturday outcome so far
+
+Learner implementation/revisions passed source review and all 110 frontend tests,
+build, lint and whitespace checks. Real Safari evidence confirms current-user check
+200, local key-rotation invalidation 401 with session cleanup, and subsequent login
+and profile 200 with warning removal. Explicit Sign out/navigation is covered by
+component tests and learner manual confirmation: empty Login after logout, three mock
+Tickets on navigation, and empty Login again on return. Record this as invalid-token
+verification, not a timed-expiry experiment. Finish daily publication
+and exact-SHA CI. Preserve Sunday's full regression, deployment checkpoint and weekly
+review/normal-merge plan; optional Organization work can wait.

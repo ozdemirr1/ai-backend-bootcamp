@@ -14,8 +14,15 @@ Week 14 — Month 04 / Frontend CI and first API integration
   All 98 frontend tests, build/lint and whitespace checks pass locally. Learner
   browser/backend evidence confirms login 401, registration 201, login/current-user
   200, session survival across navigation and reset after full reload.
-- Friday README/report updates are prepared; commit/push and exact-SHA hosted CI
-  remain pending. Saturday retains logout and expired-session handling.
+- Friday closed: product 842b10e and bootcamp 152718c were pushed; Frontend and
+  Backend CI passed at the exact product SHA. Local signing-key rotation and a
+  successful backend restart were confirmed by learner terminal output.
+- 17 October: logout, explicit session checks, invalid-session cleanup and stale-result
+  protection implemented. Final local verification: 110 tests, build/lint and whitespace
+  checks passed. Browser evidence confirms check 200, invalid-token 401 cleanup and
+  subsequent login/profile 200 with the warning removed. Learner also confirmed
+  Sign out opens an empty Login form and Tickets → Login does not restore the session.
+  Daily publication and exact-SHA CI remain pending.
 - Thursday closed with product ea6f6f4 and bootcamp e75cdf3 pushed; both CI workflows
   passed at the exact product SHA. Backend logs confirmed registration 201 and
   duplicate-email 409 with unexpected_error=false. Development schema is verified.

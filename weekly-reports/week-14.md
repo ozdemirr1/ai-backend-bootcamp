@@ -435,3 +435,50 @@ remain explicitly tracked dependencies/deliverables, not assumed completed work.
   Friday commits/pushes and exact-SHA hosted Frontend/Backend CI are still pending.
   This is local integration evidence, not a hosted deployment or complete session
   lifecycle. Thursday's successful CI does not verify Friday's uncommitted changes.
+
+## Friday publication and Saturday opening
+
+- Product 842b10e9bdd211eba97fa0a28aacc94f0801b482 was pushed on the weekly
+  feature branch. Exact-SHA [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38928077090)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/38928077326)
+  completed successfully. Bootcamp 152718c was pushed to main; both trees were clean.
+- Learner output confirms a fresh development signing secret was generated and the
+  backend restarted successfully, then shut down normally. No old token was reused
+  for verification or retained in these records.
+- 17 October source inspection confirms App owns the in-memory session and has no
+  logout/revalidation control yet. Start with a bounded learner logout exercise and
+  behavior tests; then add current-user revalidation, 401 cleanup and protection
+  against a late request restoring a cleared or replaced session.
+
+## 17 October implementation, review and local evidence
+
+- Learner implemented Sign out and explicit Check session in App. Active profiles
+  update the session; 401 or an inactive profile clears it and selects Login.
+  Network, server and invalid-response failures preserve the session with safe
+  feedback. Cancellation is silent. Sign out remains usable during a pending check.
+- Review caught a render-time ref assignment and five explicit-any lint errors.
+  Learner moved session-ref updates into session transitions and typed deferred
+  Promises with CurrentUserResult. Added separate 500/invalid-response/abort cases
+  and signal-aborted assertions for logout and unmount.
+- Final mentor-run checks: 110 tests across seven files, TypeScript/Vite build,
+  ESLint and whitespace checks passed. App now has 16 tests; other suites unchanged.
+  Controlled Promise tests verify late 200 cannot restore a signed-out session and
+  late 401 cannot clear a subsequent login. No feature code was rewritten by mentor.
+- Learner Safari/backend evidence: login/current-user 200, additional current-user
+  check 200, then another login/profile 200. After a local signing-key change and
+  backend restart, current-user returns 401; the UI removes session controls and
+  displays Login with the expected invalid-session warning. Supplied backend logs
+  report unexpected_error=false.
+- Follow-up Safari headers show login 200 and current-user 200 after that 401;
+  signed-in feedback and controls return, and the old warning is gone. This closes
+  real-browser recovery after invalidation. No token/secret values are recorded.
+- Limits: key rotation demonstrates invalid-signature handling, not elapsed-time
+  expiry. There is no automatic expiry timer, token persistence, refresh-token flow
+  or server-side logout revocation. Explicit logout/navigation is tested locally.
+  Learner subsequently confirmed the manual sequence in writing: Sign out opened an
+  empty Login form, Tickets showed three mock records, and returning to Login left
+  both inputs empty without restoring the session. Network/500 and race cases remain
+  mocked-test evidence.
+- Both product READMEs and bootcamp status/plan/notes updated. Daily commit/push and
+  exact-SHA hosted CI are pending. Keep the weekly feature branch for Sunday review
+  and normal merge; optional Organizations and real Ticket reads remain out of scope.

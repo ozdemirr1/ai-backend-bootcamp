@@ -51,7 +51,8 @@ identity API. Week 15 now has a public identity preview. This progression suppor
 the backend-focused career goal while adding practical frontend skills.
 
 After the bounded Week 15 release checks, resume Month 04 integration and UI
-fundamentals. Prefer an existing Organization read endpoint before adding missing
-Ticket read APIs and their UI. Preserve Month 05 Docker/background-work and Month 06
+fundamentals. The 20 October alignment correction restores dashboard exercises now,
+with Organization context and missing Ticket reads tracked as integration dependencies.
+Preserve Month 05 Docker/background-work and Month 06
 AI sequencing. See [current status](../WEEKLY_STATUS.md) and the
 [roadmap](../ROADMAP.md) for current evidence and next priorities.

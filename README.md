@@ -73,7 +73,9 @@ Historical week-based laboratory names remain unchanged. Start with
 - [Week 14 Report](weekly-reports/week-14.md) - identity integration merged in PR #42,
   session lifecycle verification and Railway trial decision
 - [Week 15 Plan](weekly-reports/week-15-plan.md) - first Railway identity preview,
-  revised after the live demo: verification, operations and scoped external feedback
+  followed by the 20 October dashboard-priority correction and bounded preview checks
+- [Month 04 alignment review](notes/react/month-04-alignment.md) - original dashboard
+  goals, actual implementation and explicit integration dependencies
 - [Week 15 Report](weekly-reports/week-15.md) - hosted and browser evidence
 - [Railway deployment notes](notes/deployment/opsdesk-railway-preview.md)
 - [OpsDesk LinkedIn draft](notes/career/opsdesk-live-preview-linkedin.md)

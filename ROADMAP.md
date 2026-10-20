@@ -60,12 +60,21 @@ The revised Week 15 plan prioritizes scoped tester feedback, abuse controls,
 trial usage, backup/restore and rollback. Tickets remain mock data in the UI;
 no AI feature is claimed. A LinkedIn draft documents this specific progression.
 
-Sequencing after Week 15: timebox unfinished preview operations, then return to
-React/TypeScript with one screen backed by the existing Organization reads and a
-bounded responsive/accessibility pass. Tailwind can follow as a styling exercise
-after the component and CSS decisions are understood; it is not a hosting dependency.
-Real Ticket list/detail UI first requires separately scoped backend read endpoints.
-Do not bundle a complete dashboard, all Ticket workflows and AI into Week 16.
+20 October correction: the original Month 04 sequence was foundations (Week 13),
+API integration (Week 14), dashboard (Week 15), and UI polish (Week 16). The live
+identity preview is valuable additional evidence but does not satisfy the dashboard
+milestone. Week 14's real Ticket list and protected-route goals remain incomplete.
+The 19 October operations-heavy schedule therefore needs correction, not a claim
+that everything is on the original weekly schedule.
+
+Resume dashboard fundamentals during Week 15: table, status badges, search/filter
+and a detail view, with fixture-backed behavior clearly labelled. Scope the missing
+real Ticket list/detail backend dependency and Organization context explicitly.
+Week 16 combines that integration priority with bounded Tailwind/responsive/
+accessibility work; comments and role-aware actions are not promised without their
+backend APIs. At handoff, estimate remaining scope and record any spillover before
+calling the frontend MVP complete. Operations remain timeboxed follow-up work.
+See the [alignment review](notes/react/month-04-alignment.md) for feature-level gaps.
 The [Month 03 retrospective](monthly-reports/month-03.md) records carried product
 work and the delayed deployment milestone; the preview does not close that backlog.
 

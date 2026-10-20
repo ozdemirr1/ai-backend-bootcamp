@@ -1,13 +1,20 @@
-# Week 15 Plan — Live identity preview and release verification
+# Week 15 Plan — Dashboard foundation and bounded preview follow-up
 
 ## Dates, capacity and outcome
 
 19–25 October 2026, Month 04. Original plan prepared 18 October; revised
-19 October after the live browser checkpoint. Planned capacity: 18 active hours
+19 October after the live browser checkpoint; corrected 20 October against the
+learner's original Month 04 dashboard milestones. Planned capacity: 18 active hours
 (3 hours on six days; Wednesday optional). Actual time is not inferred from logs.
-The first identity preview is already live. The remaining outcome is a reviewable,
-operable preview with scoped external feedback, accurate documentation and a
-normally merged weekly PR. This is not a complete Ticket or AI product launch.
+The first identity preview is already live. The 19 October revision overallocated
+the remaining frontend week to operations and deferred the dashboard. Restore
+dashboard learning as the primary remaining outcome: a tested table, local search/
+filter behavior, status badges and a bounded detail view, with data provenance
+explicit. This is not yet the original complete frontend MVP: real Ticket reads,
+comments and organization-role behavior have backend dependencies.
+
+The previous plan is preserved in bootcamp commit `3be0f38`. See the
+[Month 04 alignment review](../notes/react/month-04-alignment.md) for the gap analysis.
 
 ## Completed before and during Monday
 
@@ -23,25 +30,29 @@ normally merged weekly PR. This is not a complete Ticket or AI product launch.
 - [x] Exact-head Backend and Frontend CI passed at `2f6e00d`, rechecked 19 October.
 - [x] LinkedIn draft and two accompanying still images prepared; publication unconfirmed.
 
-These replace the original Tuesday–Friday setup tasks, which were completed early.
-Do not repeat provisioning or broaden scope to fill freed calendar space.
+Do not repeat provisioning. The completed identity preview supplements the original
+dashboard goal; it does not replace it or establish Month 04 completion.
 
 ## Revised daily allocation
 
 | Date | Planned time | Work and acceptance evidence |
 | --- | --- | --- |
 | Mon 19 | 3 h baseline; actual unknown | Completed live identity preview, current-head CI verification, documentation review and LinkedIn draft/images. Bootcamp publication remains pending. |
-| Tue 20 | 3 h | Verify deployed SHA (recheck CI if head changes); document public registration/login abuse boundaries. Implement a bounded control only after choosing policy, trusted proxy/IP behavior and restart/replica limitations; test allowed requests, rejection and recovery. Keep broad test invitation pending until reviewed. |
+| Tue 20 | 3 h | Finish yesterday's documentation commit/push and correct the Month 04 scope. Limit preview triage to runtime SHA/usage and recording any exposure issue. Explain table component/props/state design with a small analogous example; learner starts TicketTable and StatusBadge using explicitly labelled fixtures. |
 | Wed 21 | Optional | Rest or catch-up. No required new feature or assumed spare capacity. |
-| Thu 22 | 3 h | Record current trial usage; write shutdown/export steps and code/schema rollback limits. Verify a backup restore in an isolated disposable database, never by resetting the Railway demo. Record what was actually exercised. |
-| Fri 23 | 3 h | Hosted browser negative cases (duplicate 409, wrong password 401), reload reset, network-error recovery and narrow/mobile layout. Document demo-only data, no real support content, data reset/contact expectations. Fix confirmed defects with relevant tests. |
-| Sat 24 | 3 h | Invite a small manual feedback group; collect usability/error findings without credentials. Address reproducible issues. Recheck the already prepared LinkedIn draft/images against current behavior; publish only when Furkan chooses. |
-| Sun 25 | 3 h | Relevant regression and exact-head CI; review weekly PR and merge with `--merge`; choose/verify Railway branch after merge, deployed SHA and smoke. Close report, record usage and hand off to Week 16. |
+| Thu 22 | 3 h | Learner implements status filter and title search as derived state; test combined conditions, clearing filters, no matches and semantic table output. Search/filter operates on the labelled fixture collection, not an entire remote paginated collection. |
+| Fri 23 | 3 h | Bounded Ticket detail selection/view and return navigation; expand fixtures explicitly where detail fields are needed. Add session-aware access to the dashboard and tests for signed-out/logout behavior. Do not present a conditional screen as a completed URL router. |
+| Sat 24 | 3 h | Review Ticket-read contract and tenant authorization dependencies, map the table/detail adapter, and estimate the real list/detail package. Review Organization selection/membership context and empty state. Fix dashboard defects; begin a backend slice only if its reviewed scope and tests fit. No mandatory public launch or new artwork. |
+| Sun 25 | 3 h | Relevant frontend regression/build/lint and exact-head CI; document implemented versus fixture-backed behavior and outstanding reads/comments/roles. Review weekly changes and normal PR merge only for completed scope; verify deployment if changed. Prepare Week 16 integration/UI plan. |
 
-If abuse-control or restore work exceeds its allocation, defer optional polish and
-broad sharing. Record unfinished work explicitly; do not waive checks or change
-provider/paid plan just to satisfy the calendar. Docker/Redis remain Month 05;
-AI remains later. Organization/Ticket-read UI is a separately planned dependency.
+Preview triage is a bounded secondary task, not the remaining week's main syllabus.
+If an actual exposure or cost issue requires more work, record that interruption
+and reduce sharing while it is resolved; do not label an unreviewed demo ready.
+Backup/restore and abuse controls remain open operations work, not silently completed
+or unconditional blockers for local frontend learning. No destructive demo changes.
+Docker/Redis remain Month 05 and AI remains later. Real Ticket reads need explicit
+backend authorization and database tests before integration. Do not replace them
+with local filtering and claim the live Ticket API works.
 
 ## Architecture decision
 
@@ -56,7 +67,16 @@ Application and migration roles have different privileges, but both credentials
 currently enter the same service. Separate prefixes alone are not secret isolation.
 No browser-persisted tokens, refresh flow, broad redesign or new technology is added.
 
-## External feedback and release gates
+## Dashboard acceptance evidence
+
+- [ ] Semantic Ticket table and status badges preserve typed inputs and clear labels.
+- [ ] Search/filter combinations and empty/no-match states have behavior tests.
+- [ ] Detail view and return navigation have explicit fixture/real-data provenance.
+- [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
+- [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.
+- [ ] Comment submission and organization-role mutations remain unavailable until their APIs exist.
+
+## Open external feedback and release gates
 
 - [x] Current-head Backend and Frontend CI pass at `2f6e00d`.
 - [ ] Deployed runtime SHA is checked; CI is repeated if code changes.
@@ -90,17 +110,13 @@ Explain in your own words:
 6. What does a code rollback fail to undo after a schema migration?
 7. Why can a zero-visitor service still consume credit?
 
-Week 16 planning follows Sunday's evidence. Timebox any unfinished operations work
-explicitly instead of letting it absorb the whole frontend month. Prefer one screen
-using the existing Organization read API, paired with a small responsive/accessibility
-exercise. Select its exact scope at handoff; this is a sequencing recommendation,
-not a second weekly implementation commitment. Real Ticket reads remain a backend
-dependency. Full redesign, all Ticket workflows and AI do not fit this package.
-
-The three-hour abuse-control and backup/restore allocations include explanation,
-implementation and verification. If either is too large, record the incomplete
-gate and a narrower next step; do not introduce Redis early or assume a restore
-succeeded from a written command alone. Actual study hours remain learner-reported.
+Week 16 prioritizes the reviewed real Ticket-read integration dependency and a
+bounded UI pass: Tailwind fundamentals, responsive layout/sidebar, keyboard/focus
+behavior and state feedback. Toast/modal work needs a real interaction that benefits
+from it; do not add decorative components to tick boxes. Comments and role-dependent
+actions require their own backend capability and authorization evidence. At Sunday's
+handoff, publish a realistic split if this exceeds capacity; do not declare the
+original frontend MVP complete or silently drop its missing features.
 
 ## References checked during implementation
 

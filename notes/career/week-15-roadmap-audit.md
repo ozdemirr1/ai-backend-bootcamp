@@ -3,6 +3,10 @@
 Recorded 19 October 2026. Repository review, not a new runtime regression or
 market survey. No commits, pushes, merges or deployments were performed.
 
+Historical checkpoint: the [20 October alignment review](../react/month-04-alignment.md)
+supersedes this audit's recommendation to defer dashboard work until after Week 15.
+The documentation package was subsequently committed/pushed as `3be0f38`.
+
 ## Direction and weekly scope
 
 The path remains aligned with backend-focused junior/full-stack development:

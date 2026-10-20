@@ -162,3 +162,21 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   priority explicit. See [audit](../notes/career/week-15-roadmap-audit.md).
 - No commit, push, PR creation, branch deletion, merge or deployment was performed
   during this audit. The bootcamp publication package remains for review and commit.
+
+## 20 October interrupted publication and Month 04 correction
+
+- The previous session stopped after creating `feature/week-15-documentation`;
+  no commit/push had completed. Resumed the 14-file package, corrected one trailing
+  blank line caught by the staged whitespace check, committed `3be0f38`, and pushed
+  the branch with upstream tracking. Main was not merged and OpsDesk was unchanged.
+- Learner supplied the original Month 04 dashboard/UI milestones. Source comparison
+  confirmed the real Ticket list, protected routing, dashboard detail/comments and
+  role controls are not complete. A live identity preview is an additional outcome,
+  not a substitute for these milestones.
+- Corrected the operations-heavy Week 15 plan to resume bounded dashboard exercises
+  with honest fixture labels, explicit Ticket-read dependencies and a Week 16 UI/
+  integration priority. No complete MVP or catch-up date is claimed without scope
+  estimates. See [alignment review](../notes/react/month-04-alignment.md).
+- Next learner exercise: explain table/props/state through a small example, then
+  implement TicketTable and StatusBadge with behavioral tests. This review did not
+  implement the learner's exercise or rerun application suites.

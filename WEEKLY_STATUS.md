@@ -1,6 +1,6 @@
 # Weekly Status
 
-## Current checkpoint — 19 October 2026
+## Current checkpoint — 20 October 2026
 
 Week 15, Month 04; 19–25 October. First public identity preview is working.
 
@@ -31,15 +31,16 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 
 ## Next work
 
-1. Confirm deployed runtime SHA and public negative cases; current-head CI passed.
-2. Review bounded registration/login abuse controls, cost and demo data handling
-   before a broad invitation. Small manual feedback tests are technically possible
-   now; do not represent the preview as a production support system.
+1. Resume Month 04 dashboard learning: TicketTable/StatusBadge, then search/filter
+   and detail/session behavior with tests. Explicitly label fixture-backed screens.
+2. Timebox preview SHA/usage/exposure triage. Review abuse and data controls before
+   broad sharing; pending operations work is not a blanket blocker for local UI learning.
 3. Follow the revised [daily plan](weekly-reports/week-15-plan.md),
    [deployment notes](notes/deployment/opsdesk-railway-preview.md) and
    [LinkedIn draft](notes/career/opsdesk-live-preview-linkedin.md).
-4. Record backup/restore and rollback procedure, then normal PR merge and Week 16
-   handoff. Do not introduce Docker, Redis, AI or Ticket-read work into this package.
+4. Scope the missing real Ticket list/detail API and organization membership context
+   for integration. Record remaining comments/roles and UI work at Week 16 handoff.
+   Docker/Redis and AI stay in their scheduled phases. Restore evidence remains open.
 
 ## Evidence and history
 
@@ -47,7 +48,10 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - [Week 14 report](weekly-reports/week-14.md): identity integration and PR #42 merge.
 - [Previous status snapshot](weekly-reports/archive/status-before-2026-10-19-preview.md)
   preserves the former 1,828-line history. This file now contains current status only.
-- Bootcamp documentation edits are local and uncommitted; product code is pushed.
+- Yesterday's 14-file bootcamp package was committed and pushed on 20 October as
+  `3be0f38` on `feature/week-15-documentation`; main is not merged. The follow-up
+  Month 04 alignment correction is maintained on the same branch. Product code
+  remains at the pushed Week 15 feature head.
 - GitHub heads rechecked on 19 October: bootcamp main `42cf59c`; product main
   `b0e6cab`, feature head `2f6e00d`. Product feature is three commits ahead of main;
   no open PR exists in either repository. No unpublished product files were found.

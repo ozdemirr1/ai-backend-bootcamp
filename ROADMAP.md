@@ -30,11 +30,11 @@ React, TypeScript, frontend integration, and a deployed full-stack demo.
 Week 13 (6–11 October): [React foundation plan](weekly-reports/week-13-plan.md),
 with a static shell, mock Ticket list, and controlled login/register forms inside
 OpsDesk's `frontend/`. Budget 18 active hours within the normal 15–20 hour capacity.
-Week 14 planning will review API integration prerequisites, including missing Ticket
-reads; Week 13 does not absorb the remaining Month 03 product backlog. Tailwind,
-authentication integration, protected routes, and deployment remain later work.
-The deployed backend/full-stack milestones remain unverified until delivery evidence
-exists; beginning Month 04 does not imply those milestones are complete.
+Week 13 did not absorb the remaining Month 03 product backlog. Week 14 delivered
+identity integration and in-memory session lifecycle. Missing Ticket reads, Tailwind
+and protected-route work remain separately scoped. Deployment of the bounded
+identity preview is verified at the 19 October checkpoint below; this does not
+complete the full Ticket dashboard or remaining product backlog.
 
 11 October checkpoint: Week 13 technical review passed with 23 frontend tests and
 built-bundle browser evidence; product PR #41 merged as 511715d. The
@@ -42,6 +42,32 @@ built-bundle browser evidence; product PR #41 merged as 511715d. The
 registration/login/current-User APIs. Missing Ticket reads remain a separately scoped
 dependency. Week 14 includes a hosting decision checkpoint; Week 15 targets a first
 hosted identity-flow preview, subject to integration and deployment gates.
+
+18 October checkpoint: Week 14 PR #42 merged normally at b0e6cab, with both
+merge-commit CI workflows successful. Furkan selected Railway's one-time USD 5 /
+up-to-30-day trial. The [Week 15 plan](weekly-reports/week-15-plan.md) allocates 18
+hours to a hosted identity preview and its migration/origin/verification prerequisites.
+Credit may run out before 30 days; paid continuation will be decided from actual
+usage. Deployment was still unverified at that 18 October decision checkpoint.
+
+19 October checkpoint: React and FastAPI now run on one public Railway origin,
+with a separate persistent PostgreSQL service. Public HTML/assets/readiness and
+learner browser registration/login/session/logout are verified at product `2f6e00d`.
+Local backend regression: 506 passed, 160 deselected. Latest-head Backend and Frontend
+CI both passed, rechecked on 19 October; runtime SHA confirmation, operational
+checks and weekly merge remain.
+The revised Week 15 plan prioritizes scoped tester feedback, abuse controls,
+trial usage, backup/restore and rollback. Tickets remain mock data in the UI;
+no AI feature is claimed. A LinkedIn draft documents this specific progression.
+
+Sequencing after Week 15: timebox unfinished preview operations, then return to
+React/TypeScript with one screen backed by the existing Organization reads and a
+bounded responsive/accessibility pass. Tailwind can follow as a styling exercise
+after the component and CSS decisions are understood; it is not a hosting dependency.
+Real Ticket list/detail UI first requires separately scoped backend read endpoints.
+Do not bundle a complete dashboard, all Ticket workflows and AI into Week 16.
+The [Month 03 retrospective](monthly-reports/month-03.md) records carried product
+work and the delayed deployment milestone; the preview does not close that backlog.
 
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking

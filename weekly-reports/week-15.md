@@ -1,0 +1,164 @@
+# Week 15 Report — Railway identity preview
+
+19–25 October 2026, Month 04. Work in progress.
+
+Latest checkpoint: the public identity preview is working as of 19 October.
+Earlier “pending” statements below describe their dated checkpoints; the newest
+sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work.
+
+## Early setup completed on 18 October
+
+- Product branch: `feature/week-15-railway-preview`.
+- Product commit: `cec7ce7954d1cbf912c553eac838b2d67478cdf7`.
+- Exact-commit [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39163258790)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39163258819)
+  both succeeded. Local learner evidence: 487 non-integration tests passed,
+  160 database tests deselected; Ruff lint/format and whitespace checks passed.
+- Added the explicit hosted Alembic target, separate migration settings,
+  private-host/port/name guards, connected identity and role-attribute checks,
+  transactional migration execution and tests. Default local test and development
+  paths remain guarded.
+- Railway demo database `opsdesk_demo` is owned by `opsdesk_migrator`.
+  Migration and runtime roles have LOGIN but no superuser, CREATEDB, CREATEROLE,
+  REPLICATION or BYPASSRLS attributes. Passwords were set interactively, not recorded.
+- Learner deployment screenshots show the feature branch and deployment `d81bad4a`.
+  This deployment identifier is not a Git commit SHA. Source title matches the
+  migration commit; runtime metadata was subsequently confirmed on 19 October (below).
+- Supplied logs show both revisions applied, ending at `31be9023cfb2`, followed by
+  `Application startup complete` and Uvicorn listening on port 8080.
+- A subsequent PostgreSQL query confirmed revision `31be9023cfb2` and all five
+  tables owned by `opsdesk_migrator`.
+- Explicit SELECT/INSERT/UPDATE grants cover the four product tables; USAGE grants
+  cover their four identity sequences. No application grants on `alembic_version`.
+  Schema CREATE is denied to `opsdesk_app`. New objects require privilege review.
+- `SET LOCAL ROLE opsdesk_app` could read users (zero rows). This establishes role
+  permissions, not password authentication or an HTTP application request.
+- Both credential sets are currently supplied to the API service; separate prefixes
+  do not isolate the migration secret from its runtime process.
+
+## 19 October opening checkpoint
+
+- Local product branch is clean and tracks the pushed feature branch.
+- Learner executed the synthetic identity smoke check inside the running API container:
+  registration 201, duplicate registration 409, wrong-password login 401, valid login
+  200, current User 200 with matching ID/email and active status, tokens omitted 401.
+  The script checked runtime database `opsdesk_demo` and role `opsdesk_app` before writes.
+  One synthetic account was created; its generated password and token were not printed.
+- Runtime `RAILWAY_GIT_COMMIT_SHA` matched
+  `cec7ce7954d1cbf912c553eac838b2d67478cdf7`. Evidence is learner-supplied terminal output,
+  not an independently repeated remote check. This confirms container-local HTTP and
+  application-role database access, not public reachability.
+- Next verify usage, implement liveness/readiness, and choose production frontend/origin wiring.
+- Learner implemented `/health/live` locally and supplied passing evidence for the
+  health and application tests: 8 passed; Ruff lint/format and whitespace checks passed.
+  Source review confirms the liveness handler has no database or authentication
+  dependency. This change is not yet claimed as deployed. Readiness is the next exercise.
+- Learner subsequently implemented `/health/ready` using the application session
+  factory, `SELECT 1`, session cleanup and the shared `service_unavailable` 503
+  response. Source review and learner output confirm 30 targeted health/application/
+  API-error tests passed with Ruff and whitespace checks clean. Hosted readiness
+  remains unverified until these local changes are deployed. Runtime connection and
+  pool wait limits are the next bounded change; these are not total request deadlines.
+  Frontend publication, public HTTP reachability and browser identity flows are pending.
+- Tickets remain mock data. Tokens remain in memory. No paid upgrade is authorized.
+- Runtime connect and pool waits now default to 5 seconds, with validated environment
+  overrides. Source review confirms wiring and tests; learner full regression output:
+  500 passed, 160 integration tests deselected, Ruff lint passed, 110 files formatted,
+  whitespace check passed. This is local evidence; publication and hosted health
+  checks for these changes remain pending.
+- Bootcamp documentation is updated locally; publication is not yet claimed.
+
+## 19 October hosted health checkpoint
+
+- Health and timeout changes published as
+  `3df5bfccdb344b8ead0b3ea50ca3c4ba04e66991` on the existing feature branch.
+- Exact-commit [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39275302161)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39275302240)
+  succeeded, verified through GitHub CLI.
+- Learner reported enabling autodeploy did not start the pending commit. Deploy Latest
+  Commit started a successful deployment; screenshot title matches the health change.
+  Autodeploy on a subsequent push still needs verification.
+- Learner confirmed configuring the requested readiness deployment check; subsequent
+  screenshot shows successful ACTIVE deployment. The screenshot does not display the
+  configured healthcheck path or timeout values themselves.
+- Learner then executed read-only HTTP checks inside the running API container:
+  full runtime Git SHA matched `3df5bfccdb344b8ead0b3ea50ca3c4ba04e66991`,
+  `/health/live` returned 200 and `{"status":"ok"}`, `/health/ready` returned 200
+  and `{"status":"ready"}`. This supersedes earlier pending hosted health status.
+- Dashboard displayed USD 4.94 remaining trial credit and 29 days; no monthly
+  cost forecast is inferred from that point-in-time display.
+- Service remained unexposed in the supplied screenshot. Public HTTPS and frontend
+  publication/browser checks are the next steps; neither is claimed complete.
+
+## 19 October public HTTPS checkpoint
+
+- Learner generated `https://opsdesk-production-448f.up.railway.app` targeting port 8080.
+- Independent read-only HTTPS checks returned HTTP 200 with `{"status":"ok"}`
+  from `/health/live` and HTTP 200 with `{"status":"ready"}` from `/health/ready`.
+  The initial sandbox DNS failure was resolved by an approved external-network retry;
+  it was not evidence of an application outage.
+- Public API health reachability is verified. Frontend publication and browser
+  registration/login/session checks remain pending.
+
+## 19 October combined frontend and browser checkpoint
+
+- Product commit `2f6e00d5157d820adbd54dcc20464cee917c6bf3` was committed/pushed;
+  supplied status and subsequent local inspection show a clean product tree.
+- Optional frontend directory setting, explicit HTML/favicon/asset serving,
+  incomplete-build failure and six behavior cases added. Existing API errors and
+  liveness remain intact. Local learner run: 506 passed, 160 deselected; Ruff clean.
+- Node 24 Railpack build appends npm ci and the same-origin Vite build to Python
+  steps. Generated assets stay out of Git. Runtime configuration activates serving.
+- Learner built with `VITE_API_BASE_URL=/`; actual HTML/CSS/JS served with HTTP 200
+  in a local TestClient check. Public read-only checks independently returned HTML
+  200, referenced JavaScript 200 and readiness 200 with the expected body.
+- Learner reports automatic build after push. No exact `2f6e00d` runtime SHA check
+  has yet been supplied, so distinguish source publication from runtime metadata.
+- Learner confirms all requested browser checks worked: three mock Tickets,
+  registration, login, Check session, Sign out and Tickets → Login with empty form.
+  Supplied Railway network screenshot shows POST /users 201, POST /auth/login 200,
+  GET /users/me 200 and a later session check 200. Public negative/reload cases
+  remain to be explicitly recorded; earlier container smoke covers negative cases.
+- Missing optional favicon.ico/apple-touch icons returned 404 while favicon.svg
+  returned 200. These are not failed identity requests. VS Code schema trust warning
+  was resolved by adding the actual schema URI to the trusted-domain setting.
+- GitHub inspection during planning: [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39281732882)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39281732888)
+  are queued at `2f6e00d`, not confirmed passing. Previous head CI passed.
+
+## 19 October plan, repository and communication review
+
+- Week 15 plan already existed locally from 18 October, but had not been committed.
+  Replaced the obsolete setup schedule with remaining release/operations work;
+  preserved 18-hour planned capacity without inventing actual hours.
+- Local ignored AGENTS.md now points to Week 15, 19–25 October, and the live preview.
+- Archived the former 1,828-line WEEKLY_STATUS without discarding its history;
+  rebased archive links and made the live status file concise. Historical laboratory
+  directories remain unchanged; product code is still separate from bootcamp.
+- README navigation and ROADMAP now distinguish the live identity preview from the
+  remaining Ticket/AI product work. Added deployment notes and an English LinkedIn
+  draft continuing the supplied prior posts. Nothing was published to LinkedIn.
+- External visitors can test the identity flow now. Source review found no
+  registration/login rate-limiting implementation; edge controls are unverified.
+  Scoped manual feedback is possible; broad invitation follows current-head CI,
+  abuse/cost/data review. No paid upgrade, backup restore or production readiness
+  is claimed. No product code was changed during this planning task.
+
+## 19 October roadmap and GitHub audit
+
+- Rechecked live GitHub branch heads: bootcamp main remains `42cf59c`, product main
+  `b0e6cab`, and product Week 15 feature `2f6e00d`. Each matches its local branch.
+  OpsDesk is clean; the feature is three commits ahead of main. No open PR exists
+  in either repository. Bootcamp has uncommitted documentation and publication assets.
+- Exact-head [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39281732888)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39281732882)
+  both completed successfully. This supersedes the earlier queued status; it does
+  not supply the still-missing exact runtime-SHA confirmation for this release.
+- Updated current status/roadmap/plan and publication notes. Added a retrospective
+  Month 03 summary from existing reports, with unfinished product work and delayed
+  hosting explicitly retained. No historical tests were rerun or relabelled as new.
+- Two LinkedIn images and an expanded draft are prepared; publication is unconfirmed.
+  The roadmap review keeps Week 15 bounded and makes the next frontend integration
+  priority explicit. See [audit](../notes/career/week-15-roadmap-audit.md).
+- No commit, push, PR creation, branch deletion, merge or deployment was performed
+  during this audit. The bootcamp publication package remains for review and commit.

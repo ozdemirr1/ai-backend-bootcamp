@@ -25,9 +25,12 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
   been paused temporarily`; [Railway's incident page](https://status.railway.com/)
   confirms a platform deployment pause. Table release and runtime-SHA verification
   remain pending. Today's public liveness/readiness requests returned expected JSON.
-- Latest GitHub inspection: [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470600124)
+- Earlier exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470600124)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470599975)
   at `30e5d03` both completed successfully, verified 21 October.
+- Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022621)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022552)
+  at `3a5b11b` also completed successfully on 21 October.
 - Last supplied credit display: USD 4.94 / 29 days. Not a current balance or
   monthly forecast. Only trial credit is approved; no paid upgrade.
 

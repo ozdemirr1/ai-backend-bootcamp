@@ -1,7 +1,12 @@
 # Ticket search and status filtering
 
-Prepared 21 October 2026 as optional Week 15 catch-up. This is an exercise brief,
-not evidence that the product feature is implemented.
+Prepared 21 October 2026 as optional Week 15 catch-up. Title search was subsequently
+implemented and reviewed locally: 123 frontend tests, build and lint passed.
+Status filtering and combined-condition behavior below remain the next exercise.
+Chrome screenshots later confirmed case-insensitive matching, no-match feedback
+and clearing to all mock rows. A later screenshot confirmed the revised field
+layout. The title-search change was pushed as OpsDesk commit `3a5b11b`; public
+deployment remains unverified.
 
 ## Reasoning and component boundaries
 

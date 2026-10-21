@@ -224,3 +224,34 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   [search/filter exercise](../notes/react/ticket-search-filter.md) for the next
   dashboard step: input state versus derived rows, combined conditions and
   distinct empty/no-match behavior. Product implementation remains pending.
+
+## 21 October title-search implementation review
+
+- Reviewed TicketDashboard and its App integration. Query is local state; visible
+  rows are derived from typed props. Comparison trims and lowercases the query
+  without changing displayed input. Empty source and zero matches are distinct.
+  No application-logic correction was needed.
+- Added six dashboard test cases and one App navigation test. Coverage includes
+  substring/case/whitespace matching, clearing, no matches, empty source, changed
+  props and reset after leaving/returning to Tickets. Mock labels remain visible.
+- Node.js 24 verification passed 123 tests across nine files, TypeScript/Vite build,
+  ESLint and whitespace checks. Product documentation was updated. Backend suites
+  were not rerun for this frontend-only increment.
+- Search changes and this evidence are local/uncommitted. Search-specific manual
+  browser checks remain pending; no deployment or new CI result is claimed.
+  Status filtering and combined-condition tests are the next increment.
+
+## 21 October search browser check and field layout
+
+- Learner-provided Chrome screenshots confirm local title search with `EMAIL` and
+  `email` narrowing to #102, an unmatched query showing `No matching tickets.`,
+  and clearing the field restoring all three mock rows. These are local browser
+  observations, not evidence that the change is deployed.
+- The search label and browser-default input appeared cramped and ran into the
+  table. Added a vertical control layout, consistent input sizing, narrow-screen
+  width and visible keyboard focus. TypeScript/Vite build, ESLint and whitespace
+  checks passed after this presentation change. Learner's subsequent Chrome screenshot
+  confirmed the revised desktop layout. The full frontend suite was rerun after
+  the layout change: 123 tests across nine files, build and lint passed.
+- Product title search was committed and pushed as `3a5b11b`. Public deployment
+  and exact-head CI for this commit remain unverified at this checkpoint.

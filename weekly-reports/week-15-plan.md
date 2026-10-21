@@ -75,6 +75,10 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
   Pushed as `30e5d03`; both CI workflows passed. Railway publication is blocked by
   the provider's 21 October deployment pause; the previous release remains active.
 - [ ] Search/filter combinations and empty/no-match states have behavior tests.
+  Title search completed locally on 21 October; 123 frontend tests passed, including
+  empty/no-match and navigation-reset coverage. Browser layout confirmed and
+  product commit `3a5b11b` pushed. Status filtering and combined
+  conditions are still pending; this checkbox remains open.
 - [ ] Detail view and return navigation have explicit fixture/real-data provenance.
 - [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
 - [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.

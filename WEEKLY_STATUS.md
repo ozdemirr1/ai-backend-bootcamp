@@ -5,7 +5,7 @@
 Week 15, Month 04; 19–25 October. First public identity preview is working.
 
 - Product branch: `feature/week-15-railway-preview`.
-- Pushed head: `30e5d035bb82e86b213bdbc9816577cb1dc9873a`; product tree is clean.
+- Pushed head: `3a5b11b` on the Week 15 product branch; product tree is clean.
 - Demo: https://opsdesk-production-448f.up.railway.app/
 - One FastAPI service serves the built React frontend and API on the same origin;
   PostgreSQL is a separate persistent service. Node 24 builds frontend assets;
@@ -36,8 +36,12 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 1. TicketTable/StatusBadge are implemented locally; 116 frontend tests, build and
    lint passed on 20 October. Desktop screenshot reviewed; learner confirmed narrow-screen
    scrolling and keyboard/navigation checks. The increment is pushed with passing CI.
-   Continue the [search/filter exercise](notes/react/ticket-search-filter.md), then
-   detail/session behavior with tests.
+   Title search is now implemented locally: 123 frontend tests, build and lint
+   passed on 21 October. Chrome screenshots confirmed matching, no-match feedback
+   and clearing. A subsequent screenshot confirmed the restyled search field.
+   The change is committed and pushed as `3a5b11b`. Next: status filtering and
+   combined conditions in the [search/filter exercise](notes/react/ticket-search-filter.md),
+   then detail/session behavior with tests. Public deployment remains unverified.
    Explicitly label fixture-backed screens.
 2. Retry the latest-source release after Railway recovers, then verify runtime SHA
    and public assets. No automatic monitoring is configured. Timebox usage/exposure triage. Review abuse and data controls before

@@ -5,7 +5,7 @@
 Week 15, Month 04; 19–25 October. First public identity preview is working.
 
 - Product branch: `feature/week-15-railway-preview`.
-- Pushed head: `3a5b11b` on the Week 15 product branch; product tree is clean.
+- Pushed head: `a031633` on the Week 15 product branch; product tree is clean.
 - Demo: https://opsdesk-production-448f.up.railway.app/
 - One FastAPI service serves the built React frontend and API on the same origin;
   PostgreSQL is a separate persistent service. Node 24 builds frontend assets;
@@ -31,6 +31,9 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022621)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022552)
   at `3a5b11b` also completed successfully on 21 October.
+- Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552429)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552567)
+  at `a031633` completed successfully on 21 October.
 - Last supplied credit display: USD 4.94 / 29 days. Not a current balance or
   monthly forecast. Only trial credit is approved; no paid upgrade.
 
@@ -42,9 +45,11 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
    Title search is now implemented locally: 123 frontend tests, build and lint
    passed on 21 October. Chrome screenshots confirmed matching, no-match feedback
    and clearing. A subsequent screenshot confirmed the restyled search field.
-   The change is committed and pushed as `3a5b11b`. Next: status filtering and
-   combined conditions in the [search/filter exercise](notes/react/ticket-search-filter.md),
-   then detail/session behavior with tests. Public deployment remains unverified.
+   The title search was pushed as `3a5b11b`. Status filtering, combined conditions,
+   a visible count and Clear filters are now pushed as `a031633`: 129 frontend tests,
+   build and lint passed. Local browser checks confirmed no-match and reset behavior.
+   Next: bounded detail/session behavior with tests. Public deployment of these
+   increments remains unverified.
    Explicitly label fixture-backed screens.
 2. Retry the latest-source release after Railway recovers, then verify runtime SHA
    and public assets. No automatic monitoring is configured. Timebox usage/exposure triage. Review abuse and data controls before

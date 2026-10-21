@@ -2,7 +2,9 @@
 
 Prepared 21 October 2026 as optional Week 15 catch-up. Title search was subsequently
 implemented and reviewed locally: 123 frontend tests, build and lint passed.
-Status filtering and combined-condition behavior below remain the next exercise.
+Status filtering and combined-condition behavior below were implemented locally
+and pushed as OpsDesk commit `a031633` after review. The 129-test frontend suite,
+build and lint passed; local browser checks covered zero matches and reset.
 Chrome screenshots later confirmed case-insensitive matching, no-match feedback
 and clearing to all mock rows. A later screenshot confirmed the revised field
 layout. The title-search change was pushed as OpsDesk commit `3a5b11b`; public

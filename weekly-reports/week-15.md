@@ -258,3 +258,21 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
 - Subsequent exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022621)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39639022552)
   at `3a5b11b` completed successfully. Public deployment remains unverified.
+
+## 21 October status-filter completion
+
+- Reviewed the learner's checked status options and AND filtering with title search.
+  Preserved local state and derived rows; added a visible result count and responsive
+  search/status/reset controls with keyboard focus styling.
+- Added behavior coverage for each status, combined title/status matches and misses,
+  Clear filters, empty source and navigation reset. Node.js 24 verification passed
+  129 frontend tests across nine files, TypeScript/Vite build, ESLint and whitespace
+  checks. Backend suites were not rerun locally for this frontend-only change.
+- Local browser check confirmed `email` + Open shows zero of three and a no-match
+  message; Clear filters restored all three rows. Desktop control layout was
+  visually inspected. Narrow-screen visual inspection remains open.
+- Product commit `a031633` was pushed to the Week 15 feature branch. Public
+  deployment and exact-head CI were still unverified at this checkpoint.
+- Subsequent exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552429)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552567)
+  completed successfully at `a031633`. Public deployment remains unverified.

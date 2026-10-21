@@ -180,3 +180,47 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
 - Next learner exercise: explain table/props/state through a small example, then
   implement TicketTable and StatusBadge with behavioral tests. This review did not
   implement the learner's exercise or rerun application suites.
+
+## 20 October Ticket table and status badges
+
+- Replaced the mock TicketList with TicketTable. App supplies TicketSummary[]
+  through props; the table has a caption, column/row headers and an explicit empty
+  state. StatusBadge maps all four TicketStatus values to readable labels with
+  supplementary color. Neither component owns state or makes API requests.
+- Preserved the mock-data notice and existing identity/session behavior. Added
+  table container scrolling and keyboard focus styling. Search/filter, details,
+  comments and real Ticket API integration remain pending.
+- Added tests for table row associations, headers, empty/changed props and all
+  status labels. Updated App navigation assertions and product documentation.
+- Local Node.js 24.21.0 checks: 116 frontend tests passed across eight files;
+  TypeScript/Vite production build, ESLint and whitespace checks passed. Backend
+  tests were not rerun for this frontend-only increment.
+- The supplied desktop screenshot shows aligned columns, three mock records,
+  readable badges and the mock-data notice. Learner subsequently confirmed both
+  manual checks: narrow-screen table scrolling and keyboard focus/Login → Tickets
+  navigation. These are learner-reported browser results, separate from jsdom tests.
+- The increment was committed and pushed as `30e5d03` on 20 October. The session
+  ended before CI/deployment verification and the bootcamp evidence commit.
+
+## 21 October catch-up and search/filter preparation
+
+- Confirmed local product HEAD and the remote Week 15 branch both point to
+  `30e5d035bb82e86b213bdbc9816577cb1dc9873a`; product working tree is clean.
+- Exact-head [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470599975)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470600124)
+  completed successfully. The local 116-test result belongs to 20 October;
+  application suites were not unnecessarily rerun today.
+- Railway deployment metadata still identifies `2f6e00d` as the successful release.
+  A request to deploy the latest configured source returned `Deploys have been
+  paused temporarily`. The [official incident page](https://status.railway.com/)
+  reports paused builds/deployments and dashboard/API disruption on 21 October.
+  This establishes today's external release blocker, not the cause of yesterday's
+  missing automatic deployment. No successful new deployment is claimed.
+- Public `/health/live` and `/health/ready` requests succeeded with the expected
+  `ok` and `ready` JSON statuses. These checks cover the existing service, not the
+  unpublished table release or its exact runtime SHA. Retry the release after the
+  provider recovers; no automatic monitoring was configured.
+- Wednesday remains optional catch-up. Prepared a bounded
+  [search/filter exercise](../notes/react/ticket-search-filter.md) for the next
+  dashboard step: input state versus derived rows, combined conditions and
+  distinct empty/no-match behavior. Product implementation remains pending.

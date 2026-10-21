@@ -39,7 +39,7 @@ dashboard goal; it does not replace it or establish Month 04 completion.
 | --- | --- | --- |
 | Mon 19 | 3 h baseline; actual unknown | Completed live identity preview, current-head CI verification, documentation review and LinkedIn draft/images. Bootcamp publication remains pending. |
 | Tue 20 | 3 h | Finish yesterday's documentation commit/push and correct the Month 04 scope. Limit preview triage to runtime SHA/usage and recording any exposure issue. Explain table component/props/state design with a small analogous example; learner starts TicketTable and StatusBadge using explicitly labelled fixtures. |
-| Wed 21 | Optional | Rest or catch-up. No required new feature or assumed spare capacity. |
+| Wed 21 | Optional | Catch-up selected: verify Tuesday's push and CI, record Railway release outcome, publish bootcamp evidence, and prepare the search/filter exercise. No additional mandatory feature or assumed spare capacity. |
 | Thu 22 | 3 h | Learner implements status filter and title search as derived state; test combined conditions, clearing filters, no matches and semantic table output. Search/filter operates on the labelled fixture collection, not an entire remote paginated collection. |
 | Fri 23 | 3 h | Bounded Ticket detail selection/view and return navigation; expand fixtures explicitly where detail fields are needed. Add session-aware access to the dashboard and tests for signed-out/logout behavior. Do not present a conditional screen as a completed URL router. |
 | Sat 24 | 3 h | Review Ticket-read contract and tenant authorization dependencies, map the table/detail adapter, and estimate the real list/detail package. Review Organization selection/membership context and empty state. Fix dashboard defects; begin a backend slice only if its reviewed scope and tests fit. No mandatory public launch or new artwork. |
@@ -69,7 +69,11 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
 
 ## Dashboard acceptance evidence
 
-- [ ] Semantic Ticket table and status badges preserve typed inputs and clear labels.
+- [x] Semantic Ticket table and status badges preserve typed inputs and clear labels.
+  Implemented locally on 20 October; frontend suite: 116 passed. Desktop screenshot
+  reviewed; learner confirmed narrow-screen scrolling and keyboard/navigation checks.
+  Pushed as `30e5d03`; both CI workflows passed. Railway publication is blocked by
+  the provider's 21 October deployment pause; the previous release remains active.
 - [ ] Search/filter combinations and empty/no-match states have behavior tests.
 - [ ] Detail view and return navigation have explicit fixture/real-data provenance.
 - [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
@@ -78,7 +82,7 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
 
 ## Open external feedback and release gates
 
-- [x] Current-head Backend and Frontend CI pass at `2f6e00d`.
+- [x] Current-head Backend and Frontend CI pass at `30e5d03`, verified 21 October.
 - [ ] Deployed runtime SHA is checked; CI is repeated if code changes.
 - [ ] Public duplicate/wrong-password/reload cases and recovery are recorded.
 - [ ] Registration/login abuse policy, control and limitations are reviewed and tested.

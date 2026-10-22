@@ -82,7 +82,15 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
   build and lint passed. Local browser checks confirmed `email` + Open yields
   no matches and Clear filters restores all three rows. Narrow-screen visual
   inspection and public release remain open.
-- [ ] Detail view and return navigation have explicit fixture/real-data provenance.
+- [x] Detail view and return navigation have explicit fixture/real-data provenance.
+  Implemented on 22 October, ahead of Friday's allocation. The mock table stays
+  visible while a selected row opens a detail card below it. Changing filters
+  closes the card; closing it returns keyboard focus to the selected row. The
+  three descriptions are fixtures, not API results. Product commit `daa912f` is
+  pushed on the Week 15 branch. Local verification: 134 frontend tests across
+  nine files, TypeScript/Vite build, ESLint and whitespace checks passed. A narrow
+  browser viewport showed the selected row and detail card; public deployment
+  and exact-head CI for this commit are not yet verified.
 - [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
 - [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.
 - [ ] Comment submission and organization-role mutations remain unavailable until their APIs exist.

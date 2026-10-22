@@ -1,11 +1,11 @@
 # Weekly Status
 
-## Current checkpoint — 21 October 2026
+## Current checkpoint — 22 October 2026
 
 Week 15, Month 04; 19–25 October. First public identity preview is working.
 
 - Product branch: `feature/week-15-railway-preview`.
-- Pushed head: `a031633` on the Week 15 product branch; product tree is clean.
+- Pushed head: `daa912f` on the Week 15 product branch; product tree is clean.
 - Demo: https://opsdesk-production-448f.up.railway.app/
 - One FastAPI service serves the built React frontend and API on the same origin;
   PostgreSQL is a separate persistent service. Node 24 builds frontend assets;
@@ -20,11 +20,11 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - Tickets still show three mock records. No real Ticket workflow or AI is in the UI.
   Tokens remain in memory; reload requires login. Latest public-browser negative
   cases and reload behavior still need explicit evidence.
-- Railway's latest successful deployment metadata still points to `2f6e00d`.
-  The 21 October latest-source deployment request was rejected with `Deploys have
+- Railway's latest successful deployment metadata checked on 21 October pointed
+  to `2f6e00d`. The latest-source deployment request was rejected with `Deploys have
   been paused temporarily`; [Railway's incident page](https://status.railway.com/)
   confirms a platform deployment pause. Table release and runtime-SHA verification
-  remain pending. Today's public liveness/readiness requests returned expected JSON.
+  remain pending. Public liveness/readiness checks on 21 October returned expected JSON.
 - Earlier exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470600124)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39470599975)
   at `30e5d03` both completed successfully, verified 21 October.
@@ -34,6 +34,11 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552429)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552567)
   at `a031633` completed successfully on 21 October.
+- The mock Ticket detail card was pushed as `daa912f` on 22 October. The table
+  remains visible with the selected row highlighted. Local checks passed 134
+  frontend tests across nine files, build, lint and whitespace checks; a narrow
+  browser check showed the table and card. Exact-head CI and public deployment
+  of this newer commit remain unverified.
 - Last supplied credit display: USD 4.94 / 29 days. Not a current balance or
   monthly forecast. Only trial credit is approved; no paid upgrade.
 
@@ -48,8 +53,10 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
    The title search was pushed as `3a5b11b`. Status filtering, combined conditions,
    a visible count and Clear filters are now pushed as `a031633`: 129 frontend tests,
    build and lint passed. Local browser checks confirmed no-match and reset behavior.
-   Next: bounded detail/session behavior with tests. Public deployment of these
-   increments remains unverified.
+   The bounded mock detail behavior is now pushed as `daa912f`, with the table
+   still visible and keyboard focus returning on close. Next: session-aware
+   dashboard behavior with tests. Public deployment of these increments remains
+   unverified.
    Explicitly label fixture-backed screens.
 2. Retry the latest-source release after Railway recovers, then verify runtime SHA
    and public assets. No automatic monitoring is configured. Timebox usage/exposure triage. Review abuse and data controls before

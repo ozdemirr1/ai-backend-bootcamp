@@ -237,9 +237,8 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
 - Node.js 24 verification passed 123 tests across nine files, TypeScript/Vite build,
   ESLint and whitespace checks. Product documentation was updated. Backend suites
   were not rerun for this frontend-only increment.
-- Search changes and this evidence are local/uncommitted. Search-specific manual
-  browser checks remain pending; no deployment or new CI result is claimed.
-  Status filtering and combined-condition tests are the next increment.
+- At this earlier checkpoint, search changes and evidence were local and
+  uncommitted. Subsequent browser checks, commits and CI are recorded below.
 
 ## 21 October search browser check and field layout
 
@@ -276,3 +275,21 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
 - Subsequent exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552429)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39650552567)
   completed successfully at `a031633`. Public deployment remains unverified.
+
+## 22 October mock Ticket detail
+
+- Added optional descriptions to the three labelled Ticket fixtures and a local
+  detail view. Selecting a title keeps the semantic table visible, highlights the
+  row and opens a detail card below it. The card shows ID, status, priority and
+  description. Close details returns keyboard focus to the selected title;
+  changing search or status closes the card. Leaving Tickets resets the local
+  selection and filters. No URL route or real Ticket API is claimed.
+- Local Node.js 24 checks passed 134 frontend tests across nine files,
+  TypeScript/Vite production build, ESLint and whitespace checks. A browser check
+  at a narrow viewport showed the table, highlighted row and detail card. The
+  product README and frontend README describe the fixture-backed behavior.
+- Product commit `daa912f` (`week-15: show ticket details below the table`) is
+  pushed on `feature/week-15-railway-preview`; the product worktree is clean.
+  Exact-head CI and Railway deployment for this commit have not been verified.
+- Friday's planned detail exercise was completed early. Session-aware dashboard
+  access, real Ticket reads, comments and role-dependent actions remain open.

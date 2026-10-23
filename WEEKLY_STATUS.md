@@ -37,8 +37,9 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - The mock Ticket detail card was pushed as `daa912f` on 22 October. The table
   remains visible with the selected row highlighted. Local checks passed 134
   frontend tests across nine files, build, lint and whitespace checks; a narrow
-  browser check showed the table and card. Exact-head CI and public deployment
-  of this newer commit remain unverified.
+  browser check showed the table and card. Exact-head Frontend and Backend CI
+  both passed at `daa912f`, checked on 23 October. Public deployment of this
+  newer commit remains unverified.
 - Last supplied credit display: USD 4.94 / 29 days. Not a current balance or
   monthly forecast. Only trial credit is approved; no paid upgrade.
 - Railway's 21 October security disclosure reports possible access to customer

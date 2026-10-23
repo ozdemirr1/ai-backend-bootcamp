@@ -290,7 +290,10 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   product README and frontend README describe the fixture-backed behavior.
 - Product commit `daa912f` (`week-15: show ticket details below the table`) is
   pushed on `feature/week-15-railway-preview`; the product worktree is clean.
-  Exact-head CI and Railway deployment for this commit have not been verified.
+  Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39837133817)
+  and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39837133772)
+  both passed, checked on 23 October. Railway deployment for this commit has
+  not been verified.
 - Friday's planned detail exercise was completed early. Session-aware dashboard
   access, real Ticket reads, comments and role-dependent actions remain open.
 

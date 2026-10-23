@@ -90,7 +90,8 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
   pushed on the Week 15 branch. Local verification: 134 frontend tests across
   nine files, TypeScript/Vite build, ESLint and whitespace checks passed. A narrow
   browser viewport showed the selected row and detail card; public deployment
-  and exact-head CI for this commit are not yet verified.
+  remains unverified. Exact-head Frontend and Backend CI passed, checked
+  on 23 October.
 - [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
 - [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.
 - [ ] Comment submission and organization-role mutations remain unavailable until their APIs exist.

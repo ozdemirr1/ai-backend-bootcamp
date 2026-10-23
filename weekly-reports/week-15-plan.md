@@ -92,8 +92,15 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
   browser viewport showed the selected row and detail card; public deployment
   remains unverified. Exact-head Frontend and Backend CI passed, checked
   on 23 October.
-- [ ] Session-aware dashboard visibility and logout behavior are tested; token remains in memory.
+- [x] Session termination and dashboard reset behavior are tested; token remains in memory.
+  On 23 October, sign-out, session-check 401 and inactive-User cases verified
+  cleared search/status/detail state and absent session controls. The mock preview
+  intentionally remains public; protected real-data access and URL routing are
+  not implemented. Local frontend verification: 137 tests, build and lint passed.
+  Pushed as `5cfa65e`; Frontend and Backend CI both passed for that commit.
 - [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.
+  F11 implementation preparation was expanded on 23 October. Required tenant-safe
+  database scenarios are documented; their endpoint implementation/tests remain open.
 - [ ] Comment submission and organization-role mutations remain unavailable until their APIs exist.
 
 ## Open external feedback and release gates

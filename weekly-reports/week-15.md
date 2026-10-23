@@ -313,3 +313,46 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   separate custom `opsdesk_app` and `opsdesk_migrator` database roles, plus a JWT
   signing secret. Their rotation, GitHub reconnection and latest-source release
   remain pending; no secret values were recorded.
+
+## 23 October recovery checkpoint and work decision
+
+- The learner reports regenerating the Railway template Postgres password, rotating the
+  custom application/migration role passwords and JWT signing secret, and updating
+  the corresponding service variables. Secret values were not recorded here.
+- Railway CLI showed a successful Postgres deployment at 18:14 local time. The
+  latest listed OpsDesk deployment remained the 19 October release; no new app
+  deployment was visible after the variable changes. Public `/health/live`
+  returned 200, while `/health/ready` returned 503. This proves that the current
+  app process responds but does not establish a working database connection; the
+  specific connection failure has not been confirmed.
+- Keep the public identity preview out of active sharing while readiness fails.
+  The learner will reassess Railway on 26 October. If deployment remains blocked,
+  compare an Azure migration against the existing setup and available education
+  credit before making infrastructure changes. Do not count Azure as deployed.
+- Continue the Week 15 dashboard exercises locally. The Week 15 branch is clean
+  and exact-head CI passed for `daa912f`; those results do not verify the old
+  Railway runtime.
+
+## 23 October dashboard session regression and Ticket-read preparation
+
+- Added three App regression cases for sign-out, session-check 401 and an
+  inactive current User. Each begins with title/status filters and an open detail,
+  then verifies Login, removal of session controls, and a fresh public mock
+  dashboard on return. The existing App behavior already satisfied these cases;
+  no production component change was required.
+- The mock preview remains public. These tests do not implement protected URL
+  routing or authorization for real Ticket data.
+- Extended OpsDesk's existing F11 planning record with the reviewed list/detail
+  scope, pagination/count consistency, membership/requester isolation, frontend
+  adapter boundaries and required database test evidence. Real Ticket reads are
+  still unimplemented; title search needs a separate server-side contract.
+- Node.js 24 verification: App tests 21 passed; complete frontend suite 137 passed
+  across nine files; TypeScript/Vite build, ESLint and whitespace checks passed.
+  No backend behavior changed, so backend suites were not rerun.
+- Product tests, frontend README and F11 notes were committed and pushed as
+  `5cfa65e` (`week-15: verify dashboard session resets and scope ticket reads`).
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897780) and
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897714)
+  both passed for `5cfa65edf1b3d1b2b279c84ce3996b31b19d2e97` on 23 October.
+  No deployment success is claimed. Railway follow-up remains deferred to
+  26 October under the learner's decision.

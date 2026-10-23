@@ -2,10 +2,18 @@
 
 ## Current checkpoint — 23 October 2026
 
-Week 15, Month 04; 19–25 October. First public identity preview is working.
+Week 15, Month 04; 19–25 October. Local dashboard work continues; the public
+identity preview is degraded after credential rotation (liveness 200, readiness
+503 on 23 October). Railway follow-up is deferred to 26 October; if deployment
+remains blocked, the learner plans to move to Azure after checking setup and costs.
 
 - Product branch: `feature/week-15-railway-preview`.
-- Pushed head: `daa912f` on the Week 15 product branch; product tree is clean.
+- Pushed head: `5cfa65e` on the Week 15 product branch. Session regression tests
+  and Ticket-read preparation are committed and pushed: 137 frontend tests across
+  nine files, build, lint and whitespace checks passed locally on 23 October.
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897780) and
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897714)
+  both passed for this commit. Product working tree is clean.
 - Demo: https://opsdesk-production-448f.up.railway.app/
 - One FastAPI service serves the built React frontend and API on the same origin;
   PostgreSQL is a separate persistent service. Node 24 builds frontend assets;
@@ -13,7 +21,7 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - Learner local evidence: 506 non-integration backend tests passed; 160 database
   tests deselected; Ruff and whitespace checks passed. Frontend production build
   with `VITE_API_BASE_URL=/` passed. Actual HTML/CSS/JS were served by TestClient.
-- Independent public checks returned 200 for HTML, the referenced JavaScript,
+- Earlier public checks returned 200 for HTML, the referenced JavaScript,
   and readiness. Learner confirms Tickets, registration, login, session check,
   logout and Tickets → Login navigation. Supplied network screenshot shows
   registration 201, login 200, profile/session check 200.
@@ -45,9 +53,11 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
 - Railway's 21 October security disclosure reports possible access to customer
   environment variables. On 23 October Railway says Trial/Free builds have
   resumed, but its investigation is ongoing. OpsDesk-specific impact is unknown.
-  Recovery on Railway is the current choice; custom database-role credentials,
-  JWT secret, GitHub connection and latest deployment still need action and
-  verification. The [deployment notes](notes/deployment/opsdesk-railway-preview.md)
+  The learner reports rotation of custom database-role credentials and the JWT
+  secret and updates to service variables. Postgres redeployed successfully on
+  23 October; OpsDesk still lists the 19 October deployment and readiness fails.
+  GitHub connection and a successful new deployment remain unverified.
+  The [deployment notes](notes/deployment/opsdesk-railway-preview.md)
   record the procedure. Azure Student credit is an option to cost later, not an
   activated migration or a fix for possibly exposed secrets.
 

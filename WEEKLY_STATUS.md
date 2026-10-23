@@ -1,6 +1,6 @@
 # Weekly Status
 
-## Current checkpoint — 22 October 2026
+## Current checkpoint — 23 October 2026
 
 Week 15, Month 04; 19–25 October. First public identity preview is working.
 
@@ -41,6 +41,14 @@ Week 15, Month 04; 19–25 October. First public identity preview is working.
   of this newer commit remain unverified.
 - Last supplied credit display: USD 4.94 / 29 days. Not a current balance or
   monthly forecast. Only trial credit is approved; no paid upgrade.
+- Railway's 21 October security disclosure reports possible access to customer
+  environment variables. On 23 October Railway says Trial/Free builds have
+  resumed, but its investigation is ongoing. OpsDesk-specific impact is unknown.
+  Recovery on Railway is the current choice; custom database-role credentials,
+  JWT secret, GitHub connection and latest deployment still need action and
+  verification. The [deployment notes](notes/deployment/opsdesk-railway-preview.md)
+  record the procedure. Azure Student credit is an option to cost later, not an
+  activated migration or a fix for possibly exposed secrets.
 
 ## Next work
 

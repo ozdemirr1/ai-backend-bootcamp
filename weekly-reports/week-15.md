@@ -293,3 +293,20 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   Exact-head CI and Railway deployment for this commit have not been verified.
 - Friday's planned detail exercise was completed early. Session-aware dashboard
   access, real Ticket reads, comments and role-dependent actions remain open.
+
+## 23 October Railway incident review
+
+- Railway's 21 October disclosure reports possible unauthorized access to
+  customer environment variables. The project's own exposure is not confirmed.
+  Its 23 October status says builds and deploys for Trial/Free have resumed,
+  while the incident investigation remains open. The visible “Limited Access”
+  banner may be stale or may require GitHub reconnection; no successful OpsDesk
+  redeploy is inferred from the provider-wide update.
+- Chose to recover the existing Railway preview before considering a move to
+  Azure. The GitHub Education offer advertises USD 100 Azure credit, but neither
+  subscription activation nor OpsDesk deployment cost has been verified.
+- Documented the tailored rotation and verification checklist in the existing
+  [deployment notes](../notes/deployment/opsdesk-railway-preview.md). OpsDesk has
+  separate custom `opsdesk_app` and `opsdesk_migrator` database roles, plus a JWT
+  signing secret. Their rotation, GitHub reconnection and latest-source release
+  remain pending; no secret values were recorded.

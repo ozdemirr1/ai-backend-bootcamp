@@ -63,3 +63,46 @@ Do not use the public trial service for load testing.
 - [Railpack configuration](https://railpack.com/config/file/)
 - [Vite environment variables](https://vite.dev/guide/env-and-mode)
 - [Week 15 evidence](../../weekly-reports/week-15.md)
+
+## 23 October Railway security incident decision
+
+Railway [disclosed possible unauthorized access to customer environment variables](https://blog.railway.com/p/security-disclosure-wednesday-october-21st)
+on 21 October. This is a provider incident, not evidence that this particular
+OpsDesk project was accessed. Railway recommends rotating every secret stored in
+Railway and reviewing logs. Its [23 October status update](https://status.railway.com/)
+states that Trial and Free builds/deploys are running again; the security
+investigation and customer notifications were still in progress at the checkpoint.
+The dashboard's “Limited Access” banner is not sufficient evidence that the
+current branch cannot deploy. Railway also warns that GitHub may need reconnecting.
+
+Decision: keep the existing Railway preview for this Week 15 recovery, rather
+than start an unplanned Azure migration during incident response. The
+[GitHub Education Azure offer](https://education.github.com/pack) includes a
+possible USD 100 student credit, but eligibility approval is not proof that an
+Azure subscription is activated or that the app plus managed PostgreSQL will
+fit a desired monthly budget. Reassess Azure after the Railway rotation, latest
+deployment and a measured cost/backup review. Changing providers alone does not
+invalidate potentially exposed database or JWT credentials.
+
+Recovery checklist (planned, not yet executed):
+
+1. Preserve available incident/audit evidence; review Railway deploy and service
+   logs, unexpected database connections/roles, GitHub security log and connected
+   apps. Do not copy values of secrets into notes or chat.
+2. Inventory all Railway variables and their consumers, including
+   `OPSDESK_DB_PASSWORD`, `OPSDESK_MIGRATION_PASSWORD`, `OPSDESK_JWT_SECRET`
+   and the Railway PostgreSQL template credentials. The app and migration roles
+   are custom PostgreSQL roles, so the template's [Regenerate procedure](https://blog.railway.com/p/security-disclosure-recommendation-rotate-postgresql-database-credentials)
+   cannot be assumed to rotate those two role passwords. Coordinate each role's
+   database password and matching service variable, then redeploy consumers.
+   Use Regenerate for the template's own password; do not edit only one side.
+3. Rotate the JWT signing secret and expect existing sessions to require login
+   again. Confirm that old tokens no longer authenticate. Reconnect the Railway
+   GitHub integration if needed using the [provider guide](https://blog.railway.com/p/security-disclosure-recommendation-redeploy-buckets-and-reconnect-github-after-the-credential-reset).
+4. Deploy the latest reviewed product commit once, verify its runtime SHA,
+   readiness and synthetic registration/login/session/logout cases, then review
+   error and database-authentication logs. Do not invite broader testers until
+   rotation and deployment are verified. Backups and restore remain unproven.
+
+No credential rotation, GitHub reconnection, Azure provisioning or new public
+deployment was performed as part of this research checkpoint.

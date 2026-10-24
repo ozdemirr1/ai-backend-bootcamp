@@ -101,6 +101,12 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
 - [ ] Real Ticket list/detail dependency is scoped with tenant-safe API tests; completion is not assumed.
   F11 implementation preparation was expanded on 23 October. Required tenant-safe
   database scenarios are documented; their endpoint implementation/tests remain open.
+  On 24 October, added the typed frontend display adapter and four unit tests;
+  reviewed Organization/membership context and split real reads into bounded
+  implementation packages. All 141 frontend tests, build and lint passed locally.
+  Runtime JSON validation and real list/detail endpoints remain unimplemented.
+  Adapter and preparation notes were pushed as `255f937`; Frontend and Backend
+  CI both passed for that commit on 24 October.
 - [ ] Comment submission and organization-role mutations remain unavailable until their APIs exist.
 
 ## Open external feedback and release gates

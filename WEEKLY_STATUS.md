@@ -1,6 +1,6 @@
 # Weekly Status
 
-## Current checkpoint — 23 October 2026
+## Current checkpoint — 24 October 2026
 
 Week 15, Month 04; 19–25 October. Local dashboard work continues; the public
 identity preview is degraded after credential rotation (liveness 200, readiness
@@ -8,12 +8,21 @@ identity preview is degraded after credential rotation (liveness 200, readiness
 remains blocked, the learner plans to move to Azure after checking setup and costs.
 
 - Product branch: `feature/week-15-railway-preview`.
-- Pushed head: `5cfa65e` on the Week 15 product branch. Session regression tests
+- Pushed head: `255f937` on the Week 15 product branch; product working tree is clean.
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941595) and
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941691)
+  both passed for this commit on 24 October.
+- Previous checkpoint `5cfa65e`: session regression tests
   and Ticket-read preparation are committed and pushed: 137 frontend tests across
   nine files, build, lint and whitespace checks passed locally on 23 October.
   [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897780) and
   [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39981897714)
-  both passed for this commit. Product working tree is clean.
+  both passed for that commit.
+- Added a typed TicketResponse-to-TicketSummary adapter and four tests. Local
+  Node.js 24 verification passed 141 tests across ten files, build and lint.
+  Existing F11 notes now map Organization context, empty/error states, safe ID
+  validation and the backend/frontend implementation packages. The adapter is not
+  wired to HTTP or the dashboard; Tickets remain labelled fixtures.
 - Demo: https://opsdesk-production-448f.up.railway.app/
 - One FastAPI service serves the built React frontend and API on the same origin;
   PostgreSQL is a separate persistent service. Node 24 builds frontend assets;

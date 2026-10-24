@@ -356,3 +356,33 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   both passed for `5cfa65edf1b3d1b2b279c84ce3996b31b19d2e97` on 23 October.
   No deployment success is claimed. Railway follow-up remains deferred to
   26 October under the learner's decision.
+
+## 24 October Ticket adapter and integration preparation
+
+- Added `frontend/src/api/tickets.ts`: the existing backend TicketResponse wire
+  shape and a pure `toTicketSummary` projection. The adapter selects display
+  fields and preserves descriptions; it does not fetch, authorize or validate
+  unknown JSON. The dashboard continues to use labelled fixtures.
+- Four tests cover exact display projection, empty and multiline Unicode
+  descriptions, source immutability and independent result objects. Node.js 24
+  checks passed 141 frontend tests across ten files, TypeScript/Vite build and
+  ESLint. Backend behavior was unchanged; backend suites were not rerun.
+- Extended the existing F11 record with the Organization/membership visibility
+  matrix, suspended/no-membership/empty/error UI distinctions, stale-response
+  boundaries and five implementation packages. The provisional estimate is
+  2–3 sessions for backend contracts/reads/tests plus 1–2 for integration, to be
+  revised after the first package; this is not a Week 15 completion claim.
+- Recorded that PostgreSQL bigint IDs exceed JavaScript's safe integer range.
+  Future runtime validation must reject unsafe numeric IDs; full-range string
+  IDs would require a reviewed wire-contract change. No validator or real Ticket
+  GET endpoint was implemented today.
+- Updated frontend README. The multiline test example now uses English text
+  with café to retain Unicode coverage; all four adapter tests passed again.
+- Product changes were committed and pushed as `255f937`
+  (`week-15: add ticket display adapter and plan read integration`).
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941595) and
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941691)
+  both passed for `255f9374a6506e1e50dfec0181f39c0b93fec2f4` on 24 October.
+  Product working tree is clean. No browser integration or deployment success
+  is claimed. Railway follow-up remains in the plan for 26 October, with no
+  automatic monitor configured.

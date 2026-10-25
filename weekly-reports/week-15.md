@@ -487,3 +487,8 @@ normal merge. Sunday document links resolve and whitespace checks pass.
   Application code, migrations, dependencies and CI configuration are unchanged.
   Runtime test groups above remain dated evidence; hosted PR CI is checked
   separately during publication. Normal PR merge history is retained.
+
+Publication references: [OpsDesk PR #44](https://github.com/ozdemirr1/opsdesk/pull/44)
+and [bootcamp PR #8](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/8).
+These collect the consistency corrections separately from the earlier feature
+release and weekly closure. GitHub provides the final CI/merge state.

@@ -70,3 +70,10 @@ incident and recovery evidence. Earlier status history is retained in the
 The weekly bootcamp documentation is collected in
 [PR #7](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/7), including the
 Sunday package `a5e1915` and the Week 16 plan.
+
+The subsequent documentation consistency correction is collected in
+[bootcamp PR #8](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/8) and
+[OpsDesk PR #44](https://github.com/ozdemirr1/opsdesk/pull/44). It aligns README
+entry points, historical status boundaries and the carry-over ledger; no runtime
+behavior or Railway source-branch setting changes. GitHub shows their publication
+and merge state; the Week 15 report records the documentation checks.

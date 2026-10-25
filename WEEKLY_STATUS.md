@@ -58,9 +58,17 @@ rollback evidence remain open; do not mark them complete from green health check
 ## Next work
 
 Follow the [Week 16 plan](weekly-reports/week-16-plan.md), starting 26 October:
-scoped Ticket reads and tenant-safe tests, then real frontend integration and a
-bounded Tailwind/responsive/accessibility pass. Comments and mutation APIs retain
-an explicit backlog. Docker/Redis stay in Month 05; AI stays in Month 06.
+the learner approved an intensive 26 October–1 November calendar on 25 October,
+with 42 focused hours and up to 8 contingency hours. Required deliveries are
+scoped Ticket reads/search, real Organization/list/detail integration and protected
+routes, persisted comments, a role-aware priority operation, and the full original
+Tailwind/responsive/sidebar/empty-state/toast/modal/accessibility package.
+Feature tests, release verification and the monthly learning handoff are included.
+Assignment, membership administration and the full status workflow remain separate
+backend backlog; completing the priority subset does not close all of F12.
+Tuesday/Friday checkpoints re-estimate remaining work; no unfinished Month 04
+requirement is silently removed. This is planned work, not completion evidence.
+Docker/Redis stay in Month 05; AI stays in Month 06.
 
 Sunday's learning review is in the [Week 15 report](weekly-reports/week-15.md).
 The [deployment notes](notes/deployment/opsdesk-railway-preview.md) preserve the

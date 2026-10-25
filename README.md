@@ -16,8 +16,9 @@ The provider deployment pause was resolved on 25 October; a provider migration
 is no longer needed for that blocker.
 
 The original Month 04 MVP is **not complete**. Real Ticket reads and integration,
-comments, role-dependent actions and the full UI pass remain open. Week 16 prioritizes
-the backend read dependency, then real integration and a bounded visual pass.
+comments, role-dependent actions and the full UI pass remain open. The revised
+Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
+42 focused hours plus up to 8 hours of contingency, with explicit completion gates.
 
 - [Current status and evidence limits](WEEKLY_STATUS.md)
 - [Week 15 plan](weekly-reports/week-15-plan.md) and [report](weekly-reports/week-15.md)
@@ -55,7 +56,7 @@ checks; learner explanations and independent exercises remain separate evidence.
 | HireMatch AI | Planned; no completed product claimed | CV/job matching with validated structured output in Month 09 |
 
 Current stack: Python, FastAPI, PostgreSQL, SQLAlchemy, Alembic, React,
-TypeScript and GitHub Actions. Tailwind is planned for the bounded Week 16 UI pass;
+TypeScript and GitHub Actions. Tailwind is planned for the complete Month 04 UI package in Week 16;
 Docker/Redis/background jobs remain Month 05, OpenAI integration/evals Month 06,
 and RAG/pgvector Months 07–08. Prefer depth over unrelated technology switching.
 

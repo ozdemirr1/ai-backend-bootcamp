@@ -67,6 +67,9 @@ milestone. Week 14's real Ticket list and protected-route goals remain incomplet
 The 19 October operations-heavy schedule therefore needs correction, not a claim
 that everything is on the original weekly schedule.
 
+The following was the 20 October recovery scope; its Week 16 capacity/scope is
+superseded by the intensive plan agreed on 25 October below.
+
 Resume dashboard fundamentals during Week 15: table, status badges, search/filter
 and a detail view, with fixture-backed behavior clearly labelled. Scope the missing
 real Ticket list/detail backend dependency and Organization context explicitly.
@@ -82,10 +85,16 @@ work and the delayed deployment milestone; the preview does not close that backl
 public liveness/readiness return 200 and the learner confirms the latest interface.
 Week 15 product PR #43 merged normally at `122c052`. Table/search/status/detail
 and session-reset behavior are implemented with fixtures; real reads, comments
-and role mutations remain open. The [Week 16 plan](weekly-reports/week-16-plan.md)
-budgets 12 hours for the API/integration dependency, 3 for bounded UI work and 3
-for verification/handoff. Re-estimate after the first backend slice and record any
-spillover rather than declaring the original frontend MVP complete.
+and role mutations remain open. Later on 25 October, the learner explicitly chose
+an intensive 26 October–1 November calendar to close all original Month 04 goals.
+The revised [Week 16 plan](weekly-reports/week-16-plan.md) replaces the earlier
+18-hour allocation with 42 focused hours plus up to 8 contingency hours. It includes
+real reads/search and protected navigation, persisted comments, a working
+role-aware priority action, the complete UI package, tests and release/learning
+evidence. Membership administration, assignment and full status workflow remain
+separate backend scope; F12 is only partially covered by the priority action.
+Re-estimate Tuesday and Friday; an unmet acceptance gate prevents Month 04 closure
+and requires an explicit revised estimate/calendar, not a silent scope cut.
 
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking

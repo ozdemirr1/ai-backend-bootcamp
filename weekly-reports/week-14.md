@@ -1,8 +1,16 @@
 # Week 14 Report — Integration merged; Railway handoff prepared
 
-Core integration is merged and verified. Railway trial selection and the Week 15
-handoff are prepared; hosting implementation and documentation publication remain.
-Earlier daily checkpoints below retain their historical status.
+## Weekly outcome
+
+Core identity integration and frontend CI merged in PR #42 (`b0e6cab`); local
+evidence includes 110 frontend tests and 455 backend non-integration tests, with
+160 database/schema tests deselected. Loading/error handling, runtime identity
+guards and the in-memory session lifecycle are the week's learning focus.
+
+At the 18 October handoff, hosting and documentation publication were still
+pending. Both have subsequent evidence in the [Week 15 report](week-15.md).
+Real Ticket integration was not delivered in Week 14 and remains an explicit
+dependency. Earlier daily checkpoints below retain their historical status.
 
 ## Scope and dates
 

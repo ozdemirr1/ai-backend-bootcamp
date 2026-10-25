@@ -5,8 +5,11 @@
 These notes record the Week 08 security model for the Month 02 Ticket API.
 They describe the implemented password, User persistence, Ticket ownership
 expand phase, registration boundaries, JWT implementation, and login-service
-contract. Production login composition, current-user resolution, and
-authorization remain later steps.
+contract. Login composition, persisted current-user resolution and
+owner-scoped authorization were completed during Week 08, with evidence below.
+This describes the Month 02 learning application, not production readiness or
+the separate product's organization-membership model; see the
+[product identity contract](https://github.com/ozdemirr1/opsdesk/blob/main/docs/identity-authentication-contract.md).
 
 ## Authentication and Authorization Are Different Decisions
 

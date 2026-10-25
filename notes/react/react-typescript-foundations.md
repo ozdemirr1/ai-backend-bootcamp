@@ -1,5 +1,11 @@
 # React and TypeScript Foundations
 
+These are chronological learning checkpoints. Statements such as “no test script”
+or “login remains a demo” describe their dated section, not the latest product.
+See the [Week 15 summary](../../weekly-reports/week-15.md#weekly-outcome-at-25-october)
+and [current frontend scope](https://github.com/ozdemirr1/opsdesk/blob/main/frontend/README.md)
+for the later implementation.
+
 ## 6 October 2026 — Static OpsDesk shell
 
 Mentor-maintained review notes; these do not claim that the learner independently

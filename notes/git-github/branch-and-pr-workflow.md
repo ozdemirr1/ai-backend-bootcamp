@@ -1,5 +1,15 @@
 # Git Branch and Pull Request Workflow
 
+## Current repository policy
+
+From Week 14, use normal PR merges (`--merge`) to preserve daily commits.
+Week 13's historical squash remains unchanged. The Week 03 examples below explain
+the workflow; use the active week's `feature/week-XX-topic` branch for new work.
+Delete a merged branch only after checking external consumers: Railway still
+tracks `feature/week-15-railway-preview`, so retain it until its deployment source
+is deliberately changed. A merged branch is not automatically safe to remove.
+
+
 ## Goal
 
 This note explains how to create, switch, and inspect Git branches while keeping new work separate from the stable `main` branch.
@@ -163,7 +173,7 @@ git switch main
 git pull --ff-only origin main
 ```
 
-After confirming that the feature commits are present in `main`, delete the local feature branch:
+After confirming the commits are in `main` and no deployment or other consumer needs the branch, delete the local feature branch:
 
 ```bash
 git branch -d feature/week-03-python-engineering

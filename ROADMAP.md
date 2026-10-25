@@ -122,6 +122,15 @@ Final CV, LinkedIn, GitHub, project polish, mock interviews, and an intensive ap
 
 ## Delivery Milestones
 
+These are the original target milestones, not a completion checklist. As of
+25 October, Month 02 CI/deployment and the complete Month 03 backend release
+were not delivered in their original windows. CI shipped in Month 03; a narrower
+identity preview shipped in Month 04. The complete Month 04 frontend MVP and R01
+backend release remain incomplete. See the
+[dated carry-over matrix](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over)
+for delivered scope, dependencies and the next decisions.
+
+
 - Month 1: Clean Python learning projects with notes and basic checks
 - Month 2: First deployed FastAPI and PostgreSQL API
 - Month 3: Deployed OpsDesk backend preview
@@ -153,8 +162,9 @@ Final CV, LinkedIn, GitHub, project polish, mock interviews, and an intensive ap
 - Existing earlier roadmap revisions remain in Git history. The
   [Month 02 report](monthly-reports/month-02.md#roadmap-variance-and-carry-over)
   records that the original Month 02 CI/deployment targets were not completed then.
-  Minimal CI subsequently shipped in OpsDesk; deployment remains an evidence-based
-  delivery target, not an assumed completed milestone.
+  Minimal CI subsequently shipped in OpsDesk; the hosted identity preview
+  shipped in Month 04 and recovered on 25 October. The broader R01 backend
+  release and real Ticket UI remain open; the smaller preview does not close them.
 - React + TypeScript remains Month 04; Docker/Redis remain Month 05. Do not move
   the learner back to pre-FastAPI fundamentals or switch persistence to async just
   to mirror a market checklist. Frameworks follow direct SDK/API understanding;

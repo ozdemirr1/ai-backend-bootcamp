@@ -14,7 +14,9 @@ No Azure provisioning or paid upgrade is authorized by this checkpoint.
   Daily commits are preserved; do not delete the branch while Railway uses it
   as its source. Merge-commit [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369253)
   and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369467)
-  passed. Fetched `origin/main` and the deployed feature head have identical file trees.
+  passed. At the PR #43 checkpoint, `origin/main` and the deployed feature head
+  had identical file trees. Later documentation-only changes do not change the
+  deployed runtime source.
 - Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941595)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941691)
   passed, rechecked on 25 October. Backend CI covers Ruff and non-integration

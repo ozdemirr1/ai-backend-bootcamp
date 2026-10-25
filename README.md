@@ -77,6 +77,8 @@ Historical week-based laboratory names remain unchanged. Start with
 - [Month 04 alignment review](notes/react/month-04-alignment.md) - original dashboard
   goals, actual implementation and explicit integration dependencies
 - [Week 15 Report](weekly-reports/week-15.md) - hosted and browser evidence
+- [Week 16 Plan](weekly-reports/week-16-plan.md) - tenant-safe Ticket reads, real
+  frontend integration and a bounded UI pass (26 October–1 November)
 - [Railway deployment notes](notes/deployment/opsdesk-railway-preview.md)
 - [OpsDesk LinkedIn draft](notes/career/opsdesk-live-preview-linkedin.md)
 - [Month 03 retrospective](monthly-reports/month-03.md) - backend evidence and
@@ -105,11 +107,12 @@ This repository continues to hold the learning evidence and roadmap history.
 
 ## Latest Handoff
 
-- 19 October: [OpsDesk identity preview](https://opsdesk-production-448f.up.railway.app/)
-  serves React and FastAPI on one origin. Browser registration, login and session
-  checks are verified; Tickets remain mock data. Product head is `2f6e00d`;
-  both current-head CI workflows passed, rechecked on 19 October. See the
-  [Week 15 report](weekly-reports/week-15.md) for evidence boundaries.
+- 25 October: [OpsDesk preview](https://opsdesk-production-448f.up.railway.app/)
+  recovered with verified deployed source `255f937`; both health endpoints return
+  200 and the learner confirms the latest interface works. Product PR #43 merged
+  normally at `122c052`. Tickets remain mock data. See the
+  [Week 15 report](weekly-reports/week-15.md) for evidence boundaries and the
+  [Week 16 plan](weekly-reports/week-16-plan.md) for real reads and UI work.
 - [Week 14 report](weekly-reports/week-14.md) — OpsDesk PR #42 merged normally at
   `b0e6cab`; both merge-commit CI workflows passed. Local regression includes 110
   frontend and 455 backend tests; 160 backend tests were deselected.

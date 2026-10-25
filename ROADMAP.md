@@ -78,6 +78,15 @@ See the [alignment review](notes/react/month-04-alignment.md) for feature-level 
 The [Month 03 retrospective](monthly-reports/month-03.md) records carried product
 work and the delayed deployment milestone; the preview does not close that backlog.
 
+25 October checkpoint: Railway recovered and successfully deployed `255f937`;
+public liveness/readiness return 200 and the learner confirms the latest interface.
+Week 15 product PR #43 merged normally at `122c052`. Table/search/status/detail
+and session-reset behavior are implemented with fixtures; real reads, comments
+and role mutations remain open. The [Week 16 plan](weekly-reports/week-16-plan.md)
+budgets 12 hours for the API/integration dependency, 3 for bounded UI work and 3
+for verification/handoff. Re-estimate after the first backend slice and record any
+spillover rather than declaring the original frontend MVP complete.
+
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking
 cost and project fit; practical IAM, secrets, logs, and budget controls precede any

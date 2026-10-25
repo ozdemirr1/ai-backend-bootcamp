@@ -111,8 +111,9 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
 
 ## Open external feedback and release gates
 
-- [x] Current-head Backend and Frontend CI pass at `30e5d03`, verified 21 October.
-- [ ] Deployed runtime SHA is checked; CI is repeated if code changes.
+- [x] Current-head Backend and Frontend CI pass at `255f937`, rechecked 25 October.
+- [x] Deployment metadata identifies exact source `255f937`; both public health
+  endpoints returned 200 on 25 October. See the dated closing checkpoint below.
 - [ ] Public duplicate/wrong-password/reload cases and recovery are recorded.
 - [ ] Registration/login abuse policy, control and limitations are reviewed and tested.
 - [ ] Trial usage and a stop/export procedure are recorded; no uptime guarantee is made.
@@ -161,3 +162,21 @@ original frontend MVP complete or silently drop its missing features.
 
 Trial terms were checked on 18 October; the plan does not promise a full month of
 uptime or approve a paid subscription.
+
+## 25 October closing checkpoint
+
+Earlier deployment-blocked statements above describe their dated checkpoints.
+Today Railway deployment `e7aa38ac-cb26-46f1-937a-e044241a8405` succeeded from
+`255f9374a6506e1e50dfec0181f39c0b93fec2f4`. Public live/ready probes returned 200
+and the learner reports the latest interface works. The conditional Azure move
+is no longer needed for this blocker. Operational controls and negative/reload
+evidence remain open; recovery is not a security clearance.
+
+Product [PR #43](https://github.com/ozdemirr1/opsdesk/pull/43) merged normally at
+`122c052` after fresh PR Backend/Frontend CI passed. Railway still tracks the
+weekly feature branch and runs `255f937`; do not describe the merge SHA as deployed.
+The branch is retained until its deployment source is deliberately changed.
+
+The [Week 16 plan](week-16-plan.md) budgets backend/integration, a bounded UI pass
+and final verification within 18 hours. The full original frontend MVP, comments
+and role mutations remain incomplete. No new product feature was added on Sunday.

@@ -386,3 +386,63 @@ sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work
   Product working tree is clean. No browser integration or deployment success
   is claimed. Railway follow-up remains in the plan for 26 October, with no
   automatic monitor configured.
+
+## 25 October recovery and weekly review
+
+- Railway support explained that commits pushed during the pause were not queued
+  and requested a manual latest-commit deployment. The learner performed that
+  deployment and confirmed the latest interface works.
+- CLI deployment metadata verifies successful deployment
+  `e7aa38ac-cb26-46f1-937a-e044241a8405`, created 25 October at 15:19:33
+  Europe/Istanbul, from `255f9374a6506e1e50dfec0181f39c0b93fec2f4`. The previous
+  `2f6e00d` deployment is removed. Independent public health checks returned
+  liveness 200 / `{"status":"ok"}` and readiness 200 / `{"status":"ready"}`.
+- The source branch is clean and matches its remote. Latest source Backend and
+  Frontend CI passed. Fresh PR [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193232937)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193232976)
+  also passed on 25 October. CI includes frontend tests/build/lint and backend
+  Ruff/non-integration tests; it does not run PostgreSQL integration/schema tests.
+- Reviewed the weekly change set, including migration-target guards, safe health
+  errors/static assets, dashboard state and the adapter boundary. Whitespace
+  checks passed. No new product behavior was added and no destructive database
+  test or schema operation was run. The unchanged local frontend evidence remains
+  141 tests/build/lint from 24 October; historical backend counts are not relabelled
+  as Sunday runs.
+- Product [PR #43](https://github.com/ozdemirr1/opsdesk/pull/43) merged normally at
+  `122c0528be371d8e68698323ea171dfa2272379e`, preserving all daily commits.
+  Railway still uses the weekly feature branch; it is retained. Its deployed
+  source remains `255f937`, not the merge commit.
+- Keep Railway for now: the blocker behind the conditional 26 October Azure
+  decision has cleared. No new infrastructure or paid plan was provisioned.
+- Updated current status and prepared the [Week 16 plan](week-16-plan.md). Existing
+  weekly evidence was used; no separate daily working file was introduced.
+
+Merge follow-up: [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369253)
+and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369467)
+both passed at `122c052`. After fetching `origin/main`, a full tree comparison
+against feature head `255f937` showed no file differences. Merge history differs,
+but the deployed source content is the merged product content.
+
+### Delivered scope and carry-over
+
+Delivered: hosted identity preview, table/status badges, combined local filters,
+result counts, mock detail card/focus return, session-reset regression and typed
+display adapter. Tickets remain fixtures. Real Ticket reads, runtime JSON guards,
+Organization selection, authenticated real-data screens, comments, role-dependent
+mutations and the full visual pass remain incomplete. The original frontend MVP
+is not claimed complete. Week 16 explicitly prioritizes the read dependency.
+
+Public wrong-password/duplicate/reload evidence, current trial usage and stop/export
+procedure, abuse controls, provider audit review and isolated restore/rollback
+remain open. The learner reported credential rotation on 23 October; green health
+and the new deployment do not prove absence of compromise or complete all checks.
+
+### Sunday learning review — learner response pending
+
+1. Explain why a green readiness check does not prove Ticket authorization works.
+2. Describe the difference between a TypeScript response type, runtime validation
+   and the display adapter using one Ticket example.
+3. Explain why Organization/requester filtering must happen before pagination.
+
+These are review questions, not completed learner answers. Start Monday with the
+F11 access matrix and one small scoped-query example before implementation.

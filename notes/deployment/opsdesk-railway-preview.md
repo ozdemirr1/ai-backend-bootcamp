@@ -106,3 +106,29 @@ Recovery checklist (planned, not yet executed):
 
 No credential rotation, GitHub reconnection, Azure provisioning or new public
 deployment was performed as part of this research checkpoint.
+
+## 25 October recovery checkpoint
+
+The checklist above records the 23 October research state. The learner subsequently
+reported rotation of template/custom-role passwords and the JWT secret, with matching
+service variables updated. Do not repeat completed rotations solely because of
+this documentation update. Audit review and complete revocation evidence are not
+inferred from a successful deployment.
+
+Railway support said paused-period commits were not queued and recommended
+**Deploy Latest Commit** in the Command Palette. The learner executed a manual
+deployment. Metadata confirms deployment `e7aa38ac-cb26-46f1-937a-e044241a8405`
+succeeded from `255f9374a6506e1e50dfec0181f39c0b93fec2f4`, created at
+2026-10-25 12:19:33 UTC (15:19:33 Europe/Istanbul). Both public health probes now
+return 200. The learner reports the latest interface works. Separate public
+negative/reload cases remain unrecorded at this checkpoint.
+
+Product PR #43 merged normally at `122c052`, while Railway's source is still
+`feature/week-15-railway-preview`. Preserve that branch. A future source switch
+to `main` needs explicit deployment metadata and smoke evidence; do not use the
+merge SHA as proof of the currently deployed source.
+
+The conditional Azure move is unnecessary for the resolved blocker. Current
+credit/stop-export planning, abuse controls, audit review and an isolated restore
+exercise remain open. No paid plan, provider migration or live database restore
+was performed.

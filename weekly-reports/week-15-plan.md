@@ -119,7 +119,9 @@ No browser-persisted tokens, refresh flow, broad redesign or new technology is a
 - [ ] Trial usage and a stop/export procedure are recorded; no uptime guarantee is made.
 - [ ] Demo account/data handling and a contact route are clear to testers.
 - [ ] Backup/restore and rollback evidence distinguish instructions from executed steps.
-- [ ] Weekly PR reviewed/merged normally; post-merge deployment verified.
+- [x] Product PR #43 reviewed and merged normally; merge CI passed. Post-merge
+  health checks passed and merged file content equals deployed source `255f937`.
+  The merge commit itself is not claimed deployed; Railway retains its feature source.
 
 A public URL permits external visitors now. Technical reachability is not a claim
 of production readiness. Start with synthetic test accounts and a password used

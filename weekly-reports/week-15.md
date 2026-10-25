@@ -446,3 +446,9 @@ and the new deployment do not prove absence of compromise or complete all checks
 
 These are review questions, not completed learner answers. Start Monday with the
 F11 access matrix and one small scoped-query example before implementation.
+
+Bootcamp publication: the Sunday evidence/plan package was committed and pushed
+as `a5e1915` on `feature/week-15-documentation`.
+[Bootcamp PR #7](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/7)
+collects the weekly documentation and preserves its daily history through a
+normal merge. Sunday document links resolve and whitespace checks pass.

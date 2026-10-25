@@ -64,3 +64,7 @@ Sunday's learning review is in the [Week 15 report](weekly-reports/week-15.md).
 The [deployment notes](notes/deployment/opsdesk-railway-preview.md) preserve the
 incident and recovery evidence. Earlier status history is retained in the
 [status archive](weekly-reports/archive/status-before-2026-10-19-preview.md).
+
+The weekly bootcamp documentation is collected in
+[PR #7](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/7), including the
+Sunday package `a5e1915` and the Week 16 plan.

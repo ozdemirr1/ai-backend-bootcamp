@@ -34,8 +34,24 @@ latest sourced review, adopted changes, and preserved learning priorities.
 2. DocuMind - RAG-based document intelligence platform
 3. HireMatch AI - CV and job matching assistant
 
-The product repositories will be created when their implementation phases
-begin. This repository remains the learning log and evidence base.
+OpsDesk is developed in its [own repository](https://github.com/ozdemirr1/opsdesk).
+DocuMind and HireMatch AI repositories will follow in their planned phases.
+This repository remains the learning log and evidence base.
+
+## Repository guide
+
+- `WEEKLY_STATUS.md`: short current checkpoint and next actions.
+- `weekly-reports/`: dated plans and chronological weekly evidence.
+- `weekly-reports/archive/`: preserved historical status snapshots.
+- `monthly-reports/`: monthly reviews and handoffs.
+- `assets/linkedin/`: final publication images and their production notes.
+- `notes/`: topic-based learning notes; `deployment/` holds the Railway notes and
+  `career/` holds publication drafts.
+- `projects/`: historical learning applications and bounded laboratories.
+  Product code stays in the separate OpsDesk repository.
+
+Historical week-based laboratory names remain unchanged. Start with
+[current status](WEEKLY_STATUS.md), then the current plan and report.
 
 ## Current Learning Modules
 
@@ -54,7 +70,19 @@ begin. This repository remains the learning log and evidence base.
   completed learning review, and product PR #41 merge evidence
 - [Week 14 Plan](weekly-reports/week-14-plan.md) - frontend CI, first real identity
   integration, and the deployment preparation checkpoint
-- [Week 14 Report](weekly-reports/week-14.md) - daily evidence and integration progress
+- [Week 14 Report](weekly-reports/week-14.md) - identity integration merged in PR #42,
+  session lifecycle verification and Railway trial decision
+- [Week 15 Plan](weekly-reports/week-15-plan.md) - first Railway identity preview,
+  followed by the 20 October dashboard-priority correction and bounded preview checks
+- [Month 04 alignment review](notes/react/month-04-alignment.md) - original dashboard
+  goals, actual implementation and explicit integration dependencies
+- [Week 15 Report](weekly-reports/week-15.md) - hosted and browser evidence
+- [Week 16 Plan](weekly-reports/week-16-plan.md) - tenant-safe Ticket reads, real
+  frontend integration and a bounded UI pass (26 October–1 November)
+- [Railway deployment notes](notes/deployment/opsdesk-railway-preview.md)
+- [OpsDesk LinkedIn draft](notes/career/opsdesk-live-preview-linkedin.md)
+- [Month 03 retrospective](monthly-reports/month-03.md) - backend evidence and
+  explicit carry-over into Month 04
 - [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
   identity, Ticket ownership, and authorization
 - [Month 02 Report](monthly-reports/month-02.md) - the complete progression
@@ -79,6 +107,18 @@ This repository continues to hold the learning evidence and roadmap history.
 
 ## Latest Handoff
 
+- 25 October: [OpsDesk preview](https://opsdesk-production-448f.up.railway.app/)
+  recovered with verified deployed source `255f937`; both health endpoints return
+  200 and the learner confirms the latest interface works. Product PR #43 merged
+  normally at `122c052`. Tickets remain mock data. See the
+  [Week 15 report](weekly-reports/week-15.md) for evidence boundaries and the
+  [Week 16 plan](weekly-reports/week-16-plan.md) for real reads and UI work.
+- [Week 14 report](weekly-reports/week-14.md) — OpsDesk PR #42 merged normally at
+  `b0e6cab`; both merge-commit CI workflows passed. Local regression includes 110
+  frontend and 455 backend tests; 160 backend tests were deselected.
+- [Week 15 plan](weekly-reports/week-15-plan.md) — Railway trial selected; hosting
+  implementation is live, with operations/release checks remaining.
+  Paid continuation is a separate user decision.
 - [Week 13 report](weekly-reports/week-13.md) — frontend foundation merged into
   OpsDesk main at `511715d`; local test/build/lint, preview, and pre-merge Backend CI
   evidence recorded

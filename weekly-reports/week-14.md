@@ -1,4 +1,8 @@
-# Week 14 Report — In Progress
+# Week 14 Report — Integration merged; Railway handoff prepared
+
+Core integration is merged and verified. Railway trial selection and the Week 15
+handoff are prepared; hosting implementation and documentation publication remain.
+Earlier daily checkpoints below retain their historical status.
 
 ## Scope and dates
 
@@ -482,3 +486,67 @@ remain explicitly tracked dependencies/deliverables, not assumed completed work.
 - Both product READMEs and bootcamp status/plan/notes updated. Daily commit/push and
   exact-SHA hosted CI are pending. Keep the weekly feature branch for Sunday review
   and normal merge; optional Organizations and real Ticket reads remain out of scope.
+
+## Saturday publication and Sunday regression — 18 October
+
+- Saturday product 345814b7c8af06cc641b784df196582ee5704ec5 and bootcamp 42cf59c
+  were pushed. Both product push workflows succeeded and both trees were clean.
+- Learner Sunday frontend regression: 110 tests in seven files, TypeScript/Vite build
+  and ESLint passed. Backend Ruff check and format check passed (106 files); pytest
+  with database opt-in flags removed and not-integration selection reported 455 passed,
+  160 deselected. This does not establish a fresh PostgreSQL integration-test run.
+- Mentor reviewed the weekly diff, including response guards, form/session lifecycle,
+  public proxy configuration, frontend CI and guarded development migration wiring.
+  No blocking issue was identified in the reviewed scope. Existing local-only migration
+  guards and Vite origin configuration require separate deployment work.
+- Created [draft PR #42](https://github.com/ozdemirr1/opsdesk/pull/42), titled
+  `week-14: integrate identity API and session lifecycle`, against main 511715d.
+  Head is 345814b7c8af06cc641b784df196582ee5704ec5. GitHub reports MERGEABLE/CLEAN.
+- PR-triggered [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39153513026)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39153513121)
+  both succeeded. PR remains draft and unmerged at this checkpoint. Normal merge,
+  merged-main checks, deployment decision and Week 15 plan remain pending.
+
+## Normal merge and main verification — 18 October
+
+- Furkan marked PR #42 ready and merged with --merge, matching reviewed head
+  345814b7c8af06cc641b784df196582ee5704ec5. Merge commit is
+  b0e6cab7d43995acbd6b499cf26a72b629ba574a; daily commits are preserved.
+- Local main is clean and synchronized with origin/main. Exact-merge-commit
+  [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39153728462) and
+  [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/39153728410)
+  both completed successfully.
+- Hosting budget and duration are under discussion. No provider, paid subscription
+  or publication has been approved or provisioned. Week 15 planning must distinguish
+  a short deployment-learning trial from an ongoing portfolio demo.
+
+## Railway decision and Week 15 handoff — 18 October
+
+- Furkan subsequently selected Railway's one-time USD 5 trial, with continuation
+  to be decided from actual usage. The account screenshot shows 30 days or USD 5
+  remaining. The trial ends when either limit is reached; one month of continuous
+  hosting is not guaranteed. No recurring paid subscription was authorized.
+- Only internflow is visible in the supplied GitHub picker; opsdesk repository
+  permission is the next learner setup step. No running OpsDesk service is evidenced.
+- Prepared the [Week 15 plan](week-15-plan.md): 18 hours, native runtime validation,
+  explicit guarded hosted migrations, secret configuration, production browser/API
+  routing, bounded demo exposure, cost review and hosted identity smoke evidence.
+- Current migration code accepts only guarded local test/development targets.
+  Current Vite proxy is development-only. These are explicit deployment tasks,
+  not reasons to weaken existing guards or assume the merged app is already hosted.
+- Required Week 14 identity integration and deployment preparation are complete.
+  Optional Organizations and real Ticket reads remain deferred. Product merge and
+  CI are verified; this bootcamp closure update still needs learner commit/push.
+
+### Railway setup carried forward on Sunday evening
+
+- Learner created the OpsDesk Railway service. Initial Railpack build preparation
+  failed because no start command was detected. An explicit Uvicorn factory command
+  advanced to application startup on Python 3.14.7.
+- Supplied runtime logs first showed a missing JWT secret, then five missing
+  DatabaseSettings fields after JWT configuration. Neither was a database query failure.
+- Latest screenshot shows Postgres Online with a volume and five staged backend DB
+  variable changes. Values are masked; connection success and schema readiness are
+  not verified. Hosted migration implementation and an application role remain pending.
+- Provisioning began before Week 15; record it here without moving the calendar date
+  or claiming hosted identity success. The running database consumes trial resources.

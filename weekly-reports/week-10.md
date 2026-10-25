@@ -67,4 +67,5 @@ changes must be explained before extending the day; tests are not skipped to cat
 - [Two career targets and an unsent outreach draft](week-10-career-targets.md)
   complete the research/drafting action. No application or message was sent.
 - Technical review, report and handoff preparation are complete. Bootcamp commit/push
-  remains a separate user verification step.
+  was still pending at this report's preparation checkpoint. Publication followed
+  in bootcamp commit `f5bc070` on 23 September; Week 11 records that handoff.

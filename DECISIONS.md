@@ -2,6 +2,11 @@
 
 Decisions are historical records. Decision 015 refines the career wording and
 AI learning sequence from Decision 001 without replacing the backend foundation.
+Month 02 database/ownership decisions below apply to the learning API. Standalone
+OpsDesk uses its own organization-membership model and guarded product database
+targets; see its [development guide](https://github.com/ozdemirr1/opsdesk/blob/main/docs/development.md).
+Use [current status](WEEKLY_STATUS.md) for delivered scope rather than treating
+every historical decision checkpoint as the current product state.
 
 ## Decision 001 - Main Career Direction
 

@@ -1,5 +1,10 @@
 # FastAPI Fundamentals
 
+Scope: Month 02 learning API. Examples and database names in these notes
+belong to that historical application; the standalone OpsDesk product has its
+own [setup and guarded database targets](https://github.com/ozdemirr1/opsdesk/blob/main/docs/development.md).
+
+
 ## Goal
 
 This note explains the roles of FastAPI, ASGI, and Uvicorn, how an HTTP request

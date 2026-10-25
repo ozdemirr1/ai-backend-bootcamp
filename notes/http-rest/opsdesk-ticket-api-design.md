@@ -1,5 +1,12 @@
 # OpsDesk Ticket API Design
 
+Historical Week 01 REST design exercise. Its flat Ticket routes and draft fields
+are not the current standalone OpsDesk contract. The product began in Week 09;
+use its [organization-scoped API contract](https://github.com/ozdemirr1/opsdesk/blob/main/docs/api-contract.md)
+and [implementation status](https://github.com/ozdemirr1/opsdesk/blob/main/docs/project-status.md)
+for current work. This original exercise is preserved to show the learning progression.
+
+
 ## Goal
 
 This note describes the first REST API design draft for the OpsDesk ticket system.

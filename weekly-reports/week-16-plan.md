@@ -10,8 +10,9 @@ Week 15 delivered the live identity preview and a tested mock Ticket dashboard.
 Railway recovered on 25 October at source commit `255f937`; no provider migration
 is required for the resolved deployment pause. The adapter is ready, but Ticket
 GET endpoints, runtime response validation and real frontend integration are not.
-See [Week 15 evidence](week-15.md) and the existing OpsDesk `docs/issues/f11.md`
-contract before implementing a new API shape.
+See [Week 15 evidence](week-15.md) and the existing
+[F11 contract](https://github.com/ozdemirr1/opsdesk/blob/main/docs/issues/f11.md)
+before implementing a new API shape.
 
 The original Week 16 was UI polish. Missing Week 14/15 real-data dependencies now
 consume part of that capacity: allocate 12 hours to backend/integration, 3 to
@@ -55,7 +56,7 @@ meaningful tests. Do not generate an entire backend/frontend rewrite at once.
 | Day | Budget | Work | Acceptance evidence |
 | --- | --- | --- | --- |
 | Mon 26 | 3 h | Verify merged starting state; establish weekly product branch. Review F11 query/envelope and access matrix; implement bounded read inputs and first scoped repository query. | Invalid/duplicate/unknown query inputs rejected according to contract; deterministic order and tenant/requester scope reviewed. |
-| Tue 27 | 3 h | Complete list/detail repository/service and endpoint wiring with existing guards. | Real `opsdesk_test` cases cover two Organizations, customer/staff scope, foreign/hidden detail, empty results and pagination/count consistency. No demo/dev destructive tests. |
+| Tue 27 | 3 h | Complete list/detail repository/service and endpoint wiring with existing guards. | Real `opsdesk_product_test` cases cover two Organizations, customer/staff scope, foreign/hidden detail, empty results and pagination/count consistency. No demo/dev destructive tests. |
 | Wed 28 | Optional | Rest or carry unfinished Tuesday work. | No additional mandatory package or assumed hours. |
 | Thu 29 | 3 h | Organization selection, Ticket response guards and fetch/service layer; connect list with loading/empty/error states. | Safe IDs/shapes checked; correct authenticated Organization context; authorization, empty state and network errors kept distinct; mocked response tests. |
 | Fri 30 | 3 h | Connect detail and pagination; verify session/Organization changes and stale responses. | Private state clears on logout/invalid session/switch; late results cannot repopulate it. Local end-to-end walkthrough uses synthetic data. |
@@ -81,6 +82,20 @@ much Saturday styling is feasible; preserve Sunday verification time.
 - [ ] Existing weekly report, README and Month 04 retrospective reflect actual results.
 
 ## Explicit backlog and operational follow-up
+
+Use the [carry-over matrix](../notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over)
+as the month-end scope ledger. Within Sunday's three-hour handoff, size and order
+F14 comments, F07–F10 membership/role work, F12/F13 Ticket mutations and Q03 database
+CI; assign explicit follow-up capacity before changing Month 05 scope. These are
+not secretly added to this 18-hour week. R01 remains the broader backend release,
+not a synonym for the already-live identity preview.
+
+On Monday, briefly verify trial usage/remaining credit, exposure and the
+stop/export decision point. On Tuesday, decide the read-API estimate; on Friday,
+decide the feasible styling slice. Reserve Sunday for verification and handoff.
+If abuse, backup/restore or rollback work needs more time, record its estimate and
+trade-off explicitly rather than treating a green deployment as completion.
+
 
 - Comments and role-dependent mutation buttons need their own backend contracts,
   authorization and tests. Do not add inert controls or infer authorization from

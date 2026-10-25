@@ -1,138 +1,86 @@
 # AI Backend / Full-Stack Bootcamp
 
-This repository tracks my 12-month learning journey toward backend development
-for production AI applications, with practical full-stack capability.
+My 12-month learning journey toward junior backend/full-stack work, with a
+backend focus and a longer-term goal of building production AI applications.
+This repository contains plans, learning notes, exercises and evidence;
+the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
+Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Goal
+## Current checkpoint — 25 October 2026
 
-My goal is to become job-ready for junior backend/full-stack roles by building
-projects with backend, database, cloud, AI integration, and frontend skills.
-Production AI engineering is the direction of the roadmap, not a claim that
-the current learning projects are production-ready.
+**Week 15, Month 04: React/TypeScript and full-stack integration.**
+The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) has
+working registration/login/session checks and a mock Ticket dashboard with a table,
+search, status filters and details. Tickets are not yet read from the real API.
+The provider deployment pause was resolved on 25 October; a provider migration
+is no longer needed for that blocker.
 
-See the [12-month roadmap](ROADMAP.md) and the
-[September 2026 market review](monthly-reports/2026-09-market-review.md) for the
-latest sourced review, adopted changes, and preserved learning priorities.
+The original Month 04 MVP is **not complete**. Real Ticket reads and integration,
+comments, role-dependent actions and the full UI pass remain open. Week 16 prioritizes
+the backend read dependency, then real integration and a bounded visual pass.
 
-## Main Stack
+- [Current status and evidence limits](WEEKLY_STATUS.md)
+- [Week 15 plan](weekly-reports/week-15-plan.md) and [report](weekly-reports/week-15.md)
+- [Month 04 alignment and carry-over](notes/react/month-04-alignment.md)
+- [Week 16 plan: 26 October–1 November](weekly-reports/week-16-plan.md)
+- [12-month roadmap](ROADMAP.md) and [decision log](DECISIONS.md)
 
-- Python
-- FastAPI
-- PostgreSQL
-- Redis
-- Docker
-- React
-- TypeScript
-- OpenAI API
-- RAG
-- pgvector
-- GitHub Actions
+## Learning journey and evidence
 
-## Main Projects
+Weekly reports and the separate plans introduced after Week 01 continue through
+Months 03 and 04. The main change is
+where implementation lives: Month 01/02 exercises are here; product development
+moved to OpsDesk in Week 09. Later reports contain dated daily checkpoints;
+their opening summaries distinguish final outcomes from earlier pending work.
 
-1. OpsDesk - AI-powered support ticket management system
-2. DocuMind - RAG-based document intelligence platform
-3. HireMatch AI - CV and job matching assistant
+| Phase | Learning and implementation | Weekly evidence | Review / actual outcome |
+| --- | --- | --- | --- |
+| Month 01 · Weeks 01–04 | Git/terminal, Python, HTTP/REST, CLI exercises and basic tests | [01](weekly-reports/week-01.md), [02](weekly-reports/week-02.md), [03](weekly-reports/week-03.md), [04](weekly-reports/week-04.md) | [Month 01 review](weekly-reports/week-04.md#month-1-review) is inside Week 04 |
+| Month 02 · Weeks 05–08 | FastAPI, PostgreSQL, SQLAlchemy/Alembic, authentication and authorization in the learning API | [05](weekly-reports/week-05.md), [06](weekly-reports/week-06.md), [07](weekly-reports/week-07.md), [08](weekly-reports/week-08.md) | [Month 02 review](monthly-reports/month-02.md); original CI/deployment targets carried forward |
+| Month 03 · Weeks 09–12 | Separate OpsDesk product: design, architecture, CI/errors, schema, identity, Organization reads and Ticket creation | [09](weekly-reports/week-09.md), [10](weekly-reports/week-10.md), [11](weekly-reports/week-11.md), [12](weekly-reports/week-12.md) | [Month 03 retrospective](monthly-reports/month-03.md); workflow/comments and full backend release remained open |
+| Month 04 · Weeks 13–16 | React/TypeScript, live identity integration, deployment and mock dashboard | [13](weekly-reports/week-13.md), [14](weekly-reports/week-14.md), [15](weekly-reports/week-15.md), [16 plan](weekly-reports/week-16-plan.md) | In progress; [dependency and schedule correction](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over) |
 
-OpsDesk is developed in its [own repository](https://github.com/ozdemirr1/opsdesk).
-DocuMind and HireMatch AI repositories will follow in their planned phases.
-This repository remains the learning log and evidence base.
+Week 01 records its focus and outcomes in one report; Weeks 02–15 have separate
+plan/report files in `weekly-reports/`. Week 16 has a plan only: future work is not
+presented as completed evidence. The Month 04 retrospective is due at its
+1 November handoff, not fabricated in advance. Test counts demonstrate specific
+checks; learner explanations and independent exercises remain separate evidence.
+
+## Projects and technology sequence
+
+| Project | Current state | Planned direction |
+| --- | --- | --- |
+| [OpsDesk](https://github.com/ozdemirr1/opsdesk) | Active product since Week 09; live identity flow and mock Ticket dashboard | Support-ticket workflow, comments and UI integration; AI summaries/priority/category suggestions in Month 06 |
+| DocuMind | Planned; no completed product claimed | Document upload, embeddings, pgvector retrieval and grounded answers in Months 07–08 |
+| HireMatch AI | Planned; no completed product claimed | CV/job matching with validated structured output in Month 09 |
+
+Current stack: Python, FastAPI, PostgreSQL, SQLAlchemy, Alembic, React,
+TypeScript and GitHub Actions. Tailwind is planned for the bounded Week 16 UI pass;
+Docker/Redis/background jobs remain Month 05, OpenAI integration/evals Month 06,
+and RAG/pgvector Months 07–08. Prefer depth over unrelated technology switching.
 
 ## Repository guide
 
-- `WEEKLY_STATUS.md`: short current checkpoint and next actions.
-- `weekly-reports/`: dated plans and chronological weekly evidence.
-- `weekly-reports/archive/`: preserved historical status snapshots.
-- `monthly-reports/`: monthly reviews and handoffs.
-- `assets/linkedin/`: final publication images and their production notes.
-- `notes/`: topic-based learning notes; `deployment/` holds the Railway notes and
-  `career/` holds publication drafts.
-- `projects/`: historical learning applications and bounded laboratories.
-  Product code stays in the separate OpsDesk repository.
+- [Weekly plans and reports](weekly-reports/) — learning goals, tasks, code/test
+  evidence, review questions and next-week preparation.
+- [Monthly reviews](monthly-reports/) — outcomes, deviations and handoffs; Month 01
+  is preserved in Week 04 as linked above.
+- [Topic notes](notes/) — concepts and scoped examples. Historical learning API
+  designs are not the current OpsDesk product contract.
+- [Historical learning projects](projects/) — including the completed
+  [Month 02 Ticket API](projects/month-02-ticket-api/README.md) and bounded
+  [Week 06 SQL lab](projects/week-06-postgresql-sql/README.md).
+- [Railway deployment notes](notes/deployment/opsdesk-railway-preview.md) — dated
+  setup/recovery evidence and open operational checks.
+- [Publication draft](notes/career/opsdesk-live-preview-linkedin.md) and
+  [visual assets](assets/linkedin/opsdesk-live-preview/README.md) — drafts/assets
+  do not establish publication or current product scope.
+- [September market review](monthly-reports/2026-09-market-review.md) — sourced
+  career review and adopted priorities.
 
-Historical week-based laboratory names remain unchanged. Start with
-[current status](WEEKLY_STATUS.md), then the current plan and report.
-
-## Current Learning Modules
-
-- [Month 02 Ticket API](projects/month-02-ticket-api/README.md) - the completed
-  Weeks 05-08 learning application covering FastAPI, PostgreSQL, SQLAlchemy,
-  Alembic, authentication, and authorization
-- [Week 06 PostgreSQL and SQL](projects/week-06-postgresql-sql/README.md) - a
-  bounded SQL laboratory with schema, relationship, query, transaction, and
-  index exercises
-
-## Current Weekly Evidence
-
-- [Week 13 Plan](weekly-reports/week-13-plan.md) - React + TypeScript foundations,
-  mock Ticket rendering, controlled forms, and frontend behavior checks
-- [Week 13 Report](weekly-reports/week-13.md) - React foundation, 23 frontend tests,
-  completed learning review, and product PR #41 merge evidence
-- [Week 14 Plan](weekly-reports/week-14-plan.md) - frontend CI, first real identity
-  integration, and the deployment preparation checkpoint
-- [Week 14 Report](weekly-reports/week-14.md) - identity integration merged in PR #42,
-  session lifecycle verification and Railway trial decision
-- [Week 15 Plan](weekly-reports/week-15-plan.md) - first Railway identity preview,
-  followed by the 20 October dashboard-priority correction and bounded preview checks
-- [Month 04 alignment review](notes/react/month-04-alignment.md) - original dashboard
-  goals, actual implementation and explicit integration dependencies
-- [Week 15 Report](weekly-reports/week-15.md) - hosted and browser evidence
-- [Week 16 Plan](weekly-reports/week-16-plan.md) - tenant-safe Ticket reads, real
-  frontend integration and a bounded UI pass (26 October–1 November)
-- [Railway deployment notes](notes/deployment/opsdesk-railway-preview.md)
-- [OpsDesk LinkedIn draft](notes/career/opsdesk-live-preview-linkedin.md)
-- [Month 03 retrospective](monthly-reports/month-03.md) - backend evidence and
-  explicit carry-over into Month 04
-- [Week 08 Report](weekly-reports/week-08.md) - Argon2id, JWT, persisted User
-  identity, Ticket ownership, and authorization
-- [Month 02 Report](monthly-reports/month-02.md) - the complete progression
-  from FastAPI fundamentals to a PostgreSQL-backed secured API
-- [Week 09 Plan](weekly-reports/week-09-plan.md) - OpsDesk requirements,
-  organization-scoped domain design, ERD, access rules, and issue planning
-- [Week 09 Report](weekly-reports/week-09.md) - reviewed product design and 26 published issues
-- [Week 10 Plan](weekly-reports/week-10-plan.md) - executable foundation, guarded tests,
-  schema prerequisites, and capacity-bounded authentication work
-- [Week 10 Report](weekly-reports/week-10.md) - executable foundation, identity schema,
-  safe API errors, request diagnostics, and concurrency design
-- [Week 11 Report](weekly-reports/week-11.md) - registration, login, finalized API
-  contracts, bearer validation, and persisted current-User resolution
-- [Week 12 Plan](weekly-reports/week-12-plan.md) - Ticket schema, Organization creation,
-  scoped Organization reads, and dependency-gated Ticket creation
-- [Week 12 Report](weekly-reports/week-12.md) - tenant-consistent Ticket persistence,
-  atomic Organization creation, membership-scoped reads, and authenticated Ticket
-  creation
-
-The real OpsDesk product begins in Week 09 in a separate public repository.
-This repository continues to hold the learning evidence and roadmap history.
-
-## Latest Handoff
-
-- 25 October: [OpsDesk preview](https://opsdesk-production-448f.up.railway.app/)
-  recovered with verified deployed source `255f937`; both health endpoints return
-  200 and the learner confirms the latest interface works. Product PR #43 merged
-  normally at `122c052`. Tickets remain mock data. See the
-  [Week 15 report](weekly-reports/week-15.md) for evidence boundaries and the
-  [Week 16 plan](weekly-reports/week-16-plan.md) for real reads and UI work.
-- [Week 14 report](weekly-reports/week-14.md) — OpsDesk PR #42 merged normally at
-  `b0e6cab`; both merge-commit CI workflows passed. Local regression includes 110
-  frontend and 455 backend tests; 160 backend tests were deselected.
-- [Week 15 plan](weekly-reports/week-15-plan.md) — Railway trial selected; hosting
-  implementation is live, with operations/release checks remaining.
-  Paid continuation is a separate user decision.
-- [Week 13 report](weekly-reports/week-13.md) — frontend foundation merged into
-  OpsDesk main at `511715d`; local test/build/lint, preview, and pre-merge Backend CI
-  evidence recorded
-- [Week 14 plan](weekly-reports/week-14-plan.md) — frontend CI and the first real
-  register/login/current-User flow, with a dated deployment preparation checkpoint
-- [Week 12 report](weekly-reports/week-12.md) — all four planned product packages
-  merged with guarded PostgreSQL evidence and an explicit one-day calendar variance
-- [Week 13 plan](weekly-reports/week-13-plan.md) — Month 04 starts on 6 October
-  from clean OpsDesk `main` at `ec418f9`, with 18 active hours planned through 11 October
-
-## Learning Rule
-
-I will not jump between random technologies.  
-I will focus on backend, full-stack fundamentals, AI integration, and production-ready project development.
+The learning API uses `opsdesk_dev` / `opsdesk_test`. The separate product uses
+`opsdesk_product_dev` / `opsdesk_product_test`; the hosted demo is `opsdesk_demo`.
+Never substitute the old learning database for the product's guarded test target.
 
 ## Development Setup
 

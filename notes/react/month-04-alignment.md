@@ -1,5 +1,10 @@
 # Month 04 alignment review — 20 October 2026
 
+The first sections preserve the 20 October assessment at `2f6e00d`.
+For the later delivered dashboard and explicit carry-over, see the
+[25 October checkpoint](#25-october-checkpoint-and-carry-over).
+
+
 The learner supplied the original weekly milestones: React foundations, API
 integration, dashboard, then UI polish. Compare against actual code, not only the
 later revised weekly plans. Career direction is aligned; delivery against that
@@ -68,3 +73,29 @@ documentation/test contribution remains optional after the core month deliverabl
 - List deferred features, their dependencies and revised estimates at monthly handoff.
 
 No application code or new regression run was produced during this planning review.
+
+## 25 October checkpoint and carry-over
+
+Week 15 delivered a mock table, readable status badges, combined title/status
+filters, counts/empty states, a detail card, focus return, session-reset tests and
+a pure display adapter. Railway recovered and deployed `255f937`; PR #43 merged
+at `122c052`. This supersedes the earlier unfiltered-list observation, not the
+remaining real-data gap. Product README now includes an actual live UI screenshot.
+
+| Original milestone | Actual position on 25 October | Next gate / decision |
+| --- | --- | --- |
+| Month 02 CI/deployment | CI shipped in Month 03; first hosted identity preview shipped in Month 04 | Historical variance retained in monthly reviews; no backdated completion |
+| Month 03 complete backend preview | Schema, identity, Organization reads and Ticket creation shipped; broad R01 #26 remains open | R01 still depends on unfinished features and operational evidence |
+| Week 14 real Ticket list | Missing F11 #19 list/detail API and authenticated Organization UI | Week 16 first 12 hours: scoped reads, database tests, runtime guards and integration; re-estimate 27 October |
+| Week 15 dashboard | Table/search/status/detail delivered with fixtures | Preserve mock labels; actual data integration must pass before claiming complete MVP |
+| Week 15 comments / role actions | F14 #24 comments and F07–F10 #16/#17/#22/#23, F12/F13 #20/#21 remain open | Schema/API/access tests before controls; size and sequence remaining packages at 1 November handoff |
+| Week 16 product feel | Basic CSS/keyboard/table behavior exists; Tailwind/sidebar/full visual pass not yet done | Reserve 3 hours for a coherent responsive UI slice; 30 October checkpoint decides feasible scope |
+| Database CI and operations | Q03 #25, abuse/cost/export, provider audit and isolated restore/rollback still open | Timebox Monday review and record estimates/priority at 1 November handoff; no completed-release claim |
+| Monthly evidence | Plans/reports continue; Month 01 review is inside Week 04, Month 02/03 reviews are separate | Month 04 retrospective and learning handoff on 1 November; do not invent learner answers |
+
+The [Week 16 plan](../../weekly-reports/week-16-plan.md) totals 18 hours: 12 for
+reads/integration, 3 for UI, 3 for verification/handoff. If integration needs 15,
+reduce visible polish and record the carry-over. Comments and role workflows have
+no hidden capacity allocation in this week; the month-end sizing decision must
+name their next delivery slices before changing the Month 05 plan. Docker/Redis
+remain Month 05 and AI Month 06 unless a later explicit capacity review changes them.

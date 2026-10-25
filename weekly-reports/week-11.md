@@ -106,5 +106,6 @@ instead of claiming an unverified backend preview.
 ## Closure status
 
 Week 11 implementation, local regression, hosted CI, product merges, issue closures,
-branch cleanup, learning review, and this report are complete. The remaining action is
-to commit and push this bootcamp evidence together with the Week 12 handoff.
+branch cleanup, learning review, and this report are complete. At preparation, the
+remaining action was publishing this evidence with the Week 12 handoff. That
+publication followed in bootcamp commit `b295828` on 28 September.

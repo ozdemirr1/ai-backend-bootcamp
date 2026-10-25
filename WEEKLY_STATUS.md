@@ -14,7 +14,9 @@ No Azure provisioning or paid upgrade is authorized by this checkpoint.
   Daily commits are preserved; do not delete the branch while Railway uses it
   as its source. Merge-commit [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369253)
   and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40193369467)
-  passed. Fetched `origin/main` and the deployed feature head have identical file trees.
+  passed. At the PR #43 checkpoint, `origin/main` and the deployed feature head
+  had identical file trees. Later documentation-only changes do not change the
+  deployed runtime source.
 - Exact-head [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941595)
   and [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40129941691)
   passed, rechecked on 25 October. Backend CI covers Ruff and non-integration
@@ -68,3 +70,10 @@ incident and recovery evidence. Earlier status history is retained in the
 The weekly bootcamp documentation is collected in
 [PR #7](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/7), including the
 Sunday package `a5e1915` and the Week 16 plan.
+
+The subsequent documentation consistency correction is collected in
+[bootcamp PR #8](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/8) and
+[OpsDesk PR #44](https://github.com/ozdemirr1/opsdesk/pull/44). It aligns README
+entry points, historical status boundaries and the carry-over ledger; no runtime
+behavior or Railway source-branch setting changes. GitHub shows their publication
+and merge state; the Week 15 report records the documentation checks.

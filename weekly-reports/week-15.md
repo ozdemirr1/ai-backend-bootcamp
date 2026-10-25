@@ -1,10 +1,22 @@
-# Week 15 Report — Railway identity preview
+# Week 15 Report — Live preview and mock dashboard
 
-19–25 October 2026, Month 04. Work in progress.
+19–25 October 2026, Month 04. Technical weekly package merged; learner review
+answers and the explicitly listed operational checks remain open.
 
-Latest checkpoint: the public identity preview is working as of 19 October.
-Earlier “pending” statements below describe their dated checkpoints; the newest
-sections supersede them. See [current status](../WEEKLY_STATUS.md) for open work.
+## Weekly outcome at 25 October
+
+| Area | Outcome |
+| --- | --- |
+| Goal | Restore dashboard learning alongside the first hosted identity preview |
+| Delivered | Table/badges, combined search/status filters, detail card/focus, session resets, pure display adapter; live recovery at `255f937` |
+| Learning | Props/state, derived filtering, conditional detail rendering, session/request ownership, and type-versus-runtime-validation boundaries |
+| Validation | Latest local frontend: 141 tests/build/lint on 24 October. Backend: 506 non-integration on 19 October. PR #43 and merge CI passed; no new full regression on Sunday |
+| Remaining | Real reads/integration, comments/roles, full visual pass, operational evidence and three learner review answers |
+| Next | [Week 16 plan](week-16-plan.md): scoped reads first, then real-data UI and bounded styling |
+
+Earlier “pending” statements below describe their dated checkpoints; the 25 October
+closure supersedes them. See [current status](../WEEKLY_STATUS.md) for open work.
+
 
 ## Early setup completed on 18 October
 
@@ -452,3 +464,31 @@ as `a5e1915` on `feature/week-15-documentation`.
 [Bootcamp PR #7](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/7)
 collects the weekly documentation and preserves its daily history through a
 normal merge. Sunday document links resolve and whitespace checks pass.
+
+## 25 October documentation consistency review
+
+- Reorganized both repository entry points around actual current scope, with
+  chronological Month 01–04 evidence navigation in bootcamp and a real deployed
+  dashboard capture in OpsDesk. Backend setup/test instructions moved to the
+  product development guide; original implementation history remains in Git.
+- Added a dated product status/issue-closure matrix. Contract inventories and
+  historical issue snapshots no longer imply all endpoints are delivered or
+  completed issues are still unpublished. Closed design does not mean complete CRUD.
+- Corrected Week 16's destructive-test target to `opsdesk_product_test` and
+  separated product, historical learning and hosted databases. Local ignored
+  mentoring instructions received the same guardrail correction.
+- Added weekly outcome summaries and an explicit carry-over/dependency ledger.
+  No daily work file was created. No learner answers, product feature completion,
+  new full regression run or operational acceptance results were invented.
+- Documentation publication uses separate weekly alignment branches, preserving
+  the Railway source branch. Validation passed: 113 Markdown files, 548 local
+  link/image targets and Markdown anchors, plus 11 cross-repository main-branch
+  file references checked against the proposed trees. Both whitespace checks pass.
+  Application code, migrations, dependencies and CI configuration are unchanged.
+  Runtime test groups above remain dated evidence; hosted PR CI is checked
+  separately during publication. Normal PR merge history is retained.
+
+Publication references: [OpsDesk PR #44](https://github.com/ozdemirr1/opsdesk/pull/44)
+and [bootcamp PR #8](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/8).
+These collect the consistency corrections separately from the earlier feature
+release and weekly closure. GitHub provides the final CI/merge state.

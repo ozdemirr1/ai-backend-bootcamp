@@ -1,5 +1,13 @@
 # OpsDesk — first live preview LinkedIn draft
 
+Historical draft checkpoint: 19 October. The text/counts below describe that
+milestone and are not automatically the latest publication copy. Before posting,
+reconcile them with [current status](../../WEEKLY_STATUS.md) and the Week 15
+closure (latest local frontend count: 141 on 24 October). The current mock
+dashboard is now deployed; real Ticket integration and AI remain future work.
+Publication is still unconfirmed; this documentation correction does not post it.
+
+
 Prepared 19 October 2026. Draft only; not published or sent to LinkedIn.
 
 ## Editorial direction

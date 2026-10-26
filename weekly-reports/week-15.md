@@ -492,3 +492,26 @@ Publication references: [OpsDesk PR #44](https://github.com/ozdemirr1/opsdesk/pu
 and [bootcamp PR #8](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/8).
 These collect the consistency corrections separately from the earlier feature
 release and weekly closure. GitHub provides the final CI/merge state.
+
+
+## 25 October Week 16 scope revision
+
+The learner requested a plan covering every original Month 04 outcome and chose
+an intensive 26 October–1 November calendar. The revised
+[Week 16 plan](week-16-plan.md) supersedes the earlier 18-hour proposal: 42 focused
+hours plus up to 8 contingency hours, with Tuesday/Friday estimate checkpoints.
+Required work includes real Ticket reads/search and protected routes, persisted
+comments, the role-aware priority subset, the complete original UI package, tests
+and release/learning evidence. Broader membership administration, assignment and
+status workflow remain explicit backend backlog; this does not close R01 or F12.
+
+This entry records a planning decision only. No Week 16 code, passing test results,
+learner answers or monthly completion are claimed. Current README/status/roadmap
+pointers were aligned; earlier dated evidence remains historical. No daily work
+file was added. Month 04 closes only after the plan's acceptance gates pass.
+
+Planning validation: local Markdown links/anchors and cross-repository file
+references resolve in the proposed trees; both repository whitespace checks pass.
+Package hours total 42, matching seven six-hour days; four optional two-hour
+reserves bring the ceiling to 50. This documentation change did not run or alter
+application tests.

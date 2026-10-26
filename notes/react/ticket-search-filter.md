@@ -90,3 +90,27 @@ Keep later API integration and membership context as separate reviewed work.
 After implementation, run frontend tests, build and lint. Manually check typing,
 selecting status, clearing filters, keyboard operation and a narrow viewport.
 Record actual results; this brief does not establish those checks as passed.
+
+
+## Week 16 server-search boundary — 26 October 2026
+
+The earlier sections describe the Week 15 mock exercise. The 25 October live
+checkpoint verified that mock dashboard; this does not establish real-data search.
+The new [Ticket read contract](https://github.com/ozdemirr1/opsdesk/blob/main/docs/api-contract.md)
+defines the server query. The backend is now implemented and locally tested;
+the frontend still uses mocks and has not been wired to these endpoints.
+
+In the book analogy, filtering ten books already downloaded cannot tell us how
+many matching books exist in a library of one thousand. The server must first
+select books the member can see, then search, count and return a page.
+
+OpsDesk will send `q` plus filters and pagination. Blank input omits `q`; an
+All statuses selection omits `status` instead of sending `all`. Changing query,
+filter or Organization resets offset; logout/Organization changes also discard
+old data and invalidate in-flight responses. `total_count` comes from the server,
+not `items.length`. Do not apply the mock filter again to a returned page.
+
+Search targets titles only; wildcard characters are literal. Case behavior comes
+from the database collation, not frontend `toLowerCase()`. Runtime validation of
+the envelope/items precedes mapping. Authentication and Organization membership
+are checked by the server on every read, regardless of hidden buttons.

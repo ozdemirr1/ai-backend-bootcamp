@@ -25,6 +25,13 @@ uses fixtures. The display adapter is implemented, but Ticket reads, Comment
 persistence/API and the real-data UI are not. This document is a plan, not a
 claim that any new Week 16 feature has shipped.
 
+26 October progress: Monday tasks 1–6 are recorded in the
+[Week 16 report](week-16.md): baseline/access contract, scoped GET reads/search,
+unit/API/PostgreSQL tests and Railway usage review. Backend results: 583
+non-integration and 178 data-integration tests passed, as separate suites.
+The backend is normally merged through OpsDesk PR #46 with passing PR CI;
+hosted collation verification, deployment and real frontend integration remain open. The weekly completion gates still apply.
+
 ## Original Month 04 outcomes and completion evidence
 
 | Original outcome | Week 16 completion requirement |

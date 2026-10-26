@@ -6,16 +6,17 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 25 October 2026
+## Current checkpoint — 26 October 2026
 
-**Week 15, Month 04: React/TypeScript and full-stack integration.**
+**Week 16, Month 04: completing real integration and the frontend MVP.**
 The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) has
 working registration/login/session checks and a mock Ticket dashboard with a table,
 search, status filters and details. Tickets are not yet read from the real API.
 The provider deployment pause was resolved on 25 October; a provider migration
 is no longer needed for that blocker.
 
-The original Month 04 MVP is **not complete**. Real Ticket reads and integration,
+The original Month 04 MVP is **not complete**. Ticket list/detail/search are now
+implemented and tested locally in the Week 16 backend. Real UI integration,
 comments, role-dependent actions and the full UI pass remain open. The revised
 Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
 42 focused hours plus up to 8 hours of contingency, with explicit completion gates.
@@ -23,7 +24,7 @@ Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
 - [Current status and evidence limits](WEEKLY_STATUS.md)
 - [Week 15 plan](weekly-reports/week-15-plan.md) and [report](weekly-reports/week-15.md)
 - [Month 04 alignment and carry-over](notes/react/month-04-alignment.md)
-- [Week 16 plan: 26 October–1 November](weekly-reports/week-16-plan.md)
+- [Week 16 plan: 26 October–1 November](weekly-reports/week-16-plan.md) and [in-progress report](weekly-reports/week-16.md)
 - [12-month roadmap](ROADMAP.md) and [decision log](DECISIONS.md)
 
 ## Learning journey and evidence
@@ -42,8 +43,11 @@ their opening summaries distinguish final outcomes from earlier pending work.
 | Month 04 · Weeks 13–16 | React/TypeScript, live identity integration, deployment and mock dashboard | [13](weekly-reports/week-13.md), [14](weekly-reports/week-14.md), [15](weekly-reports/week-15.md), [16 plan](weekly-reports/week-16-plan.md) | In progress; [dependency and schedule correction](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over) |
 
 Week 01 records its focus and outcomes in one report; Weeks 02–15 have separate
-plan/report files in `weekly-reports/`. Week 16 has a plan only: future work is not
-presented as completed evidence. The Month 04 retrospective is due at its
+plan/report files in `weekly-reports/`. Week 16 now has its plan and an in-progress
+report: Monday baseline, contract, backend read implementation, database tests
+and Railway usage review are recorded. The new backend is published through
+[OpsDesk PR #46](https://github.com/ozdemirr1/opsdesk/pull/46); the live dashboard
+still uses labelled mock Tickets on the previously deployed source. Future work is not presented as completed evidence. The Month 04 retrospective is due at its
 1 November handoff, not fabricated in advance. Test counts demonstrate specific
 checks; learner explanations and independent exercises remain separate evidence.
 

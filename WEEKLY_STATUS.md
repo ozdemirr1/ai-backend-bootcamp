@@ -1,8 +1,32 @@
 # Weekly Status
 
-## Current checkpoint — 25 October 2026
+## Current checkpoint — 26 October 2026
 
-Week 15, Month 04; 19–25 October. Railway deployment recovered today. The
+Week 16, Month 04; 26 October–1 November. Monday tasks 1–6 are complete locally:
+baseline/access/search contract, scoped Ticket list/detail implementation, new
+tests and Railway usage review. See the [Week 16 report](weekly-reports/week-16.md).
+
+Final backend checks: 583 non-integration tests passed / 181 deselected; 178
+PostgreSQL data tests passed on guarded local `opsdesk_product_test`; Ruff lint
+and format passed. The three schema tests were not rerun (no migration change).
+Frontend is unchanged: today's earlier 141-test/10-file one-worker run, lint and
+build passed after an initial ENOSPC failure. Disk capacity remains a limitation.
+
+Railway Usage in Chrome: $0.54 current usage, $4.46 remaining, 22 days; two services
+online. No paid upgrade or deployment/settings change was made. The public preview
+continues to use mock Tickets. GET reads are published and normally merged through
+[OpsDesk PR #46](https://github.com/ozdemirr1/opsdesk/pull/46) at `fff4e47`.
+Backend and frontend PR CI passed at source `a28cff2`. The new reads are not
+deployed; Railway metadata still identifies `255f937` on the Week 15 branch.
+Next: the Tuesday read-integration checkpoint, including hosted collation and
+frontend runtime guards.
+
+The 25 October intensive plan was published through normally merged bootcamp
+PR #9 and OpsDesk PR #45. Current Week 16 product code is in PR #46; this bootcamp update records its evidence.
+
+## Previous checkpoint — 25 October 2026
+
+Week 15, Month 04; 19–25 October. Railway deployment recovered on 25 October. The
 learner reports the latest live interface works. Keep the existing provider;
 the conditional 26 October Azure migration is no longer needed for this blocker.
 No Azure provisioning or paid upgrade is authorized by this checkpoint.

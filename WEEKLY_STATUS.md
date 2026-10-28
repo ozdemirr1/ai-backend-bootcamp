@@ -1,6 +1,71 @@
 # Weekly Status
 
-## Current checkpoint — 26 October 2026
+## Current checkpoint — 28 October 2026, Wednesday close
+
+Yesterday's branches are pushed (`0b28946` product, `20e26d2` bootcamp); both product
+CI workflows passed at that head. Neither branch has a PR. The local PostgreSQL
+browser flow now verifies login, Organization creation/selection, real Ticket
+list/detail, search/filter/pagination, scope change, reload and logout. API checks
+confirm anonymous and cross-Organization denial. See the [Week 16 report](weekly-reports/week-16.md#28-october--wednesday-tasks-13-real-flow-review).
+
+The local root shows Login before authentication; fixture Tickets are removed
+from product navigation. Account/Workspaces replace authenticated Login/Register.
+Registration has password guidance and a login link after success. Verification:
+234 frontend tests / 12 files, build and lint passed. Today's changes are local,
+uncommitted and not deployed; yesterday's CI is not evidence for these edits.
+
+Hosted synthetic registration, browser login/session check/sign-out and readiness
+work, but the hosted interface remains the earlier mock preview without Workspaces.
+Comment schema/model and scoped repository are now implemented. Source/test head
+is `84c2f9a17d60`; development/hosted were not migrated. Backend verification:
+589 non-integration, 204 PostgreSQL data and 5 schema tests passed; Ruff passed.
+Wednesday’s scheduled implementation is complete locally. Comment service/API,
+locking and form remain Thursday work. Publication/deployment of the private
+flow, role mutations and the full UI pass remain open. No daily file was added.
+
+## Earlier checkpoint — 27 October 2026, Tuesday close
+
+Tuesday tasks 4–6 are complete as local implementation and automated verification.
+The Workspaces screen lists current memberships, displays Organization-specific
+roles and supports creation with a name-only request. Protected hash addresses
+cover the directory, real Ticket dashboard and Ticket detail. Anonymous entry
+shows Login at the intended internal address; successful login resumes it. Reload
+clears the in-memory session and requires login again. Unknown/external/unsafe
+paths never become redirect destinations.
+
+The private dashboard uses the real validated HTTP adapters, server title/status
+filters, total counts and pagination. The public mock dashboard remains separate.
+Changing Organization resets private filters/detail/results. Session-scoped keys,
+loader identity and effect cleanup prevent old responses from reappearing after
+scope change, logout or a newer query, even when fetch ignores cancellation.
+401 clears the session; 403 removes inaccessible workspace context; missing details
+show a safe unavailable state; network/malformed responses offer retry without
+turning into empty success. Organization creation is never automatically retried.
+
+Fresh frontend verification: 233 tests / 12 files, build and lint passed.
+The in-app browser confirmed signed-out direct-route/reload protection. Actual
+PostgreSQL browser integration and hosted deployment remain separate checks.
+Changes are local and uncommitted; the public Railway preview is unchanged.
+
+Navigation refinement: Workspaces is hidden before login and after sign-out.
+Normal login opens the directory; guarded deep links keep their intended route.
+
+## Earlier checkpoint — 27 October 2026, tasks 1–3
+
+Tuesday tasks 1–3 are complete locally: backend read coverage review,
+Organization/session flow design, and validated Organization/Ticket HTTP adapters.
+The dashboard still uses labelled mocks; protected routes, Organization screens
+and real Ticket loading remain the next increment. No deployment was performed.
+
+Fresh checks: 77 focused backend query/service/API tests passed; 209 frontend
+tests across 11 files passed with one worker, plus build and lint. The 178
+PostgreSQL integration results are from 26 October, not a new run. The API layer
+has 68 new cases for malformed data, scope, pagination, query encoding, errors
+and cancellation. No new dependency, migration or browser token storage was added.
+
+See the [flow design](notes/react/ticket-search-filter.md#organization-and-session-flow--27-october-2026) and [Week 16 report](weekly-reports/week-16.md).
+
+## Previous checkpoint — 26 October 2026
 
 Week 16, Month 04; 26 October–1 November. Monday tasks 1–6 are complete locally:
 baseline/access/search contract, scoped Ticket list/detail implementation, new

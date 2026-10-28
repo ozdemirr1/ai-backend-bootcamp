@@ -55,6 +55,12 @@ implemented. Source/test head is `84c2f9a17d60`; development/hosted remain uncha
 Ruff checks. Wednesday’s local implementation is complete; Thursday’s Comment
 service/API/locking/form and the remaining weekly gates are still pending.
 
+29 October closure of Wednesday release: PR #47/#11 merged, product CI and
+Railway deployment from `main` passed. Hosted register/login/workspace/list/detail/
+search/reload/logout smoke is complete. Comment storage migration is deployed;
+Comment service/API/form and the remaining weekly gates stay open. See
+[release evidence](week-16.md#29-october--release-verification-closing-the-28-october-work).
+
 ## Original Month 04 outcomes and completion evidence
 
 | Original outcome | Week 16 completion requirement |

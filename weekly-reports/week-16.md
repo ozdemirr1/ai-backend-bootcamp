@@ -176,3 +176,110 @@ hosted collation and real frontend integration remain separate planned gates.
 This bootcamp publication preserves the existing Week 16 report and plan rather
 than creating a separate daily file. Monday's implementation, tests, usage check
 and Git publication are complete; Month 04 remains in progress.
+
+
+## 27 October — Tuesday tasks 1–3
+
+Tuesday tasks 1–3 are complete locally: backend read coverage review,
+Organization/session flow design, and validated Organization/Ticket HTTP adapters.
+The dashboard still uses labelled mocks; protected routes, Organization screens
+and real Ticket loading remain the next increment. No deployment was performed.
+
+Fresh checks: 77 focused backend query/service/API tests passed; 209 frontend
+tests across 11 files passed with one worker, plus build and lint. The 178
+PostgreSQL integration results are from 26 October, not a new run. The API layer
+has 68 new cases for malformed data, scope, pagination, query encoding, errors
+and cancellation. No new dependency, migration or browser token storage was added.
+
+### Coverage review and implementation
+
+Reviewed the backend input/service/API tests and PostgreSQL read tests against
+the access/search/pagination contract. Existing coverage includes customer/staff
+scope, foreign/hidden records, inactive identities/memberships/Organizations,
+revocation after authentication, literal Unicode/punctuation search, combined
+filters, tied ordering, beyond-end pages and concurrent count/item snapshots.
+No blocking gap was identified for preparing the frontend API layer. Hosted
+collation verification and full UI/session integration remain separate gates.
+
+In OpsDesk, `resources.ts` shares checked collection and transport results;
+`organizations.ts` handles list/detail/create and Organization membership context;
+`tickets.ts` now adds list/detail HTTP adapters and runtime guards while retaining
+the pure display mapper. `resource-boundaries.test.ts` exercises the real request
+helper through a mocked fetch boundary. IDs must be safe JavaScript integers;
+invalid scope/pagination/role/enum/timestamp data never becomes typed success.
+
+The existing [search/filter note](../notes/react/ticket-search-filter.md#organization-and-session-flow--27-october-2026)
+records state transitions, role source, cancellation/request ownership, 401/403/404
+behavior and uncertain creation outcomes. It is a design for the next controller,
+not a claim that Organization screens or protected routes now exist.
+
+The first frontend run had one failed test because its expected path omitted the
+configured `/api` prefix. The assertion was corrected to use API_BASE_URL; the
+final full run passed. No backend runtime source changed. No destructive database
+test, new browser verification or Railway usage inspection was performed today.
+Changes remain local on `feature/week-16-api-boundaries` in both repositories;
+no commit/push, current-head CI or new deployed-source evidence is claimed.
+
+
+## 27 October — Tuesday tasks 4–6
+
+Tuesday tasks 4–6 are complete as local implementation and automated verification.
+The Workspaces screen lists current memberships, displays Organization-specific
+roles and supports creation with a name-only request. Protected hash addresses
+cover the directory, real Ticket dashboard and Ticket detail. Anonymous entry
+shows Login at the intended internal address; successful login resumes it. Reload
+clears the in-memory session and requires login again. Unknown/external/unsafe
+paths never become redirect destinations.
+
+The private dashboard uses the real validated HTTP adapters, server title/status
+filters, total counts and pagination. The public mock dashboard remains separate.
+Changing Organization resets private filters/detail/results. Session-scoped keys,
+loader identity and effect cleanup prevent old responses from reappearing after
+scope change, logout or a newer query, even when fetch ignores cancellation.
+401 clears the session; 403 removes inaccessible workspace context; missing details
+show a safe unavailable state; network/malformed responses offer retry without
+turning into empty success. Organization creation is never automatically retried.
+
+### Final verification — 27 October
+
+- Frontend: **231 tests across 12 files passed**, including 22 new UI behavior
+  cases and the earlier 68 API-boundary cases. Build and lint passed.
+- New cases cover direct detail login/return/reload, unsafe routes, membership
+  selection and later-page lookup, empty/create/uncertain-create flows, suspended
+  and foreign Organizations, paging/filter reset, stale search and cross-scope
+  responses, logout/history guards, HTTP 401/403/404/500, malformed responses and
+  inactive-session cleanup. Tests run through App and the real resource adapters
+  with synthetic fetch responses; they are not live-database browser tests.
+- In-app browser smoke: opening and reloading a private detail hash address while
+  signed out showed Login without private data. Chrome automation was unavailable;
+  the available in-app browser was used. Authenticated PostgreSQL browser smoke
+  and hosted release/collation checks remain pending.
+- Backend runtime did not change. Earlier today's focused 77-test result applies;
+  the complete backend and PostgreSQL suites retain their 26 October dates.
+- No dependencies, migrations, browser token storage or new daily document added.
+  No deployment, commit or push performed; both repositories retain the local
+  `feature/week-16-api-boundaries` work for review/publication.
+
+### Next gate
+
+Publish after review and current-head CI, then verify the complete flow against
+the actual backend/database and the intended deployed source. Newly created
+Organizations may legitimately have zero Tickets; this slice does not add a
+Ticket creation form. Comments, role-aware mutations, the full Tailwind/UI pass
+and Month 04 handoff remain planned work, not completed by this checkpoint.
+
+
+### 27 October navigation refinement
+
+Workspaces navigation now appears only with a verified session. Normal login
+opens the Organization directory; direct protected Ticket addresses retain their
+internal destination after login. Sign-out removes the button again. Existing
+server authorization and private route guards remain unchanged.
+
+Two additional behavior cases cover normal/failed-login visibility and redirect.
+Session-check tests explicitly return to Login after asserting the new directory
+landing. The first full run exposed a timing-sensitive 403 assertion holding a
+transient alert; it now waits for the final access-denied view. Final verification:
+233 frontend tests / 12 files, build and lint passed. In-app browser inspection
+confirmed the signed-out navigation contains Tickets, Login and Register only.
+No new deployment, commit or push was made.

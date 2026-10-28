@@ -114,3 +114,82 @@ Search targets titles only; wildcard characters are literal. Case behavior comes
 from the database collation, not frontend `toLowerCase()`. Runtime validation of
 the envelope/items precedes mapping. Authentication and Organization membership
 are checked by the server on every read, regardless of hidden buttons.
+
+
+## Organization and session flow — 27 October 2026
+
+This is the design for the next UI increment. Organization/Ticket HTTP adapters
+and their runtime guards are implemented; the screen controller and protected
+routes are not implemented by this checkpoint. The public mock view stays separate.
+
+A library analogy: a person can be a librarian at one library and a reader at
+another. The selected library's membership determines the controls; a global user
+role or a library ID typed in the URL cannot establish permission.
+
+| Event | Required controller behavior |
+| --- | --- |
+| No verified session | Public mock view remains available; private routes require login and a validated internal return destination |
+| Successful login | Keep token in memory; advance session generation, clear previous private state and load Organizations |
+| Organization list | Separate loading, failed and genuinely empty results; paginate using server total; use the returned own_membership role, never a client-selected role |
+| No memberships | Offer Organization creation; send name only; accept the 201 Organization/owner-membership pair supplied by the API |
+| Select Organization | Use matching active membership context from the list/create response; GET Organization detail alone has no membership role; do not load Tickets for a suspended Organization |
+| Change Organization | Abort prior reads, advance scope generation, clear private rows/detail/filters and reset offset before fetching the new scope |
+| Change Ticket filters/search | Reset offset; serialize server query once and replace the list only for the newest request; do not filter the returned page again |
+| Sign out / protected HTTP 401 / inactive current user | Invalidate pending requests and clear token, Organization, role, private rows/detail and filters; return to Login |
+| HTTP 403 | Remove inaccessible Organization data, refresh membership context and show access feedback; do not treat every 403 as global logout |
+| Detail HTTP 404 | Show an unavailable detail without disclosing another tenant; return to the authorized list |
+| Network / 5xx / malformed response | Show a retryable error, preserve a still-valid session, and never replace failure with an empty-success result or display data from a previous scope |
+
+Before applying a response, compare session generation, Organization ID and request
+generation with the active controller state. Abort helps release work, but is not
+by itself the complete UI race guard. The new HTTP helper rejects responses whose
+signal was aborted; controller race tests remain part of UI integration.
+
+Organization creation is not automatically retried. A cancelled/lost response
+may follow a committed write; preserve input and explain uncertain completion
+rather than promising rollback. Refresh the Organization list before retrying.
+The backend remains authoritative for all access and role checks.
+
+Runtime guards validate safe numeric IDs, exact roles/statuses/priorities,
+Organization/membership pairing, calendar timestamps and collection counts.
+Returned Ticket scope and pagination must match the request. Unsafe JavaScript
+integers are rejected rather than rounded into a resource lookup; supporting the
+full PostgreSQL bigint range would need a coordinated string-ID wire contract.
+Search text is encoded once and is not lowercased or Unicode-normalized in the
+HTTP layer. Empty string is omitted; other whitespace is preserved for the
+backend's own normalization rule.
+
+Verification: 209 frontend tests across 11 files, build and lint passed on
+27 October; 68 new cases cover these API boundaries. The focused backend
+query/service/API suite also passed all 77 cases. The unchanged PostgreSQL suite
+retains its 26 October evidence (178 passed); hosted collation and end-to-end
+Organization selection remain unverified here.
+
+
+## Organization/session implementation checkpoint — 27 October 2026
+
+The design above was implemented in the subsequent tasks 4–6. Organization and
+Ticket screens now call the validated HTTP adapters. Hash routes keep reloads
+compatible with the existing same-origin host without a new router dependency:
+`#/organizations`, `#/organizations/{id}/tickets`, and
+`#/organizations/{id}/tickets/{ticketId}`. Only recognized internal patterns are
+accepted. The guard renders Login at the requested address and resumes the same
+route after verified login; it does not accept a free-form return URL.
+
+App's session epoch and Organization component key isolate private state. Each
+resource loader identity represents the current query/scope; old results are
+hidden immediately when that identity changes. Effect cleanup both aborts and
+invalidates the request closure. This implements response ownership without
+placing tokens or private results in browser storage.
+
+Organization detail alone has no role, so direct addresses resolve membership
+through the paginated Organization list until a match or the end. This is correct
+for the current API; many memberships can add lookup latency. Future optimization
+should use a reviewed context endpoint rather than trusting a client role. A new
+Organization may have an empty Ticket list because the Ticket creation UI is a
+separate feature. The public mock view remains explicitly labelled.
+
+Final evidence: 231 frontend tests / 12 files, build and lint passed. Tests use
+synthetic HTTP responses through real adapters; signed-out guard/reload behavior
+was also checked in the in-app browser. No authenticated live-database browser
+check or hosted deployment is established by this entry.

@@ -6,7 +6,7 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 26 October 2026
+## Current checkpoint — 27 October 2026
 
 **Week 16, Month 04: completing real integration and the frontend MVP.**
 The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) has
@@ -16,8 +16,11 @@ The provider deployment pause was resolved on 25 October; a provider migration
 is no longer needed for that blocker.
 
 The original Month 04 MVP is **not complete**. Ticket list/detail/search are now
-implemented and tested locally in the Week 16 backend. Real UI integration,
-comments, role-dependent actions and the full UI pass remain open. The revised
+implemented and tested locally in the Week 16 backend. Organization selection/creation, protected hash routes and real Ticket list/detail
+loading are now implemented locally with validated HTTP adapters. Comments,
+role-dependent mutations and the full UI pass remain open. Final frontend checks
+on 27 October passed 233 tests, build and lint; authenticated database/browser
+and hosted verification remain pending. The public preview above is unchanged. The revised
 Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
 42 focused hours plus up to 8 hours of contingency, with explicit completion gates.
 

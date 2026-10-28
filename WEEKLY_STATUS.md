@@ -1,27 +1,27 @@
 # Weekly Status
 
-## Current checkpoint — 28 October 2026, Wednesday close
+## Current checkpoint — 29 October 2026, closing the 28 October release
 
-Yesterday's branches are pushed (`0b28946` product, `20e26d2` bootcamp); both product
-CI workflows passed at that head. Neither branch has a PR. The local PostgreSQL
-browser flow now verifies login, Organization creation/selection, real Ticket
-list/detail, search/filter/pagination, scope change, reload and logout. API checks
-confirm anonymous and cross-Organization denial. See the [Week 16 report](weekly-reports/week-16.md#28-october--wednesday-tasks-13-real-flow-review).
+[OpsDesk PR #47](https://github.com/ozdemirr1/opsdesk/pull/47) and
+[bootcamp PR #11](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/11) merged
+normally. Product runtime `2013248` passed both CI workflows and deployed on
+Railway from `main`; its pre-deploy migrated the hosted schema to `84c2f9a17d60`.
+The last verified development schema is still `31be9023cfb2`.
 
-The local root shows Login before authentication; fixture Tickets are removed
-from product navigation. Account/Workspaces replace authenticated Login/Register.
-Registration has password guidance and a login link after success. Verification:
-234 frontend tests / 12 files, build and lint passed. Today's changes are local,
-uncommitted and not deployed; yesterday's CI is not evidence for these edits.
+Hosted browser smoke on 29 October passed register, login, workspace creation and
+selection, real Ticket list/detail, combined search/status filter, session check,
+private-detail reload/login return and logout. Anonymous root shows Login; private
+API requests without a token return 401. Two synthetic Tickets were created by API
+because Ticket creation UI is not implemented. No existing data was deleted.
 
-Hosted synthetic registration, browser login/session check/sign-out and readiness
-work, but the hosted interface remains the earlier mock preview without Workspaces.
-Comment schema/model and scoped repository are now implemented. Source/test head
-is `84c2f9a17d60`; development/hosted were not migrated. Backend verification:
-589 non-integration, 204 PostgreSQL data and 5 schema tests passed; Ruff passed.
-Wednesday’s scheduled implementation is complete locally. Comment service/API,
-locking and form remain Thursday work. Publication/deployment of the private
-flow, role mutations and the full UI pass remain open. No daily file was added.
+28 October test evidence remains: 234 frontend tests, build/lint; 589 backend
+non-integration, 204 PostgreSQL data and 5 schema tests; Ruff passed. This closure
+adds hosted smoke, not a new run of all suites. See the
+[release record](weekly-reports/week-16.md#29-october--release-verification-closing-the-28-october-work).
+
+The 28 October publication/check gate is closed. Comment service/API/form,
+cooperating locks, role mutations and the full Month 04 UI/learning gates remain.
+No separate daily report was introduced.
 
 ## Earlier checkpoint — 27 October 2026, Tuesday close
 

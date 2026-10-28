@@ -6,28 +6,25 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 28 October 2026
+## Current checkpoint — 29 October 2026
 
 **Week 16, Month 04: completing real integration and the frontend MVP.**
-The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) has
-working registration/login/session checks and a mock Ticket dashboard with a table,
-search, status filters and details. That hosted screen still uses fixtures; the local Week 16 UI reads the real API.
-The provider deployment pause was resolved on 25 October; a provider migration
-is no longer needed for that blocker.
+The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) now
+requires login for Workspaces and reads real Organization/Ticket data. Registration,
+login, workspace creation/selection, Ticket list/detail, search/filter, reload and
+logout passed hosted smoke on 29 October, closing the interrupted 28 October work.
+A new workspace starts empty; Ticket creation UI is still pending.
 
-The original Month 04 MVP is **not complete**. Ticket list/detail/search are now
-implemented and tested locally in the Week 16 backend. Organization selection/creation, protected hash routes and real Ticket list/detail
-loading are now implemented locally with validated HTTP adapters. Comment
-schema/model and scoped repository are verified; its service/API/form,
-role-dependent mutations and the full UI pass remain open. The 28 October real-PostgreSQL browser walkthrough passed. The local root now
-requires login; the mock dashboard is removed from product navigation. Frontend
-234 tests, build and lint passed. Wednesday’s backend checks passed 589
-non-integration, 204 data-integration and 5 schema tests; Ruff passed. Only the
-guarded test database received the Comment migration. Yesterday’s two branches are pushed and OpsDesk
-CI passed at `0b28946`; neither branch has a PR yet. Today’s corrections remain
-uncommitted and hosted private-flow verification is still pending. The revised
-Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
-42 focused hours plus up to 8 hours of contingency, with explicit completion gates.
+Product PR #47 merged as `2013248`, bootcamp PR #11 as `e94c0a9`. Product CI passed
+and Railway deployed successfully from `main`, including Comment storage migration
+`84c2f9a17d60`. The Comment service/API/form, role-dependent mutations and full UI
+pass remain open: **the original Month 04 MVP is not complete**.
+
+28 October results: 234 frontend tests plus build/lint; 589 backend non-integration,
+204 PostgreSQL data and 5 schema tests; Ruff passed. These retain their execution
+date. The 29 October closure adds hosted smoke, not a fresh full-suite run.
+The revised Week 16 plan targets all original Month 04 outcomes on 26 October–1
+November: 42 focused hours plus up to 8 contingency hours and explicit gates.
 
 - [Current status and evidence limits](WEEKLY_STATUS.md)
 - [Week 15 plan](weekly-reports/week-15-plan.md) and [report](weekly-reports/week-15.md)
@@ -48,14 +45,14 @@ their opening summaries distinguish final outcomes from earlier pending work.
 | Month 01 · Weeks 01–04 | Git/terminal, Python, HTTP/REST, CLI exercises and basic tests | [01](weekly-reports/week-01.md), [02](weekly-reports/week-02.md), [03](weekly-reports/week-03.md), [04](weekly-reports/week-04.md) | [Month 01 review](weekly-reports/week-04.md#month-1-review) is inside Week 04 |
 | Month 02 · Weeks 05–08 | FastAPI, PostgreSQL, SQLAlchemy/Alembic, authentication and authorization in the learning API | [05](weekly-reports/week-05.md), [06](weekly-reports/week-06.md), [07](weekly-reports/week-07.md), [08](weekly-reports/week-08.md) | [Month 02 review](monthly-reports/month-02.md); original CI/deployment targets carried forward |
 | Month 03 · Weeks 09–12 | Separate OpsDesk product: design, architecture, CI/errors, schema, identity, Organization reads and Ticket creation | [09](weekly-reports/week-09.md), [10](weekly-reports/week-10.md), [11](weekly-reports/week-11.md), [12](weekly-reports/week-12.md) | [Month 03 retrospective](monthly-reports/month-03.md); workflow/comments and full backend release remained open |
-| Month 04 · Weeks 13–16 | React/TypeScript, live identity integration, deployment and mock dashboard | [13](weekly-reports/week-13.md), [14](weekly-reports/week-14.md), [15](weekly-reports/week-15.md), [16 plan](weekly-reports/week-16-plan.md) | In progress; [dependency and schedule correction](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over) |
+| Month 04 · Weeks 13–16 | React/TypeScript, live identity/workspace integration, real Ticket reads and Comment storage | [13](weekly-reports/week-13.md), [14](weekly-reports/week-14.md), [15](weekly-reports/week-15.md), [16 plan](weekly-reports/week-16-plan.md) | In progress; [dependency and schedule correction](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over) |
 
 Week 01 records its focus and outcomes in one report; Weeks 02–15 have separate
 plan/report files in `weekly-reports/`. Week 16 now has its plan and an in-progress
 report: Monday baseline, contract, backend read implementation, database tests
 and Railway usage review are recorded. The new backend is published through
 [OpsDesk PR #46](https://github.com/ozdemirr1/opsdesk/pull/46); the live dashboard
-still uses labelled mock Tickets on the previously deployed source. Future work is not presented as completed evidence. The Month 04 retrospective is due at its
+now uses the protected real-data flow deployed through PR #47. Future work is not presented as completed evidence. The Month 04 retrospective is due at its
 1 November handoff, not fabricated in advance. Test counts demonstrate specific
 checks; learner explanations and independent exercises remain separate evidence.
 
@@ -63,7 +60,7 @@ checks; learner explanations and independent exercises remain separate evidence.
 
 | Project | Current state | Planned direction |
 | --- | --- | --- |
-| [OpsDesk](https://github.com/ozdemirr1/opsdesk) | Active product since Week 09; live identity flow and mock Ticket dashboard | Support-ticket workflow, comments and UI integration; AI summaries/priority/category suggestions in Month 06 |
+| [OpsDesk](https://github.com/ozdemirr1/opsdesk) | Active product since Week 09; live identity/workspace flow and real Ticket reads | Support-ticket workflow, comments and UI integration; AI summaries/priority/category suggestions in Month 06 |
 | DocuMind | Planned; no completed product claimed | Document upload, embeddings, pgvector retrieval and grounded answers in Months 07–08 |
 | HireMatch AI | Planned; no completed product claimed | CV/job matching with validated structured output in Month 09 |
 

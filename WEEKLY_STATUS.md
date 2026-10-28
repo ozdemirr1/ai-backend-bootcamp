@@ -1,6 +1,29 @@
 # Weekly Status
 
-## Current checkpoint — 27 October 2026, Tuesday close
+## Current checkpoint — 28 October 2026, Wednesday close
+
+Yesterday's branches are pushed (`0b28946` product, `20e26d2` bootcamp); both product
+CI workflows passed at that head. Neither branch has a PR. The local PostgreSQL
+browser flow now verifies login, Organization creation/selection, real Ticket
+list/detail, search/filter/pagination, scope change, reload and logout. API checks
+confirm anonymous and cross-Organization denial. See the [Week 16 report](weekly-reports/week-16.md#28-october--wednesday-tasks-13-real-flow-review).
+
+The local root shows Login before authentication; fixture Tickets are removed
+from product navigation. Account/Workspaces replace authenticated Login/Register.
+Registration has password guidance and a login link after success. Verification:
+234 frontend tests / 12 files, build and lint passed. Today's changes are local,
+uncommitted and not deployed; yesterday's CI is not evidence for these edits.
+
+Hosted synthetic registration, browser login/session check/sign-out and readiness
+work, but the hosted interface remains the earlier mock preview without Workspaces.
+Comment schema/model and scoped repository are now implemented. Source/test head
+is `84c2f9a17d60`; development/hosted were not migrated. Backend verification:
+589 non-integration, 204 PostgreSQL data and 5 schema tests passed; Ruff passed.
+Wednesday’s scheduled implementation is complete locally. Comment service/API,
+locking and form remain Thursday work. Publication/deployment of the private
+flow, role mutations and the full UI pass remain open. No daily file was added.
+
+## Earlier checkpoint — 27 October 2026, Tuesday close
 
 Tuesday tasks 4–6 are complete as local implementation and automated verification.
 The Workspaces screen lists current memberships, displays Organization-specific

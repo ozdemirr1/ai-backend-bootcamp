@@ -283,3 +283,102 @@ transient alert; it now waits for the final access-denied view. Final verificati
 233 frontend tests / 12 files, build and lint passed. In-app browser inspection
 confirmed the signed-out navigation contains Tickets, Login and Register only.
 No new deployment, commit or push was made.
+
+## 28 October — Wednesday tasks 1–3: real-flow review
+
+### Publication and hosted boundary
+
+Yesterday's pushes are present on `feature/week-16-api-boundaries`: OpsDesk
+`0b28946` and bootcamp `20e26d2`. Neither branch has a PR at this check.
+[Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40679546209) and
+[Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/40679546235)
+succeeded at exactly `0b28946`; these runs do not cover today's uncommitted changes.
+No bootcamp workflow run was returned. No merge, push or deployment was performed
+during this review.
+
+The hosted preview still exposes the older public mock dashboard and has no
+Workspaces navigation after login. A synthetic account was created through the
+hosted API, then browser login, session check and sign-out succeeded. Readiness
+returned 200, anonymous Organization access and a wrong password returned 401.
+This proves the deployed identity flow, not deployment of the new private UI.
+The exact currently deployed SHA was not independently retrieved today.
+
+### Actual local PostgreSQL walkthrough
+
+The local API used `opsdesk_product_dev` with the application role; the frontend
+used its `/api` proxy. Two new synthetic local users, three Organizations and 22
+Tickets were created through APIs/UI; no existing records were deleted and no
+destructive test suite targeted development or the hosted demo. One Organization
+was created in the browser. Credentials were temporary and outside Git; no real
+customer data was used. Account registration was checked through the API, not
+claimed as a completed browser registration walkthrough.
+
+- Browser: login, create/select Organization, real table/detail, 20+1 pagination,
+  literal `100%_search` plus open-status filter, no-match and clear filters,
+  Organization switch to an empty workspace, detail reload/login return and logout.
+- API: anonymous list/detail 401, another user's Organization list/detail 403,
+  foreign Ticket ID under an owned Organization 404, invalid limit 422,
+  non-overlapping page results, literal wildcard search and empty/status results.
+- Role/grant changes, inactive Organizations and out-of-order responses remain
+  automated test evidence; they were not simulated by changing live accounts.
+
+### Corrections and verification
+
+The root now shows Login when signed out and Workspaces when signed in. Fixture
+Tickets remain isolated learning/test components and are no longer mounted by App.
+Authenticated navigation uses Workspaces/Account; Login/Register are anonymous
+controls. Private deep links retain their login return destination. Registration
+success offers Continue to login; password-length guidance and the tab-only session
+rule are visible. Backend authorization and in-memory token handling are unchanged.
+
+Frontend: **234 tests / 12 files passed**, build and lint passed. Obsolete public
+fixture App scenarios were replaced by entry/registration/navigation cases and
+real-dashboard reset checks for logout, 401 and inactive profiles; fixture component
+tests remain. The first build caught an unsupported test-selector option; it was
+removed and build passed. The backend suites were not rerun wholesale for this
+frontend-only change; the real API smoke above is separate evidence.
+
+Remaining gates: publish the reviewed changes, verify CI at the new commit, then
+merge/deploy the intended source and repeat hosted Workspaces/Ticket checks.
+A new workspace still has no Ticket creation form in this slice. Comments,
+role-aware mutations and the full Month 04 UI package remain planned. Today's
+requested first three tasks do not mark the whole Wednesday plan complete.
+
+
+## 28 October — Wednesday close: Comment persistence foundation
+
+Wednesday's scheduled implementation is complete locally: the real-data walkthrough
+above and the Comment schema/model/scoped repository. This is not completion of
+F14 or the full Month 04 MVP. No Comment HTTP endpoint or form is wired yet.
+
+- Revision `84c2f9a17d60` follows `31be9023cfb2`, adding Comment identity, content,
+  creation time and composite Organization/Ticket/author-membership foreign keys.
+  The storage CHECK bounds content to 1..10000 code points. Parent deletion is
+  restricted; deactivating an author preserves historical attribution.
+- The scoped reader reuses Ticket visibility: active User/membership/Organization,
+  customer-owned Tickets or staff visibility. Access, parent visibility, total and
+  ordered page come from one SQL statement. A hidden parent is distinguished from
+  a visible Ticket with no comments; ordering is `created_at, comment_id` ascending.
+- The insert primitive flushes without committing. Its future service must derive
+  the author, normalize/validate content, acquire cooperating locks, recheck access
+  and reject posting to closed Tickets. Database tenant FKs do not implement those
+  application rules. No edit/delete repository operation was added.
+- Guarded cleanup now deletes Comments before Tickets and checks the new head.
+  Predecessor upgrade/downgrade cycles preserve existing identity/Ticket rows and
+  restore the head even after an injected test failure. Alembic metadata check
+  reports no drift. Destructive verification used only `opsdesk_product_test`.
+
+Fresh 28 October results: **589 backend non-integration tests passed** (209 database
+cases deselected); **204 PostgreSQL data tests and 5 schema tests passed** in one
+209-case run. Ruff lint and format passed. The frontend result remains **234 tests
+across 12 files**, with build and lint passed. These are separate test groups.
+
+Only the test database was migrated to `84c2f9a17d60`. The development database
+used for the browser walkthrough remains at `31be9023cfb2`; no hosted migration,
+deployment, commit or push was performed. Yesterday's CI covers `0b28946`, not
+these uncommitted changes. No new dependency or daily report file was introduced.
+
+Thursday 29 October: finish Comment service/API authorization, content rules,
+posting/closing contention and rollback tests, then CommentForm/list integration
+and the scheduled priority boundary. Publication needs review and new-commit CI;
+hosted private-workspace verification and Month 04 learning/handoff gates remain.

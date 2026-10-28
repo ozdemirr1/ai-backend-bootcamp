@@ -6,21 +6,26 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 27 October 2026
+## Current checkpoint — 28 October 2026
 
 **Week 16, Month 04: completing real integration and the frontend MVP.**
 The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) has
 working registration/login/session checks and a mock Ticket dashboard with a table,
-search, status filters and details. Tickets are not yet read from the real API.
+search, status filters and details. That hosted screen still uses fixtures; the local Week 16 UI reads the real API.
 The provider deployment pause was resolved on 25 October; a provider migration
 is no longer needed for that blocker.
 
 The original Month 04 MVP is **not complete**. Ticket list/detail/search are now
 implemented and tested locally in the Week 16 backend. Organization selection/creation, protected hash routes and real Ticket list/detail
-loading are now implemented locally with validated HTTP adapters. Comments,
-role-dependent mutations and the full UI pass remain open. Final frontend checks
-on 27 October passed 233 tests, build and lint; authenticated database/browser
-and hosted verification remain pending. The public preview above is unchanged. The revised
+loading are now implemented locally with validated HTTP adapters. Comment
+schema/model and scoped repository are verified; its service/API/form,
+role-dependent mutations and the full UI pass remain open. The 28 October real-PostgreSQL browser walkthrough passed. The local root now
+requires login; the mock dashboard is removed from product navigation. Frontend
+234 tests, build and lint passed. Wednesday’s backend checks passed 589
+non-integration, 204 data-integration and 5 schema tests; Ruff passed. Only the
+guarded test database received the Comment migration. Yesterday’s two branches are pushed and OpsDesk
+CI passed at `0b28946`; neither branch has a PR yet. Today’s corrections remain
+uncommitted and hosted private-flow verification is still pending. The revised
 Week 16 plan targets all original Month 04 outcomes on 26 October–1 November:
 42 focused hours plus up to 8 hours of contingency, with explicit completion gates.
 

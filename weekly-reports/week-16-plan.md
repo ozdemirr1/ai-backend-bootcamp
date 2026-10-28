@@ -44,13 +44,24 @@ server filters/pagination now use the validated adapters. Frontend 231 tests /
 12 files, build and lint passed. Authenticated database/browser smoke, publication
 and hosted release verification remain pending; the month is not complete.
 
+28 October progress: requested tasks 1–3 are complete locally with actual PostgreSQL
+browser/API evidence and corrected anonymous navigation. Frontend 234 tests, build
+and lint passed. Yesterday’s pushes/CI are verified; PRs and hosted private UI
+release remain open. See the existing weekly report; this was the first checkpoint.
+
+28 October close: the scheduled Comment migration/model/scoped repository is also
+implemented. Source/test head is `84c2f9a17d60`; development/hosted remain unchanged.
+589 backend non-integration, 204 PostgreSQL data and 5 schema tests passed, with
+Ruff checks. Wednesday’s local implementation is complete; Thursday’s Comment
+service/API/locking/form and the remaining weekly gates are still pending.
+
 ## Original Month 04 outcomes and completion evidence
 
 | Original outcome | Week 16 completion requirement |
 | --- | --- |
 | Components, props, state, events, conditional/list rendering, form handling | Retain Week 13 evidence; learner explains and applies these concepts to Organization selection, CommentForm and TicketDetail without skipping review |
 | Fetch/API service layer, token handling | Real Organization/Ticket/Comment requests through typed adapters and runtime guards; tokens remain in memory, no refresh-token or localStorage expansion |
-| Protected route | Real dashboard/detail URLs require a verified session; reload/direct navigation leads to login and a safe in-app return target; mock preview is separately labelled and public |
+| Protected route | Real dashboard/detail URLs require a verified session; reload/direct navigation leads to login and a safe in-app return target; root shows Login before authentication; fixture components stay outside product navigation (28 October refinement) |
 | Loading/error state and form validation | Registration/login, Organization/Ticket creation, reads, comments and priority mutation have explicit loading, validation, error and success handling |
 | Ticket table and real API list | Authenticated Organization context, scoped paginated records, deterministic ordering and consistent count; no fixtures in the real dashboard |
 | Filter and search | Combined status filter and reviewed server-side title search across the caller's visible records; reset page when inputs change; no claim that searching one page searches all records |

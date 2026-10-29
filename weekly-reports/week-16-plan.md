@@ -254,3 +254,11 @@ Learner review questions:
 Keep the current Month 04 conversation until the completion gates and retrospective
 are finished, then start Month 05 with its focused handoff. No Month 05/06
 implementation or claimed completion is created by this planning change.
+
+
+### 29 October checkpoint — requested tasks 1–3
+
+Comment service authorization, POST/GET API and authorization/rollback/concurrency
+tests are complete locally. Verification: 702 non-integration and 237 PostgreSQL
+data tests passed, plus Ruff. CommentForm/list, priority API/service and the other
+Month 04 gates remain open. Publication is pending; see the existing Week 16 report.

@@ -1,6 +1,15 @@
 # Weekly Status
 
-## Current checkpoint — 29 October 2026, closing the 28 October release
+## Current checkpoint — 29 October 2026, Comment API tasks 1–3
+
+Comment service authorization, GET/POST routes, content validation, rollback and
+real PostgreSQL contention tests are implemented locally in OpsDesk. Fresh results:
+702 backend non-integration and 237 PostgreSQL data tests passed; Ruff passed.
+Schema/frontend checks retain their 28 October results. No commit/push/deployment
+was performed for this increment; CommentForm/list and priority work remain open.
+See the [task evidence](weekly-reports/week-16.md#29-october--comment-service-and-api-tasks-13).
+
+## Earlier checkpoint — 29 October 2026, closing the 28 October release
 
 [OpsDesk PR #47](https://github.com/ozdemirr1/opsdesk/pull/47) and
 [bootcamp PR #11](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/11) merged

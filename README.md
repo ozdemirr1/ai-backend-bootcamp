@@ -17,12 +17,13 @@ A new workspace starts empty; Ticket creation UI is still pending.
 
 Product PR #47 merged as `2013248`, bootcamp PR #11 as `e94c0a9`. Product CI passed
 and Railway deployed successfully from `main`, including Comment storage migration
-`84c2f9a17d60`. The Comment service/API/form, role-dependent mutations and full UI
-pass remain open: **the original Month 04 MVP is not complete**.
+`84c2f9a17d60`. Comment service/GET/POST API and authorization/concurrency tests were then
+implemented locally on 29 October. Publication, CommentForm/list, role-dependent
+mutations and the full UI pass remain open: **the original Month 04 MVP is not complete**.
 
-28 October results: 234 frontend tests plus build/lint; 589 backend non-integration,
-204 PostgreSQL data and 5 schema tests; Ruff passed. These retain their execution
-date. The 29 October closure adds hosted smoke, not a fresh full-suite run.
+29 October local backend results: 702 non-integration and 237 PostgreSQL data
+tests; Ruff passed. The 234 frontend tests/build/lint and 5 schema tests retain
+their 28 October results. The new Comment API is uncommitted and not deployed.
 The revised Week 16 plan targets all original Month 04 outcomes on 26 October–1
 November: 42 focused hours plus up to 8 contingency hours and explicit gates.
 

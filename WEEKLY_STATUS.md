@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 29 October 2026, Comment API tasks 1–3
+## Current checkpoint — 30 October 2026, Thursday tasks 4–6
+
+CommentForm/list is connected to real Ticket detail; role/state-guarded priority
+PUT is implemented in the backend. Fresh results: 740 non-integration, 281
+PostgreSQL data integration and 278 frontend tests / 14 files; build/lint/Ruff pass.
+The first three Thursday tasks were pushed as product `7a3bb04` and bootcamp
+`98f4cda`; this continuation is local and uncommitted. No new release is claimed.
+Friday priority UI, Tailwind/responsive shell and remaining Month 04 gates are open.
+See the existing Week 16 report for verification limits and the Thursday closure.
+
+## Earlier checkpoint — 29 October 2026, Comment API tasks 1–3
 
 Comment service authorization, GET/POST routes, content validation, rollback and
 real PostgreSQL contention tests are implemented locally in OpsDesk. Fresh results:

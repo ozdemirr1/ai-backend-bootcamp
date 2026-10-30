@@ -6,7 +6,7 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 29 October 2026
+## Current checkpoint — 30 October 2026
 
 **Week 16, Month 04: completing real integration and the frontend MVP.**
 The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) now
@@ -18,12 +18,13 @@ A new workspace starts empty; Ticket creation UI is still pending.
 Product PR #47 merged as `2013248`, bootcamp PR #11 as `e94c0a9`. Product CI passed
 and Railway deployed successfully from `main`, including Comment storage migration
 `84c2f9a17d60`. Comment service/GET/POST API and authorization/concurrency tests were then
-implemented locally on 29 October. Publication, CommentForm/list, role-dependent
-mutations and the full UI pass remain open: **the original Month 04 MVP is not complete**.
+implemented locally on 29 October. On 30 October, CommentForm/list and the priority backend subset were completed
+locally. Publication, priority UI and the full visual pass remain open: **the original Month 04 MVP is not complete**.
 
-29 October local backend results: 702 non-integration and 237 PostgreSQL data
-tests; Ruff passed. The 234 frontend tests/build/lint and 5 schema tests retain
-their 28 October results. The new Comment API is uncommitted and not deployed.
+30 October results: 740 backend non-integration, 281 PostgreSQL data and 278
+frontend tests across 14 files; build/lint/Ruff passed. The 5 schema tests retain
+their 28 October results. Comment API commits were pushed to the feature branch;
+the UI/priority continuation is uncommitted and not deployed.
 The revised Week 16 plan targets all original Month 04 outcomes on 26 October–1
 November: 42 focused hours plus up to 8 contingency hours and explicit gates.
 

@@ -262,3 +262,13 @@ Comment service authorization, POST/GET API and authorization/rollback/concurren
 tests are complete locally. Verification: 702 non-integration and 237 PostgreSQL
 data tests passed, plus Ruff. CommentForm/list, priority API/service and the other
 Month 04 gates remain open. Publication is pending; see the existing Week 16 report.
+
+
+### 30 October checkpoint — Thursday tasks 4–6 completed
+
+CommentForm/list, priority backend subset and their verification are complete
+locally. The work occurred on 30 October; Friday priority UI/Tailwind/responsive
+shell work remains pending. Evidence: 740 backend non-integration, 281 PostgreSQL
+data tests and 278 frontend tests / 14 files; build/lint/Ruff passed. First-three-task
+commits are on the feature branch; this continuation is uncommitted. The weekly
+release/learning gates remain open; no completed hours are inferred from estimates.

@@ -1,14 +1,17 @@
 # Weekly Status
 
-## Current checkpoint — 30 October 2026, Thursday tasks 4–6
+## Current checkpoint — 31 October 2026, Friday tasks 4–6 completed
 
-CommentForm/list is connected to real Ticket detail; role/state-guarded priority
-PUT is implemented in the backend. Fresh results: 740 non-integration, 281
-PostgreSQL data integration and 278 frontend tests / 14 files; build/lint/Ruff pass.
-The first three Thursday tasks were pushed as product `7a3bb04` and bootcamp
-`98f4cda`; this continuation is local and uncommitted. No new release is claimed.
-Friday priority UI, Tailwind/responsive shell and remaining Month 04 gates are open.
-See the existing Week 16 report for verification limits and the Thursday closure.
+The 30 October package is complete locally: priority UI, Tailwind shared styles,
+responsive sidebar/auth screens and layout verification. Frontend: 311 tests /
+16 files passed on 30 October; final build/lint and desktop/narrow visual checks
+finished on 31 October. Private-screen visual checks used synthetic API responses.
+Earlier backend results remain 740 non-integration and 281 PostgreSQL data tests.
+
+All Friday changes remain uncommitted. Prior product `acb5a57` passed CI; no new
+PR/deployment is claimed. Existing dev-dependency audit findings are documented
+in the weekly report. Next: the scheduled Saturday Ticket creation modal, toast,
+empty-state/accessibility work, then final integrated release gates.
 
 ## Earlier checkpoint — 29 October 2026, Comment API tasks 1–3
 

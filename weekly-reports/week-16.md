@@ -505,3 +505,71 @@ Thursday's requested implementation is complete locally. The next Friday package
 still includes the role-aware priority UI, Tailwind primitives and responsive
 shell/sidebar. Ticket creation UI and remaining Month 04 gates also stay open.
 No publish, paid service change, new migration or separate daily report was made.
+
+
+## 30 October — Friday tasks 1–3: priority control
+
+- GitHub review: product `acb5a57` has successful [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41082922607)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41082922744).
+  Neither repository has a PR for `feature/week-16-comment-api`; the bootcamp
+  branch has no workflow runs. Thursday's continuation is pushed as product
+  `acb5a57` and bootcamp `25f3a23`.
+- Real Ticket detail now exposes the priority form only to agent/admin/owner,
+  using API membership context. Resolved/closed Tickets cannot be changed;
+  backend authorization remains authoritative. PUT responses are checked for
+  matching organization, Ticket, priority, state and valid response structure.
+- Pending submissions prevent duplicate sends. Successful responses update the
+  detail without discarding a comment draft; an authorized no-op reports unchanged
+  priority. Unauthorized/missing resources clear private content. Uncertain writes
+  and state conflicts require an explicit refresh before another attempt.
+- Ticket, organization and session changes abort pending writes and ignore late
+  responses. Tests cover role/state visibility, successful/no-op writes, error
+  handling, malformed responses, duplicate prevention and scope cleanup.
+- Fresh frontend verification: **309 tests across 15 files**, build and lint pass.
+  Tests use the real App/adapters with synthetic HTTP responses. Earlier 30 October
+  backend evidence remains 740 non-integration and 281 PostgreSQL data tests; no
+  backend/schema change or rerun was needed. Schema evidence remains 5 tests from
+  28 October. No new manual browser or hosted smoke is claimed.
+
+These Friday changes are local and uncommitted; the successful CI above applies
+only to `acb5a57`. Review/publication, Tailwind/responsive shell, Ticket creation UI
+and the remaining Month 04 acceptance gates are still pending.
+
+
+## 31 October — completion of Friday 30 October tasks 4–6
+
+- Added Tailwind CSS 4.3.3 and its Vite plugin using the
+  [official Vite integration](https://tailwindcss.com/docs/installation/using-vite).
+  Shared theme tokens cover colors, typography and radii; base styles unify
+  buttons, fields, focus and disabled/error states. Semantic component styles
+  remain in App.css. Explicit source scanning and static tokens keep utilities
+  and CSS variable consumers consistent.
+- AppShell separates public login/register presentation from authenticated
+  navigation. Desktop uses a sidebar; narrow screens use a compact top navigation.
+  The same controls remain available without a modal or hidden navigation state.
+  No session persistence, role rules or API contracts changed.
+- Workspace cards, Ticket filters/table/detail, priority controls and comments
+  share spacing and surfaces. Tables scroll within their labelled region;
+  long descriptions wrap. Keyboard users can skip to main content without
+  changing the hash route. Reduced-motion preferences are respected.
+- Verification: **311 frontend tests across 16 files passed on 30 October**,
+  including two new shell accessibility/session-cleanup tests; build and lint
+  passed. After the interrupted work resumed on 31 October, the final theme
+  adjustment passed build/lint again. Both repositories pass diff checks.
+- Browser checks covered login/register, workspace selection, Ticket table and
+  detail at desktop and narrow layouts. Observed narrow viewport widths included
+  355 and 433 CSS pixels; page scroll width matched viewport width while the
+  table retained its own horizontal scroll. Authenticated visual checks used
+  the real components in an isolated temporary harness with synthetic responses,
+  not the production API. The harness was stopped; no hosted smoke or deployment
+  is claimed. Existing behavior tests cover permissions and request cancellation.
+- Installation initially failed certificate validation; using the system CA
+  bundle resolved it without disabling TLS verification. npm audit reports four
+  existing development-dependency findings (two moderate, two high): Vitest /
+  @vitest/mocker, undici and zod. Their versions are unchanged from HEAD;
+  dependency remediation remains a separate follow-up, not a clean-audit claim.
+
+Friday's six requested implementation tasks are complete locally. All Friday
+changes remain uncommitted; CI evidence above still belongs to `acb5a57`.
+Ticket creation modal, toast, fuller empty states/accessibility, final integrated
+release checks and publication remain Month 04 work. No new daily report was made.

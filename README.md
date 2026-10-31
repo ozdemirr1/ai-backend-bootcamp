@@ -19,12 +19,14 @@ Product PR #47 merged as `2013248`, bootcamp PR #11 as `e94c0a9`. Product CI pas
 and Railway deployed successfully from `main`, including Comment storage migration
 `84c2f9a17d60`. Comment service/GET/POST API and authorization/concurrency tests were then
 implemented locally on 29 October. On 30 October, CommentForm/list and the priority backend subset were completed
-locally. Publication, priority UI and the full visual pass remain open: **the original Month 04 MVP is not complete**.
+locally; Friday added the role-aware priority UI; its Tailwind/responsive layout was completed on 31 October. Publication and remaining UI gates stay open: **the original Month 04 MVP is not complete**.
 
-30 October results: 740 backend non-integration, 281 PostgreSQL data and 278
-frontend tests across 14 files; build/lint/Ruff passed. The 5 schema tests retain
-their 28 October results. Comment API commits were pushed to the feature branch;
-the UI/priority continuation is uncommitted and not deployed.
+30 October results: 740 backend non-integration, 281 PostgreSQL data and 311
+frontend tests across 16 files; build/lint/Ruff passed. The 5 schema tests retain
+their 28 October results. Product `acb5a57` and bootcamp `25f3a23` were pushed;
+product Backend/Frontend CI passed. Neither branch has a PR. Friday priority UI and responsive design
+changes remain local and uncommitted; final build/lint and visual checks finished
+on 31 October. No new deployment is claimed.
 The revised Week 16 plan targets all original Month 04 outcomes on 26 October–1
 November: 42 focused hours plus up to 8 contingency hours and explicit gates.
 

@@ -272,3 +272,24 @@ shell work remains pending. Evidence: 740 backend non-integration, 281 PostgreSQ
 data tests and 278 frontend tests / 14 files; build/lint/Ruff passed. First-three-task
 commits are on the feature branch; this continuation is uncommitted. The weekly
 release/learning gates remain open; no completed hours are inferred from estimates.
+
+
+### 30 October checkpoint — Friday tasks 1–3 completed
+
+PR/CI status checked; the priority control and its behavior tests are implemented
+locally. Frontend: 309 tests / 15 files, build and lint pass. Product `acb5a57`
+passed both CI workflows; neither repository has a PR for the current branch.
+Friday changes remain uncommitted. Tailwind/style primitives and responsive
+shell/sidebar are the next planned block; no broader Month 04 completion is claimed.
+
+
+### 31 October checkpoint — Friday tasks 4–6 completed
+
+The interrupted 30 October package is complete locally: Tailwind/common styles,
+responsive auth/sidebar/workspace/table/detail layouts and verification. 311 tests
+across 16 frontend files passed on 30 October; final build/lint and desktop/narrow
+visual checks finished on 31 October. Private views used synthetic responses for
+layout checks, not a hosted walkthrough. Friday changes remain uncommitted.
+Saturday's Ticket creation modal, toast and empty-state/accessibility tasks remain
+open; no complete Month 04 MVP or new release is claimed. Actual hours were not
+measured, so planned reserve consumption is not inferred.

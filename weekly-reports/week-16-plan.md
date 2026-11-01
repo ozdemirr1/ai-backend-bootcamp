@@ -293,3 +293,26 @@ layout checks, not a hosted walkthrough. Friday changes remain uncommitted.
 Saturday's Ticket creation modal, toast and empty-state/accessibility tasks remain
 open; no complete Month 04 MVP or new release is claimed. Actual hours were not
 measured, so planned reserve consumption is not inferred.
+
+
+### 31 October checkpoint — Saturday tasks 1–3 completed
+
+Ticket creation modal, existing POST integration, success notice and canonical
+detail navigation are implemented locally. Validation, duplicate prevention,
+request timeout/uncertain results, scope cleanup and focus behavior are covered.
+347 frontend tests / 17 files, build and lint pass. Browser checks used synthetic
+responses; hosted verification remains pending. Friday's changes are committed
+as `19dfaff`; today's increment is uncommitted. Remaining Saturday empty-state/
+accessibility review and final integrated release gates stay open. Actual hours
+were not measured; planned reserve consumption is not inferred.
+
+
+### 1 November checkpoint — Saturday tasks 4–6 completed
+
+Empty/loading/error states and recovery actions, bounded keyboard/responsive
+review, and frontend regression/weekly evidence are complete. 356 tests / 17
+files, build and lint passed on 1 November. Browser widths: 1280, 700 and 320 CSS
+pixels; synthetic responses were used. Saturday's implementation package is
+locally complete and uncommitted. Sunday's real persistence/cross-identity,
+PR/CI, release/recovery and retrospective gates above remain unchecked until
+separately evidenced. No actual-hour or deployment-success claim is inferred.

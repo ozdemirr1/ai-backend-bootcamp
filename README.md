@@ -6,27 +6,31 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 30 October 2026
+## Current checkpoint — 1 November 2026
 
 **Week 16, Month 04: completing real integration and the frontend MVP.**
 The [OpsDesk live preview](https://opsdesk-production-448f.up.railway.app/) now
 requires login for Workspaces and reads real Organization/Ticket data. Registration,
 login, workspace creation/selection, Ticket list/detail, search/filter, reload and
 logout passed hosted smoke on 29 October, closing the interrupted 28 October work.
-A new workspace starts empty; Ticket creation UI is still pending.
+A new workspace starts empty in the last verified hosted release. The local
+branch now includes a creation modal connected to the existing Ticket API, with
+validation, safe submission handling and success/detail navigation.
 
 Product PR #47 merged as `2013248`, bootcamp PR #11 as `e94c0a9`. Product CI passed
 and Railway deployed successfully from `main`, including Comment storage migration
 `84c2f9a17d60`. Comment service/GET/POST API and authorization/concurrency tests were then
 implemented locally on 29 October. On 30 October, CommentForm/list and the priority backend subset were completed
-locally; Friday added the role-aware priority UI; its Tailwind/responsive layout was completed on 31 October. Publication and remaining UI gates stay open: **the original Month 04 MVP is not complete**.
+locally; Friday added the role-aware priority UI; its Tailwind/responsive layout was completed on 31 October. Saturday empty/loading/error states and keyboard/responsive checks were completed on 1 November. Final release gates stay open: **the original Month 04 MVP is not complete**.
 
-30 October results: 740 backend non-integration, 281 PostgreSQL data and 311
-frontend tests across 16 files; build/lint/Ruff passed. The 5 schema tests retain
-their 28 October results. Product `acb5a57` and bootcamp `25f3a23` were pushed;
-product Backend/Frontend CI passed. Neither branch has a PR. Friday priority UI and responsive design
-changes remain local and uncommitted; final build/lint and visual checks finished
-on 31 October. No new deployment is claimed.
+1 November frontend results: 356 tests across 17 files, build and lint passed.
+Backend evidence remains 740 non-integration and 281 PostgreSQL data tests from
+30 October; the 5 schema tests retain their 28 October results. Product `acb5a57` and bootcamp `25f3a23` were pushed;
+product Backend/Frontend CI passed. Friday priority UI and responsive design are committed as product `19dfaff`,
+matching the local origin tracking ref. Saturday creation work is uncommitted;
+local browser checks used synthetic API responses. No fresh PR/CI or deployment
+verification is claimed. The bounded Saturday UI review is complete; final persistence/cross-identity,
+release/recovery and retrospective gates remain open.
 The revised Week 16 plan targets all original Month 04 outcomes on 26 October–1
 November: 42 focused hours plus up to 8 contingency hours and explicit gates.
 

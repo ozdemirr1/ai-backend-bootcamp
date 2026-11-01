@@ -1,17 +1,25 @@
 # Weekly Status
 
-## Current checkpoint — 31 October 2026, Friday tasks 4–6 completed
+## Current checkpoint — 1 November 2026, Saturday 31 October tasks completed
 
-The 30 October package is complete locally: priority UI, Tailwind shared styles,
-responsive sidebar/auth screens and layout verification. Frontend: 311 tests /
-16 files passed on 30 October; final build/lint and desktop/narrow visual checks
-finished on 31 October. Private-screen visual checks used synthetic API responses.
-Earlier backend results remain 740 non-integration and 281 PostgreSQL data tests.
+Ticket creation, safe POST handling and success/detail navigation are implemented.
+The remaining Saturday work adds actionable empty states, distinct loading/error
+surfaces, page/filter recovery, accessible validation feedback and keyboard focus
+handling. Closed empty Tickets no longer invite comments. Pagination has named
+navigation landmarks.
 
-All Friday changes remain uncommitted. Prior product `acb5a57` passed CI; no new
-PR/deployment is claimed. Existing dev-dependency audit findings are documented
-in the weekly report. Next: the scheduled Saturday Ticket creation modal, toast,
-empty-state/accessibility work, then final integrated release gates.
+Frontend: **356 tests / 17 files**, build and lint passed on 1 November. Browser
+checks at 1280/700/320 CSS pixels and keyboard/error recovery passed in an isolated
+synthetic-response harness. The combined create/detail/comment/priority/logout
+UI test uses real adapters with synthetic HTTP responses; no fresh PostgreSQL or
+hosted walkthrough is claimed. Backend evidence remains dated 30 October (740
+non-integration, 281 data) and 28 October (5 schema).
+
+Friday's package is committed as product `19dfaff`. Saturday's implementation and
+this continuation remain uncommitted. No new GitHub/CI or Railway action was taken.
+Sunday's final persistence/cross-identity regression, PR/CI, deployment/smoke,
+operational recovery and Month 04 retrospective gates remain open. Existing
+development-dependency audit findings still require their separate review.
 
 ## Earlier checkpoint — 29 October 2026, Comment API tasks 1–3
 

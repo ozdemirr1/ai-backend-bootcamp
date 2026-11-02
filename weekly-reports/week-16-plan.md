@@ -218,7 +218,7 @@ as a blocker, not application completion or a reason to change providers implici
 - [ ] Remaining abuse/audit/backup findings are explicitly assessed before expanding
       the public demo invitation. Unresolved release-blocking findings stop publication;
       a green health endpoint alone does not satisfy this gate.
-- [ ] Normal PR merge preserves daily commits; verify deployed source contains the
+- [x] Normal PR merge preserves daily commits; verify deployed source contains the
       intended runtime changes and run post-deploy checks. Coordinate the Railway
       source branch explicitly; pushing an unrelated branch is not deployment.
 - [ ] Update product/frontend README with reproducible setup and real screenshots;
@@ -346,3 +346,10 @@ The [Month 04 review](../monthly-reports/month-04.md) is written and includes tw
 learner explanations; personal reflection remains unanswered. Checkmarks above
 refer to dated automated/browser evidence, not a new repeat of every hosted case.
 No completed hours or unconditional Month 04 closure are inferred.
+
+Publication evidence: OpsDesk PR #50 merged as `f8f42be`, main Backend/Frontend CI
+passed, Railway deployment `ecaeb139-8e7a-4784-99de-66daf31e1cca` succeeded and
+post-deploy health/root checks passed. Application code matches the browser-verified
+`8a633d0` release. Updated READMEs/screenshot and Month 04 records are published
+through product PR #50 and bootcamp PR #13. Remaining combined gates above stay
+unchecked where their operational or learner requirements are still incomplete.

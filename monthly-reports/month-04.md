@@ -98,3 +98,21 @@ does not close its permissions, backup or abuse-control gaps.
 
 No Month 05 implementation, measured hours or independent learner exercise is
 claimed by this handoff. Preserve the weekly report/normal-merge workflow.
+
+## Publication references
+
+Product implementation: [PR #49](https://github.com/ozdemirr1/opsdesk/pull/49).
+Recovery documentation/screenshot: [PR #50](https://github.com/ozdemirr1/opsdesk/pull/50),
+merged normally as `f8f42be` after passing Backend/Frontend checks.
+Bootcamp report and handoff: [PR #13](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/13).
+These document links track publication; neither a normal merge nor clean Git state
+closes the operational carry-over table above.
+
+Final publication verification: product documentation merge `f8f42be` passed
+[Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591574) and
+[Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591535). Railway
+deployment `ecaeb139-8e7a-4784-99de-66daf31e1cca` reached SUCCESS at that commit.
+Post-deploy `/health/live`, `/health/ready` and `/` succeeded. This follow-up changes
+only documentation and an image; the application behavior is the `8a633d0` release
+that passed the full hosted persistence walkthrough. The HTTP checks do not
+pretend to repeat that whole browser flow.

@@ -747,3 +747,23 @@ only on these technical results. No broad production-readiness claim is made.
 Actual study hours were not recorded. Docker/Compose, then Redis and one bounded
 background job remain Month 05; AI remains Month 06. Use the monthly handoff in a
 new project-scoped Month 05 conversation after reconciling the open gates.
+
+### Publication references
+
+- Product implementation: [PR #49](https://github.com/ozdemirr1/opsdesk/pull/49),
+  normal merge `8a633d0`, hosted browser-verified runtime.
+- Product recovery/README/screenshot follow-up: [PR #50](https://github.com/ozdemirr1/opsdesk/pull/50),
+  normal merge `f8f42be`; all four push/PR Backend/Frontend checks passed at
+  head `c4f1d43`. It changes documentation and one screenshot only.
+- Bootcamp report/handoff package: [PR #13](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/13).
+  This repository has no configured CI workflow; changed Markdown links and
+  whitespace checks passed locally. GitHub records the final merge state.
+
+Final publication verification: product documentation merge `f8f42be` passed
+[Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591574) and
+[Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591535). Railway
+deployment `ecaeb139-8e7a-4784-99de-66daf31e1cca` reached SUCCESS at that commit.
+Post-deploy `/health/live`, `/health/ready` and `/` succeeded. This follow-up changes
+only documentation and an image; the application behavior is the `8a633d0` release
+that passed the full hosted persistence walkthrough. The HTTP checks do not
+pretend to repeat that whole browser flow.

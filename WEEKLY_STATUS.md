@@ -2,7 +2,9 @@
 
 ## Current checkpoint — 2 November 2026, release evidence and handoff
 
-Month 04 UI/integration is delivered through OpsDesk PR #49 (`8a633d0`). Hosted
+Month 04 UI/integration is delivered through OpsDesk PR #49 (`8a633d0`). The
+documentation follow-up PR #50 (`f8f42be`) passed main CI, deployed successfully
+and passed post-deploy health/root checks. Hosted
 persistence, scoped access, isolated backup/restore and prior-runtime read checks
 are recorded. Fresh PostgreSQL results: 281 data tests and 5 schema tests; no drift.
 The [Month 04 review](monthly-reports/month-04.md) contains two learner answers,

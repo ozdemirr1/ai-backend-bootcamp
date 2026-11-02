@@ -197,16 +197,16 @@ as a blocker, not application completion or a reason to change providers implici
 - [ ] A synthetic account can register/login, create/select an Organization, create
       a Ticket, find it through real search/filter/pagination, open its URL and post
       a persisted Comment; reloading/relogging reads persisted data.
-- [ ] Two Organizations and separate customer/staff identities demonstrate read
+- [x] Two Organizations and separate customer/staff identities demonstrate read
       isolation, priority controls, denied direct API attempts and unchanged state
       after rejected/failed mutations. Closed-Ticket comments are rejected.
-- [ ] Protected direct URLs, browser Back, logout, reload, invalid sessions,
+- [x] Protected direct URLs, browser Back, logout, reload, invalid sessions,
       Organization changes and late responses cannot restore another scope's data.
-- [ ] Comment schema and data suites pass separately against `opsdesk_product_test`;
+- [x] Comment schema and data suites pass separately against `opsdesk_product_test`;
       record exact commands/counts/revision and no drift. No demo/dev destructive tests.
-- [ ] Relevant backend/frontend regressions, frontend build/lint, backend Ruff and
+- [x] Relevant backend/frontend regressions, frontend build/lint, backend Ruff and
       exact-head Backend/Frontend CI pass; do not sum historical test groups.
-- [ ] Tailwind styles cover all scoped screens; sidebar/navigation, table/detail,
+- [x] Tailwind styles cover all scoped screens; sidebar/navigation, table/detail,
       forms, empty/loading/error states, modal and toast work at desktop/tablet/mobile
       widths and with keyboard-only operation. Record actual viewport evidence.
 - [ ] Safe demo smoke: happy path, duplicate registration, wrong password, missing/
@@ -316,3 +316,33 @@ pixels; synthetic responses were used. Saturday's implementation package is
 locally complete and uncommitted. Sunday's real persistence/cross-identity,
 PR/CI, release/recovery and retrospective gates above remain unchecked until
 separately evidenced. No actual-hour or deployment-success claim is inferred.
+
+
+### 2 November checkpoint — requested live-flow and authorization checks
+
+- [x] Hosted login, Organization/Ticket creation, comments, priority change,
+      logout/relogin persistence and protected-history/reload behavior verified.
+- [x] Two local Organizations and distinct customer/staff identities verified
+      with real PostgreSQL/browser/API evidence; focused session/race tests pass.
+
+See the [acceptance record](week-16.md#2-november--live-flow-and-authorization-acceptance)
+for the repaired hosted Comment permission defect and separate 98 PostgreSQL / 88
+frontend results. These checkmarks do not close the larger combined gates above,
+the remaining operational review or the Month 04 retrospective.
+
+### 2 November checkpoint — technical closure and honest carry-over
+
+The UI/integration is published at product PR #49 / `8a633d0`. Hosted persistence,
+local multi-tenant/role tests, 281 data tests, 5 schema tests and no drift are verified.
+The isolated restore preserved synthetic rows/sequences; previous app `b7800e4`
+read the expanded schema without modifying data. No live restore was performed.
+See [recovery and review evidence](week-16.md#2-november--recovery-release-records-and-month-04-review).
+
+The larger recovery gate stays unchecked because actual hosted-export backup and
+pre-migration backup evidence are not supplied. Safe-demo/operational gates remain
+open for abuse controls, provider audit, current usage and development dependency
+maintenance. Full npm audit: 14 moderate + 2 high, production-only: zero.
+The [Month 04 review](../monthly-reports/month-04.md) is written and includes two
+learner explanations; personal reflection remains unanswered. Checkmarks above
+refer to dated automated/browser evidence, not a new repeat of every hosted case.
+No completed hours or unconditional Month 04 closure are inferred.

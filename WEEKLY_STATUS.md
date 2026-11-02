@@ -1,6 +1,35 @@
 # Weekly Status
 
-## Current checkpoint — 1 November 2026, Saturday 31 October tasks completed
+## Current checkpoint — 2 November 2026, release evidence and handoff
+
+Month 04 UI/integration is delivered through OpsDesk PR #49 (`8a633d0`). Hosted
+persistence, scoped access, isolated backup/restore and prior-runtime read checks
+are recorded. Fresh PostgreSQL results: 281 data tests and 5 schema tests; no drift.
+The [Month 04 review](monthly-reports/month-04.md) contains two learner answers,
+schedule variance and the Month 05 handoff. Personal reflection remains open.
+
+This closes the technical evidence package, not all operational acceptance gates:
+hosted-export recovery, abuse controls, provider audit/current usage and development
+dependency maintenance remain explicit follow-ups before broader demo exposure.
+See the [Week 16 closure](weekly-reports/week-16.md#2-november--recovery-release-records-and-month-04-review).
+
+## Earlier checkpoint — 2 November 2026, two acceptance checks completed
+
+The deployed OpsDesk source `8a633d0` passed the hosted create-Ticket, Comment,
+priority and logout/relogin persistence walkthrough. A real release defect was
+fixed: the runtime database role lacked SELECT/INSERT on Comments; narrow table
+and identity-sequence grants restored the flow without a code redeploy.
+
+Customer/staff and two-Organization acceptance passed against the guarded local
+product test database: 98 focused PostgreSQL tests, 88 focused frontend tests,
+plus a real browser/API fixture walkthrough. Invalid sessions and late-response
+cleanup are covered by the frontend tests; hosted role mutation was not performed.
+See the [dated evidence](weekly-reports/week-16.md#2-november--live-flow-and-authorization-acceptance).
+
+These results close the two requested checks, not all Month 04 gates. Operational
+recovery, publication/documentation cleanup and the retrospective remain open.
+
+## Earlier checkpoint — 1 November 2026, Saturday 31 October tasks completed
 
 Ticket creation, safe POST handling and success/detail navigation are implemented.
 The remaining Saturday work adds actionable empty states, distinct loading/error

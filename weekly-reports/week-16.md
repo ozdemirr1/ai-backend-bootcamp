@@ -1,11 +1,12 @@
 # Week 16 Report — Month 04 completion work
 
-26 October–1 November 2026. In progress; the week and Month 04 are not complete.
+Planned 26 October–1 November 2026; technical evidence closure continued on
+2 November. UI/integration delivered; operational gates and learner reflection
+remain explicit, so the full combined Month 04 checklist is not closed.
 Follow the [intensive plan](week-16-plan.md). This is the regular weekly report,
 not a separate daily work document.
 
-Latest checkpoint: the 28 October release is verified on 29 October; see the
-[closure record](#29-october--release-verification-closing-the-28-october-work).
+Latest checkpoint: [recovery, release records and Month 04 review](#2-november--recovery-release-records-and-month-04-review).
 Earlier pending statements below are dated historical checkpoints.
 
 ## 26 October — Monday tasks 1–3
@@ -648,3 +649,101 @@ publication, hosted smoke, operational recovery or Month 04 retrospective gates.
 Creation and this continuation remain uncommitted. No commit, push, merge or
 Railway action was performed; the manual deployment instructions remain a release
 step after the intended source is published. No new daily file was introduced.
+
+
+## 2 November — live flow and authorization acceptance
+
+Scope: the two requested Week 16 checks, not the full Month 04 closure.
+Runtime source `8a633d0` was merged in OpsDesk PR #49 and deployed successfully
+as Railway deployment `3215ab49-07c6-4b91-9372-59c14d63f47e` on 1 November.
+The release-head CI passed 740 backend non-integration and 356 frontend tests;
+these are separate from the focused checks below.
+
+### Hosted browser evidence
+
+Using the synthetic account registered on 1 November, the browser completed
+login, Organization creation, Ticket creation, canonical detail navigation,
+priority change to high, Comment posting, sign-out and sign-in back to the
+protected detail. Ticket #3 in Organization #2 retained its title, description,
+high priority and one Comment after signing in again. Browser Back after logout
+showed Login without private content. Reloading the detail also required login.
+No real customer/support data was entered and no hosted data was deleted.
+
+The first Comment GET returned 500. Read-only inspection confirmed that
+`opsdesk_app` had neither SELECT nor INSERT on `public.comments`. Using the
+existing guarded hosted migration connection, after checking database, role and
+revision `84c2f9a17d60`, granted only SELECT/INSERT on that table and USAGE on
+`public.comments_comment_id_seq`. No role membership, ownership, UPDATE/DELETE,
+schema-wide privileges or application-code change was added. Retry then loaded
+the empty list; posting and re-reading the Comment succeeded. A healthy readiness
+endpoint alone had not detected this missing table permission.
+
+### Isolated authorization and session evidence
+
+- Fresh real-PostgreSQL run on guarded `opsdesk_product_test`:
+  `tests/integration/test_ticket_reads.py`, `test_comment_api.py` and
+  `test_ticket_priority.py`: **98 passed**. Coverage includes customer/staff
+  scope, hidden/foreign resources, closed-Ticket comments, current-role/state
+  rechecks, rollback and cooperating-operation contention.
+- Fresh frontend run of `src/WorkspaceFlow.test.tsx` and
+  `src/components/Comments.test.tsx`: **88 passed**. Synthetic-response tests
+  verify invalid-session cleanup, role visibility, logout/history protection,
+  filter/draft reset and ignored late responses. This is not a new full-suite run.
+- Separate real local browser/API walkthrough used Alpha and Beta Organizations
+  with two synthetic identities: one customer in Alpha/owner in Beta, one staff
+  owner in Alpha without Beta membership. Customer saw only its one Alpha Ticket
+  and no priority control; staff saw both Alpha Tickets. Switching to Beta showed
+  only its Ticket and owner controls, with the Alpha comment draft cleared.
+- Direct FastAPI-to-PostgreSQL checks on these fixtures returned 404 for a hidden
+  Ticket, 403 for a foreign Organization, 403 for customer priority modification,
+  and 401 for missing/invalid tokens. The rejected priority write left the full
+  Ticket response unchanged. Other staff roles are covered by the automated matrix;
+  no hosted customer membership was fabricated.
+
+Both requested checks are complete with the environment boundaries above.
+The temporary local server is stopped. Full backup/restore and rollback evidence,
+broader operational review, README/release publication cleanup and the Month 04
+retrospective/learner handoff remain separate work. No new daily report was created.
+
+## 2 November — recovery, release records and Month 04 review
+
+Completed the three requested remaining blocks within their documented boundaries:
+
+- Matched runtime `8a633d0`, SUCCESS deployment `3215ab49-07c6-4b91-9372-59c14d63f47e`
+  and source/test/hosted revision `84c2f9a17d60`. Migration-role read confirmed the
+  revision and runtime Comment SELECT/INSERT/sequence-USAGE grants. Runtime need
+  not read `alembic_version`; that inspection was moved to the migration role.
+- Isolated recovery on the exact guarded `opsdesk_product_test` preserved 2 Users,
+  2 Organizations, 3 Memberships, 3 Tickets, 1 Comment and all sequence values.
+  PostgreSQL 18.6 custom dump/transactional restore succeeded. The initial default
+  pg_dump 14.19 attempt stopped on version mismatch before any restore.
+- Previous app source `b7800e4` read its synthetic Ticket on the restored expanded
+  schema (200); data/sequence digest remained unchanged. This is bounded read
+  compatibility, not all old write paths or a live rollback.
+- After test-fixture cleanup, `.venv/bin/python -m pytest -q tests/schema` with
+  schema opt-in: **5 passed**. `alembic check`: no new operations. Separate
+  `pytest -q tests/integration` with integration opt-in: **281 passed** (23.76 s).
+  Both use guarded test environment settings. Final head `84c2f9a17d60`, business
+  tables empty. No destructive test/restore ran on dev or hosted demo.
+- Product/frontend READMEs now describe deployed creation/comments/priority and
+  show the real 2 November persisted Ticket screenshot. Earlier dated checkpoints
+  remain historical; current summaries supersede their pending-release wording.
+- Added [Month 04 review](../monthly-reports/month-04.md), original-target evidence,
+  variance/carry-over, two learner-supplied explanations and Month 05 handoff.
+  The personal difficulty/repeat-target answer was not supplied and is not invented.
+
+The product [recovery record](https://github.com/ozdemirr1/opsdesk/blob/main/docs/release-recovery.md)
+contains reproduction preconditions and command options. The dump is temporary,
+private and outside Git, not an established hosted backup/retention system.
+
+Fresh npm review found 16 development-tool findings (14 moderate, 2 high), versus
+zero with `--omit=dev`; TLS remained enabled using the system CA. Toolchain
+maintenance remains separate, with no forced dependency change. Provider audit,
+bounded abuse controls, hosted-export restore evidence and current usage review
+remain operational follow-ups. The latest supplied credit snapshot was 1 November
+($4.08 / 16 days), not a fresh cost check. Do not expand the demo invitation based
+only on these technical results. No broad production-readiness claim is made.
+
+Actual study hours were not recorded. Docker/Compose, then Redis and one bounded
+background job remain Month 05; AI remains Month 06. Use the monthly handoff in a
+new project-scoped Month 05 conversation after reconciling the open gates.

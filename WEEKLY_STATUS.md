@@ -1,6 +1,67 @@
 # Weekly Status
 
-## Current checkpoint — 29 October 2026, closing the 28 October release
+## Current checkpoint — 2 November 2026, release evidence and handoff
+
+Month 04 UI/integration is delivered through OpsDesk PR #49 (`8a633d0`). The
+documentation follow-up PR #50 (`f8f42be`) passed main CI, deployed successfully
+and passed post-deploy health/root checks. Hosted
+persistence, scoped access, isolated backup/restore and prior-runtime read checks
+are recorded. Fresh PostgreSQL results: 281 data tests and 5 schema tests; no drift.
+The [Month 04 review](monthly-reports/month-04.md) contains two learner answers,
+schedule variance and the Month 05 handoff. Personal reflection remains open.
+
+This closes the technical evidence package, not all operational acceptance gates:
+hosted-export recovery, abuse controls, provider audit/current usage and development
+dependency maintenance remain explicit follow-ups before broader demo exposure.
+See the [Week 16 closure](weekly-reports/week-16.md#2-november--recovery-release-records-and-month-04-review).
+
+## Earlier checkpoint — 2 November 2026, two acceptance checks completed
+
+The deployed OpsDesk source `8a633d0` passed the hosted create-Ticket, Comment,
+priority and logout/relogin persistence walkthrough. A real release defect was
+fixed: the runtime database role lacked SELECT/INSERT on Comments; narrow table
+and identity-sequence grants restored the flow without a code redeploy.
+
+Customer/staff and two-Organization acceptance passed against the guarded local
+product test database: 98 focused PostgreSQL tests, 88 focused frontend tests,
+plus a real browser/API fixture walkthrough. Invalid sessions and late-response
+cleanup are covered by the frontend tests; hosted role mutation was not performed.
+See the [dated evidence](weekly-reports/week-16.md#2-november--live-flow-and-authorization-acceptance).
+
+These results close the two requested checks, not all Month 04 gates. Operational
+recovery, publication/documentation cleanup and the retrospective remain open.
+
+## Earlier checkpoint — 1 November 2026, Saturday 31 October tasks completed
+
+Ticket creation, safe POST handling and success/detail navigation are implemented.
+The remaining Saturday work adds actionable empty states, distinct loading/error
+surfaces, page/filter recovery, accessible validation feedback and keyboard focus
+handling. Closed empty Tickets no longer invite comments. Pagination has named
+navigation landmarks.
+
+Frontend: **356 tests / 17 files**, build and lint passed on 1 November. Browser
+checks at 1280/700/320 CSS pixels and keyboard/error recovery passed in an isolated
+synthetic-response harness. The combined create/detail/comment/priority/logout
+UI test uses real adapters with synthetic HTTP responses; no fresh PostgreSQL or
+hosted walkthrough is claimed. Backend evidence remains dated 30 October (740
+non-integration, 281 data) and 28 October (5 schema).
+
+Friday's package is committed as product `19dfaff`. Saturday's implementation and
+this continuation remain uncommitted. No new GitHub/CI or Railway action was taken.
+Sunday's final persistence/cross-identity regression, PR/CI, deployment/smoke,
+operational recovery and Month 04 retrospective gates remain open. Existing
+development-dependency audit findings still require their separate review.
+
+## Earlier checkpoint — 29 October 2026, Comment API tasks 1–3
+
+Comment service authorization, GET/POST routes, content validation, rollback and
+real PostgreSQL contention tests are implemented locally in OpsDesk. Fresh results:
+702 backend non-integration and 237 PostgreSQL data tests passed; Ruff passed.
+Schema/frontend checks retain their 28 October results. No commit/push/deployment
+was performed for this increment; CommentForm/list and priority work remain open.
+See the [task evidence](weekly-reports/week-16.md#29-october--comment-service-and-api-tasks-13).
+
+## Earlier checkpoint — 29 October 2026, closing the 28 October release
 
 [OpsDesk PR #47](https://github.com/ozdemirr1/opsdesk/pull/47) and
 [bootcamp PR #11](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/11) merged

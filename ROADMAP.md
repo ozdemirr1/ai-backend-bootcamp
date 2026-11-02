@@ -96,6 +96,14 @@ separate backend scope; F12 is only partially covered by the priority action.
 Re-estimate Tuesday and Friday; an unmet acceptance gate prevents Month 04 closure
 and requires an explicit revised estimate/calendar, not a silent scope cut.
 
+2 November outcome: protected real-data Ticket creation/reads, comments, priority
+and the scoped Tailwind/responsive UI are delivered through OpsDesk PR #49.
+Local recovery and hosted persistence evidence are recorded in the
+[Month 04 review](monthly-reports/month-04.md). Operational acceptance gates and
+personal learner reflection remain open; the earlier checkpoints above are history,
+not a claim that the current product still uses mock data. Month 05 preparation
+must carry these items visibly rather than silently marking the whole checklist done.
+
 ### Month 5
 Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking
 cost and project fit; practical IAM, secrets, logs, and budget controls precede any
@@ -134,8 +142,8 @@ Final CV, LinkedIn, GitHub, project polish, mock interviews, and an intensive ap
 These are the original target milestones, not a completion checklist. As of
 25 October, Month 02 CI/deployment and the complete Month 03 backend release
 were not delivered in their original windows. CI shipped in Month 03; a narrower
-identity preview shipped in Month 04. The complete Month 04 frontend MVP and R01
-backend release remain incomplete. See the
+identity preview shipped in Month 04. The Month 04 UI/integration was delivered by 2 November, but its operational
+gates and the broader R01 release remain open. See the [Month 04 review](monthly-reports/month-04.md) and the
 [dated carry-over matrix](notes/react/month-04-alignment.md#25-october-checkpoint-and-carry-over)
 for delivered scope, dependencies and the next decisions.
 

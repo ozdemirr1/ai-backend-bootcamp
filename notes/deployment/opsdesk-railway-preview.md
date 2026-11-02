@@ -1,6 +1,11 @@
 # OpsDesk Railway preview — deployment notes
 
-Recorded 19 October 2026. Learning notes, not a promise of production readiness.
+Initial notes: 19 October 2026. Latest update: 2 November. Earlier sections below
+retain their dated identity-preview scope; the current product now has protected
+real-data Tickets, comments and priority, verified at runtime `8a633d0` (PR #49).
+The [product recovery record](https://github.com/ozdemirr1/opsdesk/blob/main/docs/release-recovery.md)
+records the grant repair, local restore/rollback-read rehearsal and outstanding
+hosted-backup/abuse/audit/cost limits. These notes do not claim production readiness.
 
 ## Request path and build
 

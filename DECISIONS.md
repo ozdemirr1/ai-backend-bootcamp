@@ -394,3 +394,31 @@ support stronger evaluation and operational skills, but do not justify replacing
 core backend learning with a list of frameworks. Several reported additions were
 already planned, and the proposed post-October introduction to FastAPI/PostgreSQL
 does not match the learner's demonstrated progress.
+
+## 3 November 2026 — Month 05 systems scope
+
+User selected Docker/Compose, Redis cache/rate limiting, Celery (not RQ), expanded
+GitHub Actions CI, bounded retry/idempotency and Linux/logging. See
+[Month 05 plan](monthly-plans/month-05.md) for dates, gates and failure semantics.
+Do not relocate existing backend modules solely to match a conceptual tree.
+Keep existing frontend/build/CI; no new React/RAG/MCP/agents/Kubernetes work.
+Task idempotency is required; generic HTTP idempotency is a separate contract.
+The prior instruction not to prepare a new month program is superseded by the
+explicit planning request on 3 November. No product implementation is claimed.
+
+### Month 05 learning sequence refinement — 3 November
+
+The learner approved incremental examples, failure diagnosis and independent
+explanation as acceptance criteria. GitHub Actions fundamentals must be taught
+fully despite existing CI/test counts. Docker progresses from a basic image to
+multi-stage builds; Celery progresses from a simple worker to retry, durable
+idempotency and only then the commit/publish gap and bounded outbox solution.
+Estimated effort is now 84–108 hours, subject to learning gates and capacity.
+No new product features or Month 06 implementation are added.
+
+### Month 05 start and conversation handoff
+
+The learner set the start to 4 November 2026. All daily blocks move one day
+without compressing learning; target closure is 30 November, subject to gates.
+Use one new primary conversation for Month 05; read the tracked handoff and
+local AGENTS.md before working. No product implementation has started.

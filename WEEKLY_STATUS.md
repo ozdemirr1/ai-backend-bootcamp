@@ -1,6 +1,19 @@
 # Weekly Status
 
-## Current checkpoint — 2 November 2026, release evidence and handoff
+## Current checkpoint — 3 November 2026
+
+Month 05 scope and Week 17–20 plans are prepared, not implemented. GitHub Actions fundamentals, incremental examples and
+independent failure diagnosis are included; existing test counts do not replace learning. Follow the
+[monthly plan](monthly-plans/month-05.md). Celery is selected; existing CI will be
+extended with Docker build and isolated integration checks. Product #19/#24 were
+closed with evidence; #25 is targeted in Week 18. Other product backlog and the
+Month 04 operational follow-ups remain visible; no broad completion claim.
+
+Month 05 starts on **4 November 2026**; planned closure is 30 November.
+Continue in a new month-scoped conversation using the
+[Month 05 handoff](monthly-plans/month-05-handoff.md).
+
+## Earlier checkpoint — 2 November 2026, release evidence and handoff
 
 Month 04 UI/integration is delivered through OpsDesk PR #49 (`8a633d0`). The
 documentation follow-up PR #50 (`f8f42be`) passed main CI, deployed successfully

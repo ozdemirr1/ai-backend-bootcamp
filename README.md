@@ -6,7 +6,21 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current checkpoint — 2 November 2026
+## Current focus — Month 05 planning, 3 November 2026
+
+The [approved Month 05 plan](monthly-plans/month-05.md) defines Docker/Compose,
+Redis cache/rate limiting, Celery retry/idempotency and expanded CI with basic
+Linux/logging. Weekly plans: [17](weekly-reports/week-17-plan.md),
+[18](weekly-reports/week-18-plan.md), [19](weekly-reports/week-19-plan.md),
+[20](weekly-reports/week-20-plan.md). Planning is complete; implementation has not
+started. GitHub Actions fundamentals, incremental examples and
+independent failure diagnosis are included; existing test counts do not replace learning. Existing frontend behavior stays; no new React/AI/Kubernetes scope.
+
+Month 05 starts on **4 November 2026**; planned closure is 30 November.
+Continue in a new month-scoped conversation using the
+[Month 05 handoff](monthly-plans/month-05-handoff.md).
+
+## Month 04 checkpoint — 2 November 2026
 
 **Month 04 UI/integration delivered; technical review and Month 05 handoff recorded.**
 The [OpsDesk preview](https://opsdesk-production-448f.up.railway.app/) uses protected

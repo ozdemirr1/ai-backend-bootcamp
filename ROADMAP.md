@@ -105,9 +105,17 @@ not a claim that the current product still uses mock data. Month 05 preparation
 must carry these items visibly rather than silently marking the whole checklist done.
 
 ### Month 5
-Docker, Redis, Celery, background jobs. Prefer AWS for cloud learning after checking
-cost and project fit; practical IAM, secrets, logs, and budget controls precede any
-certification decision.
+Docker/Compose, Redis caching and rate limiting, Celery workers with bounded
+retry/idempotency, Linux/networking/logging and expanded GitHub Actions CI.
+Approved scope on 3 November: [Month 05 plan](monthly-plans/month-05.md),
+[Week 17](weekly-reports/week-17-plan.md), [18](weekly-reports/week-18-plan.md),
+[19](weekly-reports/week-19-plan.md), [20](weekly-reports/week-20-plan.md).
+Existing Ruff/pytest/frontend CI continues; Docker build and guarded PostgreSQL/
+Redis/worker checks are additions. No new React, RAG, MCP, agents, Kubernetes,
+cloud-provider move or AI implementation this month. Celery is selected over RQ.
+Dates and hours are estimates; acceptance gates govern completion. GitHub Actions
+fundamentals are taught fully; small examples, failure diagnosis and independent
+explanation precede completion claims.
 
 ### Month 6
 OpenAI SDK and Responses API, Structured Outputs, and bounded tool calling.
@@ -152,7 +160,7 @@ for delivered scope, dependencies and the next decisions.
 - Month 2: First deployed FastAPI and PostgreSQL API
 - Month 3: Deployed OpsDesk backend preview
 - Month 4: Deployed OpsDesk full-stack demo
-- Month 5: Docker Compose development environment
+- Month 5: Verified Compose environment, scoped Redis cache/rate limiting, retry/idempotent Celery notification simulation and PR Docker/integration checks
 - Month 6: OpsDesk AI integration, repeatable evaluation baseline, and live demo
 - Month 8: DocuMind demo with retrieval evaluation
 - Month 9: HireMatch AI MVP

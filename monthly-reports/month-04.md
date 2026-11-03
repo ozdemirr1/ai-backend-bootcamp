@@ -116,3 +116,11 @@ Post-deploy `/health/live`, `/health/ready` and `/` succeeded. This follow-up ch
 only documentation and an image; the application behavior is the `8a633d0` release
 that passed the full hosted persistence walkthrough. The HTTP checks do not
 pretend to repeat that whole browser flow.
+
+## 3 November planning follow-up
+
+The handoff above is historical. The learner subsequently selected Celery and
+a systems-focused [Month 05 plan](../monthly-plans/month-05.md). No RQ comparison,
+new frontend work or provider migration is required by the current plan.
+Product #19/#24 were closed with implementation/test evidence on 3 November;
+remaining backlog is distinguished from the new month's required outputs.

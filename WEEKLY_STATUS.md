@@ -1,6 +1,48 @@
 # Weekly Status
 
-## Current checkpoint — 3 November 2026
+## Current checkpoint — 6 November 2026: 4 November learning closure
+
+The learner supplied the final review for the 4 November session and requested
+closure without another experiment. Image/source snapshots, rebuilds and command
+defaults; build-context exclusion/cache recovery; HTTP/connection/exit-code
+distinctions; port conflict/name resolution; and bounded shutdown behavior have
+learner-supplied exercise evidence. The final explanation was accepted with
+clarifications about bind-mount reload and configured access logging.
+
+The 4 November work is closed; Week 17 remains in progress. This is not evidence
+of work on 5 November or completion of the scheduled 6 November product image.
+OpsDesk remains unchanged; no product Dockerfile, new CI job, product test run
+or deployment is claimed. GitHub Actions foundations still require full teaching.
+Next session resumes the weekly prerequisites before a bounded basic product image.
+See the [Week 17 closure](weekly-reports/week-17.md#6-november--review-and-closure-of-the-4-november-session).
+
+## Earlier checkpoint — 4 November 2026
+
+Month 05's main working conversation has begun. Week 17's repository/build/CI
+and local Docker baseline is inspected; product implementation has not started.
+After fetching both origins, bootcamp main matched `8e2408a` and OpsDesk main
+matched `f8f42be`. Existing untracked LinkedIn assets were preserved.
+
+Docker Desktop was started and Engine 28.5.1 now responds as Linux/ARM64;
+Compose v2.40.2 is available. About 5 GiB host disk space remains, so image-build
+capacity needs attention. No product tests or deployment ran.
+The first container exercise succeeded in learner-supplied terminal evidence:
+Linux, PID 1, retained logs and Exited (0), matching the accepted prediction.
+Controlled failure diagnosis and recovery also passed on learner-supplied output
+(RuntimeError/exit 1 → corrected command/exit 0). The learner removed the two
+failure/recovery containers only. A later minimal custom learning image,
+`week17-python-demo:v1`, built and ran successfully with `/app` and exit 0 in
+learner-supplied output. No OpsDesk product image has been built.
+HTTP exercises verified port forwarding, wrong-port connection failure and
+HTTP status versus curl exit code (including `--fail`). The learner stopped the
+HTTP container and investigated Exited (137): a three-second SIGTERM stop took
+3.235 seconds with exit 137/OOM false; SIGINT took 0.250 seconds with exit 0 and
+an explicit shutdown log. The comparison supports timeout escalation; the
+container is now stopped. This is not an OpsDesk SIGTERM acceptance result.
+See the [Week 17 report](weekly-reports/week-17.md)
+and [Docker foundations](notes/docker/docker-foundations.md).
+
+## Earlier checkpoint — 3 November 2026
 
 Month 05 scope and Week 17–20 plans are prepared, not implemented. GitHub Actions fundamentals, incremental examples and
 independent failure diagnosis are included; existing test counts do not replace learning. Follow the

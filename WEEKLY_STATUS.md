@@ -1,6 +1,23 @@
 # Weekly Status
 
-## Current checkpoint — 6 November 2026: 4 November learning closure
+## Current checkpoint — 6 November 2026: systems-plan continuation
+
+The 4 November closure was pushed as `c908860`. Continuing the remaining
+5 November learning scope on the actual date of 6 November: the product venv
+(Darwin/Python 3.14.7/FastAPI present) and base container
+(Linux/Python 3.14.10/FastAPI absent) comparison passed on learner evidence.
+A Docker version probe initially timed out; subsequent client/server and tiny
+container checks succeeded. Root cause/recovery action are not established.
+TLS/HTTPS experiments also passed on learner output: verified public TLS 1.3 and
+HTTP/2 200, plus a local HTTP/TLS mismatch (curl 35 and server malformed-request
+logs). The example server was stopped. Final review was supplied and corrected:
+container isolation is not absolute, base-image contents are not standard-library
+only, and -k cannot fix HTTPS sent to a plain-HTTP server. No independent revised
+answer is claimed. The 5 November systems session is closed on 6 November.
+No product image implementation or new product test run
+is claimed; see the [Week 17 report](weekly-reports/week-17.md).
+
+## Earlier checkpoint — 6 November 2026: 4 November learning closure
 
 The learner supplied the final review for the 4 November session and requested
 closure without another experiment. Image/source snapshots, rebuilds and command

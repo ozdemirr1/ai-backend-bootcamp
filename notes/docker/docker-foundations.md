@@ -206,5 +206,61 @@ different processes, and that `-d` detaches rather than keeps a process alive.
 Review accepted with these clarifications. At his request, no additional repeat
 exercise is added; the 4 November learning session is closed.
 
+## Venv/container comparison — 6 November
+
+Continuation of the 5 November plan, using learner-supplied output:
+
+| Observation | Product venv on Mac | Base Python container |
+| --- | --- | --- |
+| OS | Darwin | Linux |
+| Python | 3.14.7 | 3.14.10 |
+| Inside venv | True | False |
+| FastAPI discoverable | True | False |
+
+A venv isolates a Python dependency environment, not the operating system or
+host filesystem. A container can itself contain a venv; these are compatible
+tools. Host package installation does not populate the container. Construct the
+Linux environment from the product dependency definitions and lockfile rather
+than copying a Mac venv with platform-specific binaries and interpreter paths.
+The mutable 3.14-slim tag does not pin a patch version.
+
+## TLS/HTTPS — 6 November
+
+Learner output shows successful DNS/TCP/TLS 1.3/certificate verification followed
+by HTTP/2 200 and curl exit 0 for example.com. ALPN selected HTTP/2; this is
+separate from the TLS protocol version. TLS protects the connection and verifies
+server identity; it does not replace application authentication/authorization.
+
+The local Python HTTP server answered HTTP on host 8087. An HTTPS request to the
+same port established TCP then failed with curl 35, while server logs recorded
+binary data as malformed HTTP (400). The TLS-library error text mentioned protocol
+version, but the known server configuration and logs show HTTP/TLS mismatch.
+The client's result was a TLS error, not a successfully received HTTPS 400.
+Do not fix this by weakening TLS versions or adding -k. Learner stopped the
+server with SIGINT; no new hosted OpsDesk verification is claimed.
+
+For OpsDesk, the existing docs describe a same-origin React/FastAPI deployment.
+[Railway edge networking](https://docs.railway.com/networking/edge-networking)
+describes public TLS terminating at the edge and forwarding to the deployment.
+The API-to-PostgreSQL connection is a separate protocol/security boundary;
+browser HTTPS alone does not certify its TLS configuration. /health/live checks
+liveness without DB access; /health/ready checks database connectivity via SELECT
+1, not all migrations, table permissions or business operations.
+
+### Review corrections — 6 November
+
+The learner correctly identified that host-installed FastAPI does not transfer
+automatically. Isolation is not absolute: containers are not separate guest VMs,
+and Linux containers here share the Docker Desktop VM kernel. Do not describe
+the official Python image as containing no third-party software; FastAPI absence
+is the actual observation. Mounted/copied package files still require compatible
+binaries, dependencies and Python import paths.
+
+The learner's generic certificate discussion included an incorrect claim that
+-k would establish the local connection. In this experiment the server speaks
+plain HTTP, so skipping certificate verification cannot fix it. Certificate trust
+failure and absence of a TLS-speaking server are distinct diagnoses. Correction
+was explained; a revised independent learner answer is not recorded.
+
 References: [Docker container concepts](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/),
 [docker run and process exit status](https://docs.docker.com/engine/containers/run/).

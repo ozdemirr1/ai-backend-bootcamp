@@ -178,3 +178,60 @@ on `feature/week-17-docker-foundation`. Whitespace checks passed. No product
 test rerun was needed for these documentation changes. Product working tree
 was checked clean on main; unrelated untracked LinkedIn assets were preserved.
 No new daily report, push, PR, merge or deployment is part of this closure.
+
+## 6 November — continuation of the 5 November systems plan
+
+The prior closure was pushed as `c908860` to the weekly feature branch after the
+learner requested publication. This continuation preserves that same branch.
+
+Environment comparison: learner screenshot showed macOS/Darwin, Python 3.14.7,
+venv true and FastAPI discoverable in the product venv. The container command
+initially stalled. An approved read-only Docker version probe also timed out
+after ten seconds; this was not evidence of a Python application failure.
+Subsequent learner output showed both Docker client (Darwin/ARM64) and server
+(Linux/ARM64), then a successful `container ready` run. Exact recovery action
+and root cause were not supplied, so neither is asserted.
+
+The repeated base-image comparison returned Linux, Python 3.14.10, venv false
+and FastAPI unavailable. This confirms separate dependency environments and
+version drift between the mutable image tag and product interpreter. No product
+dependency was installed or changed. Do not copy the Mac venv into the Linux
+image; construct the target environment from dependency definitions and lockfile.
+The venv/container comparison is complete.
+
+TLS learner evidence: example.com resolved, TCP connected on 443, TLS 1.3 was
+negotiated, hostname matched the certificate, verification succeeded, and HTTP/2
+returned 200 with curl exit 0. Local plain HTTP on 8087 returned HTML. Sending
+HTTPS to the same plain-HTTP server connected TCP but failed the TLS handshake
+with curl 35; the server logged binary request syntax and HTTP 400. This is a
+protocol mismatch, not proof that a TLS-capable server needs a version downgrade
+or disabled certificate validation. No -k was used. Learner stopped the server
+with SIGINT afterward. These results are not a fresh OpsDesk hosted smoke test.
+
+Product mapping reviewed from existing development docs: FastAPI serves the
+React build and API on one origin; readiness checks SELECT 1, not all schema
+privileges. Railway's official edge documentation describes TLS termination at
+its edge before forwarding to the deployment. No provider configuration or
+database TLS setting was changed.
+
+Final review supplied on 6 November:
+- Correct central explanation: host FastAPI installation is not automatically
+  available in the container. Corrections: container isolation is not absolute
+  or equivalent to a separate guest VM; Linux containers share their host kernel
+  (the Docker Desktop VM's kernel here). A base Python image is not guaranteed
+  to contain only the standard library; the observed fact is FastAPI absence.
+  Copying or mounting files also does not automatically make packages importable
+  or compatible with the container's OS/interpreter.
+- Learner understood why certificate verification should not be casually
+  disabled, but incorrectly stated -k would establish the connection in this
+  protocol-mismatch case. Corrected explicitly: -k skips certificate verification;
+  it does not add TLS to a plain-HTTP server or fix protocol negotiation.
+  No revised independent learner answer or -k experiment is claimed.
+
+The 5 November planned systems session was completed on 6 November with the
+review corrections above; this is not an assertion that both original answers
+were fully correct. No additional exercise is required for this session closure.
+Next: bounded basic OpsDesk image and locked dependency/config boundaries, before
+multi-stage work. GitHub Actions foundations remain required. Documentation-only
+closure uses the same weekly branch and preserves unrelated LinkedIn assets;
+no product test rerun, PR, merge or deployment is included.

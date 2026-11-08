@@ -1,6 +1,35 @@
 # Weekly Status
 
-## Current checkpoint — 6 November 2026: systems-plan continuation
+## Current checkpoint — 9 November 2026: basic product image learning closure
+
+Continuing the scheduled 6 November task on the actual date of 9 November.
+The learner created the product branch `feature/week-17-docker-foundation` and
+the initial single-stage Dockerfile plus allowlist .dockerignore. Actual local
+file review confirmed the intended content and valid whitespace/continuations;
+the files are included in this closure. Learner build output confirms a successful
+`opsdesk:week17-basic` image build with exit 0, Python 3.14.7 and 31 installed
+runtime packages. Network-disabled import checks passed (pytest absent), and
+default startup without config failed as expected on missing JWT secret with
+exit 1. Learner's isolated runtime check then passed: PID 1 startup, liveness
+200, expected unavailable-DB readiness 503, and SIGTERM shutdown in 0.456 seconds
+with exit 0. No successful real-DB readiness or persistence is claimed.
+
+Host disk initially had only 513 MiB available. After the learner's restart/cleanup
+pause, a fresh check showed about 2.4 GiB. Docker Desktop was opened and Engine
+28.5.1 responded. No agent cleanup or volume deletion was performed. Capacity
+remains constrained: the latest check showed 442 MiB free. Scoped image-filesystem
+exclusion checks passed; full layer-secret scanning is not claimed. Local regression
+passed on learner evidence: Ruff clean, 141 files formatted, 740 tests passed and
+286 deselected in 9.98 seconds. Product Docker documentation, README and dated
+project status now describe the verified scope. Final learner review was supplied
+and corrected for the limited health-check and image-secret evidence. The planned
+6 November learning slice is closed on 9 November; commit/push is authorized.
+The learner plans to continue the 7–8 November scope on 10 November, subject to
+learning checks and disk capacity, without treating those tasks as completed.
+Multi-stage/frontend, non-root and Docker CI remain later
+work. See the [Week 17 report](weekly-reports/week-17.md).
+
+## Earlier checkpoint — 6 November 2026: systems-plan continuation
 
 The 4 November closure was pushed as `c908860`. Continuing the remaining
 5 November learning scope on the actual date of 6 November: the product venv

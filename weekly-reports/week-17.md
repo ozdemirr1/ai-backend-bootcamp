@@ -235,3 +235,113 @@ Next: bounded basic OpsDesk image and locked dependency/config boundaries, befor
 multi-stage work. GitHub Actions foundations remain required. Documentation-only
 closure uses the same weekly branch and preserves unrelated LinkedIn assets;
 no product test rerun, PR, merge or deployment is included.
+
+## 9 November — basic product image files, build not started
+
+Continuing the scheduled 6 November task. After reviewing actual manifests,
+configuration and startup code, the learner created the product weekly branch,
+Dockerfile and .dockerignore. The initial single-stage recipe selects Python
+3.14.7-slim, installs uv 0.12.3, copies the dependency files/source/Alembic files,
+and uses locked, no-dev, non-editable sync. Uvicorn is the direct startup command
+with factory mode, container binding and the existing no-access-log convention.
+Required DB/JWT settings are runtime inputs, not build credentials. Frontend and
+non-root runtime are not yet implemented; this is not a deployable release claim.
+
+Read-only inspection confirmed both actual files match the supplied recipe and
+have no trailing/non-ASCII whitespace problems; ENV continuations are intact.
+Git diff --check alone did not cover these untracked files, so they were inspected
+directly. No build, dependency resolution or runtime acceptance has run.
+
+Capacity check found only 513 MiB available on the host data filesystem, compared
+with about 5 GiB at the 4 November baseline. Build is deferred until capacity is
+addressed. No files, Docker resources or volumes were removed. The next step is
+bounded disk-use inspection and user-selected cleanup, then build verification.
+
+Resume after learner restart/cleanup pause: learner df output showed 2.5 GiB,
+and a fresh local check showed about 2.4 GiB available. Docker Desktop was opened
+with approval; a bounded read-only probe confirmed both client/server 28.5.1.
+Docker reports nine images, four containers (one active), six volumes (one active)
+and 171.9 MB build cache. No unrelated resource was stopped or removed. Product
+files and branch remain intact. Proceed with one basic backend build and inspect
+remaining disk afterward; the earlier 5 GiB suggestion was headroom guidance,
+not a measured minimum requirement. Build success is not yet claimed.
+
+First product build completed on learner-supplied transcript: base Python
+3.14.7-slim resolved and downloaded; uv 0.12.3 installed; locked no-dev,
+non-editable sync built OpsDesk and installed 31 packages using Python 3.14.7.
+The resolver considered 43 packages, which is distinct from the 31 installed.
+Image export/tag `opsdesk:week17-basic` completed with CLI exit 0. Build context
+was 256.02 kB, not proof by itself of secret exclusion. The pip root warning
+is not a failed build; non-root runtime remains scheduled work.
+
+A fresh host check after receiving this transcript showed about 1.0 GiB free.
+Avoid unnecessary rebuilds; next use the existing image for import/content and
+missing-config checks with network disabled. No startup, secret-layer audit,
+database test, migration, health smoke or release success is claimed yet.
+
+Learner runtime checks: network-disabled command override imported opsdesk.main
+without invoking the factory; Python 3.14.7 from /app/.venv, OpsDesk 0.1.0,
+FastAPI 0.141.1 and Uvicorn 0.53.0 were found; pytest was unavailable and exit was
+0. The real default command with no supplied config failed in TokenSettings
+with secret/Field required; CLI and retained container both reported exit 1.
+This is the expected fail-fast missing-JWT configuration case. No real secret
+was supplied or printed. It does not yet cover missing DB settings, successful
+startup, liveness/readiness or image-layer secret exclusion.
+
+Learner image-filesystem check passed with exit 0: required manifests/source/
+Alembic paths present, selected root exclusions absent, no .env-like files,
+.git/__pycache__ directories or .pem/.key/.pyc artifacts found under source and
+migrations, and Linux venv present. This is a scoped merged-filesystem check,
+not an exhaustive secret scan of every image layer. Next: network-isolated
+runtime with generated ephemeral credentials, liveness 200 and expected
+readiness 503 against an unavailable container-local database target.
+
+Learner runtime evidence: an isolated container generated ephemeral credentials
+inside its startup process, then exec'd Uvicorn with the intended factory/port
+options. Uvicorn ran as PID 1 and reported startup complete. Internal HTTP checks
+asserted /health/live 200 with status ok and /health/ready 503 with the generic
+service_unavailable envelope; the check command exited 0. Network was disabled
+and the target was container-local loopback with no database server; no real
+database, migration or destructive test was used. This validates unavailable-DB
+behavior, not successful PostgreSQL readiness or Ticket persistence.
+
+Structured request logs showed both statuses with unexpected_error false and
+no supplied credential values. SIGTERM stop with a ten-second deadline took
+0.456 seconds; container state was exited/0, OOM false, and logs showed shutdown
+complete. This does not test in-flight request draining or commit interruption.
+All runtime evidence was supplied by the learner, not independently rerun.
+
+Post-check disk observation: 442 MiB available. No further build/download is
+planned before capacity improves. Existing local pytest/Ruff executables are
+available for the bounded non-integration regression.
+
+Learner regression evidence, 9 November: Ruff check passed; format check reported
+141 files already formatted. Local pytest with `-m "not integration"` and cache/
+bytecode writes disabled reported 740 passed, 286 deselected in 9.98 seconds.
+These tests ran in the host development venv, not the runtime image. No new
+database test or CI run is claimed.
+
+Product documentation now includes docs/docker.md with the basic image scope,
+configuration boundary and dated local evidence. README links it and replaces
+its obsolete Month 04 next-step paragraph; project status preserves the dated
+published boundary separately from the local image milestone. Multi-stage/non-root/frontend
+packaging and Docker CI learning remain subsequent Week 17 work.
+
+Final learner review supplied on 9 November: correctly distinguished live process
+from dependency readiness and explained runtime secrets, environment portability
+and rotation. Review corrections: this implementation checks PostgreSQL only,
+not cache; liveness 200 proves that endpoint responded, not that the whole image
+or application is defect-free. Secrets may persist in image configuration or
+layers, but not all file contents appear directly in docker history. Runtime
+rotation also requires the process to receive/reload the new configuration.
+No independent restatement after these corrections is claimed.
+
+The learner explicitly closed the scheduled 6 November slice and authorized
+commit/push for both repositories on 9 November. The planned 7–8 November work
+will resume on 10 November: multi-stage/non-root existing frontend packaging,
+then full GitHub Actions learning and Docker build CI. These remain pending;
+Week 17 as a whole is not closed. Disk capacity must be rechecked before builds.
+
+Product closure commit `421b053` was pushed to
+`origin/feature/week-17-docker-foundation`. No merge or deployment was performed.
+CI results for that push are not asserted by this report.

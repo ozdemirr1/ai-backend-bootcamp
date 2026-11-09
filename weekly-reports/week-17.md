@@ -345,3 +345,54 @@ Week 17 as a whole is not closed. Disk capacity must be rechecked before builds.
 Product closure commit `421b053` was pushed to
 `origin/feature/week-17-docker-foundation`. No merge or deployment was performed.
 CI results for that push are not asserted by this report.
+
+## Planned 7 November work — executed 9 November
+
+Docker Desktop API stalled despite its running indicator. Bounded socket and CLI
+checks timed out; host log sampling found no-space messages, without proving
+current causality. User authorized a normal Docker restart; UI restart/quit did
+not produce a confirmed recovery. The learner rebooted the Mac. Subsequent direct
+checks returned Engine 28.5.1 and the existing container list; visaassist-ai-db-1
+was stopped with exit 0. No deletion, purge, reset or forced termination occurred.
+Free disk space was 7.6 GiB after reboot and 5.5 GiB before product checks.
+
+Learner small-example evidence: builder output reached runtime while build.py
+did not; exit 0. Default UID was 0; overriding UID/GID to 10001 allowed reading
+the artifact and denied writing into /app. No image-size claim was made.
+
+Learner implemented two-stage OpsDesk image: Node 24 + npm ci + existing React
+build, Python 3.14.7 runtime, dist copy, UID/GID 10001. VITE_API_BASE_URL=/ matches
+the existing same-origin deployment approach; no Vite proxy is needed in runtime.
+Frontend context includes build inputs but excludes local node_modules/dist.
+
+Learner verification output:
+- Build exit 0; unchanged rebuild reused npm ci, frontend build and uv sync layers.
+- Effective UID/GID 10001; selected required paths present, selected exclusions
+  absent, node/npm not on PATH, /app write denied; assertions exit 0.
+- Network-disabled Uvicorn PID 1; ephemeral credentials generated inside startup,
+  unavailable loopback DB target; no real DB access or destructive DB tests.
+- /, referenced JS/CSS and favicon 200; live 200/status ok; ready 503 with generic
+  service_unavailable; assertions exit 0.
+- Missing frontend path raised the expected RuntimeError with exit 1. No files
+  were removed. This exercised mount_frontend directly, not full factory startup.
+- SIGTERM shutdown 0.478 seconds, exit 0, OOM false, shutdown-complete logs.
+- Ruff clean, 141 already formatted; backend 740 passed, 286 deselected in 9.71s.
+- Node 24.21.0; frontend 356 passed/17 files in 16.62s; ESLint and diff check clean.
+
+The static mount logged <unmatched> with HTTP 200; this label is not evidence of
+404. Browser interaction with the container, DB persistence, exhaustive layer
+secret scanning and in-flight draining were not verified. No independent rerun
+of learner tests is claimed. Product documentation updated. Final learner review
+and commit/push remain pending; 8 November CI work remains open.
+
+Final learner explanation: correctly separated Node build tooling from browser
+execution and static-file serving, and identified least privilege and read access
+as the runtime requirements. Review clarified that non-root reduces impact but
+does not guarantee prevention of host escape; ownership alone does not make files
+read-only, because permission bits and directory access matter. The /app write
+denial was experimentally verified. No independent restatement of these
+clarifications is claimed. Planned 7 November learning slice closed on 9 November;
+GitHub Actions fundamentals and Docker CI remain the next work.
+
+Product commit `78d22ca` pushed to origin/feature/week-17-docker-foundation.
+No merge, deployment or completed remote CI result is claimed by this closure.

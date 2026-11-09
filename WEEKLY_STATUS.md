@@ -1,6 +1,27 @@
 # Weekly Status
 
-## Current checkpoint — 9 November 2026: basic product image learning closure
+## Current checkpoint — 9 November 2026: multi-stage verification
+
+The scheduled 7 November scope continued on 9 November, earlier than the
+previously stated intention to resume on 10 November. Learner evidence confirms
+the small multi-stage/non-root exercises and the OpsDesk Node build/Python runtime
+image. UID/GID 10001, selected image exclusions, Node/npm absence, denied /app
+writes, static-file HTTP 200, liveness 200, unavailable-DB readiness 503 and
+controlled missing-frontend failure passed. SIGTERM exited 0 in 0.478 seconds.
+Unchanged rebuild used cached layers. Ruff passed (141 formatted files), backend
+740 passed/286 deselected in 9.71 seconds, frontend 356 passed in 16.62 seconds,
+frontend lint clean. Evidence came from learner terminal output, not independent
+reruns. Product documentation updated; final learner explanation supplied and
+reviewed, closing the planned 7 November learning slice on 9 November.
+Commit/push follows this closure. GitHub Actions learning/Docker CI has not been
+completed. No browser/container DB persistence or new deployment is claimed.
+
+Docker API had stalled; after the learner rebooted the Mac, direct checks
+confirmed Engine 28.5.1 answered and existing containers remained listed. No
+deletion/reset was performed. Disk free rose to 7.6 GiB after reboot, then 5.5 GiB
+before the runtime checks. Historical no-space log matches do not prove root cause.
+
+## Earlier checkpoint — 9 November 2026: basic product image learning closure
 
 Continuing the scheduled 6 November task on the actual date of 9 November.
 The learner created the product branch `feature/week-17-docker-foundation` and

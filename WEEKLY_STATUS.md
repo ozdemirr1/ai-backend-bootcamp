@@ -1,6 +1,23 @@
 # Weekly Status
 
-## Current checkpoint — 9 November 2026: multi-stage verification
+## Current checkpoint — 9 November 2026: planned 8 November learning closure
+
+The learner pushed exit-code failure/recovery commits 2c59021 and d9eb142.
+GitHub job metadata confirms the failed step skipped its successor, then all
+three steps passed after correction. Separate backend/frontend workflows passed
+on both commits. Evidence is in notes/ci/github-actions-foundations.md and the
+Week 17 report.
+
+Subsequent Docker CI evidence: a35af07 build passed; f294911 deliberately failed
+on missing COPY source /frontend/dist-missing after frontend build succeeded;
+67500f2 restored the path and passed Docker, backend and frontend CI. Verified
+GitHub runs/logs are recorded in the CI note. Planned 8 November technical
+exercises are complete. Final learner explanation supplied; review clarified
+workflow versus job names and build-only CI limits. Product documentation updated.
+The planned 8 November slice is closed on 9 November; documentation commit/push
+follows. Week 17 review/PR/handoff remains open, not automatically completed by CI.
+
+## Earlier checkpoint — 9 November 2026: multi-stage verification
 
 The scheduled 7 November scope continued on 9 November, earlier than the
 previously stated intention to resume on 10 November. Learner evidence confirms

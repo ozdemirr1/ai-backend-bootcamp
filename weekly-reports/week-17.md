@@ -396,3 +396,30 @@ GitHub Actions fundamentals and Docker CI remain the next work.
 
 Product commit `78d22ca` pushed to origin/feature/week-17-docker-foundation.
 No merge, deployment or completed remote CI result is claimed by this closure.
+
+## Scheduled 8 November — CI fundamentals on 9 November
+
+Learner read existing backend/frontend YAML and pushed demonstration commit
+2c59021 followed by recovery d9eb142. GitHub API verification confirmed failure
+run 42682092503: first step success, deliberate failure failed, following step
+skipped. Recovery run 42682612638 passed all three steps. Backend and frontend
+workflows passed on both commits. Product working tree was clean after these
+pushes. The noclobber file-exists message prevented an unintended overwrite;
+the final diff changed exit 1 to exit 0. See
+[CI foundations](../notes/ci/github-actions-foundations.md). Docker CI and its
+controlled build failure remain pending; learner mastery review remains open.
+
+Docker CI subsequently added at a35af07, successful run 42683580921. Controlled
+failure f294911/run 42684285925 independently verified: frontend build completed;
+Dockerfile:28 COPY failed because /frontend/dist-missing did not exist, exit 1.
+Correction 67500f2/run 42684862264 passed. Backend 42684862267 and frontend
+42684862697 also passed on the correction commit. No runtime CI, registry push,
+DB integration CI or deployment was performed. Final learner review and document
+commit/push remain pending for the planned 8 November slice.
+
+Final learner review supplied. Clarified that Frontend CI/Docker CI name workflows,
+not jobs (frontend-checks/docker-build), and that Docker CI runs build only, not
+separate tests or runtime permission/DB checks. Learner correctly distinguished
+frontend checks from image assembly and build from deployment. Product README,
+Docker guide and status updated with linked CI evidence. Planned 8 November slice
+closed on 9 November; Week 17 review/PR/handoff remains open. No deployment/merge.

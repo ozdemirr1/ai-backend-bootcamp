@@ -6,7 +6,9 @@ Planned 9 November tasks verified today: independent cached build and isolated
 runtime smoke passed, including missing config, non-root, static files, live 200,
 expected ready 503 and SIGTERM exit 0 in 0.374s. Reusable smoke script and product
 instructions added. Prior product head 5f6f291 passed all three CI workflows.
-Technical Week 17 evidence is ready for PR review; merge/release is not claimed.
+Current product head 2cda8fb passed all three push and PR workflows. Technical
+Week 17 evidence is complete with documented limits. OpsDesk draft PR #51 and
+bootcamp PR #15 hold the reviewable changes; product merge/release is not claimed.
 Railway follows main, so product merge requires a concrete release decision.
 
 Week 18 preparation reviewed current migration/test guards and selected isolated

@@ -1,6 +1,149 @@
 # Weekly Status
 
-## Current checkpoint — 3 November 2026
+## Current checkpoint — 10 November 2026: Week 17 review and Week 18 preparation
+
+Planned 9 November tasks verified today: independent cached build and isolated
+runtime smoke passed, including missing config, non-root, static files, live 200,
+expected ready 503 and SIGTERM exit 0 in 0.374s. Reusable smoke script and product
+instructions added. Prior product head 5f6f291 passed all three CI workflows.
+Current product head 2cda8fb passed all three push and PR workflows. Technical
+Week 17 evidence is complete with documented limits. OpsDesk draft PR #51 and
+bootcamp PR #15 hold the reviewable changes; product merge/release is not claimed.
+Railway follows main, so product merge requires a concrete release decision.
+
+Week 18 preparation reviewed current migration/test guards and selected isolated
+Compose service/config boundaries. Existing test guard remains exact; separate
+Compose migration target must be implemented/tested. No Compose services, volumes
+or databases were created. See [Week 18 plan](weekly-reports/week-18-plan.md) and
+[preparation report](weekly-reports/week-18.md). Preserve unrelated LinkedIn assets.
+
+## Earlier checkpoint — 9 November 2026: planned 8 November learning closure
+
+The learner pushed exit-code failure/recovery commits 2c59021 and d9eb142.
+GitHub job metadata confirms the failed step skipped its successor, then all
+three steps passed after correction. Separate backend/frontend workflows passed
+on both commits. Evidence is in notes/ci/github-actions-foundations.md and the
+Week 17 report.
+
+Subsequent Docker CI evidence: a35af07 build passed; f294911 deliberately failed
+on missing COPY source /frontend/dist-missing after frontend build succeeded;
+67500f2 restored the path and passed Docker, backend and frontend CI. Verified
+GitHub runs/logs are recorded in the CI note. Planned 8 November technical
+exercises are complete. Final learner explanation supplied; review clarified
+workflow versus job names and build-only CI limits. Product documentation updated.
+The planned 8 November slice is closed on 9 November; documentation commit/push
+follows. Week 17 review/PR/handoff remains open, not automatically completed by CI.
+
+## Earlier checkpoint — 9 November 2026: multi-stage verification
+
+The scheduled 7 November scope continued on 9 November, earlier than the
+previously stated intention to resume on 10 November. Learner evidence confirms
+the small multi-stage/non-root exercises and the OpsDesk Node build/Python runtime
+image. UID/GID 10001, selected image exclusions, Node/npm absence, denied /app
+writes, static-file HTTP 200, liveness 200, unavailable-DB readiness 503 and
+controlled missing-frontend failure passed. SIGTERM exited 0 in 0.478 seconds.
+Unchanged rebuild used cached layers. Ruff passed (141 formatted files), backend
+740 passed/286 deselected in 9.71 seconds, frontend 356 passed in 16.62 seconds,
+frontend lint clean. Evidence came from learner terminal output, not independent
+reruns. Product documentation updated; final learner explanation supplied and
+reviewed, closing the planned 7 November learning slice on 9 November.
+Commit/push follows this closure. GitHub Actions learning/Docker CI has not been
+completed. No browser/container DB persistence or new deployment is claimed.
+
+Docker API had stalled; after the learner rebooted the Mac, direct checks
+confirmed Engine 28.5.1 answered and existing containers remained listed. No
+deletion/reset was performed. Disk free rose to 7.6 GiB after reboot, then 5.5 GiB
+before the runtime checks. Historical no-space log matches do not prove root cause.
+
+## Earlier checkpoint — 9 November 2026: basic product image learning closure
+
+Continuing the scheduled 6 November task on the actual date of 9 November.
+The learner created the product branch `feature/week-17-docker-foundation` and
+the initial single-stage Dockerfile plus allowlist .dockerignore. Actual local
+file review confirmed the intended content and valid whitespace/continuations;
+the files are included in this closure. Learner build output confirms a successful
+`opsdesk:week17-basic` image build with exit 0, Python 3.14.7 and 31 installed
+runtime packages. Network-disabled import checks passed (pytest absent), and
+default startup without config failed as expected on missing JWT secret with
+exit 1. Learner's isolated runtime check then passed: PID 1 startup, liveness
+200, expected unavailable-DB readiness 503, and SIGTERM shutdown in 0.456 seconds
+with exit 0. No successful real-DB readiness or persistence is claimed.
+
+Host disk initially had only 513 MiB available. After the learner's restart/cleanup
+pause, a fresh check showed about 2.4 GiB. Docker Desktop was opened and Engine
+28.5.1 responded. No agent cleanup or volume deletion was performed. Capacity
+remains constrained: the latest check showed 442 MiB free. Scoped image-filesystem
+exclusion checks passed; full layer-secret scanning is not claimed. Local regression
+passed on learner evidence: Ruff clean, 141 files formatted, 740 tests passed and
+286 deselected in 9.98 seconds. Product Docker documentation, README and dated
+project status now describe the verified scope. Final learner review was supplied
+and corrected for the limited health-check and image-secret evidence. The planned
+6 November learning slice is closed on 9 November; commit/push is authorized.
+The learner plans to continue the 7–8 November scope on 10 November, subject to
+learning checks and disk capacity, without treating those tasks as completed.
+Multi-stage/frontend, non-root and Docker CI remain later
+work. See the [Week 17 report](weekly-reports/week-17.md).
+
+## Earlier checkpoint — 6 November 2026: systems-plan continuation
+
+The 4 November closure was pushed as `c908860`. Continuing the remaining
+5 November learning scope on the actual date of 6 November: the product venv
+(Darwin/Python 3.14.7/FastAPI present) and base container
+(Linux/Python 3.14.10/FastAPI absent) comparison passed on learner evidence.
+A Docker version probe initially timed out; subsequent client/server and tiny
+container checks succeeded. Root cause/recovery action are not established.
+TLS/HTTPS experiments also passed on learner output: verified public TLS 1.3 and
+HTTP/2 200, plus a local HTTP/TLS mismatch (curl 35 and server malformed-request
+logs). The example server was stopped. Final review was supplied and corrected:
+container isolation is not absolute, base-image contents are not standard-library
+only, and -k cannot fix HTTPS sent to a plain-HTTP server. No independent revised
+answer is claimed. The 5 November systems session is closed on 6 November.
+No product image implementation or new product test run
+is claimed; see the [Week 17 report](weekly-reports/week-17.md).
+
+## Earlier checkpoint — 6 November 2026: 4 November learning closure
+
+The learner supplied the final review for the 4 November session and requested
+closure without another experiment. Image/source snapshots, rebuilds and command
+defaults; build-context exclusion/cache recovery; HTTP/connection/exit-code
+distinctions; port conflict/name resolution; and bounded shutdown behavior have
+learner-supplied exercise evidence. The final explanation was accepted with
+clarifications about bind-mount reload and configured access logging.
+
+The 4 November work is closed; Week 17 remains in progress. This is not evidence
+of work on 5 November or completion of the scheduled 6 November product image.
+OpsDesk remains unchanged; no product Dockerfile, new CI job, product test run
+or deployment is claimed. GitHub Actions foundations still require full teaching.
+Next session resumes the weekly prerequisites before a bounded basic product image.
+See the [Week 17 closure](weekly-reports/week-17.md#6-november--review-and-closure-of-the-4-november-session).
+
+## Earlier checkpoint — 4 November 2026
+
+Month 05's main working conversation has begun. Week 17's repository/build/CI
+and local Docker baseline is inspected; product implementation has not started.
+After fetching both origins, bootcamp main matched `8e2408a` and OpsDesk main
+matched `f8f42be`. Existing untracked LinkedIn assets were preserved.
+
+Docker Desktop was started and Engine 28.5.1 now responds as Linux/ARM64;
+Compose v2.40.2 is available. About 5 GiB host disk space remains, so image-build
+capacity needs attention. No product tests or deployment ran.
+The first container exercise succeeded in learner-supplied terminal evidence:
+Linux, PID 1, retained logs and Exited (0), matching the accepted prediction.
+Controlled failure diagnosis and recovery also passed on learner-supplied output
+(RuntimeError/exit 1 → corrected command/exit 0). The learner removed the two
+failure/recovery containers only. A later minimal custom learning image,
+`week17-python-demo:v1`, built and ran successfully with `/app` and exit 0 in
+learner-supplied output. No OpsDesk product image has been built.
+HTTP exercises verified port forwarding, wrong-port connection failure and
+HTTP status versus curl exit code (including `--fail`). The learner stopped the
+HTTP container and investigated Exited (137): a three-second SIGTERM stop took
+3.235 seconds with exit 137/OOM false; SIGINT took 0.250 seconds with exit 0 and
+an explicit shutdown log. The comparison supports timeout escalation; the
+container is now stopped. This is not an OpsDesk SIGTERM acceptance result.
+See the [Week 17 report](weekly-reports/week-17.md)
+and [Docker foundations](notes/docker/docker-foundations.md).
+
+## Earlier checkpoint — 3 November 2026
 
 Month 05 scope and Week 17–20 plans are prepared, not implemented. GitHub Actions fundamentals, incremental examples and
 independent failure diagnosis are included; existing test counts do not replace learning. Follow the

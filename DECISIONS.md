@@ -422,3 +422,18 @@ The learner set the start to 4 November 2026. All daily blocks move one day
 without compressing learning; target closure is 30 November, subject to gates.
 Use one new primary conversation for Month 05; read the tracked handoff and
 local AGENTS.md before working. No product implementation has started.
+
+### 10 November 2026 — Week 17 handoff and Week 18 target isolation
+
+Keep the learner-created Docker build workflow separate from backend CI for this
+iteration. This follows the concrete Week 17 workflow exercise and preserves
+existing backend/frontend checks; it refines the planning preference for a job
+in ci.yml, without duplicating Ruff/pytest. Week 18 PostgreSQL jobs will extend
+existing backend CI rather than introduce another duplicate test workflow.
+
+Current guards only accept exact local targets. Plan a separate explicitly
+validated Compose migration target with migration/runtime role separation;
+do not widen the existing test or development target allowlist. Preserve test
+endpoint 127.0.0.1:5432 / opsdesk_product_test for runner-based CI. See the dated
+[Week 18 preparation](weekly-reports/week-18-plan.md). These are preparation
+decisions, not proof of Compose or DB CI implementation.

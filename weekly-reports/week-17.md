@@ -1,0 +1,468 @@
+# Week 17 — Docker and systems foundations
+
+Teaching preference updated on 4 November: explain and continue through bounded
+exercises without a question/checkpoint after each one. Collect learner review
+questions at the end of the day. Execution evidence is still required; prepared
+commands are not completed work.
+
+4–9 November 2026. In progress; follow the [weekly plan](week-17-plan.md)
+and [Month 05 scope](../monthly-plans/month-05.md).
+
+## 4 November — repository and environment baseline
+
+- Read the local bootcamp instructions, tracked handoff, monthly/weekly plans,
+  status, roadmap and decisions. Bootcamp AGENTS.md is ignored and untracked.
+  No AGENTS.md was found in the product checkout or its ancestor directories;
+  the supplied product guardrails and tracked handoff remain applicable.
+- Fetched both origins. Bootcamp main matched `8e2408a` (planning PR #14);
+  product main matched `f8f42be` (PR #50). Both had zero ahead/behind commits.
+  Product working tree was clean; existing untracked LinkedIn milestone assets
+  in bootcamp were preserved. Bootcamp notes now use
+  `feature/week-17-docker-foundation`; product remains on main without edits.
+- Inspected product README, project status, API contract baseline, build manifests,
+  Railpack configuration and both CI workflows. No tracked Dockerfile,
+  .dockerignore or Compose configuration exists yet.
+- Backend: Python 3.14.7, `pyproject.toml` + `uv.lock`, existing `src/opsdesk`.
+  Frontend: Node 24, npm lockfile, TypeScript/Vite build. `railpack.json` extends
+  the provider build with frontend installation/build and enables FastAPI serving
+  `frontend/dist`; the configured frontend API base is the same origin.
+- Backend CI: push/PR → Ubuntu → checkout → uv/Python → locked dependencies →
+  Ruff lint/format → non-integration pytest. Frontend CI: push/PR → Ubuntu →
+  Node 24 → npm ci → tests → build → lint. Both have read-only contents permission
+  and a ten-minute job timeout. PostgreSQL and Docker build checks are absent.
+- GitHub currently reports successful [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591574)
+  and [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/41490591535)
+  for `f8f42be`. These are existing runs inspected today, not newly executed tests
+  or evidence of independent CI understanding. Hosted runtime was not rechecked.
+- Docker CLI 28.5.1 and Compose v2.40.2-desktop.1 were installed. The initial
+  daemon connection failed. Starting Docker Desktop made the socket available;
+  subsequent sandbox socket denial was resolved by approved access. Engine now
+  reports 28.5.1, Linux, aarch64. This distinguishes engine availability from
+  tool sandbox permissions; no socket permission change was made.
+- Host free disk: approximately 5 GiB. Docker reports five images, one stopped
+  container, six local volumes and about 172 MB build cache. Existing resources
+  were not started, removed or pruned. Check capacity before larger builds.
+
+## Carry-over reviewed, still open
+
+The Month 04 records retain hosted-export/restore evidence, abuse controls,
+provider incident audit/current usage, dependency maintenance and personal learner
+reflection as follow-ups. The 2 November npm findings are historical, not a fresh
+audit. Q03 PostgreSQL CI is a Week 18 target. Assignment, lifecycle and membership
+backlog are not added to this month's implementation scope.
+
+The README's final “Next” paragraph still describes already-delivered Month 04
+work; the development guide also contains dated mock-Ticket language. Use current
+delivered-boundary evidence; align these passages during the scoped product docs
+update without rewriting historical checkpoints.
+
+## First learning checkpoint
+
+Prepared [a small Python-container exercise](../notes/docker/docker-foundations.md).
+Purpose: distinguish image, container, main process and venv before writing the
+OpsDesk Dockerfile. Learner prediction and conceptual explanation were accepted:
+Linux VM kernel, main-process lifetime, successful exit and Uvicorn connection.
+Furkan then ran the exercise and supplied terminal evidence: image pull succeeded,
+Python printed Linux and PID 1; `docker ps` omitted the completed container while
+`docker ps -a` showed Exited (0). Logs retained the output and inspect confirmed
+`exited exit=0`. This is learner-supplied evidence, not a separate mentor rerun.
+No custom image build or backend/frontend/database test ran.
+
+Furkan supplied the controlled failure output (RuntimeError traceback, exit 1),
+identified Python as the source, then independently supplied and ran the corrected
+command using the same image (`recovered`, exit 0). He removed only the failure
+and fixed containers afterward. Review corrected one overstatement: exit 1 alone
+does not prove an exception; the traceback does. Docker CLI startup exit statuses
+must also be distinguished from stored container state. This completes the first
+small run/log/failure/recovery exercise on learner-supplied evidence.
+
+HTTP follow-up: learner terminal output and Docker Desktop screenshot show
+`week17-http` running with host 8087 mapped to container 8000. Curl returned 200
+and server logs recorded GET/200. Learner explained process lifetime and port
+mapping; review distinguished detachment from lifetime and peer-IP observation
+from proof of gateway configuration. HTTP container is still running at the
+supplied checkpoint. Wrong-port diagnosis subsequently passed on learner output:
+8088 failed with curl exit 7, container stayed Up, log tails were unchanged, and
+8087 returned 200 again. Learner distinguished connection failure from HTTP error
+and process crash. No listener inventory was performed; absence of a listener is
+an explanation rather than independently proven host state.
+
+HTTP/client status distinction: learner correctly predicted plain curl exit 0
+despite HTTP 404. Supplied execution returned 404 for `/week17-missing.txt`, exit
+0 and a matching GET/404 server log. The learner subsequently verified `--fail`:
+404 produced exit 22; `/` returned HTML and exit 0. Stopping `week17-http` yielded
+Exited (137). Follow-up inspection showed OOM false, empty runtime error and the
+default stop signal. Learner's measured comparison: SIGTERM with a three-second
+timeout took 3.235 seconds and exited 137; SIGINT took 0.250 seconds, exited 0
+and logged `Keyboard interrupt received, exiting.` This strongly supports stop
+timeout escalation in the first case; no event trace was collected. The small
+shutdown comparison is complete; product SIGTERM acceptance remains separate.
+The exercise container is stopped and retained.
+Port collision, DNS and broader weekly gates are not completed
+by these exercises.
+
+Learner shutdown explanation accepted: Furkan explained commit succeeding before
+process termination prevents the HTTP response from reaching the client. Review
+emphasized uncertain write outcomes and duplicate risk from automatic POST retry.
+The 4 November baseline and first small Docker learning checkpoint are complete;
+this does not complete Week 17 or implement the product image.
+
+Subsequent learner evidence: host-port collision produced Docker exit 125 and
+a Created container with empty logs, while the original server kept responding.
+The failed container was removed; the second server was created on host 8088,
+but immediate curl returned 52 (empty reply). Its successful HTTP response is
+still unverified; startup timing is only a hypothesis. Invalid-name resolution
+failed with socket.gaierror/exit 1; localhost resolved to IPv4/IPv6 loopback.
+Both HTTP containers were then stopped with SIGINT. These are learner-supplied
+results; no product implementation or external DNS-health proof is claimed.
+
+Follow-up: learner restarted the second server, observed startup, ended log
+following and obtained verbose HTTP 200, curl exit 0 and a matching GET/200 log
+on port 8088. Then stopped it with SIGINT. Current access is verified; the initial
+empty reply's exact cause remains unproven. The next tiny Dockerfile illustration
+is prepared, not built, before the separate basic OpsDesk image.
+
+Subsequently Furkan built `week17-python-demo:v1` from a small temporary context
+with app.py, FROM/WORKDIR/COPY/CMD and an allowlist .dockerignore. Default-command
+execution printed the expected message and `/app`, with exit 0. This is a custom
+learning image only; the product Dockerfile remains unimplemented.
+
+Source snapshot/cache exercise passed on learner transcript: v1 retained its
+original output after the host file changed; v2 built and printed the new text.
+WORKDIR was cached on the changed build, and both WORKDIR/COPY were cached on
+an unchanged repeat. No product Dockerfile or product build is claimed.
+
+Context exclusion experiment passed on learner evidence: COPY failed with
+not-found/build exit 1 despite the file existing on the host. Restoring ignore
+rules allowed cached COPY, successful build and v2 runtime output with exit 0.
+
+Command-default check passed: image inspect showed /app and the Python CMD;
+a one-run override printed source, and the following normal run used the original
+CMD. The 4 November planned baseline and initial learning work are complete;
+some later-day foundations were brought forward. Day-end learner review and
+documentation/commit closure remain, not another product implementation block.
+Estimated remaining closure effort: 10–15 minutes, not measured work time.
+
+Next session: reconcile remaining weekly fundamentals and begin the bounded basic
+product image when its prerequisites are covered, before multi-stage work.
+No new daily report, commit, push,
+PR, deployment or product implementation is claimed.
+
+## 6 November — review and closure of the 4 November session
+
+Furkan supplied the end-of-day review on 6 November and explicitly requested
+closing the 4 November program without another experiment. Preserve the exercise
+dates above; this review does not claim 5 November work or completion of the
+scheduled 6 November product implementation.
+
+- Image/source: correctly explained the build-time snapshot, rebuilding and
+  starting a container from the new image. Also described a development bind
+  mount. Clarification: changed files become visible through the mount, but the
+  running application may need reload/restart; no bind-mount exercise was run.
+- Diagnosis: correctly separated TCP connection failure from HTTP 404 and
+  explained default curl versus `--fail`. Access-log expectations are correct
+  for the exercised server; in general, logging configuration and proxies must
+  be considered. A 404 need not originate in the intended backend process.
+- Reflection: identified container exit code versus curl exit code, and detach
+  versus main-process lifetime, as the most important distinctions. No claim
+  is made that he selected or completed a further independent repeat exercise.
+
+The 4 November baseline and bounded learning session are closed. Remaining
+Week 17 work includes product dependency/config boundaries, basic product image,
+then multi-stage/non-root/runtime acceptance and full GitHub Actions teaching.
+Broader Linux/networking/HTTP-TLS coverage must be reconciled with the plan;
+the small exercises do not automatically close every weekly learning gate.
+
+Closure is limited to the weekly report, Docker topic note and current status
+on `feature/week-17-docker-foundation`. Whitespace checks passed. No product
+test rerun was needed for these documentation changes. Product working tree
+was checked clean on main; unrelated untracked LinkedIn assets were preserved.
+No new daily report, push, PR, merge or deployment is part of this closure.
+
+## 6 November — continuation of the 5 November systems plan
+
+The prior closure was pushed as `c908860` to the weekly feature branch after the
+learner requested publication. This continuation preserves that same branch.
+
+Environment comparison: learner screenshot showed macOS/Darwin, Python 3.14.7,
+venv true and FastAPI discoverable in the product venv. The container command
+initially stalled. An approved read-only Docker version probe also timed out
+after ten seconds; this was not evidence of a Python application failure.
+Subsequent learner output showed both Docker client (Darwin/ARM64) and server
+(Linux/ARM64), then a successful `container ready` run. Exact recovery action
+and root cause were not supplied, so neither is asserted.
+
+The repeated base-image comparison returned Linux, Python 3.14.10, venv false
+and FastAPI unavailable. This confirms separate dependency environments and
+version drift between the mutable image tag and product interpreter. No product
+dependency was installed or changed. Do not copy the Mac venv into the Linux
+image; construct the target environment from dependency definitions and lockfile.
+The venv/container comparison is complete.
+
+TLS learner evidence: example.com resolved, TCP connected on 443, TLS 1.3 was
+negotiated, hostname matched the certificate, verification succeeded, and HTTP/2
+returned 200 with curl exit 0. Local plain HTTP on 8087 returned HTML. Sending
+HTTPS to the same plain-HTTP server connected TCP but failed the TLS handshake
+with curl 35; the server logged binary request syntax and HTTP 400. This is a
+protocol mismatch, not proof that a TLS-capable server needs a version downgrade
+or disabled certificate validation. No -k was used. Learner stopped the server
+with SIGINT afterward. These results are not a fresh OpsDesk hosted smoke test.
+
+Product mapping reviewed from existing development docs: FastAPI serves the
+React build and API on one origin; readiness checks SELECT 1, not all schema
+privileges. Railway's official edge documentation describes TLS termination at
+its edge before forwarding to the deployment. No provider configuration or
+database TLS setting was changed.
+
+Final review supplied on 6 November:
+- Correct central explanation: host FastAPI installation is not automatically
+  available in the container. Corrections: container isolation is not absolute
+  or equivalent to a separate guest VM; Linux containers share their host kernel
+  (the Docker Desktop VM's kernel here). A base Python image is not guaranteed
+  to contain only the standard library; the observed fact is FastAPI absence.
+  Copying or mounting files also does not automatically make packages importable
+  or compatible with the container's OS/interpreter.
+- Learner understood why certificate verification should not be casually
+  disabled, but incorrectly stated -k would establish the connection in this
+  protocol-mismatch case. Corrected explicitly: -k skips certificate verification;
+  it does not add TLS to a plain-HTTP server or fix protocol negotiation.
+  No revised independent learner answer or -k experiment is claimed.
+
+The 5 November planned systems session was completed on 6 November with the
+review corrections above; this is not an assertion that both original answers
+were fully correct. No additional exercise is required for this session closure.
+Next: bounded basic OpsDesk image and locked dependency/config boundaries, before
+multi-stage work. GitHub Actions foundations remain required. Documentation-only
+closure uses the same weekly branch and preserves unrelated LinkedIn assets;
+no product test rerun, PR, merge or deployment is included.
+
+## 9 November — basic product image files, build not started
+
+Continuing the scheduled 6 November task. After reviewing actual manifests,
+configuration and startup code, the learner created the product weekly branch,
+Dockerfile and .dockerignore. The initial single-stage recipe selects Python
+3.14.7-slim, installs uv 0.12.3, copies the dependency files/source/Alembic files,
+and uses locked, no-dev, non-editable sync. Uvicorn is the direct startup command
+with factory mode, container binding and the existing no-access-log convention.
+Required DB/JWT settings are runtime inputs, not build credentials. Frontend and
+non-root runtime are not yet implemented; this is not a deployable release claim.
+
+Read-only inspection confirmed both actual files match the supplied recipe and
+have no trailing/non-ASCII whitespace problems; ENV continuations are intact.
+Git diff --check alone did not cover these untracked files, so they were inspected
+directly. No build, dependency resolution or runtime acceptance has run.
+
+Capacity check found only 513 MiB available on the host data filesystem, compared
+with about 5 GiB at the 4 November baseline. Build is deferred until capacity is
+addressed. No files, Docker resources or volumes were removed. The next step is
+bounded disk-use inspection and user-selected cleanup, then build verification.
+
+Resume after learner restart/cleanup pause: learner df output showed 2.5 GiB,
+and a fresh local check showed about 2.4 GiB available. Docker Desktop was opened
+with approval; a bounded read-only probe confirmed both client/server 28.5.1.
+Docker reports nine images, four containers (one active), six volumes (one active)
+and 171.9 MB build cache. No unrelated resource was stopped or removed. Product
+files and branch remain intact. Proceed with one basic backend build and inspect
+remaining disk afterward; the earlier 5 GiB suggestion was headroom guidance,
+not a measured minimum requirement. Build success is not yet claimed.
+
+First product build completed on learner-supplied transcript: base Python
+3.14.7-slim resolved and downloaded; uv 0.12.3 installed; locked no-dev,
+non-editable sync built OpsDesk and installed 31 packages using Python 3.14.7.
+The resolver considered 43 packages, which is distinct from the 31 installed.
+Image export/tag `opsdesk:week17-basic` completed with CLI exit 0. Build context
+was 256.02 kB, not proof by itself of secret exclusion. The pip root warning
+is not a failed build; non-root runtime remains scheduled work.
+
+A fresh host check after receiving this transcript showed about 1.0 GiB free.
+Avoid unnecessary rebuilds; next use the existing image for import/content and
+missing-config checks with network disabled. No startup, secret-layer audit,
+database test, migration, health smoke or release success is claimed yet.
+
+Learner runtime checks: network-disabled command override imported opsdesk.main
+without invoking the factory; Python 3.14.7 from /app/.venv, OpsDesk 0.1.0,
+FastAPI 0.141.1 and Uvicorn 0.53.0 were found; pytest was unavailable and exit was
+0. The real default command with no supplied config failed in TokenSettings
+with secret/Field required; CLI and retained container both reported exit 1.
+This is the expected fail-fast missing-JWT configuration case. No real secret
+was supplied or printed. It does not yet cover missing DB settings, successful
+startup, liveness/readiness or image-layer secret exclusion.
+
+Learner image-filesystem check passed with exit 0: required manifests/source/
+Alembic paths present, selected root exclusions absent, no .env-like files,
+.git/__pycache__ directories or .pem/.key/.pyc artifacts found under source and
+migrations, and Linux venv present. This is a scoped merged-filesystem check,
+not an exhaustive secret scan of every image layer. Next: network-isolated
+runtime with generated ephemeral credentials, liveness 200 and expected
+readiness 503 against an unavailable container-local database target.
+
+Learner runtime evidence: an isolated container generated ephemeral credentials
+inside its startup process, then exec'd Uvicorn with the intended factory/port
+options. Uvicorn ran as PID 1 and reported startup complete. Internal HTTP checks
+asserted /health/live 200 with status ok and /health/ready 503 with the generic
+service_unavailable envelope; the check command exited 0. Network was disabled
+and the target was container-local loopback with no database server; no real
+database, migration or destructive test was used. This validates unavailable-DB
+behavior, not successful PostgreSQL readiness or Ticket persistence.
+
+Structured request logs showed both statuses with unexpected_error false and
+no supplied credential values. SIGTERM stop with a ten-second deadline took
+0.456 seconds; container state was exited/0, OOM false, and logs showed shutdown
+complete. This does not test in-flight request draining or commit interruption.
+All runtime evidence was supplied by the learner, not independently rerun.
+
+Post-check disk observation: 442 MiB available. No further build/download is
+planned before capacity improves. Existing local pytest/Ruff executables are
+available for the bounded non-integration regression.
+
+Learner regression evidence, 9 November: Ruff check passed; format check reported
+141 files already formatted. Local pytest with `-m "not integration"` and cache/
+bytecode writes disabled reported 740 passed, 286 deselected in 9.98 seconds.
+These tests ran in the host development venv, not the runtime image. No new
+database test or CI run is claimed.
+
+Product documentation now includes docs/docker.md with the basic image scope,
+configuration boundary and dated local evidence. README links it and replaces
+its obsolete Month 04 next-step paragraph; project status preserves the dated
+published boundary separately from the local image milestone. Multi-stage/non-root/frontend
+packaging and Docker CI learning remain subsequent Week 17 work.
+
+Final learner review supplied on 9 November: correctly distinguished live process
+from dependency readiness and explained runtime secrets, environment portability
+and rotation. Review corrections: this implementation checks PostgreSQL only,
+not cache; liveness 200 proves that endpoint responded, not that the whole image
+or application is defect-free. Secrets may persist in image configuration or
+layers, but not all file contents appear directly in docker history. Runtime
+rotation also requires the process to receive/reload the new configuration.
+No independent restatement after these corrections is claimed.
+
+The learner explicitly closed the scheduled 6 November slice and authorized
+commit/push for both repositories on 9 November. The planned 7–8 November work
+will resume on 10 November: multi-stage/non-root existing frontend packaging,
+then full GitHub Actions learning and Docker build CI. These remain pending;
+Week 17 as a whole is not closed. Disk capacity must be rechecked before builds.
+
+Product closure commit `421b053` was pushed to
+`origin/feature/week-17-docker-foundation`. No merge or deployment was performed.
+CI results for that push are not asserted by this report.
+
+## Planned 7 November work — executed 9 November
+
+Docker Desktop API stalled despite its running indicator. Bounded socket and CLI
+checks timed out; host log sampling found no-space messages, without proving
+current causality. User authorized a normal Docker restart; UI restart/quit did
+not produce a confirmed recovery. The learner rebooted the Mac. Subsequent direct
+checks returned Engine 28.5.1 and the existing container list; visaassist-ai-db-1
+was stopped with exit 0. No deletion, purge, reset or forced termination occurred.
+Free disk space was 7.6 GiB after reboot and 5.5 GiB before product checks.
+
+Learner small-example evidence: builder output reached runtime while build.py
+did not; exit 0. Default UID was 0; overriding UID/GID to 10001 allowed reading
+the artifact and denied writing into /app. No image-size claim was made.
+
+Learner implemented two-stage OpsDesk image: Node 24 + npm ci + existing React
+build, Python 3.14.7 runtime, dist copy, UID/GID 10001. VITE_API_BASE_URL=/ matches
+the existing same-origin deployment approach; no Vite proxy is needed in runtime.
+Frontend context includes build inputs but excludes local node_modules/dist.
+
+Learner verification output:
+- Build exit 0; unchanged rebuild reused npm ci, frontend build and uv sync layers.
+- Effective UID/GID 10001; selected required paths present, selected exclusions
+  absent, node/npm not on PATH, /app write denied; assertions exit 0.
+- Network-disabled Uvicorn PID 1; ephemeral credentials generated inside startup,
+  unavailable loopback DB target; no real DB access or destructive DB tests.
+- /, referenced JS/CSS and favicon 200; live 200/status ok; ready 503 with generic
+  service_unavailable; assertions exit 0.
+- Missing frontend path raised the expected RuntimeError with exit 1. No files
+  were removed. This exercised mount_frontend directly, not full factory startup.
+- SIGTERM shutdown 0.478 seconds, exit 0, OOM false, shutdown-complete logs.
+- Ruff clean, 141 already formatted; backend 740 passed, 286 deselected in 9.71s.
+- Node 24.21.0; frontend 356 passed/17 files in 16.62s; ESLint and diff check clean.
+
+The static mount logged <unmatched> with HTTP 200; this label is not evidence of
+404. Browser interaction with the container, DB persistence, exhaustive layer
+secret scanning and in-flight draining were not verified. No independent rerun
+of learner tests is claimed. Product documentation updated. Final learner review
+and commit/push remain pending; 8 November CI work remains open.
+
+Final learner explanation: correctly separated Node build tooling from browser
+execution and static-file serving, and identified least privilege and read access
+as the runtime requirements. Review clarified that non-root reduces impact but
+does not guarantee prevention of host escape; ownership alone does not make files
+read-only, because permission bits and directory access matter. The /app write
+denial was experimentally verified. No independent restatement of these
+clarifications is claimed. Planned 7 November learning slice closed on 9 November;
+GitHub Actions fundamentals and Docker CI remain the next work.
+
+Product commit `78d22ca` pushed to origin/feature/week-17-docker-foundation.
+No merge, deployment or completed remote CI result is claimed by this closure.
+
+## Scheduled 8 November — CI fundamentals on 9 November
+
+Learner read existing backend/frontend YAML and pushed demonstration commit
+2c59021 followed by recovery d9eb142. GitHub API verification confirmed failure
+run 42682092503: first step success, deliberate failure failed, following step
+skipped. Recovery run 42682612638 passed all three steps. Backend and frontend
+workflows passed on both commits. Product working tree was clean after these
+pushes. The noclobber file-exists message prevented an unintended overwrite;
+the final diff changed exit 1 to exit 0. See
+[CI foundations](../notes/ci/github-actions-foundations.md). Docker CI and its
+controlled build failure remain pending; learner mastery review remains open.
+
+Docker CI subsequently added at a35af07, successful run 42683580921. Controlled
+failure f294911/run 42684285925 independently verified: frontend build completed;
+Dockerfile:28 COPY failed because /frontend/dist-missing did not exist, exit 1.
+Correction 67500f2/run 42684862264 passed. Backend 42684862267 and frontend
+42684862697 also passed on the correction commit. No runtime CI, registry push,
+DB integration CI or deployment was performed. Final learner review and document
+commit/push remain pending for the planned 8 November slice.
+
+Final learner review supplied. Clarified that Frontend CI/Docker CI name workflows,
+not jobs (frontend-checks/docker-build), and that Docker CI runs build only, not
+separate tests or runtime permission/DB checks. Learner correctly distinguished
+frontend checks from image assembly and build from deployment. Product README,
+Docker guide and status updated with linked CI evidence. Planned 8 November slice
+closed on 9 November; Week 17 review/PR/handoff remains open. No deployment/merge.
+
+## Planned 9 November closure — executed 10 November
+
+Verified latest prior product head 5f6f291: backend run 42686117673, frontend
+42686116911 and Docker 42686116894 all succeeded. Both repos fetched origin;
+no new main commits or existing Week 17 PRs were found at the initial check.
+
+Independent verification (not another learner attempt): Engine 28.5.1, Compose
+v2.40.2-desktop.1, 7.4 GiB free. Rebuilt opsdesk:week17-closure successfully with
+cache. The reusable scripts/docker/smoke.py passed selected artifact/non-root
+checks, default missing-JWT config rejection, Uvicorn startup, HTML/JS/CSS/favicon
+200, live 200 and unavailable-DB ready 503. SIGTERM completed in 0.374s with exit 0,
+OOM false and shutdown-complete logs. Three uniquely named test containers were
+retained; none of the existing containers/images/volumes were removed. No real DB
+connection/destructive integration test was performed.
+
+Added a repeatable README-linked smoke recipe and release boundary to product
+docs. Historical learner regression and CI evidence remain separate; no new
+740/356 test run is claimed here. Smoke script lint/format checks passed.
+Image secret evidence remains scoped path/config checks, not exhaustive layer
+certification. Runtime isolation does not certify hosted readiness or browser
+interaction against this image.
+
+Weekly learning review uses the learner's already recorded explanations and
+controlled failures, with corrections preserved. No additional independent
+learner answer is invented. Technical Week 17 tasks and Week 18 preparation are
+ready for PR review; merge/release remains a distinct gate because main is tied
+to Railway. Week 18 plan now records exact target boundaries and first steps;
+no Compose implementation was started.
+
+Product closure commit 2cda8fb pushed; draft
+[OpsDesk PR #51](https://github.com/ozdemirr1/opsdesk/pull/51) opened for review.
+Release boundary is explicit in the PR: no merge/deploy before hosted
+configuration review. Current-head CI is recorded below after completion.
+
+Final PR-head checks at 2cda8fb all passed: Backend
+[42807468277](https://github.com/ozdemirr1/opsdesk/actions/runs/42807468277), Docker
+[42807464826](https://github.com/ozdemirr1/opsdesk/actions/runs/42807464826), Frontend
+[42807464984](https://github.com/ozdemirr1/opsdesk/actions/runs/42807464984).
+Push-event checks also passed. Bootcamp
+[PR #15](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/15) contains the
+learning closure and Week 18 preparation. Week 17 technical/learning evidence is
+complete with the documented limits; product merge/release remains pending.

@@ -423,3 +423,37 @@ separate tests or runtime permission/DB checks. Learner correctly distinguished
 frontend checks from image assembly and build from deployment. Product README,
 Docker guide and status updated with linked CI evidence. Planned 8 November slice
 closed on 9 November; Week 17 review/PR/handoff remains open. No deployment/merge.
+
+## Planned 9 November closure — executed 10 November
+
+Verified latest prior product head 5f6f291: backend run 42686117673, frontend
+42686116911 and Docker 42686116894 all succeeded. Both repos fetched origin;
+no new main commits or existing Week 17 PRs were found at the initial check.
+
+Independent verification (not another learner attempt): Engine 28.5.1, Compose
+v2.40.2-desktop.1, 7.4 GiB free. Rebuilt opsdesk:week17-closure successfully with
+cache. The reusable scripts/docker/smoke.py passed selected artifact/non-root
+checks, default missing-JWT config rejection, Uvicorn startup, HTML/JS/CSS/favicon
+200, live 200 and unavailable-DB ready 503. SIGTERM completed in 0.374s with exit 0,
+OOM false and shutdown-complete logs. Three uniquely named test containers were
+retained; none of the existing containers/images/volumes were removed. No real DB
+connection/destructive integration test was performed.
+
+Added a repeatable README-linked smoke recipe and release boundary to product
+docs. Historical learner regression and CI evidence remain separate; no new
+740/356 test run is claimed here. Smoke script lint/format checks passed.
+Image secret evidence remains scoped path/config checks, not exhaustive layer
+certification. Runtime isolation does not certify hosted readiness or browser
+interaction against this image.
+
+Weekly learning review uses the learner's already recorded explanations and
+controlled failures, with corrections preserved. No additional independent
+learner answer is invented. Technical Week 17 tasks and Week 18 preparation are
+ready for PR review; merge/release remains a distinct gate because main is tied
+to Railway. Week 18 plan now records exact target boundaries and first steps;
+no Compose implementation was started.
+
+Product closure commit 2cda8fb pushed; draft
+[OpsDesk PR #51](https://github.com/ozdemirr1/opsdesk/pull/51) opened for review.
+Release boundary is explicit in the PR: no merge/deploy before hosted
+configuration review. Current-head CI is recorded below after completion.

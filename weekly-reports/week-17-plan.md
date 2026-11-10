@@ -2,6 +2,11 @@
 
 4–9 Kasım 2026. Planlama durumu: uygulanmadı. [Ay 5 sözleşmesi](../monthly-plans/month-05.md) kapsam ve güvenlik sınırlarında esas kaynaktır.
 
+10 Kasım kapanış notu: yukarıdaki durum başlangıç planına aittir. Teknik öğrenme,
+build/runtime ve CI kanıtları [Week 17 raporunda](week-17.md) kaydedildi. Planlanan
+9 Kasım doğrulaması 10 Kasım'da yapıldı. PR/merge/release durumu raporda ayrı
+tutulur. Aşağıdaki başlangıç checklist'i geriye dönük sonuç yerine kullanılmaz.
+
 ## Öğrenme ve uygulama yöntemi
 
 Kavram → küçük örnek → OpsDesk uygulaması → kontrollü hata → test → öğrenenin

@@ -1,6 +1,21 @@
 # Weekly Status
 
-## Current checkpoint — 9 November 2026: planned 8 November learning closure
+## Current checkpoint — 10 November 2026: Week 17 review and Week 18 preparation
+
+Planned 9 November tasks verified today: independent cached build and isolated
+runtime smoke passed, including missing config, non-root, static files, live 200,
+expected ready 503 and SIGTERM exit 0 in 0.374s. Reusable smoke script and product
+instructions added. Prior product head 5f6f291 passed all three CI workflows.
+Technical Week 17 evidence is ready for PR review; merge/release is not claimed.
+Railway follows main, so product merge requires a concrete release decision.
+
+Week 18 preparation reviewed current migration/test guards and selected isolated
+Compose service/config boundaries. Existing test guard remains exact; separate
+Compose migration target must be implemented/tested. No Compose services, volumes
+or databases were created. See [Week 18 plan](weekly-reports/week-18-plan.md) and
+[preparation report](weekly-reports/week-18.md). Preserve unrelated LinkedIn assets.
+
+## Earlier checkpoint — 9 November 2026: planned 8 November learning closure
 
 The learner pushed exit-code failure/recovery commits 2c59021 and d9eb142.
 GitHub job metadata confirms the failed step skipped its successor, then all

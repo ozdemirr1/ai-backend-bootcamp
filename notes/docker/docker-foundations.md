@@ -264,3 +264,29 @@ was explained; a revised independent learner answer is not recorded.
 
 References: [Docker container concepts](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/),
 [docker run and process exit status](https://docs.docker.com/engine/containers/run/).
+
+## 9–10 November — multi-stage/non-root and repeatable smoke
+
+Learner example: builder generated message.txt; runtime received that artifact
+without build.py. UID 0 was observed first, then UID/GID 10001 read the artifact
+but could not write /app. Product implementation used Node 24 for React build and
+Python 3.14.7 for runtime; COPY --from transferred only dist. Browser executes
+the resulting JavaScript; runtime Node/npm are unnecessary for this SPA.
+
+Manifests copied before frontend sources allow reuse of the npm ci layer.
+Unchanged rebuild showed CACHED; source-only invalidation was explained but not
+separately measured. Non-root reduces privileges; it does not guarantee that
+host escape is impossible. Root ownership alone is not read-only: permission
+bits and directory access determine whether the process can write.
+
+Learner static-file/health smoke and SIGTERM checks passed on 9 November;
+independent repeat passed on 10 November via product scripts/docker/smoke.py.
+HTTP 200 for static files does not prove browser interactions or DB persistence.
+Readiness 503 was expected because the network-disabled container deliberately
+targeted an unavailable loopback database. Container localhost means that
+container, not the Mac or a future Compose db service.
+
+EXPOSE documents a container port; it does not publish it on the host. The
+independent repeat used docker exec for internal requests and no host port.
+Containers were retained after stop; stop is distinct from removal or volume
+deletion. Refer to the Week 17 report for dated counts and evidence boundaries.

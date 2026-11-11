@@ -1,6 +1,19 @@
 # Weekly Status
 
-## Current checkpoint — 10 November 2026: Week 17 review and Week 18 preparation
+## Current checkpoint — 11 November 2026: Week 17 deployed
+
+With explicit learner approval, OpsDesk PR #51 merged normally as `7dfed5a`.
+Railway deployment `7baedb6e-ae13-4903-b00a-d35eb23781a3` succeeded with the
+Dockerfile builder, direct installed Uvicorn/Alembic commands and port 8080.
+Public HTTPS liveness/readiness/static assets passed. A synthetic account passed
+registration, login and authenticated profile/organization reads; it is retained.
+No data was deleted and no destructive tests ran. Merge-head backend/frontend/
+Docker CI all passed. See the dated [Week 17 release evidence](weekly-reports/week-17.md).
+
+Week 17 release gate is closed. Bootcamp PR #15 had already merged as `d7f7211`.
+Week 18 preparation remains ready; Compose implementation has not started.
+
+## Earlier checkpoint — 10 November 2026: Week 17 review and Week 18 preparation
 
 Planned 9 November tasks verified today: independent cached build and isolated
 runtime smoke passed, including missing config, non-root, static files, live 200,

@@ -1,6 +1,22 @@
 # Weekly Status
 
-## Current checkpoint — 11 November 2026: Week 17 deployed
+## Current checkpoint — 12 November 2026: readiness/timeout learning closed
+
+Week 18 Compose role/migration implementation was pushed as OpsDesk c18775c;
+its backend/frontend/Docker CI passed at the 11 November checkpoint. Today's
+learner-run experiments verified delayed startup ordering, local DB outage
+live 200 / ready 503, recovery to ready 200 without API restart, missing-config
+exit 1 / normal-config exit 0, and two connection timeouts (2.07s, 2.09s; total
+5.15s including a one-second interval). End-of-session retry/idempotency reasoning
+is recorded in [Week 18](weekly-reports/week-18.md) and the
+[Compose note](notes/docker/compose-networking.md).
+
+The 10–12 November learning slices are complete within their recorded scope.
+No new product retry code, deployment, destructive test or deletion occurred in
+this closure. Next: planned 13 November GitHub Actions PostgreSQL service-container
+and guarded schema/data CI learning. Week 18 acceptance remains open.
+
+## Earlier checkpoint — 11 November 2026: Week 17 deployed
 
 With explicit learner approval, OpsDesk PR #51 merged normally as `7dfed5a`.
 Railway deployment `7baedb6e-ae13-4903-b00a-d35eb23781a3` succeeded with the

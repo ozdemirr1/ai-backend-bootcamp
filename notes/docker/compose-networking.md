@@ -34,3 +34,25 @@ Admin, migration and API credentials are independent. API cannot create schema,
 delete business rows, write Alembic's version table or assume the migrator role.
 Existing row-lock queries require column-level UPDATE grants even for some read
 paths; this is a database privilege detail, not a substitute for API authorization.
+
+## 12 November — readiness and timeout are separate boundaries
+
+Learner evidence: the delayed Python dependency became ready before migration
+completed, and API started last. In the real local OpsDesk outage, stopping DB left
+API alive (live 200) but unready (ready 503). Starting DB restored ready 200 on the
+first poll without restarting API. Startup depends_on is not runtime supervision.
+
+Missing JWT interpolation exited 1; normal config validation exited 0. This validates
+required configuration presence, not authentication or database availability.
+
+The network-none fake PostgreSQL listener accepted TCP but sent no protocol reply.
+Using OpsDesk's engine factory with connect_timeout=2 produced 2.07s and 2.09s
+failures. A one-second interval brought two attempts to 5.15s. The explicit lab
+loop supplied retry; the connection option supplied timeout. SQL duration and total
+HTTP-request duration were not tested. Quick refusal (about 20ms in the outage)
+does not invalidate a two-second connection timeout.
+
+Do not retry a whole write just because the response was lost. Commit may already
+have succeeded, so repeating Ticket creation can duplicate a row. Distinguish known
+pre-write failure from an unknown commit outcome; later durable idempotency work
+will address safe repeated requests. These experiments did not add product retries.

@@ -81,3 +81,52 @@ This closes implementation evidence for the planned 10–11 November slice, not
 Week 18 acceptance or independent learner mastery of the new code. Learner should
 inspect depends_on, dedicated credentials and the rejection result next. Delayed
 DB/retry, restart persistence, restore and PostgreSQL CI remain pending.
+
+## 12 November 2026 — readiness, timeout and bounded retry learning closure
+
+Evidence source: Furkan's supplied terminal outputs and end-of-session explanation.
+These experiments were run by the learner; they were not independently rerun during
+this documentation closure. No new product code or regression run is claimed.
+
+### Predictions and observations
+
+| Exercise | Expected behavior | Observed evidence |
+| --- | --- | --- |
+| Delayed dependency simulation | Migration waits for health; API waits for migration success | Dependency ready at 14:16:41.016 UTC, migration completed at 14:16:41.481, API started at 14:16:42.092; Compose exit 0 |
+| Local OpsDesk DB outage | API stays alive but loses readiness | Before stop: readiness 200 (0.155451s). During outage: liveness 200 (0.018921s), readiness 503 (0.020214s); API remained Up |
+| DB recovery | Readiness recovers without restarting API | First polling attempt returned ready; DB healthy and API retained its uptime |
+| Missing required configuration | Fail before startup | With env-file disabled and four variables unset, JWT interpolation failed; exit 1. Normal config validation exited 0 |
+| Accepted TCP connection without PostgreSQL response | Connection timeout and bounded experiment retry | Two timeouts: 2.07s and 2.09s, one 1s retry delay, total 5.15s; assertions passed and container command exited 0 |
+
+The delayed-dependency lab used Python and a readiness marker, not a delayed real
+PostgreSQL server. It verified Compose startup conditions. The real outage exercise
+stopped and restarted only the local Compose DB; no deletion/reset occurred. The
+lab services were stopped and retained. The timeout lab used an isolated network-none
+container and its loopback fake listener with the actual OpsDesk connection factory;
+random synthetic credentials were not printed. It did not connect to a real DB.
+
+Structured API logs recorded ready 200 -> live 200 -> ready 503 -> ready 200 with
+unexpected_error=false. This is handled dependency failure, not an API crash.
+The initial rg command was unavailable in the learner's shell; grep -nE provided
+the equivalent configuration inspection without installing a new tool.
+
+### Learning review and implementation decision
+
+Furkan explained why whole-Ticket-write retry can duplicate a successfully committed
+operation after its response is lost, distinguished connection establishment from
+writing/commit, and identified cumulative waiting/resource cost. Clarifications:
+not every failure stage is ambiguous; a known pre-connection failure differs from
+an unknown commit outcome. Waiting consumes request resources but does not imply
+that every API worker is blocked. Persistent idempotency remains later work.
+
+Timeout is a bound, not a mandatory delay: connection refusal can return promptly.
+The two-attempt loop belonged to the experiment, not automatic product retry.
+First-attempt readiness recovery did not exercise the polling loop's retry branch.
+The observed connection timeout does not establish a SQL statement deadline or an
+end-to-end HTTP request deadline. Existing pg_isready health does not verify app
+credentials, schema or table privileges; /health/ready currently probes SELECT 1.
+
+No new retry implementation is justified by these results. The planned 12 November
+experiments and learner review are complete within these limits. Week 18 still
+requires PostgreSQL schema/data CI, dedicated persistence/restore evidence and
+weekly acceptance; simple DB restart/readiness is not row-persistence verification.

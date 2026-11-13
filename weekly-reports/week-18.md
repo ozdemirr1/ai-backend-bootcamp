@@ -130,3 +130,37 @@ No new retry implementation is justified by these results. The planned 12 Novemb
 experiments and learner review are complete within these limits. Week 18 still
 requires PostgreSQL schema/data CI, dedicated persistence/restore evidence and
 weekly acceptance; simple DB restart/readiness is not row-persistence verification.
+
+## 13 November 2026 — PostgreSQL CI implementation and recovery
+
+Learner pushed a8e82ca: PostgreSQL learning workflow successfully queried its lab
+DB and ran the dependent job afterward (run 43392052116). Source inspection showed
+that connection.py verifies SELECT 1, not the actual role/server; this earlier
+explanation was corrected. Learner read-only Compose queries showed the same DB
+at server address 127.0.0.1 inside DB and 172.20.0.3 from API. Docker initially hung;
+a restart restored the engine. Compose start api reran the migration dependency,
+which exited 0; the claim that it would not rerun was corrected. No deletion occurred.
+
+Product CI implementation 02abc71 introduced separate schema/data PostgreSQL
+services, needs ordering, a Python container sharing each service's network stack,
+exact-target/role/privilege preflight, and isolated bootstrap. No host ports or
+production secrets are used. Initial trust is replaced by loopback SCRAM before
+product tests; a generated password is masked and written to a mode-600 temp file.
+The checkout is read-only and dependencies are isolated inside the test container.
+Existing guards are unchanged; each job creates only opsdesk_product_test and its
+restricted owner opsdesk_product_test_runner.
+
+Initial run 43417330187 failed before tests because Path.open does not accept
+opener; data was skipped by needs. Recovery 72ee274 used built-in open and added a
+private-file test. This was an implementation defect, not an intentionally induced
+learning failure. Run 43417456376 passed 5 schema tests (0.64s), then 281 data tests
+(26.00s), and Alembic drift checks. Both jobs also passed 17 guard/connection checks.
+Schema ended 11:29:52 UTC; data began 11:29:55 UTC on its own fresh service.
+Backend CI at 72ee274 passed 783 tests / 286 deselected; frontend/Docker passed.
+Local evidence before recovery: 782 non-DB tests passed; focused recovery: 24 passed.
+These figures are separate runs/suites, not a sum. Ruff passed.
+
+Product documentation pushed as f52a790; its new automatic runs are separate from
+the verified implementation-head results above. No local destructive DB test,
+main merge, deployment or issue closure occurred. Learner code review/explanation
+and remaining Week 18 acceptance are still pending.

@@ -1,6 +1,15 @@
 # Weekly Status
 
-## Current checkpoint — 12 November 2026: readiness/timeout learning closed
+## Current checkpoint — 13 November 2026: PostgreSQL CI verified
+
+OpsDesk implementation 72ee274 passed separate guarded schema (5) and data (281)
+CI suites, with needs ordering and no Alembic drift. Backend 783 tests / 286
+deselected, frontend and Docker CI passed at that head. Initial bootstrap failure
+and recovery are recorded in weekly-reports/week-18.md and the PostgreSQL CI note.
+Product evidence docs pushed as f52a790; no merge/deployment or issue closure.
+Learner review and Week 18 persistence/restore/acceptance remain open.
+
+## Earlier checkpoint — 12 November 2026: readiness/timeout learning closed
 
 Week 18 Compose role/migration implementation was pushed as OpsDesk c18775c;
 its backend/frontend/Docker CI passed at the 11 November checkpoint. Today's

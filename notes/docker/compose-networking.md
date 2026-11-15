@@ -56,3 +56,27 @@ Do not retry a whole write just because the response was lost. Commit may alread
 have succeeded, so repeating Ticket creation can duplicate a row. Distinguish known
 pre-write failure from an unknown commit outcome; later durable idempotency work
 will address safe repeated requests. These experiments did not add product retries.
+
+## 15 November — persistence, acceptance and HTTP/TLS boundaries
+
+Stop/start preserved table fingerprints and sequence states; a separate network-none
+restore matched the same snapshot. A retained named volume is persistence, not an
+independent backup. A successful dump alone does not prove that it can be restored.
+The restore omitted ownership/grants; production permission recovery remains distinct.
+Read-only Compose acceptance passed; it creates no business rows or new containers.
+
+Local flow: browser HTTP127.0.0.1:8089 -> Docker port forwarding -> Uvicorn HTTP8000.
+Docker port forwarding is not a TLS termination proxy. HTTPS against that HTTP port
+cannot be fixed by disabling certificate verification.
+
+Typical hosted flow: browser HTTPS -> trusted ingress/TLS termination -> application
+HTTP (or a separately encrypted internal hop). TLS termination means the browser's
+TLS session ends at ingress; it does not establish encryption of every later hop.
+A reverse proxy accepts client requests and forwards them to the application; it may
+also route hosts/paths and manage certificates. No new live proxy is being installed.
+Forwarded protocol/client-IP headers are trustworthy only from a trusted proxy path.
+A client can supply similarly named headers; blanket trust can spoof IP/protocol.
+Provider forwarding-header/IP trust settings were not independently audited today.
+
+Sources: https://fastapi.tiangolo.com/advanced/behind-a-proxy/ and
+https://fastapi.tiangolo.com/deployment/https/ . Learner restatement remains pending.

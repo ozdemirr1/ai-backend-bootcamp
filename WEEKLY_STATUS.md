@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 13 November 2026: PostgreSQL CI verified
+## Current checkpoint — 15 November 2026: persistence and isolated restore verified
+
+Learner stop/start and separate restore snapshots match (one Ticket and Comment,
+sequence state included). Restore target retained; no source overwrite or deletion.
+CI wrong-port failure617d175 and recovery80f62a0 verified; all five recovery workflows
+passed. Product ec645a4 adds independently passed read-only Compose acceptance and
+seven focused safety tests. See Week18 report for boundaries and run evidence.
+End-of-session learner explanation, weekly review and Q03/PR acceptance remain open.
+No deployment or merge occurred.
+
+## Earlier checkpoint — 13 November 2026: PostgreSQL CI verified
 
 OpsDesk implementation 72ee274 passed separate guarded schema (5) and data (281)
 CI suites, with needs ordering and no Alembic drift. Backend 783 tests / 286

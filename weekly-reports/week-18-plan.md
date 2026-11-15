@@ -69,6 +69,33 @@ Günlük tablo başlangıç sırasıdır; öğrenme kontrolü geçilmeden bağı
 | 15 Kasım | Tek komut acceptance; başarısız CI DB bağlantısını teşhis et; reverse proxy ve HTTP/TLS kavramını incele. | Port, servis DNS ve HTTP/TLS sınırı notu; yeni canlı proxy yok. |
 | 16 Kasım | README ve haftalık rapor; CI/review; Q03 kabulünü kontrol et. | Kanıt yeterliyse #25 kapatılır; otomatik kapanış yok. |
 
+## 15 Kasım güncellemesi — 14–15 Kasım birleşik çalışma
+
+Özgün günlük takvim tarihsel plan olarak korunur. Aşağıdaki işler henüz tamamlanmış
+sayılmaz; 13 Kasım kanıtları temel alınarak tek oturum sırasına birleştirilmiştir.
+
+1. Disk/Docker/Compose durumunu ve mevcut Git değişikliklerini kontrol et.
+2. Küçük named-volume örneği, ardından sentetik OpsDesk kaydının stop/start
+   sonrasında aynı kimlik ve içerikle kaldığını doğrula. Önceki readiness toparlanması
+   tek başına veri kalıcılığı kanıtı değildir. Silme/recreate gerektiren deney yok.
+3. Yedek al ve yalnızca yeni, izole bir hedefe geri yükle. Önce kaynak/hedef kimliğini
+   doğrula; kayıtlar, ilişkiler ve sequence davranışını karşılaştır. Mevcut dev/canlı
+   veriyi üzerine yazma; yedeği Git'e/loglara koyma. Kaynakları izinsiz silme.
+4. Zaman damgalı Linux/container loglarını önceki deneylerle birlikte oku.
+   Ayrı bir CI DB bağlantı hatasını kontrollü üret, logdan teşhis et ve toparlanmayı
+   doğrula. Önceki Path.open hatası DB bağlantı hatası yerine sayılmaz.
+5. Tek komutluk kabul kontrolünü mevcut health/static/rol kontrollerinden kur;
+   gerçekten çalıştır ve sonuçları kaydet. Dev DB'de destructive suite çalıştırma.
+6. Reverse proxy, HTTP/TLS ve forwarded-header güven sınırını mevcut OpsDesk
+   yayını üzerinden açıkla; yeni canlı proxy veya deployment yapma.
+7. Gün sonunda 13 Kasım'dan kalan needs/ağ/guard açıklamasını ve birleşik günün
+   öğrenme değerlendirmesini al; mevcut haftalık rapor/notları güncelle, commit/push.
+
+Önceden tamamlanan şema/data CI kurulumu ve timeout/missing-config deneyleri
+tekrardan iş listesine eklenmez. Gerekli regression yalnızca değişikliğe göre koşulur.
+16 Kasım haftalık review, Q03 kabulü ve PR/merge kararı ayrı kalır. Disk veya öğrenme
+kanıtı yeterli değilse işler sonraki oturuma taşınır; sırf tarihe yetişmek için kapanmaz.
+
 ## Test ve kabul
 
 - [ ] fresh volume startup; restart persistence; migration failure; missing env; bounded connection failure; schema then data tests

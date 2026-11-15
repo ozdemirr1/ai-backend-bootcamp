@@ -164,3 +164,35 @@ Product documentation pushed as f52a790; its new automatic runs are separate fro
 the verified implementation-head results above. No local destructive DB test,
 main merge, deployment or issue closure occurred. Learner code review/explanation
 and remaining Week 18 acceptance are still pending.
+
+## 15 November 2026 — combined 14–15 November evidence
+
+Learner terminal evidence and screenshot show synthetic Ticket #1 and its Comment
+in the local UI. Disk had 4.8GiB available; Docker responded. Initial immediate
+readiness curl returned 52; later runtime checks passed. Startup timing is a plausible
+explanation, not independently established root cause for that single response.
+
+Three private nonempty snapshots were independently compared without printing row
+content: before, after DB stop/start, and after isolated restore were identical,
+including one Ticket and one Comment and sequence last_value/is_called states.
+Learner dump/restore both exited 0. Restore used a new network-none PostgreSQL18.6
+container and exact opsdesk_product_test/opsdesk_product_test_runner/127.0.0.1:5432;
+next User ID exceeded restored IDs. Source DB was not overwritten. Restore container
+opsdesk-restore-20261115204154 was stopped and retained, as were its volume and backup.
+No ownership/grant or production/hosted-backup recovery claim is made.
+
+Controlled learning CI 617d175 failed on port65432: Connection refused, exit2;
+after-connection was skipped. Run43742858167 confirms the log. Recovery80f62a0
+restored5432 and run43742898582 succeeded; all five workflows at that commit passed.
+
+Read-only acceptance script added as product ec645a4. Executed against the existing
+stack: service/migration/health/private-port checks, loopback ready/live HTTP,
+unauthenticated profile401, React HTML/JS/CSS/favicon, UID/GID10001, runtime role and
+configuration boundaries, and RedisPING all passed. No container lifecycle or row
+mutation was performed. Seven focused URL/asset/redirect safety tests and Ruff passed.
+This does not replace UI workflows, persistence/restore or full security suites.
+New commit CI must be evaluated separately from80f62a0.
+
+Reverse-proxy/TLS explanation and end-of-session learner review follow this checkpoint.
+13November needs/network/guard restatement remains part of that review. Week18/Q03,
+PR merge and production deployment are not closed by this evidence.

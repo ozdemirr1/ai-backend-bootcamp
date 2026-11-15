@@ -196,3 +196,27 @@ New commit CI must be evaluated separately from80f62a0.
 Reverse-proxy/TLS explanation and end-of-session learner review follow this checkpoint.
 13November needs/network/guard restatement remains part of that review. Week18/Q03,
 PR merge and production deployment are not closed by this evidence.
+
+### 15 November — learner review and combined-day closure
+
+Furkan explained persistence on a surviving volume versus restore into a separate
+fresh target, needs job ordering versus shared network namespace, independent
+job databases, TLS termination and the risk of forged forwarded headers.
+These answers complete the combined 14–15 November review and the carried-over
+13 November needs/network explanation. Clarifications recorded with closure:
+
+- The restore proves recovery from this local backup for the compared table and
+  sequence snapshot, not all production recovery requirements. Ownership/grants
+  were omitted. Both backup and restore volume are on the same Mac; loss of that
+  disk can lose both. Off-device storage/retention and a machine-loss recovery
+  rehearsal were not performed. A temporary directory is not durable backup storage.
+- Fresh runners describe this GitHub-hosted workflow; not every possible Actions
+  runner configuration. needs itself does not create or share a database.
+- Forged IP/protocol headers can corrupt decisions that rely on them; they do not
+  automatically bypass every security check. Trust must be scoped to the proxy path.
+
+Product ec645a4 backend/frontend/Docker/PostgreSQL workflows were all confirmed
+successful in the preceding session. Documentation-only closure does not claim
+another test execution. Planned 13–15 November learning slices are complete within
+recorded scope. 16 November weekly review, Q03 acceptance and PR/merge decisions
+remain open. No deployment, deletion or product modification in this closure.

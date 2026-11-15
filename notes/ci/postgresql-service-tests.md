@@ -29,3 +29,8 @@ restatement is pending; these automated results do not replace it.
 
 References: [Docker shared container network](https://docs.docker.com/engine/network/),
 [GitHub service context](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts).
+
+15 November learner review: needs ordering, shared loopback and separate per-job DBs
+were correctly explained. Fresh isolated runners refer to our GitHub-hosted workflow;
+self-hosted configurations need separate lifecycle guarantees. The carried-over
+13 November explanation is complete; weekly acceptance remains a separate review.

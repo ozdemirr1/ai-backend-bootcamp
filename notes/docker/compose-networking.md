@@ -80,3 +80,10 @@ Provider forwarding-header/IP trust settings were not independently audited toda
 
 Sources: https://fastapi.tiangolo.com/advanced/behind-a-proxy/ and
 https://fastapi.tiangolo.com/deployment/https/ . Learner restatement remains pending.
+
+15 November review completed: learner distinguished surviving-volume persistence
+from fresh-target restore, needs from network namespace sharing, and TLS termination
+from Uvicorn's HTTP listener. Scope correction: local temp backup and target share
+the same physical Mac; neither proves off-device disaster recovery. Restoring without
+ownership/grants does not prove full production recovery. Forwarded-header spoofing
+can affect IP/protocol-dependent decisions, not automatically every security control.

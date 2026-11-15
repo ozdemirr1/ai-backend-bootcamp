@@ -1,13 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 15 November 2026: persistence and isolated restore verified
+## Current checkpoint — 15 November 2026: combined learning closure
 
 Learner stop/start and separate restore snapshots match (one Ticket and Comment,
 sequence state included). Restore target retained; no source overwrite or deletion.
 CI wrong-port failure617d175 and recovery80f62a0 verified; all five recovery workflows
 passed. Product ec645a4 adds independently passed read-only Compose acceptance and
 seven focused safety tests. See Week18 report for boundaries and run evidence.
-End-of-session learner explanation, weekly review and Q03/PR acceptance remain open.
+Learner review completed for persistence/restore, needs/network isolation and proxy
+trust boundaries. Planned 13–15 November learning slices are closed within their
+recorded scope. All four workflows at ec645a4 passed. Weekly review and Q03/PR
+acceptance remain open. Local temporary backup is not off-device disaster recovery.
 No deployment or merge occurred.
 
 ## Earlier checkpoint — 13 November 2026: PostgreSQL CI verified

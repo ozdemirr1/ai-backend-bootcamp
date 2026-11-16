@@ -1,6 +1,17 @@
 # Weekly Status
 
-## Current checkpoint — 16 November 2026: Week 18 review
+## Current checkpoint — 16 November 2026: Week 18 merged and published
+
+Bootcamp PRs #16 and #17 merged normally; main reached 6f233b8. OpsDesk PR #52
+merged normally as 4cc7bbe; all four merge-head CI workflows passed and Q03 #25
+was closed. Railway deployment 8549a60b-13cc-4c5e-88b2-097021de8175 succeeded
+for that source. Public HTTPS live/ready, unauthenticated-profile rejection and
+frontend asset checks passed. Full browser/recovery/audit checks were not repeated.
+See [Week 18 release evidence](weekly-reports/week-18.md). Week 19 is ready as a
+plan; no Redis product feature has been implemented. Retained resources and
+unrelated LinkedIn assets were preserved.
+
+## Earlier checkpoint — 16 November 2026: Week 18 review
 
 Week 18 learning and bounded local/CI acceptance have been reviewed against the
 recorded evidence. All four product workflows at ec645a4 were rechecked successful

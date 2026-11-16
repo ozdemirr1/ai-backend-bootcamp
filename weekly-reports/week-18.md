@@ -275,3 +275,24 @@ Week 19 (17–23 November) starts with uncached, authorization-scoped Ticket sta
 Redis cache/limiting is not implemented by this report. See the updated
 [Week 19 plan](week-19-plan.md). If publication is still pending, reconcile the
 branch base before product edits; do not silently omit Week 18 dependencies.
+
+
+## 16 November — normal merges and release verification
+
+With explicit learner approval, bootcamp PR #16 merged first, then PR #17 was
+retargeted to main and normally merged as 6f233b8. OpsDesk PR #52 normally merged
+as 4cc7bbe4902c882f7d6ecc3a0920fa373a024390. No branch was deleted.
+
+All four workflows on the product merge commit succeeded: backend, frontend,
+Docker and PostgreSQL (runs 43834922179, 43834922577, 43834922203 and 43834922052).
+Q03 issue #25 was closed after merge and successful checks.
+
+Railway deployment 8549a60b-13cc-4c5e-88b2-097021de8175 reports SUCCESS for the exact
+4cc7bbe source. Read-only public HTTPS checks returned live 200, ready 200,
+unauthenticated /users/me 401, root HTML 200 and both referenced assets 200.
+No new account or business record was created. This is not a repeat of the full
+browser flow, hosted restore or provider security audit. No manual resource
+cleanup or credential/configuration change was performed.
+
+Week 18 publication is complete within these boundaries. Week 19 remains planned,
+not implemented. The earlier pending statements preserve their dated checkpoints.

@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 15 November 2026: combined learning closure
+## Current checkpoint — 16 November 2026: Week 18 review
+
+Week 18 learning and bounded local/CI acceptance have been reviewed against the
+recorded evidence. All four product workflows at ec645a4 were rechecked successful
+on GitHub; no tests were rerun today. Issue #25 remains open and no product PR is
+open. Normal PR/merge and live-release review remain pending, distinct from the
+learning closure. Week 19 (17–23 November) planning is updated; implementation has
+not started. See [weekly review](weekly-reports/week-18.md) and
+[next-week plan](weekly-reports/week-19-plan.md). No resources were deleted.
+
+## Earlier checkpoint — 15 November 2026: combined learning closure
 
 Learner stop/start and separate restore snapshots match (one Ticket and Comment,
 sequence state included). Restore target retained; no source overwrite or deletion.

@@ -220,3 +220,58 @@ successful in the preceding session. Documentation-only closure does not claim
 another test execution. Planned 13–15 November learning slices are complete within
 recorded scope. 16 November weekly review, Q03 acceptance and PR/merge decisions
 remain open. No deployment, deletion or product modification in this closure.
+
+
+## 16 November 2026 — weekly acceptance review and Week 19 handoff
+
+Status: planned learning and bounded local/CI acceptance are complete; product
+publication remains pending. This review does not claim a new test execution,
+merge, deployment, issue closure or hosted recovery rehearsal.
+
+| Acceptance area | Evidence reviewed | Result and boundary |
+| --- | --- | --- |
+| Compose DNS/config/isolation | 11 November lab and isolated product stack | Service-name access, loopback API port, private DB/Redis and missing-secret rejection verified |
+| Bootstrap/migration/roles | 11 November fresh-volume and rejected-target exercises | Health gates migration; migration success gates API; runtime and migrator roles separated |
+| Failure diagnosis | 12 November outage/timeout; 15 November wrong CI port | Readiness recovery, bounded connection experiment and failed/dependent-job behavior explained |
+| Persistence and restore | 15 November snapshots and guarded isolated restore | Table/sequence snapshots match; next ID advances; no off-device or ownership/grant recovery claim |
+| Repeatable local acceptance | Product ec645a4, 15 November | Read-only acceptance passed; seven focused safety tests passed |
+| CI | ec645a4, GitHub state rechecked 16 November | Backend, frontend, Docker and PostgreSQL workflows successful |
+| Learner explanation | 12 and 15 November answers | Retry ambiguity, needs/network isolation, restore limits and proxy trust explained |
+
+Verified CI links at ec645a4:
+[Backend](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250452),
+[Frontend](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250494),
+[Docker](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250477),
+[PostgreSQL](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250573).
+Historical schema/data counts remain 5 and 281 from the recorded 13 November run;
+no new count is inferred from a green status.
+
+### Q03 / issue #25 review
+
+GitHub issue #25 is OPEN; there is no open product PR as of this review. The CI
+implementation uses separate job-local PostgreSQL services, exact connected-target
+and restricted-role checks before migration, generated test-only credentials,
+sequential schema/data jobs and the complete integration directory. It does not
+use the product Dockerfile or Compose stack to provision CI databases. Compose
+changes share the weekly branch but are a separate Month 05 deliverable, outside
+Q03's original CI-only scope.
+
+Existing cleanup-policy tests assert nonzero interruption, prevent following tests
+and hide synthetic credential details. The fast suite remains a separate workflow.
+Final PR review must retain migration-restoration failure evidence and safe logs;
+a successful build alone is not acceptance. Issue closure waits for the reviewed
+normal merge, rather than being inferred from branch CI.
+
+### Remaining publication and operational work
+
+- Prepare/review the Week 18 product PR and current-head checks; use normal merge.
+  Main is connected to Railway, so release impact and approval remain separate.
+- Publish the bootcamp report/plan changes through its normal PR workflow.
+- Keep hosted/off-device backup, provider audit, dependency findings and broader
+  release acceptance visible; the local exercise does not close those items.
+- Preserve all retained containers/volumes/backups and unrelated working files.
+
+Week 19 (17–23 November) starts with uncached, authorization-scoped Ticket stats.
+Redis cache/limiting is not implemented by this report. See the updated
+[Week 19 plan](week-19-plan.md). If publication is still pending, reconcile the
+branch base before product edits; do not silently omit Week 18 dependencies.

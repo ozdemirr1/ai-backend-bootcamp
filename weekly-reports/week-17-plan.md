@@ -1,53 +1,62 @@
-# Week 17 plan — Docker ve sistem temelleri
+# Week 17 plan — Docker and system fundamentals
 
-4–9 Kasım 2026. Planlama durumu: uygulanmadı. [Ay 5 sözleşmesi](../monthly-plans/month-05.md) kapsam ve güvenlik sınırlarında esas kaynaktır.
+4–9 November 2026. Planning status: not implemented. The [Month 5 agreement](../monthly-plans/month-05.md) is the authoritative source for scope and safety boundaries.
 
-10 Kasım kapanış notu: yukarıdaki durum başlangıç planına aittir. Teknik öğrenme,
-build/runtime ve CI kanıtları [Week 17 raporunda](week-17.md) kaydedildi. Planlanan
-9 Kasım doğrulaması 10 Kasım'da yapıldı. PR/merge/release durumu raporda ayrı
-tutulur. Aşağıdaki başlangıç checklist'i geriye dönük sonuç yerine kullanılmaz.
+10 November closure note: the status above describes the initial plan. Technical
+learning, build/runtime and CI evidence is recorded in the [Week 17 report](week-17.md).
+The verification planned for 9 November took place on 10 November. PR/merge/release
+status is tracked separately in the report. The initial checklist below must not
+be treated as a retrospective record of results.
 
-## Öğrenme ve uygulama yöntemi
+## Learning and implementation method
 
-Kavram → küçük örnek → OpsDesk uygulaması → kontrollü hata → test → öğrenenin
-anlatımı sırası izlenir. GitHub Actions temelleri mevcut CI var diye atlanmaz.
-Günlük tablo başlangıç sırasıdır; öğrenme kontrolü geçilmeden bağımlı işe geçilmez.
+Follow concept → small example → OpsDesk implementation → controlled failure →
+test → learner explanation. Do not skip GitHub Actions fundamentals because CI
+already exists. The daily table sets the initial sequence; do not start dependent
+work before the learning checkpoint is passed.
 
-## Günlük çalışma
+## Daily work
 
-| Gün | Çalışma | Beklenen kanıt |
+| Day | Work | Expected evidence |
 | --- | --- | --- |
-| 4 Kasım | Mevcut image/build/CI yapısını incele; disk/Docker kullanılabilirliğini kontrol et; devreden riskleri kaydet. | Mimari sınır ve baseline; kaynak kod taşıma yok. |
-| 5 Kasım | Process, PID, port, DNS, HTTP/TLS ve venv/container farkını küçük örnekte öğren. | Bir port çakışması ve DNS hatasının teşhisi. |
-| 6 Kasım | Önce basit backend image: Dockerfile, layer, build context, .dockerignore; docker build/run. Ardından kilitli bağımlılıkları incele. | Image secrets/test verisi içermeden build olur. |
-| 7 Kasım | Node build → Python runtime multi-stage; layer cache, non-root, mevcut React dist kopyası; health smoke. | Yeni React kodu olmadan çalışan mevcut UI/API. |
-| 8 Kasım | GitHub Actions workflow/event/runner/job/step öğren; mevcut YAML incelemesi; Docker build job ekle; bilerek bozup logdan düzelt. | Ruff/pytest/Docker build sonuçları ve failed-build deneyi. |
-| 9 Kasım | Container logs/SIGTERM kapanışı; README setup; bağımsız build/run tekrarı ve haftalık değerlendirme. | PR/CI ve Week 17 raporu; Week 18 config kararı. |
+| 4 November | Inspect the existing image/build/CI setup; check disk space and Docker availability; record carried-over risks. | Architecture boundaries and baseline; no source-code relocation. |
+| 5 November | Learn processes, PIDs, ports, DNS, HTTP/TLS and the venv/container distinction through a small example. | Diagnosis of a port conflict and a DNS failure. |
+| 6 November | Start with a basic backend image: Dockerfile, layers, build context, .dockerignore and docker build/run. Then inspect locked dependencies. | Image builds without secrets or test data. |
+| 7 November | Node build → Python runtime multi-stage build; layer cache, non-root execution, existing React dist copy and health smoke checks. | Existing UI/API works without new React code. |
+| 8 November | Learn GitHub Actions workflow/event/runner/job/step; inspect existing YAML; add a Docker build job; deliberately break it and fix it using logs. | Ruff/pytest/Docker build results and a failed-build experiment. |
+| 9 November | Container logs/SIGTERM shutdown; README setup; independent build/run repetition and weekly review. | PR/CI and Week 17 report; Week 18 configuration decision. |
 
-## Test ve kabul
+## Tests and acceptance
 
-- [ ] docker build; container health; non-root; eksik config güvenli hata; SIGTERM kapanışı; image içinde secret olmadığını doğrulama
-- [ ] İlgili regression, Ruff ve mevcut frontend CI korunur.
-- [ ] Yerel/dev/hosted veriye destructive test yapılmaz.
-- [ ] Öğrenen kodun hata ve veri sınırını açıklayabilir.
+- [ ] docker build; container health; non-root execution; safe missing-config failure; SIGTERM shutdown; verification that the image contains no secrets
+- [ ] Preserve relevant regression checks, Ruff and existing frontend CI.
+- [ ] Do not run destructive tests against local development or hosted data.
+- [ ] The learner can explain the code's failure and data boundaries.
 
-## Öğrenme kanıtı
+## Learning evidence
 
-- [ ] Bir küçük uygulama adımını öğrenen yeniden yapar ve gerekçesini açıklar.
-- [ ] Kontrollü uygulama/CI hatası logdan teşhis edilip düzeltilir.
-- [ ] Notta tahmin, gözlenen sonuç ve çıkarılan ders ayrılır.
-- [ ] Workflow, job ve step farkı nedir? Bir komutun exit code değeri CI sonucunu nasıl etkiler?
+- [ ] The learner repeats a small implementation step and explains its rationale.
+- [ ] A controlled application/CI failure is diagnosed from logs and corrected.
+- [ ] Notes distinguish predictions, observed results and lessons learned.
+- [ ] How do workflows, jobs and steps differ? How does a command’s exit code affect the CI result?
 
-Yazılması planlanan konu notları: notes/docker/docker-foundations.md; notes/ci/github-actions-foundations.md. Bu plan notların tamamlandığını iddia etmez.
+Planned topic notes: notes/docker/docker-foundations.md; notes/ci/github-actions-foundations.md. This plan does not claim that these notes are complete.
 
-## Notlar ve kapanış
+## Notes and closure
 
-Haftalık kavram notlarını `notes/` altında konu bazlı tut; Week 17 raporunu gerçek çalışma başladığında oluştur. Günlük ayrı rapor açma. `feature/week-17-docker-foundation` önerilen feature branch adıdır; bu plan branch oluşturmaz. Küçük anlamlı commit, review ve normal PR merge kullan. Test sayısı/süre/yayın sonucu yalnızca çalıştırıldıktan sonra kaydedilir.
+Keep weekly concept notes organized by topic under `notes/`; create the Week 17
+report when actual work begins. Do not create separate daily reports.
+`feature/week-17-docker-foundation` is the suggested feature branch name;
+this plan does not create the branch. Use small, meaningful commits, review and
+normal PR merges. Record test counts, durations and release results only after
+execution.
 
-## Öğrenme soruları
+## Learning questions
 
-- Docker neden venv değildir?
-- EXPOSE ile port publish farkı nedir?
-- Bir container içindeki localhost hangi makinedir?
+- Why is Docker not a venv?
+- How does EXPOSE differ from publishing a port?
+- Which machine does localhost refer to inside a container?
 
-Hafta ortasında kalan işleri ve kapasiteyi yeniden değerlendir. Sonraki haftanın başlangıç koşulu, bu haftanın bağımlılıklarının doğrulanmasıdır; takvim güvenli testlerin önüne geçmez.
+Reassess remaining work and capacity midway through the week. Starting the next
+week requires verification of this week's dependencies; the schedule does not
+take precedence over safe testing.

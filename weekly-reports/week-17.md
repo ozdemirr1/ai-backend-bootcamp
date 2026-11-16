@@ -466,3 +466,40 @@ Push-event checks also passed. Bootcamp
 [PR #15](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/15) contains the
 learning closure and Week 18 preparation. Week 17 technical/learning evidence is
 complete with the documented limits; product merge/release remains pending.
+
+
+## 11 November — approved product merge and hosted Docker release
+
+Furkan explicitly approved PR #51 merge and the prepared Railway settings.
+The reviewed head `7221618` retained successful backend/frontend/Docker checks.
+Normal merge produced `7dfed5adf2f40683985cf96d211be6f125c37865` at 21:25 Istanbul.
+No branch was deleted. Bootcamp PR #15 had already merged normally as `d7f7211`.
+
+Railway release `7baedb6e-ae13-4903-b00a-d35eb23781a3` reports SUCCESS at that
+exact merge commit. Its resolved configuration confirms the Dockerfile builder,
+root Dockerfile, the prepared shell-wrapped installed Uvicorn start command,
+installed Alembic pre-deploy command with `target=hosted`, and readiness timeout
+300 seconds. Logs show PostgreSQL migration context, application startup complete
+and Uvicorn PID 1 on port 8080. No new schema migration was introduced by PR #51.
+Existing provider secrets were preserved and not printed or committed.
+
+Public HTTPS verification on the deployed source:
+
+- `/health/live` 200 with status `ok`; `/health/ready` 200 with status `ready`.
+- `/`, HTML-referenced JavaScript/CSS assets and `/favicon.svg` returned 200.
+- Unauthenticated `/users/me` returned 401.
+- One made-up release account registered with 201, logged in with 200, then read
+  `/users/me` and `/organizations` with 200. Password/token existed only in process
+  memory; neither was printed or written to a file. The synthetic account remains.
+- The initial verification script wrongly expected readiness status `ok`; it was
+  corrected to the existing `ready` contract and rerun successfully. That initial
+  assertion stopped before account creation; it was not an application failure.
+
+Merge-head CI all passed: [Backend](https://github.com/ozdemirr1/opsdesk/actions/runs/43077586270),
+[Frontend](https://github.com/ozdemirr1/opsdesk/actions/runs/43077586220),
+[Docker](https://github.com/ozdemirr1/opsdesk/actions/runs/43077586482).
+
+No destructive DB test or data/container/volume deletion was performed. This
+release check used HTTP/API calls; it is not a new full browser Ticket/Comment
+walkthrough or backup/restore rehearsal. Week 17's release gate is complete;
+Week 18 Compose implementation remains the next learning task.

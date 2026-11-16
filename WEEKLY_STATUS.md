@@ -1,6 +1,54 @@
 # Weekly Status
 
-## Current checkpoint — 11 November 2026: Week 17 deployed
+## Current checkpoint — 16 November 2026: Week 18 review
+
+Week 18 learning and bounded local/CI acceptance have been reviewed against the
+recorded evidence. All four product workflows at ec645a4 were rechecked successful
+on GitHub; no tests were rerun today. Issue #25 remains open and no product PR is
+open. Normal PR/merge and live-release review remain pending, distinct from the
+learning closure. Week 19 (17–23 November) planning is updated; implementation has
+not started. See [weekly review](weekly-reports/week-18.md) and
+[next-week plan](weekly-reports/week-19-plan.md). No resources were deleted.
+
+## Earlier checkpoint — 15 November 2026: combined learning closure
+
+Learner stop/start and separate restore snapshots match (one Ticket and Comment,
+sequence state included). Restore target retained; no source overwrite or deletion.
+CI wrong-port failure617d175 and recovery80f62a0 verified; all five recovery workflows
+passed. Product ec645a4 adds independently passed read-only Compose acceptance and
+seven focused safety tests. See Week18 report for boundaries and run evidence.
+Learner review completed for persistence/restore, needs/network isolation and proxy
+trust boundaries. Planned 13–15 November learning slices are closed within their
+recorded scope. All four workflows at ec645a4 passed. Weekly review and Q03/PR
+acceptance remain open. Local temporary backup is not off-device disaster recovery.
+No deployment or merge occurred.
+
+## Earlier checkpoint — 13 November 2026: PostgreSQL CI verified
+
+OpsDesk implementation 72ee274 passed separate guarded schema (5) and data (281)
+CI suites, with needs ordering and no Alembic drift. Backend 783 tests / 286
+deselected, frontend and Docker CI passed at that head. Initial bootstrap failure
+and recovery are recorded in weekly-reports/week-18.md and the PostgreSQL CI note.
+Product evidence docs pushed as f52a790; no merge/deployment or issue closure.
+Learner review and Week 18 persistence/restore/acceptance remain open.
+
+## Earlier checkpoint — 12 November 2026: readiness/timeout learning closed
+
+Week 18 Compose role/migration implementation was pushed as OpsDesk c18775c;
+its backend/frontend/Docker CI passed at the 11 November checkpoint. Today's
+learner-run experiments verified delayed startup ordering, local DB outage
+live 200 / ready 503, recovery to ready 200 without API restart, missing-config
+exit 1 / normal-config exit 0, and two connection timeouts (2.07s, 2.09s; total
+5.15s including a one-second interval). End-of-session retry/idempotency reasoning
+is recorded in [Week 18](weekly-reports/week-18.md) and the
+[Compose note](notes/docker/compose-networking.md).
+
+The 10–12 November learning slices are complete within their recorded scope.
+No new product retry code, deployment, destructive test or deletion occurred in
+this closure. Next: planned 13 November GitHub Actions PostgreSQL service-container
+and guarded schema/data CI learning. Week 18 acceptance remains open.
+
+## Earlier checkpoint — 11 November 2026: Week 17 deployed
 
 With explicit learner approval, OpsDesk PR #51 merged normally as `7dfed5a`.
 Railway deployment `7baedb6e-ae13-4903-b00a-d35eb23781a3` succeeded with the

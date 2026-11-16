@@ -17,3 +17,261 @@ No Compose YAML, env file, database, role, volume, Redis integration, migration
 implementation or PostgreSQL CI job was created. Q03 remains open. First learning
 step is a small Compose DNS example before implementing the product skeleton.
 Remaining dates are targets, not completion evidence.
+
+## 11 November 2026 — planned 10 November DNS lab and product skeleton
+
+Learner terminal evidence: Compose v2.40.2-desktop.1 created a separate temporary
+lab network and web/client containers. `web` resolved to 172.19.0.2 and returned
+HTTP 200; client loopback refused the connection. Web logs recorded the successful
+GET from 172.19.0.3, not the failed client-local request. Both services were stopped
+without deletion. This verifies the small example, not product DB connectivity.
+
+OpsDesk branch feature/week-18-compose-postgres-ci starts at published main
+7dfed5a. Added docker-compose.yml, empty .env.example and docs/compose.md with a
+README link. API uses loopback 8089 and the application profile; DB/Redis have no
+host ports and share an internal data network. PostgreSQL 18 volume target is
+/var/lib/postgresql; Redis storage is ephemeral. API receives no bootstrap admin
+password. The app/migrator roles, bootstrap and migration gating are not built.
+
+Config-only checks passed using in-memory dummy values: service set, loopback
+binding, network isolation declaration, volume target, admin-secret separation,
+and missing/empty required-value rejection. Full rendered config was not printed.
+Git ignores .env/.env.local but permits .env.example. No image was pulled, no
+product service/volume/DB was created, no integration test was run. Disk had only
+944 MiB free at inspection; runtime work must reassess capacity. Official image
+tags were inspected; registry digest/pull/runtime validation remains pending.
+
+The next step is learner review of the skeleton, then separate role/bootstrap and
+compose migration target implementation. Existing exact test/dev guards remain
+unchanged. This is not a complete working Compose stack or a Week 18 acceptance.
+
+## 11 November — role separation, migration gating and runtime
+
+After user disk cleanup, free space was 5.2 GiB. Docker Desktop was stopped; it was
+opened and Engine 28.5.1 responded. Existing visaassist and all other resources were
+preserved. Image pulls/build and two isolated local PostgreSQL setups left 3.3 GiB.
+
+Added a separate compose migration target, strict db:5432 / opsdesk_compose_dev /
+opsdesk_compose_migrator guards, connected identity/role checks, explicit runtime
+grants, and one-shot migration success gating API startup. Existing hosted/dev/test
+guards were not widened. Ignored mode-600 .env was created with independent random
+local credentials; no secrets were printed or committed.
+
+Focused guard/migration tests: 100 passed. Backend non-integration regression:
+773 passed, 286 deselected (10.21s). Additional permissions tests: 3 passed.
+Final Ruff lint/format passed (145 files). No destructive DB tests were run.
+
+First bootstrap encountered bad-interpreter permission denied on the bind-mounted
+shell file; PostgreSQL init had already created the volume. The volume was kept,
+role absence verified, and initialization explicitly completed without reset.
+The final configuration mounts SQL directly. A second fresh project/volume then
+proved bootstrap -> DB healthy -> migration exit 0 -> API started automatically.
+Both setups returned readiness 200. Primary setup passed root HTML/liveness,
+synthetic registration/login/profile/organization list and creation. Redis PONG.
+App-role SQL checks verified absence of schema CREATE, DELETE, migration-table
+write and migrator membership. Generated secrets were absent from captured logs.
+
+A separate no-network/no-DB rejection experiment used an unsafe migration target:
+migration exit 1 and API remained Created. No dummy DB operation occurred. Main
+local project opsdesk-compose-dev remains running on 8089. Fresh proof project
+opsdesk-compose-fresh-20261111 was stopped; failure project
+opsdesk-migration-reject-c59ded is retained. No containers/volumes/images deleted.
+
+This closes implementation evidence for the planned 10–11 November slice, not
+Week 18 acceptance or independent learner mastery of the new code. Learner should
+inspect depends_on, dedicated credentials and the rejection result next. Delayed
+DB/retry, restart persistence, restore and PostgreSQL CI remain pending.
+
+## 12 November 2026 — readiness, timeout and bounded retry learning closure
+
+Evidence source: Furkan's supplied terminal outputs and end-of-session explanation.
+These experiments were run by the learner; they were not independently rerun during
+this documentation closure. No new product code or regression run is claimed.
+
+### Predictions and observations
+
+| Exercise | Expected behavior | Observed evidence |
+| --- | --- | --- |
+| Delayed dependency simulation | Migration waits for health; API waits for migration success | Dependency ready at 14:16:41.016 UTC, migration completed at 14:16:41.481, API started at 14:16:42.092; Compose exit 0 |
+| Local OpsDesk DB outage | API stays alive but loses readiness | Before stop: readiness 200 (0.155451s). During outage: liveness 200 (0.018921s), readiness 503 (0.020214s); API remained Up |
+| DB recovery | Readiness recovers without restarting API | First polling attempt returned ready; DB healthy and API retained its uptime |
+| Missing required configuration | Fail before startup | With env-file disabled and four variables unset, JWT interpolation failed; exit 1. Normal config validation exited 0 |
+| Accepted TCP connection without PostgreSQL response | Connection timeout and bounded experiment retry | Two timeouts: 2.07s and 2.09s, one 1s retry delay, total 5.15s; assertions passed and container command exited 0 |
+
+The delayed-dependency lab used Python and a readiness marker, not a delayed real
+PostgreSQL server. It verified Compose startup conditions. The real outage exercise
+stopped and restarted only the local Compose DB; no deletion/reset occurred. The
+lab services were stopped and retained. The timeout lab used an isolated network-none
+container and its loopback fake listener with the actual OpsDesk connection factory;
+random synthetic credentials were not printed. It did not connect to a real DB.
+
+Structured API logs recorded ready 200 -> live 200 -> ready 503 -> ready 200 with
+unexpected_error=false. This is handled dependency failure, not an API crash.
+The initial rg command was unavailable in the learner's shell; grep -nE provided
+the equivalent configuration inspection without installing a new tool.
+
+### Learning review and implementation decision
+
+Furkan explained why whole-Ticket-write retry can duplicate a successfully committed
+operation after its response is lost, distinguished connection establishment from
+writing/commit, and identified cumulative waiting/resource cost. Clarifications:
+not every failure stage is ambiguous; a known pre-connection failure differs from
+an unknown commit outcome. Waiting consumes request resources but does not imply
+that every API worker is blocked. Persistent idempotency remains later work.
+
+Timeout is a bound, not a mandatory delay: connection refusal can return promptly.
+The two-attempt loop belonged to the experiment, not automatic product retry.
+First-attempt readiness recovery did not exercise the polling loop's retry branch.
+The observed connection timeout does not establish a SQL statement deadline or an
+end-to-end HTTP request deadline. Existing pg_isready health does not verify app
+credentials, schema or table privileges; /health/ready currently probes SELECT 1.
+
+No new retry implementation is justified by these results. The planned 12 November
+experiments and learner review are complete within these limits. Week 18 still
+requires PostgreSQL schema/data CI, dedicated persistence/restore evidence and
+weekly acceptance; simple DB restart/readiness is not row-persistence verification.
+
+## 13 November 2026 — PostgreSQL CI implementation and recovery
+
+Learner pushed a8e82ca: PostgreSQL learning workflow successfully queried its lab
+DB and ran the dependent job afterward (run 43392052116). Source inspection showed
+that connection.py verifies SELECT 1, not the actual role/server; this earlier
+explanation was corrected. Learner read-only Compose queries showed the same DB
+at server address 127.0.0.1 inside DB and 172.20.0.3 from API. Docker initially hung;
+a restart restored the engine. Compose start api reran the migration dependency,
+which exited 0; the claim that it would not rerun was corrected. No deletion occurred.
+
+Product CI implementation 02abc71 introduced separate schema/data PostgreSQL
+services, needs ordering, a Python container sharing each service's network stack,
+exact-target/role/privilege preflight, and isolated bootstrap. No host ports or
+production secrets are used. Initial trust is replaced by loopback SCRAM before
+product tests; a generated password is masked and written to a mode-600 temp file.
+The checkout is read-only and dependencies are isolated inside the test container.
+Existing guards are unchanged; each job creates only opsdesk_product_test and its
+restricted owner opsdesk_product_test_runner.
+
+Initial run 43417330187 failed before tests because Path.open does not accept
+opener; data was skipped by needs. Recovery 72ee274 used built-in open and added a
+private-file test. This was an implementation defect, not an intentionally induced
+learning failure. Run 43417456376 passed 5 schema tests (0.64s), then 281 data tests
+(26.00s), and Alembic drift checks. Both jobs also passed 17 guard/connection checks.
+Schema ended 11:29:52 UTC; data began 11:29:55 UTC on its own fresh service.
+Backend CI at 72ee274 passed 783 tests / 286 deselected; frontend/Docker passed.
+Local evidence before recovery: 782 non-DB tests passed; focused recovery: 24 passed.
+These figures are separate runs/suites, not a sum. Ruff passed.
+
+Product documentation pushed as f52a790; its new automatic runs are separate from
+the verified implementation-head results above. No local destructive DB test,
+main merge, deployment or issue closure occurred. Learner code review/explanation
+and remaining Week 18 acceptance are still pending.
+
+## 15 November 2026 — combined 14–15 November evidence
+
+Learner terminal evidence and screenshot show synthetic Ticket #1 and its Comment
+in the local UI. Disk had 4.8GiB available; Docker responded. Initial immediate
+readiness curl returned 52; later runtime checks passed. Startup timing is a plausible
+explanation, not independently established root cause for that single response.
+
+Three private nonempty snapshots were independently compared without printing row
+content: before, after DB stop/start, and after isolated restore were identical,
+including one Ticket and one Comment and sequence last_value/is_called states.
+Learner dump/restore both exited 0. Restore used a new network-none PostgreSQL18.6
+container and exact opsdesk_product_test/opsdesk_product_test_runner/127.0.0.1:5432;
+next User ID exceeded restored IDs. Source DB was not overwritten. Restore container
+opsdesk-restore-20261115204154 was stopped and retained, as were its volume and backup.
+No ownership/grant or production/hosted-backup recovery claim is made.
+
+Controlled learning CI 617d175 failed on port65432: Connection refused, exit2;
+after-connection was skipped. Run43742858167 confirms the log. Recovery80f62a0
+restored5432 and run43742898582 succeeded; all five workflows at that commit passed.
+
+Read-only acceptance script added as product ec645a4. Executed against the existing
+stack: service/migration/health/private-port checks, loopback ready/live HTTP,
+unauthenticated profile401, React HTML/JS/CSS/favicon, UID/GID10001, runtime role and
+configuration boundaries, and RedisPING all passed. No container lifecycle or row
+mutation was performed. Seven focused URL/asset/redirect safety tests and Ruff passed.
+This does not replace UI workflows, persistence/restore or full security suites.
+New commit CI must be evaluated separately from80f62a0.
+
+Reverse-proxy/TLS explanation and end-of-session learner review follow this checkpoint.
+13November needs/network/guard restatement remains part of that review. Week18/Q03,
+PR merge and production deployment are not closed by this evidence.
+
+### 15 November — learner review and combined-day closure
+
+Furkan explained persistence on a surviving volume versus restore into a separate
+fresh target, needs job ordering versus shared network namespace, independent
+job databases, TLS termination and the risk of forged forwarded headers.
+These answers complete the combined 14–15 November review and the carried-over
+13 November needs/network explanation. Clarifications recorded with closure:
+
+- The restore proves recovery from this local backup for the compared table and
+  sequence snapshot, not all production recovery requirements. Ownership/grants
+  were omitted. Both backup and restore volume are on the same Mac; loss of that
+  disk can lose both. Off-device storage/retention and a machine-loss recovery
+  rehearsal were not performed. A temporary directory is not durable backup storage.
+- Fresh runners describe this GitHub-hosted workflow; not every possible Actions
+  runner configuration. needs itself does not create or share a database.
+- Forged IP/protocol headers can corrupt decisions that rely on them; they do not
+  automatically bypass every security check. Trust must be scoped to the proxy path.
+
+Product ec645a4 backend/frontend/Docker/PostgreSQL workflows were all confirmed
+successful in the preceding session. Documentation-only closure does not claim
+another test execution. Planned 13–15 November learning slices are complete within
+recorded scope. 16 November weekly review, Q03 acceptance and PR/merge decisions
+remain open. No deployment, deletion or product modification in this closure.
+
+
+## 16 November 2026 — weekly acceptance review and Week 19 handoff
+
+Status: planned learning and bounded local/CI acceptance are complete; product
+publication remains pending. This review does not claim a new test execution,
+merge, deployment, issue closure or hosted recovery rehearsal.
+
+| Acceptance area | Evidence reviewed | Result and boundary |
+| --- | --- | --- |
+| Compose DNS/config/isolation | 11 November lab and isolated product stack | Service-name access, loopback API port, private DB/Redis and missing-secret rejection verified |
+| Bootstrap/migration/roles | 11 November fresh-volume and rejected-target exercises | Health gates migration; migration success gates API; runtime and migrator roles separated |
+| Failure diagnosis | 12 November outage/timeout; 15 November wrong CI port | Readiness recovery, bounded connection experiment and failed/dependent-job behavior explained |
+| Persistence and restore | 15 November snapshots and guarded isolated restore | Table/sequence snapshots match; next ID advances; no off-device or ownership/grant recovery claim |
+| Repeatable local acceptance | Product ec645a4, 15 November | Read-only acceptance passed; seven focused safety tests passed |
+| CI | ec645a4, GitHub state rechecked 16 November | Backend, frontend, Docker and PostgreSQL workflows successful |
+| Learner explanation | 12 and 15 November answers | Retry ambiguity, needs/network isolation, restore limits and proxy trust explained |
+
+Verified CI links at ec645a4:
+[Backend](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250452),
+[Frontend](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250494),
+[Docker](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250477),
+[PostgreSQL](https://github.com/ozdemirr1/opsdesk/actions/runs/43743250573).
+Historical schema/data counts remain 5 and 281 from the recorded 13 November run;
+no new count is inferred from a green status.
+
+### Q03 / issue #25 review
+
+GitHub issue #25 is OPEN; there is no open product PR as of this review. The CI
+implementation uses separate job-local PostgreSQL services, exact connected-target
+and restricted-role checks before migration, generated test-only credentials,
+sequential schema/data jobs and the complete integration directory. It does not
+use the product Dockerfile or Compose stack to provision CI databases. Compose
+changes share the weekly branch but are a separate Month 05 deliverable, outside
+Q03's original CI-only scope.
+
+Existing cleanup-policy tests assert nonzero interruption, prevent following tests
+and hide synthetic credential details. The fast suite remains a separate workflow.
+Final PR review must retain migration-restoration failure evidence and safe logs;
+a successful build alone is not acceptance. Issue closure waits for the reviewed
+normal merge, rather than being inferred from branch CI.
+
+### Remaining publication and operational work
+
+- Prepare/review the Week 18 product PR and current-head checks; use normal merge.
+  Main is connected to Railway, so release impact and approval remain separate.
+- Publish the bootcamp report/plan changes through its normal PR workflow.
+- Keep hosted/off-device backup, provider audit, dependency findings and broader
+  release acceptance visible; the local exercise does not close those items.
+- Preserve all retained containers/volumes/backups and unrelated working files.
+
+Week 19 (17–23 November) starts with uncached, authorization-scoped Ticket stats.
+Redis cache/limiting is not implemented by this report. See the updated
+[Week 19 plan](week-19-plan.md). If publication is still pending, reconcile the
+branch base before product edits; do not silently omit Week 18 dependencies.

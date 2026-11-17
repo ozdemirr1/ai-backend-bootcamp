@@ -5,7 +5,8 @@
 Week 19 adds authorized Ticket status counts without Redis. Backend checks passed
 808 non-integration tests; guarded PostgreSQL data checks passed 286 tests and
 Alembic found no schema drift. See [Week 19 evidence](weekly-reports/week-19.md).
-Publication/CI and learner closure remain pending; no deployment occurred.
+Product `7c9661c` is pushed and all four exact-head CI workflows passed.
+Learner closure remains pending; no PR merge or deployment occurred.
 
 ## Earlier checkpoint — 16 November 2026: Week 18 merged and published
 

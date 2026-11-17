@@ -47,6 +47,13 @@ Disk had approximately 2.1 GiB available; no image build was needed.
 
 ### Remaining gates
 
-Commit/push and exact-head CI publication are separate from these local results.
+OpsDesk commit `7c9661c` and bootcamp evidence commit `509e53e` were pushed to
+`feature/week-19-redis-cache-limits`. All four product workflows passed at that
+exact product head: [Backend](https://github.com/ozdemirr1/opsdesk/actions/runs/44126223263),
+[Frontend](https://github.com/ozdemirr1/opsdesk/actions/runs/44126223278),
+[Docker](https://github.com/ozdemirr1/opsdesk/actions/runs/44126225010), and
+[PostgreSQL schema/data](https://github.com/ozdemirr1/opsdesk/actions/runs/44126222976).
+No PR merge or deployment occurred. The separate schema suite ran in CI; the
+statement above about not rerunning it refers to local execution.
 Learner end-of-day explanation remains pending. Redis work begins with the next
 planned key/value, TTL and cache-aside exercise, not from these passing SQL tests.

@@ -1,6 +1,13 @@
 # Weekly Status
 
-## Current checkpoint — 16 November 2026: Week 18 merged and published
+## Current checkpoint — 17 November 2026: uncached statistics verified locally
+
+Week 19 adds authorized Ticket status counts without Redis. Backend checks passed
+808 non-integration tests; guarded PostgreSQL data checks passed 286 tests and
+Alembic found no schema drift. See [Week 19 evidence](weekly-reports/week-19.md).
+Publication/CI and learner closure remain pending; no deployment occurred.
+
+## Earlier checkpoint — 16 November 2026: Week 18 merged and published
 
 Bootcamp PRs #16 and #17 merged normally; main reached 6f233b8. OpsDesk PR #52
 merged normally as 4cc7bbe; all four merge-head CI workflows passed and Q03 #25

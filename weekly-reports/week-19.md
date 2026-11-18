@@ -57,3 +57,71 @@ No PR merge or deployment occurred. The separate schema suite ran in CI; the
 statement above about not rerunning it refers to local execution.
 Learner end-of-day explanation remains pending. Redis work begins with the next
 planned key/value, TTL and cache-aside exercise, not from these passing SQL tests.
+
+## 19 November — planned 18 November Redis foundation and cache-aside
+
+Learner supplied successful isolated Redis key/value evidence: PING/PONG,
+SET EX 10, GET, TTL 10, expired TTL -2 and EXISTS 0; synthetic statistics JSON
+was written with EX 60 and read twice. The lab was stopped, not deleted.
+New terminology will be introduced as definition → purpose → OpsDesk use before
+commands. The 17 November learner explanation was accepted with clarifications:
+tenants are Organizations, customer is a membership role, aggregate counts are
+private data, and missing authorization differs from an authorized empty result.
+
+Disk verification found 4.4 GiB available, up from the learner's 1.6 GiB. Docker
+was stopped; Docker Desktop was opened and Engine 28.5.1 responded. No cleanup or
+deletion was performed; existing untracked LinkedIn assets were preserved.
+
+Implemented an optional Redis adapter (redis-py 8.1.0, locked), default disabled.
+Cache-aside checks current access before GET and separates environment/version,
+Organization, actor, membership and own/all visibility. Aggregation returns its
+own scope so a between-query role change cannot populate the initial wrong key.
+TTL defaults to 30 seconds, socket/connect timeouts to 0.2 seconds, retries to zero
+and pool size to 10. A cache read error falls back to SQL without attempting a
+write; write errors preserve the SQL response. Invalid cached JSON/counts are
+misses. This is not post-commit invalidation or stale-fill race protection.
+
+Fresh local evidence:
+
+- Focused cache/statistics tests: 31 passed in 1.96s.
+- Backend non-integration regression: 821 passed in 9.45s; 292 deselected at that
+  run (before adding the two opt-in Redis integration cases).
+- Guarded PostgreSQL data plus opt-in Redis checks: 289 passed in 26.60s
+  (287 PostgreSQL data and 2 Redis cases); Alembic found no drift.
+- SQL instrumentation confirmed the second read skipped the actual aggregate,
+  while fresh authorization and role demotion still affected visibility. The SQL
+  test used a memory cache transport, while two separate tests exercised real
+  Redis expiry/invalid payload and a controlled unresponsive TCP peer.
+- Ruff check/format and diff whitespace checks passed.
+
+The Redis lab `week19-cache-verification` used an ephemeral loopback-only host
+port and unique expiring synthetic keys. No FLUSH or resource deletion occurred.
+The test container was stopped after verification. PostgreSQL target and restricted
+role were checked before using the existing guarded runner. No dev/hosted DB tests.
+
+Implementation is local and uncommitted at this checkpoint. No new CI, PR merge,
+live cache enablement or deployment is claimed. Remaining: learner walkthrough,
+publication, post-commit invalidation/stale-fill exercise, limiter and Redis CI.
+
+### Learner closure — 19 November
+
+The learner independently reran the 13 focused cache tests: all passed in 0.31s.
+The learner explained that revoked membership or reduced scope must be checked
+before cache lookup, and key design cannot replace authorization. They also
+explained that bounded Redis waiting enables timely PostgreSQL fallback. Review
+clarified that 200 ms is a per-operation timeout, not a whole-request deadline.
+The planned 18 November learning checkpoint is complete. Publication follows;
+post-commit invalidation and stale-fill races remain the planned 19 November work.
+
+### Publication — planned 18 November checkpoint closed on 19 November
+
+Product commit `99bd2c25aca10d271951eaa8d4556851e8ee164a` was pushed to
+`feature/week-19-redis-cache-limits`. All four exact-head workflows passed:
+[Backend](https://github.com/ozdemirr1/opsdesk/actions/runs/44403892154),
+[Frontend](https://github.com/ozdemirr1/opsdesk/actions/runs/44403892743),
+[Docker](https://github.com/ozdemirr1/opsdesk/actions/runs/44403891965), and
+[PostgreSQL](https://github.com/ozdemirr1/opsdesk/actions/runs/44403891947).
+The two Redis integration cases remain local opt-in evidence; this workflow does
+not run a Redis service yet. Learning, local verification and publication close
+the planned 18 November scope. Cache remains disabled by default. No main merge,
+live enablement, deployment, resource deletion or next-day implementation occurred.

@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 17 November 2026: uncached statistics verified locally
+## Current checkpoint — 19 November 2026: planned 18 November work closed
+
+Planned 18 November Redis work now has learner lab evidence and default-disabled
+Ticket statistics cache-aside. Fresh local checks: 821 backend non-integration;
+287 PostgreSQL data plus 2 Redis checks passed, with no Alembic drift. Current
+access precedes cache reads. Learner review completed; product `99bd2c2` was
+pushed and all four exact-head CI workflows passed. Real Redis checks remain local
+opt-in evidence. Invalidation/races, limiter and Redis CI remain pending. No main
+merge, deployment or live enablement. See [Week 19](weekly-reports/week-19.md).
+
+## Earlier checkpoint — 17 November 2026: uncached statistics verified locally
 
 Week 19 adds authorized Ticket status counts without Redis. Backend checks passed
 808 non-integration tests; guarded PostgreSQL data checks passed 286 tests and

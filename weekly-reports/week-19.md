@@ -125,3 +125,57 @@ The two Redis integration cases remain local opt-in evidence; this workflow does
 not run a Redis service yet. Learning, local verification and publication close
 the planned 18 November scope. Cache remains disabled by default. No main merge,
 live enablement, deployment, resource deletion or next-day implementation occurred.
+
+
+## 21 November — planned 19 November generation invalidation
+
+The learner reproduced stale cache reads, commit/rollback ordering and delayed
+stale-fill with small in-memory examples, then demonstrated generation 7 keeping
+the old count 2 while generation 8 returned 3. These are learning examples, not
+Redis or PostgreSQL integration evidence.
+
+OpsDesk now captures an Organization generation before counting and fills only
+that generation. Successful Ticket creation rotates it after commit; rollback
+leaves it unchanged. Result keys retain actor, membership and visibility scope.
+Missing generation metadata uses fresh random tokens with SET NX; initialization
+losers use the winning token. Metadata expires at twice the result TTL. Read
+failure bypasses cache; rotation failure preserves committed creation and logs
+only a fixed event name. This is best-effort freshness, not cross-store atomicity.
+A delayed fill after failed invalidation means TTL is not a hard commit-relative
+freshness bound. Cache remains disabled by default.
+
+Local verification: 828 non-integration tests passed (9.20s), followed by 37
+focused tests after metadata-expiry adjustment (0.42s). Guarded PostgreSQL tests:
+288 passed, 3 Redis tests skipped (24.62s), no schema drift. The deterministic SQL
+race commits a second Ticket between count and cache fill; the next read sees 2
+instead of the old 1. Ruff and formatting checks passed. Real Redis validation
+remains pending: Docker start stalled and an 8-second server probe timed out.
+No resources were deleted. No commit, push, merge or deployment in this increment.
+Remaining: run the three Redis cases, learner review and publication closure.
+
+
+### Redis verification recovered — 21 November
+
+After the learner restarted macOS, Docker Engine 28.5.1 responded again. The
+existing isolated `week19-cache-verification` container was started with its
+loopback-only ephemeral port. All three real Redis tests passed in 1.51s:
+miss/hit/expiry and malformed payload, bounded timeout against an unresponsive
+TCP peer, and generation rotation isolating a delayed stale fill. This resolves
+the Redis verification blocker above. No resources were deleted. Learner review
+and commit/push closure remain pending; cache is still disabled by default.
+
+
+### Learner review and publication — 21 November
+
+The learner correctly explained why a reader captures its generation before
+counting and writes to that same generation: fetching the new generation after
+counting would label an old result as current. They also explained that a
+successful Ticket commit must not be retried after Redis invalidation failure,
+because creation has already persisted and repetition could create duplicates.
+Review clarified that TTL starts at cache write time, not database commit time;
+a delayed stale fill prevents a hard commit-relative freshness guarantee.
+
+Product commit `44374f0` publishes the generation implementation and tests on
+`feature/week-19-redis-cache-limits`. Local evidence above closes the planned
+19 November learning checkpoint. Remote CI is tracked separately; no main merge
+or deployment is included. Cache remains disabled by default.

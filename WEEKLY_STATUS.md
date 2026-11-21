@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 19 November 2026: planned 18 November work closed
+## Current checkpoint — 21 November 2026: planned 19 November work closed
+
+Generation-based post-commit invalidation and learner review are complete.
+Local evidence: 828 non-integration tests, 288 PostgreSQL tests and 3 real Redis
+tests passed. Product commit `44374f0` was published on the Week 19 feature branch.
+Redis invalidation is best-effort; TTL is not a commit-relative freshness bound.
+Cache remains disabled by default; no main merge or deployment. Remote CI is
+tracked separately. Limiter and Redis CI remain subsequent work. See the
+[Week 19 report](weekly-reports/week-19.md#learner-review-and-publication--21-november).
+
+## Previous checkpoint — 19 November 2026: planned 18 November work closed
 
 Planned 18 November Redis work now has learner lab evidence and default-disabled
 Ticket statistics cache-aside. Fresh local checks: 821 backend non-integration;

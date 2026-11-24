@@ -1,6 +1,17 @@
 # Weekly Status
 
-## Current checkpoint — 24 November 2026: planned 20 November policy reviewed
+## Current checkpoint — 24 November 2026: planned 21 November work closed
+
+Default-disabled atomic login/register limiting is implemented in OpsDesk. Local
+checks passed: 853 non-integration regressions, expanded 26-case limiter suite,
+10 real Redis checks and 288 guarded PostgreSQL tests with no schema drift.
+429/Retry-After, fail-closed 503, scope, expiry and proxy-spoofing boundaries are
+covered. Learner review is complete; product commit `d19e502` publishes this
+checkpoint on the Week 19 branch. Remote CI is tracked separately; Redis CI is
+still planned 22 November work. No live enablement or main merge.
+See the [Week 19 report](weekly-reports/week-19.md#24-november--planned-21-november-atomic-authentication-limiter).
+
+## Previous checkpoint — 24 November 2026: planned 20 November policy reviewed
 
 The sequential limiter lab and learner review passed. Login/register thresholds,
 IP scope, proxy trust and 429/Retry-After/503 behavior are recorded in the

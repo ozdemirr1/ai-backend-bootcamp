@@ -120,3 +120,32 @@ fail-closed 503 versus cache DB fallback, and shared-IP collateral blocking.
 The planned 20 November learning review is complete. The written policy is not
 proof of enforcement; atomicity, expiry, concurrent requests, spoofing and outage
 behavior still require the planned implementation and tests.
+
+
+## 24 November — planned 21 November atomic enforcement
+
+Atomicity here means requests cannot interleave the quota check and mutation.
+Lua scripts do not roll back earlier writes on arbitrary script errors; validate
+state before mutation and keep the write path minimal. Initial SET includes PX
+expiry in the same command. Existing accepted counters use INCR without extending
+expiry; rejected requests do not change counters or expiry.
+
+Product checks run after valid body parsing, before login/account creation. Valid
+admitted failures still consume quota. A store timeout may happen after admission
+was recorded, so no automatic retry or quota refund is attempted. 429 conveys a
+known exhausted quota; 503 conveys inability to safely establish quota. A missing
+expiry is corrupt state, not a permanent user ban or a reason to reset quota.
+
+IP identity is canonicalized, with IPv4-mapped IPv6 sharing the IPv4 key. SHA-256
+avoids raw IP text in keys but does not anonymize enumerable addresses. The server
+must restrict proxy trust; application header avoidance alone cannot undo an
+unsafe upstream forwarded-address rewrite. Eviction or Redis restart may reset
+quota: fail-closed error handling does not guarantee durable limit state.
+
+Local evidence and remaining review/publication work are in the Week 19 report.
+
+
+Learner review completed on 24 November: the learner explained why INCR alone is
+insufficient, why missing expiry means 503 rather than 429, and how unrestricted
+Uvicorn proxy trust can make application-level header avoidance insufficient.
+Expiry belongs to a new window and is not refreshed on each admitted request.

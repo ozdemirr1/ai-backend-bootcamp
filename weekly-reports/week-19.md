@@ -202,3 +202,52 @@ Planned 20 November learning and contract work is complete locally. No product
 limiter, runtime test, live setting or revised roadmap was introduced. Subsequent
 implementation remains the planned 21 November work. This documentation
 checkpoint closes the planned 20 November learning and policy scope.
+
+
+## 24 November — planned 21 November atomic authentication limiter
+
+Learner lab evidence: the split check/increment example admitted two requests for
+one remaining slot (counter 4, limit 3). The Lua lab admitted only the last slot;
+10 parallel requests produced exactly 3 admissions and 7 rejections. The expiry
+lab reopened quota after expiry and rejected a counter missing its expiry. These
+were isolated Redis examples, not yet product evidence.
+
+The product now has an optional authentication limiter, disabled by default.
+POST /auth/login and POST /users enforce the agreed IP quotas after valid body
+parsing and before the service business method. The Lua adapter validates state
+before mutation; exhaustion is 429 with rounded-up Retry-After, while Redis errors,
+invalid counters/replies and unusable client addresses fail closed with safe 503.
+Keys separate operation/environment and hash canonical IPs (not anonymization).
+The application does not parse forwarded headers itself. Direct spoofing and
+Uvicorn trusted/untrusted peer behavior are tested. No live proxy trust or Redis
+service was configured, and no hosted enablement occurred.
+
+Verification: 853 non-integration tests passed (10.06s), followed by the expanded
+26-test limiter suite (0.98s), including owned-client lifecycle. The final real
+Redis run passed 10 tests (3.95s): 7 limiter and 3 cache tests, including parallel
+admission, expiry, corrupt state and HTTP enforcement. Guarded PostgreSQL data
+regressions passed 288 tests (25.01s); 10 opt-in Redis cases were skipped in that
+separate run, and Alembic detected no drift. Ruff and formatting checks passed.
+One intermediate Redis rerun used an obsolete ephemeral port and failed during
+fixture setup; querying the container's current port corrected the test setup.
+No application change was needed for that connection failure.
+
+Implementation and local verification are complete for this slice. Learner final
+review and commit/push remain pending. Remote Redis CI is still planned 22 November
+work. Resource deletion, main merge and deployment were not performed.
+
+
+### Learner closure and product publication — 24 November
+
+The learner correctly explained that atomic INCR alone cannot protect a separate
+check/admission/update sequence or the gap before expiry assignment. They also
+explained that missing expiry is invalid store state (503), not known exhausted
+quota (429), and that trusting arbitrary forwarded headers at Uvicorn can rewrite
+request.client.host before application code sees it. Review clarified that expiry
+is assigned for a new window, not refreshed for every accepted request.
+
+Product commit `d19e502` publishes the optional atomic limiter and its tests on
+`feature/week-19-redis-cache-limits`. The planned 21 November learning checkpoint
+is complete. Remote CI results are tracked separately; the ten Redis integration
+cases remain local opt-in evidence until planned 22 November Redis CI work.
+Limiter stays disabled by default. No main merge or hosted deployment occurred.

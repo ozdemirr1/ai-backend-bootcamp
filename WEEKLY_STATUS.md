@@ -1,6 +1,16 @@
 # Weekly Status
 
-## Current checkpoint — 21 November 2026: planned 19 November work closed
+## Current checkpoint — 24 November 2026: planned 20 November policy reviewed
+
+The sequential limiter lab and learner review passed. Login/register thresholds,
+IP scope, proxy trust and 429/Retry-After/503 behavior are recorded in the
+[Redis notes](notes/redis/cache-and-rate-limiting.md#24-november--planned-20-november-limiter-contract).
+This is a written contract, not implemented enforcement. Original daily scope is
+unchanged; atomic implementation and concurrent tests remain planned 21 November
+work. The planned 20 November learning checkpoint is closed; this documentation
+checkpoint records the agreed contract and learner evidence.
+
+## Previous checkpoint — 21 November 2026: planned 19 November work closed
 
 Generation-based post-commit invalidation and learner review are complete.
 Local evidence: 828 non-integration tests, 288 PostgreSQL tests and 3 real Redis

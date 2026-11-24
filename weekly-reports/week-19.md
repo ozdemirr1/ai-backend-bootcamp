@@ -179,3 +179,26 @@ Product commit `44374f0` publishes the generation implementation and tests on
 `feature/week-19-redis-cache-limits`. Local evidence above closes the planned
 19 November learning checkpoint. Remote CI is tracked separately; no main merge
 or deployment is included. Cache remains disabled by default.
+
+
+## 24 November — planned 20 November limiter policy and learner review
+
+The learner supplied successful output for the sequential three-requests-per-ten-
+seconds lab, including rejected attempts, expiry and separate client keys. Login
+and register policy decisions 3–5 and thresholds are recorded in the
+[Redis notes](../notes/redis/cache-and-rate-limiting.md#24-november--planned-20-november-limiter-contract).
+The local starting contract is IP-scoped login 5/60s and register 3/600s, separate
+operation keys, admitted successes/failures counted after body validation, no
+window extension on rejection, 429/Retry-After on exhaustion and safe fail-closed
+503 on store failure. Only explicitly trusted proxy sources may supply forwarded
+client information. Shared-IP collateral blocking and distributed-source bypass
+are acknowledged limitations. Concrete proxy addresses and key encoding remain
+implementation details to verify, not established live configuration.
+
+The learner correctly explained all three review questions: forged
+X-Forwarded-For can bypass naive IP counters; unavailable limiter state cannot be
+replaced with independent process counters; shared public IPs share quota.
+Planned 20 November learning and contract work is complete locally. No product
+limiter, runtime test, live setting or revised roadmap was introduced. Subsequent
+implementation remains the planned 21 November work. This documentation
+checkpoint closes the planned 20 November learning and policy scope.

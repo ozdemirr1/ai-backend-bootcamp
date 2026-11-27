@@ -1,6 +1,15 @@
 # Weekly Status
 
-## Current checkpoint — 24 November 2026: planned 21 November work closed
+## Current checkpoint — 27 November 2026: planned 22 November work closed
+
+Isolated Redis CI and downloadable JUnit artifacts are verified. Deliberate wrong-
+port commit `aad1c10` produced 10 fixture errors while preserving its artifact;
+recovery `c0d08f0` restored the service port and all 10 Redis tests passed.
+Dependency cache/artifact/application cache and broker-isolation concepts are
+recorded in [CI notes](notes/ci/cache-artifacts.md). Learner review is complete. This documentation checkpoint records
+the planned 22 November closure. No main merge or live change.
+
+## Previous checkpoint — 24 November 2026: planned 21 November work closed
 
 Default-disabled atomic login/register limiting is implemented in OpsDesk. Local
 checks passed: 853 non-integration regressions, expanded 26-case limiter suite,

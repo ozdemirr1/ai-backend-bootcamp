@@ -251,3 +251,61 @@ Product commit `d19e502` publishes the optional atomic limiter and its tests on
 is complete. Remote CI results are tracked separately; the ten Redis integration
 cases remain local opt-in evidence until planned 22 November Redis CI work.
 Limiter stays disabled by default. No main merge or hosted deployment occurred.
+
+
+## 27 November — planned 22 November CI learning started
+
+The learner inspected the existing frontend/backend workflows and generated a
+local JUnit XML report: 26 limiter tests passed in 0.77s; failures/errors/skips all
+zero. Prepared an isolated Redis workflow and its product explanation. Remote
+publication, artifact inspection, controlled connection failure/recovery, broker
+isolation discussion and learner review are still pending. No commit/push or live
+configuration change was performed in this increment.
+
+
+### Redis CI publication and artifact verification — 27 November
+
+Product commit `f5144be52ce9c674ebcf700145d393539c9d0e7f` adds the isolated Redis
+workflow and its explanation. All five exact-head workflows passed: Backend,
+Frontend, Docker, PostgreSQL and Redis. The first
+[Redis CI run](https://github.com/ozdemirr1/opsdesk/actions/runs/45917707971)
+completed its job in 25 seconds, including service readiness, tests, no-skip guard
+and report upload. The downloaded redis-test-report artifact (ID 15163216630)
+contained JUnit totals: 10 tests, 0 failures, 0 errors, 0 skipped. This is observed
+remote evidence, replacing the earlier pending-publication status for this step.
+Controlled failure/recovery, broker isolation and learner closure remain pending.
+
+
+### Controlled Redis connection failure — 27 November
+
+The learning fault commit `aad1c10` selected port 1 in Redis CI only. Run
+[45918303442](https://github.com/ozdemirr1/opsdesk/actions/runs/45918303442)
+failed as expected: healthy service initialization, then connection refused to
+127.0.0.1:1 in fixture setup. Its report was still uploaded and downloaded for
+inspection: 10 tests, 10 errors, 0 failures/skips. No application service logic
+was exercised by those failed fixture setups. Commit `c0d08f0` restored the
+mapped service port; recovery verification follows. Broker isolation concepts
+are documented in notes/ci/cache-artifacts.md. Learner review remains pending.
+
+
+Recovery run [45918398606](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398606)
+succeeded for `c0d08f0`. Its downloaded XML confirms 10 tests and zero
+failures/errors/skips. This closes the controlled Redis failure/recovery evidence;
+learner explanation and education-documentation publication remain pending.
+
+
+### Learner closure — planned 22 November
+
+The learner correctly distinguished optional dependency caching from the
+required Redis integration-test connection, and artifact preservation from
+successful test execution.
+
+The learner also explained why derived Ticket statistics and pending broker
+messages have different loss consequences. Review clarified that lost tasks
+can be reconstructed only when durable intent and a recovery mechanism have
+been explicitly designed; a future outbox is one such approach.
+
+Recovery commit `c0d08f0` passed all five product CI workflows. Its downloaded
+Redis report contained 10 tests with zero failures, errors or skips.
+The planned 22 November learning checkpoint is complete. No Celery service,
+main merge or hosted deployment was introduced.

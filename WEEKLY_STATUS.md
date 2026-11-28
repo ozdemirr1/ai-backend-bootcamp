@@ -12,8 +12,12 @@ describes the verified Redis CI recovery rather than planned work.
 The [Week 19 report](weekly-reports/week-19.md) records exact-head evidence and its
 limits. Final weekly learner review is recorded, including the correction that
 invalidation is best-effort and TTL is not a commit-relative freshness guarantee.
-Documentation commit/push and normal PR review/merge remain pending.
-No deployment or hosted Redis enablement occurred.
+Documentation was published. Product PR #53 merged normally as `2fbe552` after
+all five push and PR workflows passed at `de66cc2`. Education PR #19 carries
+this final publication record for normal merge. Week 19 learning is complete.
+Hosted deployment is not verified: the linked Railway project had no active
+deployment and its readiness address returned 404 before the product merge.
+No hosted Redis enablement or provider reconfiguration was performed.
 Unrelated LinkedIn assets remain outside this checkpoint.
 
 ## Previous checkpoint — 27 November 2026: planned 22 November work closed

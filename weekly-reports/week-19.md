@@ -381,3 +381,24 @@ limits result lifetime when invalidation succeeds, not only when it fails.
 The planned 23 November learner review is recorded with this clarification.
 Documentation publication and normal PR review/merge remain separate pending
 steps; this record does not claim a merge, deployment or live Redis enablement.
+
+### Publication and product merge — 28 November
+
+Product documentation commit `de66cc2` and education review commit `d65f21a`
+were pushed. Product [PR #53](https://github.com/ozdemirr1/opsdesk/pull/53)
+passed all five workflows on both push and pull-request events before normal
+merge as `2fbe55242b29dec72004ad54c7626add84595dd5`. Daily commits, including
+the intentional CI fault and recovery, remain in history.
+
+The final PR checks were Backend run 46089807789, Frontend 46089807896,
+Docker 46089807774, PostgreSQL 46089807872 and Redis 46089807814; all passed.
+Education [PR #19](https://github.com/ozdemirr1/ai-backend-bootcamp/pull/19)
+has no configured automated checks; its documentation passed `git diff --check`.
+This final record is included in that PR before its normal merge.
+
+Read-only Railway inspection before the merge showed no active deployment in
+the linked project, and the published readiness URL returned HTTP 404. Therefore
+GitHub integration is not reported as a successful hosted release. No provider
+settings, data, volumes or Redis enablement were changed. Hosted availability
+remains a separate operational follow-up. Untracked LinkedIn assets were not
+staged, committed or deleted.

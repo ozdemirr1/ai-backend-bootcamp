@@ -6,17 +6,20 @@ This repository contains plans, learning notes, exercises and evidence;
 the real product code lives in [OpsDesk](https://github.com/ozdemirr1/opsdesk).
 Production AI is the direction of the roadmap, not a claim of current readiness.
 
-## Current focus — Month 05 planning, 3 November 2026
+## Current focus — Week 20 preparation, 28 November 2026
 
 The [approved Month 05 plan](monthly-plans/month-05.md) defines Docker/Compose,
 Redis cache/rate limiting, Celery retry/idempotency and expanded CI with basic
 Linux/logging. Weekly plans: [17](weekly-reports/week-17-plan.md),
 [18](weekly-reports/week-18-plan.md), [19](weekly-reports/week-19-plan.md),
-[20](weekly-reports/week-20-plan.md). Planning is complete; implementation has not
-started. GitHub Actions fundamentals, incremental examples and
+[20](weekly-reports/week-20-plan.md). Week 19 product and learning PRs have merged;
+Week 20 Celery implementation has not started. The next learning slice is the
+original 24 November task. GitHub Actions fundamentals, incremental examples and
 independent failure diagnosis are included; existing test counts do not replace learning. Existing frontend behavior stays; no new React/AI/Kubernetes scope.
 
-Month 05 starts on **4 November 2026**; planned closure is 30 November.
+Month 05 started on **4 November 2026**; original planned closure is 30 November.
+The planned 23 November checkpoint completed on 28 November, a five-day calendar
+lag. Keep the original topic order; reassess capacity rather than skipping gates.
 Continue in a new month-scoped conversation using the
 [Month 05 handoff](monthly-plans/month-05-handoff.md).
 

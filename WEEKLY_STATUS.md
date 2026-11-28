@@ -1,6 +1,25 @@
 # Weekly Status
 
-## Current checkpoint — 28 November 2026: planned 23 November acceptance review
+## Current checkpoint — 28 November 2026: Week 20 plan prepared
+
+Week 19 product PR #53 merged as `2fbe552`; education PR #19 merged as `3c3051a`.
+All five product workflows passed at the merge commit. The next uncompleted
+learning slice is planned 24 November. Completing the 23 November checkpoint on
+28 November gives a five-calendar-day lag; it is not a measured effort deficit.
+
+The [Week 20 plan](weekly-reports/week-20-plan.md) is expanded in English on
+`feature/week-20-celery-reliable-jobs`, preserving the original 24–30 November
+sequence and Month 5 boundaries. All seven learning slices remain. At one slice
+per day beginning today, 4 December is an illustrative completion date, not an
+approved rebaseline. No Celery implementation, product branch or new deployment
+was introduced by preparing the plan. Hosted availability remains unresolved.
+
+The plan also maps the original background-job/email-simulation/AI-queue brief to
+bounded deliverables, includes Linux/networking review, and defines Month 5
+closure gates and evidence-dependent CV wording. AI implementation, real email,
+session redesign and a separate React container are not added to this scope.
+
+## Previous checkpoint — 28 November 2026: planned 23 November acceptance review
 
 Both Week 19 branches were synchronized with GitHub before documentation edits;
 each was seven commits ahead of its own main. Product `c0d08f0` passed Backend,

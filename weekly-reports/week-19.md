@@ -309,3 +309,75 @@ Recovery commit `c0d08f0` passed all five product CI workflows. Its downloaded
 Redis report contained 10 tests with zero failures, errors or skips.
 The planned 22 November learning checkpoint is complete. No Celery service,
 main merge or hosted deployment was introduced.
+
+## 28 November — planned 23 November acceptance and regression review
+
+Fetched both repository origins. Both checkouts used
+`feature/week-19-redis-cache-limits`, each seven commits ahead of its own main
+and synchronized with its upstream. Product head was `c0d08f0`; education head
+was `2a0f96c`. Product was clean before documentation edits. Untracked LinkedIn
+assets in the education repository were excluded. Neither repository had an
+existing Week 19 PR at the time of review.
+
+### Acceptance evidence
+
+| Requirement | Reviewed evidence |
+| --- | --- |
+| Tenant/customer/staff separation and current access | Stats unit/API cases and PostgreSQL role/scope tests, including demotion and authorization before cache hits |
+| Hit/miss and TTL | Aggregate-query observation, zero-count hits, real Redis expiry and invalid-payload checks |
+| Commit/rollback boundary | Creation-service event ordering; failed commit does not invalidate; Redis failure does not repeat committed creation |
+| Delayed stale fill | Captured-generation tests, real Redis token rotation and deterministic PostgreSQL interleaving |
+| Atomic admission | Ten parallel Redis requests admit three, reject seven and leave the counter at three |
+| Failure and proxy boundaries | Cache fallback, limiter 503, corrupt-counter rejection, bounded timeouts and trusted/untrusted forwarded-peer tests |
+
+### Exact-head remote checks
+
+All five workflows completed successfully for product commit
+`c0d08f037bf833dae6b9f99bdb2fa904f6e957d0`:
+
+- [Backend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398729):
+  854 tests passed, 303 deselected; Ruff passed and 157 files were already formatted.
+- [PostgreSQL CI](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398602):
+  guarded schema checks passed; data suite 288 passed, ten Redis cases skipped;
+  Alembic reported no new upgrade operations.
+- [Redis CI](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398606):
+  ten tests passed in 4.06 seconds; zero failures, errors or skips.
+- [Frontend CI](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398681): success.
+- [Docker CI](https://github.com/ozdemirr1/opsdesk/actions/runs/45918398575): success.
+
+No application code changed after that head during this review, so these suites
+were not unnecessarily rerun locally. Subsequent documentation publication will
+have a new commit and its own CI results; the counts above belong to `c0d08f0`.
+
+### Documentation and remaining closure
+
+Updated product Redis CI, cache, limiter and project-status documents to reflect
+observed remote verification. Historical dated evidence remains intact.
+The real-Redis HTTP tests use a recording business service, while PostgreSQL
+behavior is tested separately. These checks are not hosted end-to-end evidence.
+Invalidation remains best-effort; cache/limiter stay disabled by default and live
+proxy trust, Redis capacity and broker configuration were not changed.
+
+Final learner review on TTL/invalidation and session/cache boundaries is still
+pending, followed by documentation publication and normal PR review/merge.
+This checkpoint does not declare Week 19 merged or deployed.
+
+### Final learner review — 28 November
+
+The learner explained that waiting only for TTL leaves statistics stale after a
+successful Ticket creation, and that invalidation belongs after commit rather
+than after a rolled-back write. They also correctly distinguished cached results
+from authentication and current authorization: cached data can outlive a session,
+membership or broader role, so every request must enforce current access.
+
+Review corrected the claim of an immediate freshness guarantee. Generation
+rotation protects subsequent reads after successful invalidation from delayed
+fills in an old generation, but in-flight reads can still return old snapshots.
+Redis failure or a process stopping after commit can prevent invalidation. TTL
+applies to each result from its own cache-write time, including a delayed fill;
+it is not a strict bound measured from the Ticket commit. TTL also routinely
+limits result lifetime when invalidation succeeds, not only when it fails.
+
+The planned 23 November learner review is recorded with this clarification.
+Documentation publication and normal PR review/merge remain separate pending
+steps; this record does not claim a merge, deployment or live Redis enablement.

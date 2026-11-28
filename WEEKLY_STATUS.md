@@ -1,6 +1,22 @@
 # Weekly Status
 
-## Current checkpoint — 27 November 2026: planned 22 November work closed
+## Current checkpoint — 28 November 2026: planned 23 November acceptance review
+
+Both Week 19 branches were synchronized with GitHub before documentation edits;
+each was seven commits ahead of its own main. Product `c0d08f0` passed Backend,
+Frontend, Docker, PostgreSQL and Redis CI. The acceptance review mapped scoped
+authorization, cache behavior, post-commit invalidation, races and limiter failure
+boundaries to unit/API and isolated integration tests. Product documentation now
+describes the verified Redis CI recovery rather than planned work.
+
+The [Week 19 report](weekly-reports/week-19.md) records exact-head evidence and its
+limits. Final weekly learner review is recorded, including the correction that
+invalidation is best-effort and TTL is not a commit-relative freshness guarantee.
+Documentation commit/push and normal PR review/merge remain pending.
+No deployment or hosted Redis enablement occurred.
+Unrelated LinkedIn assets remain outside this checkpoint.
+
+## Previous checkpoint — 27 November 2026: planned 22 November work closed
 
 Isolated Redis CI and downloadable JUnit artifacts are verified. Deliberate wrong-
 port commit `aad1c10` produced 10 fixture errors while preserving its artifact;

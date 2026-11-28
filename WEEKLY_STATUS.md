@@ -1,6 +1,84 @@
 # Weekly Status
 
-## Current checkpoint — 16 November 2026: Week 18 merged and published
+## Current checkpoint — 28 November 2026: planned 23 November acceptance review
+
+Both Week 19 branches were synchronized with GitHub before documentation edits;
+each was seven commits ahead of its own main. Product `c0d08f0` passed Backend,
+Frontend, Docker, PostgreSQL and Redis CI. The acceptance review mapped scoped
+authorization, cache behavior, post-commit invalidation, races and limiter failure
+boundaries to unit/API and isolated integration tests. Product documentation now
+describes the verified Redis CI recovery rather than planned work.
+
+The [Week 19 report](weekly-reports/week-19.md) records exact-head evidence and its
+limits. Final weekly learner review is recorded, including the correction that
+invalidation is best-effort and TTL is not a commit-relative freshness guarantee.
+Documentation was published. Product PR #53 merged normally as `2fbe552` after
+all five push and PR workflows passed at `de66cc2`. Education PR #19 carries
+this final publication record for normal merge. Week 19 learning is complete.
+Hosted deployment is not verified: the linked Railway project had no active
+deployment and its readiness address returned 404 before the product merge.
+No hosted Redis enablement or provider reconfiguration was performed.
+Unrelated LinkedIn assets remain outside this checkpoint.
+
+## Previous checkpoint — 27 November 2026: planned 22 November work closed
+
+Isolated Redis CI and downloadable JUnit artifacts are verified. Deliberate wrong-
+port commit `aad1c10` produced 10 fixture errors while preserving its artifact;
+recovery `c0d08f0` restored the service port and all 10 Redis tests passed.
+Dependency cache/artifact/application cache and broker-isolation concepts are
+recorded in [CI notes](notes/ci/cache-artifacts.md). Learner review is complete. This documentation checkpoint records
+the planned 22 November closure. No main merge or live change.
+
+## Previous checkpoint — 24 November 2026: planned 21 November work closed
+
+Default-disabled atomic login/register limiting is implemented in OpsDesk. Local
+checks passed: 853 non-integration regressions, expanded 26-case limiter suite,
+10 real Redis checks and 288 guarded PostgreSQL tests with no schema drift.
+429/Retry-After, fail-closed 503, scope, expiry and proxy-spoofing boundaries are
+covered. Learner review is complete; product commit `d19e502` publishes this
+checkpoint on the Week 19 branch. Remote CI is tracked separately; Redis CI is
+still planned 22 November work. No live enablement or main merge.
+See the [Week 19 report](weekly-reports/week-19.md#24-november--planned-21-november-atomic-authentication-limiter).
+
+## Previous checkpoint — 24 November 2026: planned 20 November policy reviewed
+
+The sequential limiter lab and learner review passed. Login/register thresholds,
+IP scope, proxy trust and 429/Retry-After/503 behavior are recorded in the
+[Redis notes](notes/redis/cache-and-rate-limiting.md#24-november--planned-20-november-limiter-contract).
+This is a written contract, not implemented enforcement. Original daily scope is
+unchanged; atomic implementation and concurrent tests remain planned 21 November
+work. The planned 20 November learning checkpoint is closed; this documentation
+checkpoint records the agreed contract and learner evidence.
+
+## Previous checkpoint — 21 November 2026: planned 19 November work closed
+
+Generation-based post-commit invalidation and learner review are complete.
+Local evidence: 828 non-integration tests, 288 PostgreSQL tests and 3 real Redis
+tests passed. Product commit `44374f0` was published on the Week 19 feature branch.
+Redis invalidation is best-effort; TTL is not a commit-relative freshness bound.
+Cache remains disabled by default; no main merge or deployment. Remote CI is
+tracked separately. Limiter and Redis CI remain subsequent work. See the
+[Week 19 report](weekly-reports/week-19.md#learner-review-and-publication--21-november).
+
+## Previous checkpoint — 19 November 2026: planned 18 November work closed
+
+Planned 18 November Redis work now has learner lab evidence and default-disabled
+Ticket statistics cache-aside. Fresh local checks: 821 backend non-integration;
+287 PostgreSQL data plus 2 Redis checks passed, with no Alembic drift. Current
+access precedes cache reads. Learner review completed; product `99bd2c2` was
+pushed and all four exact-head CI workflows passed. Real Redis checks remain local
+opt-in evidence. Invalidation/races, limiter and Redis CI remain pending. No main
+merge, deployment or live enablement. See [Week 19](weekly-reports/week-19.md).
+
+## Earlier checkpoint — 17 November 2026: uncached statistics verified locally
+
+Week 19 adds authorized Ticket status counts without Redis. Backend checks passed
+808 non-integration tests; guarded PostgreSQL data checks passed 286 tests and
+Alembic found no schema drift. See [Week 19 evidence](weekly-reports/week-19.md).
+Product `7c9661c` is pushed and all four exact-head CI workflows passed.
+Learner closure remains pending; no PR merge or deployment occurred.
+
+## Earlier checkpoint — 16 November 2026: Week 18 merged and published
 
 Bootcamp PRs #16 and #17 merged normally; main reached 6f233b8. OpsDesk PR #52
 merged normally as 4cc7bbe; all four merge-head CI workflows passed and Q03 #25
